@@ -1,0 +1,20 @@
+[package]
+name = "megaton-ipc"
+version = "0.1.0"
+authors = ["roblabla <unfiltered@roblab.la>"]
+
+[dependencies]
+megaton-hammer = { path = "../megaton-hammer" }
+
+[features]
+"switch-1.0.0" = []
+"switch-2.0.0" = ["switch-1.0.0"]
+"switch-2.1.0" = ["switch-2.0.0"]
+"switch-2.2.0" = ["switch-2.1.0"]
+"switch-2.3.0" = ["switch-2.2.0"]
+"switch-3.0.0" = ["switch-2.3.0"]
+"switch-3.0.1" = ["switch-3.0.0"]
+"switch-3.0.2" = ["switch-3.0.1"]
+"switch-4.0.0" = ["switch-3.0.2"]
+"switch-4.0.1" = ["switch-4.0.0"]
+"switch-4.1.0" = ["switch-4.0.1"]

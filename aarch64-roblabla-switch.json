@@ -15,7 +15,7 @@
   "executables": true,
   "has-elf-tls": false,
   "has-rpath": false,
-  "linker": "ld.lld",
+  "linker": "/home/roblabla/tmp/yaourt-tmp-roblabla/aur-lld-svn/src/build/bin/ld.lld",
   "linker-flavor": "ld",
   "llvm-target": "aarch64-unknown-none",
   "max-atomic-width": 128,
@@ -27,7 +27,12 @@
       "-Tlink.T"
     ]
   },
-  "relro-level": "full",
+  "post-link-args": {
+    "ld": [
+      "--no-gc-sections"
+    ]
+  },
+  "relro-level": "off",
   "target-c-int-width": "32",
   "target-endian": "little",
   "target-pointer-width": "64",

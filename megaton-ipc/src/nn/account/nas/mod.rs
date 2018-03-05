@@ -1,0 +1,10 @@
+mod impl_IOAuthProcedureForNintendoAccountLinkage;
+pub use self::impl_IOAuthProcedureForNintendoAccountLinkage::*;
+mod impl_IAuthorizationRequest;
+pub use self::impl_IAuthorizationRequest::*;
+mod impl_IOAuthProcedureForExternalNsa;
+pub use self::impl_IOAuthProcedureForExternalNsa::*;
+pub type NasUserBase = ();
+pub type NasUserBaseForApplication = ();
+pub type State = ();
+pub type NasClientInfo = ();

@@ -1,0 +1,7 @@
+[package]
+name = "megaton-example"
+version = "0.1.0"
+authors = ["roblabla <unfiltered@roblab.la>"]
+
+[dependencies]
+megaton-crt0 = { path = "../megaton-crt0" }

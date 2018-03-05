@@ -1,0 +1,14 @@
+pub mod ipc;
+pub type ProfileImpl = ();
+pub type FriendCandidateImpl = ();
+pub type PlayHistoryImpl = ();
+pub type FriendRequestImpl = ();
+pub type ProfileExtraImpl = ();
+pub type UserSettingImpl = ();
+pub type FriendSettingImpl = ();
+pub type BlockedUserImpl = ();
+pub type FriendImpl = ();
+pub type NintendoNetworkIdFriendImpl = ();
+pub type UserPresenceImpl = ();
+pub type FriendDetailedInfoImpl = ();
+pub type UserPresenceViewImpl = ();

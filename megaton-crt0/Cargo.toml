@@ -1,0 +1,8 @@
+[package]
+authors = ["roblabla <unfiltered@roblab.la>"]
+name = "megaton-crt0"
+version = "0.1.0"
+
+[dependencies]
+compiler_builtins = { git = "https://github.com/rust-lang-nursery/compiler-builtins" }
+rlibc = "1.0.0"

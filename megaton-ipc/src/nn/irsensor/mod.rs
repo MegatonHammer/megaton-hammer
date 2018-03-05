@@ -1,0 +1,12 @@
+mod impl_IIrSensorServer;
+pub use self::impl_IIrSensorServer::*;
+mod impl_IIrSensorSystemServer;
+pub use self::impl_IIrSensorSystemServer::*;
+pub type PackedMcuVersion = u32;
+pub type ImageTransferProcessorState = u128;
+pub type IrCameraHandle = u32;
+pub type PackedMomentProcessorConfig = [u8; 0x20];
+pub type PackedImageTransferProcessorConfig = [u8; 0x18];
+pub type PackedClusteringProcessorConfig = [u8; 0x28];
+pub type PackedTeraPluginProcessorConfig = u64;
+pub type PackedDpdProcessorConfig = [u8; 0xc];

@@ -1,0 +1,10 @@
+mod impl_IScreenShotService;
+pub use self::impl_IScreenShotService::*;
+mod impl_IAlbumAccessorService;
+pub use self::impl_IAlbumAccessorService::*;
+mod impl_IScreenShotApplicationService;
+pub use self::impl_IScreenShotApplicationService::*;
+mod impl_IScreenShotControlService;
+pub use self::impl_IScreenShotControlService::*;
+mod impl_IAlbumControlService;
+pub use self::impl_IAlbumControlService::*;

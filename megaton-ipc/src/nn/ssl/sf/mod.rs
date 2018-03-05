@@ -1,0 +1,16 @@
+mod impl_ISslConnection;
+pub use self::impl_ISslConnection::*;
+mod impl_ISslService;
+pub use self::impl_ISslService::*;
+mod impl_ISslContext;
+pub use self::impl_ISslContext::*;
+pub type InternalPki = u32;
+pub type SessionCacheMode = u32;
+pub type VerifyOption = u32;
+pub type RenegotiationMode = u32;
+pub type PollEvent = u32;
+pub type OptionType = u32;
+pub type IoMode = u32;
+pub type ContextOption = u32;
+pub type CertificateFormat = u32;
+pub type SslVersion = u32;

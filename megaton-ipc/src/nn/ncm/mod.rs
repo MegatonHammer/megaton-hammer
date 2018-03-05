@@ -1,0 +1,11 @@
+mod impl_IContentMetaDatabase;
+pub use self::impl_IContentMetaDatabase::*;
+pub mod detail;
+mod impl_IContentStorage;
+pub use self::impl_IContentStorage::*;
+mod impl_IContentManager;
+pub use self::impl_IContentManager::*;
+pub type StorageId = u8;
+pub type ApplicationId = u64;
+pub type ProgramId = u64;
+pub type SystemApplicationId = u64;
