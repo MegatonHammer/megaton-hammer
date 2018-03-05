@@ -15,20 +15,19 @@
   "executables": true,
   "has-elf-tls": false,
   "has-rpath": false,
-  "linker": "/home/roblabla/tmp/yaourt-tmp-roblabla/aur-lld-svn/src/build/bin/ld.lld",
-  "linker-flavor": "ld",
+  "linker-flavor": "ld.lld",
   "llvm-target": "aarch64-unknown-none",
   "max-atomic-width": 128,
   "os": "switch",
   "panic-strategy": "abort",
   "position-independent-executables": true,
   "pre-link-args": {
-    "ld": [
+    "ld.lld": [
       "-Tlink.T"
     ]
   },
   "post-link-args": {
-    "ld": [
+    "ld.lld": [
       "--no-gc-sections"
     ]
   },
