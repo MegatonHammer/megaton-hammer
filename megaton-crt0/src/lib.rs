@@ -19,7 +19,6 @@ pub extern "C" fn entry() -> ! {
 #![feature(global_asm, naked_functions, core_intrinsics, asm, lang_items, compiler_builtins_lib)]
 #![no_std]
 
-extern crate rlibc;
 extern crate compiler_builtins;
 
 use core::{ptr, slice, intrinsics};
