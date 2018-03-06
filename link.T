@@ -16,8 +16,7 @@ SECTIONS
 
   .text : ALIGN(0x1000) {
     __text_start = .;
-    KEEP(crt0.nso.o(.text.jmp))
-    KEEP(crt0.nro.o(.text.jmp))
+    KEEP(*(.text.jmp))
 
     . = 0x80;
 
@@ -34,8 +33,7 @@ SECTIONS
 
   .rodata : { *(.rodata .rodata.*) } :rodata
   .mod0 : {
-    KEEP(crt0.nso.o(.data.mod0))
-    KEEP(crt0.nro.o(.data.mod0))
+    KEEP(*(.data.mod0))
   }
   .hash : { *(.hash) }
   .dynsym : { *(.dynsym .dynsym.*) }
