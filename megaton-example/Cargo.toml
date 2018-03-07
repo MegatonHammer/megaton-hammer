@@ -4,4 +4,4 @@ version = "0.1.0"
 authors = ["roblabla <unfiltered@roblab.la>"]
 
 [dependencies]
-megaton-crt0 = { path = "../megaton-crt0" }
+megaton-crt0 = { path = "../megaton-crt0", features = ["log"] }
