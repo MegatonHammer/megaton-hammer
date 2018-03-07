@@ -34,12 +34,17 @@ SECTIONS
   .rodata : { *(.rodata .rodata.*) } :rodata
   .mod0 : {
     KEEP(*(.data.mod0))
-  }
+  } :rodata
+
   .hash : { *(.hash) }
   .dynsym : { *(.dynsym .dynsym.*) }
   .dynstr : { *(.dynstr .dynstr.*) }
   .rela.dyn : { *(.rela.dyn) }
-  .data.rel.ro : { *(.data.rel.ro*) } :rodata
+
+  .dynamic : {
+    __dynamic_start = .;
+    *(.dynamic)
+  }
 
   .eh_frame : {
     __eh_frame_start = .;
@@ -70,10 +75,7 @@ SECTIONS
     *(.got.plt .got.plt.*)
   } :data
 
-  .dynamic : {
-    __dynamic_start = .;
-    *(.dynamic)
-  }
+  .data.rel.ro : { *(.data.rel.ro*) }
 
   /* BSS section */
 
