@@ -8,8 +8,8 @@
     "sysv64"
   ],
   "arch": "aarch64",
-  "crt-static-default": true,
-  "crt-static-respected": true,
+  "crt-static-default": false,
+  "crt-static-respected": false,
   "data-layout": "e-m:e-i8:8:32-i16:16:32-i64:64-i128:128-n32:64-S128",
   "dynamic-linking": false,
   "executables": true,
