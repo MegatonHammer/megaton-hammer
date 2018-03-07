@@ -137,7 +137,6 @@ pub unsafe fn relocate(aslr_base: *mut u8, dyn_info: &mut DynInfo) -> Result<(),
                         return Err(8);
                     }
                     *(aslr_base.offset((*rela).offset as isize) as *mut *mut ()) = aslr_base.offset((*rela).addend as isize) as _;
-                    break;
                 },
                 _ => return Err(9)
             }
