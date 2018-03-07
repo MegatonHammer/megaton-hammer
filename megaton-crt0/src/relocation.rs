@@ -64,6 +64,7 @@ pub unsafe fn relocate(aslr_base: *mut u8, dyn_info: &mut DynInfo) -> Result<(),
         return Err(13);
     }
 
+
     // Traverse the dynamic section, extract all relevant information.
     let mut dynamic = mod_ptr.offset((*mod_header).dynamic_off as isize) as *const Elf64Dyn;
     while (*dynamic).tag > 0 {
@@ -136,6 +137,7 @@ pub unsafe fn relocate(aslr_base: *mut u8, dyn_info: &mut DynInfo) -> Result<(),
                     if (*rela).symbol != 0 {
                         return Err(8);
                     }
+
                     *(aslr_base.offset((*rela).offset as isize) as *mut *mut ()) = aslr_base.offset((*rela).addend as isize) as _;
                 },
                 _ => return Err(9)

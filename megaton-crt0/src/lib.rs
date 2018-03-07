@@ -26,7 +26,8 @@ extern crate core_io as io;
 #[cfg(feature = "log")]
 extern crate spin;
 
-use core::{slice, intrinsics};
+use core::{ptr, slice, intrinsics};
+use core::fmt::Write;
 
 #[naked]
 #[no_mangle]
@@ -45,6 +46,15 @@ pub unsafe extern fn __svcExitProcess() -> ! {
     // TODO: Clobbers
     asm!("svc 0x07" : : : : "volatile");
     intrinsics::unreachable();
+}
+
+pub extern fn __svcLog(s: &str) -> usize {
+    let str_bytes = s.as_ptr();
+    let str_len = s.len();
+    let out;
+    // TODO: Clobbers
+    unsafe { asm!("svc 0x27" : "={x0}"(out) : "{x0}"(str_bytes), "{x1}"(str_len) : : "volatile"); }
+    out
 }
 
 // Make sure x30 is set to something.
@@ -86,9 +96,9 @@ run:
     ret
 }
 
-// TODO: I should try to get rid of that one last bit of asm.
-#[link_section = ".data.mod0"]
+// TODO: I should try to get rid of that one last bit of global asm.
 global_asm!(r#"
+.section .data.mod0
 .global _mod_header
 _mod_header:
     .ascii "MOD0"
@@ -103,6 +113,8 @@ IS_NRO:
 "#);
 
 mod relocation;
+#[macro_use]
+mod util;
 
 /*pub enum LoaderConfigEntry {
     EndOfList = 0,
@@ -157,24 +169,29 @@ extern {
 }
 
 // TODO: Should this be here? I need to clean up who is responsible for what.
-// TODO: THIS IS TERRIFYING!
 #[cfg(feature = "log")]
-static mut LOG : spin::Mutex<io::Cursor<&'static mut [u8]>> = unsafe { JUNK.data };
+pub struct LoaderLog(spin::Mutex<io::Cursor<&'static mut [u8]>>);
+
+// TODO: Don't leave it uninitialized. Stick it in an Option<> or something.
+#[cfg(feature = "log")]
+pub static mut LOG : LoaderLog = unsafe { const_uninitialized!(LoaderLog) };
 
 #[cfg(feature = "log")]
-union TerrifyingUnion {
-    data: spin::Mutex<io::Cursor<&'static mut [u8]>>,
-    junk: u32
+impl core::fmt::Write for LoaderLog {
+    fn write_str(&mut self, s: &str) -> Result<(), core::fmt::Error> {
+        use io::Write;
+        unsafe { LOG.0.lock().write(s.as_bytes()).unwrap(); }
+        Ok(())
+    }
 }
 
-#[cfg(feature = "log")]
-const JUNK: TerrifyingUnion = TerrifyingUnion { junk: 0 };
+pub struct SvcLog;
 
-#[cfg(feature = "log")]
-pub fn write_to_log(s: &str) {
-    use io::Write;
-
-    unsafe { LOG.lock().write(s.as_bytes()); }
+impl core::fmt::Write for SvcLog {
+    fn write_str(&mut self, s: &str) -> Result<(), core::fmt::Error> {
+        __svcLog(s);
+        Ok(())
+    }
 }
 
 #[no_mangle]
@@ -184,28 +201,41 @@ unsafe extern fn megaton_start(mut config: *mut LoaderConfigEntry, _thread_handl
         fini_array: None
     };
 
+
     if let Err(x) = relocation::relocate(aslr_base as _, &mut dyn_info) {
         return -(x as i32);
     }
 
-    loop {
-        match (*config).tag {
-            LoaderConfigTag::EndOfList => break,
-            LoaderConfigTag::Log => {
-                #[cfg(feature = "log")]
-                {
-                    LOG = spin::Mutex::new(io::Cursor::new(slice::from_raw_parts_mut((*config).data.0 as _, (*config).data.1 as _)));
-                }
-            },
-            _ => {
-                if (*config).flags & 1 == 0 {
-                    // Is mandatory! Let's suicide.
-                    return -2;
+    if !config.is_null() {
+        loop {
+            match (*config).tag {
+                LoaderConfigTag::EndOfList => break,
+                LoaderConfigTag::Log => {
+                    #[cfg(feature = "log")]
+                    {
+                        LOG = LoaderLog(spin::Mutex::new(io::Cursor::new(slice::from_raw_parts_mut((*config).data.0 as _, (*config).data.1 as _))));
+                    }
+                },
+                _ => {
+                    if (*config).flags & 1 == 0 {
+                        // Flag is mandatory! If we don't know about it, we
+                        // should commit suicide.
+                        return -2;
+                    }
                 }
             }
+            config = config.offset(1);
         }
-        config = config.offset(1);
+    } else {
+        // There was no LoaderConfig, we're on our own to set ourselves up in a
+        // sane way.
+        // TODO: Seems totally safe. TOTALLY. SAFE.
+        #[cfg(feature = "log")]
+        {
+            LOG = LoaderLog(spin::Mutex::new(io::Cursor::new(slice::from_raw_parts_mut(ptr::null_mut(), 0))));
+        }
     }
+
     // Handle Loader Config
 
     // TODO: Might want to run init_array 👀
