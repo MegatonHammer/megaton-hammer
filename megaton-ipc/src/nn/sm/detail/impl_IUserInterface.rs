@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IUserInterface(Session);
 
 impl IUserInterface {
+	pub fn get_service() -> Result<IUserInterface> {
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let mut session = 0;
+		let r = unsafe { svc::connect_to_named_port(&mut session, "sm:".as_ptr()) };
+		if r != 0 {
+			return Err(Error(r))
+		} else {
+			return Ok(unsafe { IUserInterface::from_kobject(KObject::new(session)) });
+		}
+	}
+}
+
+impl IUserInterface {
 	pub fn Initialize(&self, reserved: u64) -> Result<()> {
 		let req = Request::new(0)
 			.args(reserved)

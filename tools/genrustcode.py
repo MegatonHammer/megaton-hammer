@@ -313,14 +313,29 @@ for name, cmds in ifaces.items():
 		print("", file=f)
 		print("pub struct %s(Session);" % ifacename, file=f)
 		print("", file=f)
-		if name in services:
+		if name in services and name == "nn::sm::detail::IUserInterface":
 			print("impl %s {" % ifacename, file=f)
-			print("\tpub fn get_service() {", file=f)
+			print("\tpub fn get_service() -> Result<%s> {" % ifacename, file=f)
 			# sm: has a different way to get acquired.
 			if name == "nn::sm::detail::IUserInterface":
-				
-			# Use sm
-			print("\t\t
+				# TODO: Call Initialize
+				print("\t\tuse megaton_hammer::kernel::svc;", file=f);
+				print("\t\tuse megaton_hammer::error::Error;", file=f);
+				print("", file=f)
+				print("\t\tlet mut session = 0;", file=f)
+				print("\t\tlet r = unsafe { svc::connect_to_named_port(&mut session, \"sm:\".as_ptr()) };", file=f)
+				print("\t\tif r != 0 {", file=f)
+				print("\t\t\treturn Err(Error(r))", file=f)
+				print("\t\t} else {", file=f)
+				print("\t\t\treturn Ok(unsafe { %s::from_kobject(KObject::new(session)) });" % ifacename, file=f)
+				print("\t\t}", file=f)
+			#else:
+			#	# Use sm
+			#	print("\t\t
+			print("\t}", file=f)
+			print("}", file=f)
+			print("", file=f)
+
 		print("impl %s {" % ifacename, file=f)
 		for cmd in cmds['cmds']:
 			fn_io = StringIO()
