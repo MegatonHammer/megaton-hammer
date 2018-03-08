@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IImmediateManager(Session);
 
 impl IImmediateManager {
+	pub fn get_service() -> Result<IImmediateManager> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"pcv:imm\0").map(|s| unsafe { IImmediateManager::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IImmediateManager {
 	pub fn SetClockRate(&self, unk0: i32, unk1: u32) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {

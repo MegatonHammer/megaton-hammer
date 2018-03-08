@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct INotifyService(Session);
 
 impl INotifyService {
+	pub fn get_service() -> Result<INotifyService> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"pdm:ntfy").map(|s| unsafe { INotifyService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl INotifyService {
 	pub fn Unknown0(&self, unk0: u64, unk1: u64) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {

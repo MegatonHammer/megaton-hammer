@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IApplicationCreator(Session);
 
 impl IApplicationCreator {
-	pub fn CreateApplication(&self, unk0: ::nn::ncm::ApplicationId) -> Result<(::nn::am::service::IApplicationAccessor)> {
+	pub fn CreateApplication(&self, unk0: ::nn::ncm::ApplicationId) -> Result<::nn::am::service::IApplicationAccessor> {
 		let req = Request::new(0)
 			.args(unk0)
 			;
@@ -14,7 +14,7 @@ impl IApplicationCreator {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn PopLaunchRequestedApplication(&self, ) -> Result<(::nn::am::service::IApplicationAccessor)> {
+	pub fn PopLaunchRequestedApplication(&self, ) -> Result<::nn::am::service::IApplicationAccessor> {
 		let req = Request::new(1)
 			.args(())
 			;
@@ -22,7 +22,7 @@ impl IApplicationCreator {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn CreateSystemApplication(&self, unk0: ::nn::ncm::SystemApplicationId) -> Result<(::nn::am::service::IApplicationAccessor)> {
+	pub fn CreateSystemApplication(&self, unk0: ::nn::ncm::SystemApplicationId) -> Result<::nn::am::service::IApplicationAccessor> {
 		let req = Request::new(10)
 			.args(unk0)
 			;
@@ -30,7 +30,7 @@ impl IApplicationCreator {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn PopFloatingApplicationForDevelopment(&self, ) -> Result<(::nn::am::service::IApplicationAccessor)> {
+	pub fn PopFloatingApplicationForDevelopment(&self, ) -> Result<::nn::am::service::IApplicationAccessor> {
 		let req = Request::new(100)
 			.args(())
 			;

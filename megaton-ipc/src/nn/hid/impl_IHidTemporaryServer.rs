@@ -6,7 +6,22 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IHidTemporaryServer(Session);
 
 impl IHidTemporaryServer {
-	pub fn GetConsoleSixAxisSensorCalibrationValues(&self, unk0: ::nn::hid::ConsoleSixAxisSensorHandle, unk1: ::nn::applet::AppletResourceUserId) -> Result<(::nn::hid::tmp::ConsoleSixAxisSensorCalibrationValues)> {
+	pub fn get_service() -> Result<IHidTemporaryServer> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"hid:tmp\0").map(|s| unsafe { IHidTemporaryServer::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IHidTemporaryServer {
+	pub fn GetConsoleSixAxisSensorCalibrationValues(&self, unk0: ::nn::hid::ConsoleSixAxisSensorHandle, unk1: ::nn::applet::AppletResourceUserId) -> Result<::nn::hid::tmp::ConsoleSixAxisSensorCalibrationValues> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: ::nn::hid::ConsoleSixAxisSensorHandle,

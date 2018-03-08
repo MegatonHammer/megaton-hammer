@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct ISystemDisplayService(Session);
 
 impl ISystemDisplayService {
-	pub fn GetZOrderCountMin(&self, unk0: u64) -> Result<(i64)> {
+	pub fn GetZOrderCountMin(&self, unk0: u64) -> Result<i64> {
 		let req = Request::new(1200)
 			.args(unk0)
 			;
@@ -14,7 +14,7 @@ impl ISystemDisplayService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetZOrderCountMax(&self, unk0: u64) -> Result<(i64)> {
+	pub fn GetZOrderCountMax(&self, unk0: u64) -> Result<i64> {
 		let req = Request::new(1202)
 			.args(unk0)
 			;
@@ -92,7 +92,7 @@ impl ISystemDisplayService {
 		Ok(())
 	}
 
-	pub fn GetLayerZ(&self, unk0: u64) -> Result<(i64)> {
+	pub fn GetLayerZ(&self, unk0: u64) -> Result<i64> {
 		let req = Request::new(2204)
 			.args(unk0)
 			;
@@ -166,7 +166,7 @@ impl ISystemDisplayService {
 		Ok(())
 	}
 
-	pub fn ListDisplayModes(&self, unk0: u64, unk2: &mut [::nn::vi::DisplayModeInfo]) -> Result<(i64)> {
+	pub fn ListDisplayModes(&self, unk0: u64, unk2: &mut [::nn::vi::DisplayModeInfo]) -> Result<i64> {
 		let req = Request::new(3000)
 			.args(unk0)
 			;
@@ -174,7 +174,7 @@ impl ISystemDisplayService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn ListDisplayRgbRanges(&self, unk0: u64, unk2: &mut [u32]) -> Result<(i64)> {
+	pub fn ListDisplayRgbRanges(&self, unk0: u64, unk2: &mut [u32]) -> Result<i64> {
 		let req = Request::new(3001)
 			.args(unk0)
 			;
@@ -182,7 +182,7 @@ impl ISystemDisplayService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn ListDisplayContentTypes(&self, unk0: u64, unk2: &mut [u32]) -> Result<(i64)> {
+	pub fn ListDisplayContentTypes(&self, unk0: u64, unk2: &mut [u32]) -> Result<i64> {
 		let req = Request::new(3002)
 			.args(unk0)
 			;
@@ -190,7 +190,7 @@ impl ISystemDisplayService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetDisplayMode(&self, unk0: u64) -> Result<(::nn::vi::DisplayModeInfo)> {
+	pub fn GetDisplayMode(&self, unk0: u64) -> Result<::nn::vi::DisplayModeInfo> {
 		let req = Request::new(3200)
 			.args(unk0)
 			;
@@ -214,7 +214,7 @@ impl ISystemDisplayService {
 		Ok(())
 	}
 
-	pub fn GetDisplayUnderscan(&self, unk0: u64) -> Result<(i64)> {
+	pub fn GetDisplayUnderscan(&self, unk0: u64) -> Result<i64> {
 		let req = Request::new(3202)
 			.args(unk0)
 			;
@@ -238,7 +238,7 @@ impl ISystemDisplayService {
 		Ok(())
 	}
 
-	pub fn GetDisplayContentType(&self, unk0: u64) -> Result<(u32)> {
+	pub fn GetDisplayContentType(&self, unk0: u64) -> Result<u32> {
 		let req = Request::new(3204)
 			.args(unk0)
 			;
@@ -262,7 +262,7 @@ impl ISystemDisplayService {
 		Ok(())
 	}
 
-	pub fn GetDisplayRgbRange(&self, unk0: u64) -> Result<(u32)> {
+	pub fn GetDisplayRgbRange(&self, unk0: u64) -> Result<u32> {
 		let req = Request::new(3206)
 			.args(unk0)
 			;
@@ -286,7 +286,7 @@ impl ISystemDisplayService {
 		Ok(())
 	}
 
-	pub fn GetDisplayCmuMode(&self, unk0: u64) -> Result<(u32)> {
+	pub fn GetDisplayCmuMode(&self, unk0: u64) -> Result<u32> {
 		let req = Request::new(3208)
 			.args(unk0)
 			;
@@ -310,7 +310,7 @@ impl ISystemDisplayService {
 		Ok(())
 	}
 
-	pub fn GetDisplayContrastRatio(&self, unk0: u64) -> Result<(f32)> {
+	pub fn GetDisplayContrastRatio(&self, unk0: u64) -> Result<f32> {
 		let req = Request::new(3210)
 			.args(unk0)
 			;
@@ -334,7 +334,7 @@ impl ISystemDisplayService {
 		Ok(())
 	}
 
-	pub fn GetDisplayGamma(&self, unk0: u64) -> Result<(f32)> {
+	pub fn GetDisplayGamma(&self, unk0: u64) -> Result<f32> {
 		let req = Request::new(3214)
 			.args(unk0)
 			;
@@ -358,7 +358,7 @@ impl ISystemDisplayService {
 		Ok(())
 	}
 
-	pub fn GetDisplayCmuLuma(&self, unk0: u64) -> Result<(f32)> {
+	pub fn GetDisplayCmuLuma(&self, unk0: u64) -> Result<f32> {
 		let req = Request::new(3216)
 			.args(unk0)
 			;

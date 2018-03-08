@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IApplicationAccessor(Session);
 
 impl IApplicationAccessor {
-	pub fn GetAppletStateChangedEvent(&self, ) -> Result<(KObject)> {
+	pub fn GetAppletStateChangedEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -14,7 +14,7 @@ impl IApplicationAccessor {
 		Ok(res.pop_handle())
 	}
 
-	pub fn IsCompleted(&self, ) -> Result<(bool)> {
+	pub fn IsCompleted(&self, ) -> Result<bool> {
 		let req = Request::new(1)
 			.args(())
 			;
@@ -70,7 +70,7 @@ impl IApplicationAccessor {
 		Ok(())
 	}
 
-	pub fn AreAnyLibraryAppletsLeft(&self, ) -> Result<(bool)> {
+	pub fn AreAnyLibraryAppletsLeft(&self, ) -> Result<bool> {
 		let req = Request::new(111)
 			.args(())
 			;
@@ -78,7 +78,7 @@ impl IApplicationAccessor {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetCurrentLibraryApplet(&self, ) -> Result<(::nn::am::service::IAppletAccessor)> {
+	pub fn GetCurrentLibraryApplet(&self, ) -> Result<::nn::am::service::IAppletAccessor> {
 		let req = Request::new(112)
 			.args(())
 			;
@@ -86,7 +86,7 @@ impl IApplicationAccessor {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetApplicationId(&self, ) -> Result<(::nn::ncm::ApplicationId)> {
+	pub fn GetApplicationId(&self, ) -> Result<::nn::ncm::ApplicationId> {
 		let req = Request::new(120)
 			.args(())
 			;

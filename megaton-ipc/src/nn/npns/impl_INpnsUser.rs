@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct INpnsUser(Session);
 
 impl INpnsUser {
+	pub fn get_service() -> Result<INpnsUser> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"npns:u\0\0").map(|s| unsafe { INpnsUser::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl INpnsUser {
 	pub fn Unknown1(&self, ) -> Result<()> {
 		let req = Request::new(1)
 			.args(())
@@ -38,7 +53,7 @@ impl INpnsUser {
 		Ok(())
 	}
 
-	pub fn Unknown5(&self, ) -> Result<(KObject)> {
+	pub fn Unknown5(&self, ) -> Result<KObject> {
 		let req = Request::new(5)
 			.args(())
 			;
@@ -46,7 +61,7 @@ impl INpnsUser {
 		Ok(res.pop_handle())
 	}
 
-	pub fn Unknown7(&self, ) -> Result<(KObject)> {
+	pub fn Unknown7(&self, ) -> Result<KObject> {
 		let req = Request::new(7)
 			.args(())
 			;
@@ -94,7 +109,7 @@ impl INpnsUser {
 		Ok(())
 	}
 
-	pub fn Unknown103(&self, ) -> Result<(u32)> {
+	pub fn Unknown103(&self, ) -> Result<u32> {
 		let req = Request::new(103)
 			.args(())
 			;

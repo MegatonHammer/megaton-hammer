@@ -18,7 +18,7 @@ impl IManagerDisplayService {
 		Ok((res.get_raw().unk1.clone(),res.get_raw().unk2.clone()))
 	}
 
-	pub fn CreateManagedLayer(&self, unk0: u32, unk1: u64, unk2: ::nn::applet::AppletResourceUserId) -> Result<(u64)> {
+	pub fn CreateManagedLayer(&self, unk0: u32, unk1: u64, unk2: ::nn::applet::AppletResourceUserId) -> Result<u64> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: u32,
@@ -44,7 +44,7 @@ impl IManagerDisplayService {
 		Ok(())
 	}
 
-	pub fn CreateIndirectLayer(&self, ) -> Result<(u64)> {
+	pub fn CreateIndirectLayer(&self, ) -> Result<u64> {
 		let req = Request::new(2050)
 			.args(())
 			;
@@ -60,7 +60,7 @@ impl IManagerDisplayService {
 		Ok(())
 	}
 
-	pub fn CreateIndirectProducerEndPoint(&self, unk0: u64, unk1: ::nn::applet::AppletResourceUserId) -> Result<(u64)> {
+	pub fn CreateIndirectProducerEndPoint(&self, unk0: u64, unk1: ::nn::applet::AppletResourceUserId) -> Result<u64> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: u64,
@@ -84,7 +84,7 @@ impl IManagerDisplayService {
 		Ok(())
 	}
 
-	pub fn CreateIndirectConsumerEndPoint(&self, unk0: u64, unk1: ::nn::applet::AppletResourceUserId) -> Result<(u64)> {
+	pub fn CreateIndirectConsumerEndPoint(&self, unk0: u64, unk1: ::nn::applet::AppletResourceUserId) -> Result<u64> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: u64,
@@ -108,7 +108,7 @@ impl IManagerDisplayService {
 		Ok(())
 	}
 
-	pub fn AcquireLayerTexturePresentingEvent(&self, unk0: u64) -> Result<(KObject)> {
+	pub fn AcquireLayerTexturePresentingEvent(&self, unk0: u64) -> Result<KObject> {
 		let req = Request::new(2300)
 			.args(unk0)
 			;
@@ -124,7 +124,7 @@ impl IManagerDisplayService {
 		Ok(())
 	}
 
-	pub fn GetDisplayHotplugEvent(&self, unk0: u64) -> Result<(KObject)> {
+	pub fn GetDisplayHotplugEvent(&self, unk0: u64) -> Result<KObject> {
 		let req = Request::new(2302)
 			.args(unk0)
 			;
@@ -132,7 +132,7 @@ impl IManagerDisplayService {
 		Ok(res.pop_handle())
 	}
 
-	pub fn GetDisplayHotplugState(&self, unk0: u64) -> Result<(u32)> {
+	pub fn GetDisplayHotplugState(&self, unk0: u64) -> Result<u32> {
 		let req = Request::new(2402)
 			.args(unk0)
 			;

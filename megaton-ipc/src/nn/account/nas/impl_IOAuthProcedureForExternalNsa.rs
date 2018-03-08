@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IOAuthProcedureForExternalNsa(Session);
 
 impl IOAuthProcedureForExternalNsa {
-	pub fn PrepareAsync(&self, ) -> Result<(::nn::account::detail::IAsyncContext)> {
+	pub fn PrepareAsync(&self, ) -> Result<::nn::account::detail::IAsyncContext> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -30,7 +30,7 @@ impl IOAuthProcedureForExternalNsa {
 		Ok(())
 	}
 
-	pub fn ApplyResponseAsync(&self, unk0: &[i8]) -> Result<(::nn::account::detail::IAsyncContext)> {
+	pub fn ApplyResponseAsync(&self, unk0: &[i8]) -> Result<::nn::account::detail::IAsyncContext> {
 		let req = Request::new(3)
 			.args(())
 			;
@@ -38,7 +38,7 @@ impl IOAuthProcedureForExternalNsa {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn Suspend(&self, ) -> Result<(::nn::account::detail::Uuid)> {
+	pub fn Suspend(&self, ) -> Result<::nn::account::detail::Uuid> {
 		let req = Request::new(10)
 			.args(())
 			;
@@ -46,7 +46,7 @@ impl IOAuthProcedureForExternalNsa {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetAccountId(&self, ) -> Result<(::nn::account::NetworkServiceAccountId)> {
+	pub fn GetAccountId(&self, ) -> Result<::nn::account::NetworkServiceAccountId> {
 		let req = Request::new(100)
 			.args(())
 			;
@@ -54,7 +54,7 @@ impl IOAuthProcedureForExternalNsa {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetLinkedNintendoAccountId(&self, ) -> Result<(::nn::account::NintendoAccountId)> {
+	pub fn GetLinkedNintendoAccountId(&self, ) -> Result<::nn::account::NintendoAccountId> {
 		let req = Request::new(101)
 			.args(())
 			;

@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct ISystemAppletProxy(Session);
 
 impl ISystemAppletProxy {
-	pub fn GetCommonStateGetter(&self, ) -> Result<(::nn::am::service::ICommonStateGetter)> {
+	pub fn GetCommonStateGetter(&self, ) -> Result<::nn::am::service::ICommonStateGetter> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -14,7 +14,7 @@ impl ISystemAppletProxy {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetSelfController(&self, ) -> Result<(::nn::am::service::ISelfController)> {
+	pub fn GetSelfController(&self, ) -> Result<::nn::am::service::ISelfController> {
 		let req = Request::new(1)
 			.args(())
 			;
@@ -22,7 +22,7 @@ impl ISystemAppletProxy {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetWindowController(&self, ) -> Result<(::nn::am::service::IWindowController)> {
+	pub fn GetWindowController(&self, ) -> Result<::nn::am::service::IWindowController> {
 		let req = Request::new(2)
 			.args(())
 			;
@@ -30,7 +30,7 @@ impl ISystemAppletProxy {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetAudioController(&self, ) -> Result<(::nn::am::service::IAudioController)> {
+	pub fn GetAudioController(&self, ) -> Result<::nn::am::service::IAudioController> {
 		let req = Request::new(3)
 			.args(())
 			;
@@ -38,7 +38,7 @@ impl ISystemAppletProxy {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetDisplayController(&self, ) -> Result<(::nn::am::service::IDisplayController)> {
+	pub fn GetDisplayController(&self, ) -> Result<::nn::am::service::IDisplayController> {
 		let req = Request::new(4)
 			.args(())
 			;
@@ -46,7 +46,7 @@ impl ISystemAppletProxy {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetProcessWindingController(&self, ) -> Result<(::nn::am::service::IProcessWindingController)> {
+	pub fn GetProcessWindingController(&self, ) -> Result<::nn::am::service::IProcessWindingController> {
 		let req = Request::new(10)
 			.args(())
 			;
@@ -54,7 +54,7 @@ impl ISystemAppletProxy {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetLibraryAppletCreator(&self, ) -> Result<(::nn::am::service::ILibraryAppletCreator)> {
+	pub fn GetLibraryAppletCreator(&self, ) -> Result<::nn::am::service::ILibraryAppletCreator> {
 		let req = Request::new(11)
 			.args(())
 			;
@@ -62,7 +62,7 @@ impl ISystemAppletProxy {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetHomeMenuFunctions(&self, ) -> Result<(::nn::am::service::IHomeMenuFunctions)> {
+	pub fn GetHomeMenuFunctions(&self, ) -> Result<::nn::am::service::IHomeMenuFunctions> {
 		let req = Request::new(20)
 			.args(())
 			;
@@ -70,7 +70,7 @@ impl ISystemAppletProxy {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetGlobalStateController(&self, ) -> Result<(::nn::am::service::IGlobalStateController)> {
+	pub fn GetGlobalStateController(&self, ) -> Result<::nn::am::service::IGlobalStateController> {
 		let req = Request::new(21)
 			.args(())
 			;
@@ -78,7 +78,7 @@ impl ISystemAppletProxy {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetApplicationCreator(&self, ) -> Result<(::nn::am::service::IApplicationCreator)> {
+	pub fn GetApplicationCreator(&self, ) -> Result<::nn::am::service::IApplicationCreator> {
 		let req = Request::new(22)
 			.args(())
 			;
@@ -86,7 +86,7 @@ impl ISystemAppletProxy {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetDebugFunctions(&self, ) -> Result<(::nn::am::service::IDebugFunctions)> {
+	pub fn GetDebugFunctions(&self, ) -> Result<::nn::am::service::IDebugFunctions> {
 		let req = Request::new(1000)
 			.args(())
 			;

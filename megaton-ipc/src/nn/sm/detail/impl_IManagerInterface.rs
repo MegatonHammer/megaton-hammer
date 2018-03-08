@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IManagerInterface(Session);
 
 impl IManagerInterface {
+	pub fn get_service() -> Result<IManagerInterface> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"sm:m\0\0\0\0").map(|s| unsafe { IManagerInterface::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IManagerInterface {
 	// fn RegisterProcess(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn UnregisterProcess(&self, unk0: u64) -> Result<()> {
 		let req = Request::new(1)

@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IFirmwareDebugSettingsServer(Session);
 
 impl IFirmwareDebugSettingsServer {
+	pub fn get_service() -> Result<IFirmwareDebugSettingsServer> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"set:fd\0\0").map(|s| unsafe { IFirmwareDebugSettingsServer::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IFirmwareDebugSettingsServer {
 	// fn SetSettingsItemValue(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn ResetSettingsItemValue(&self, unk0: &::nn::settings::SettingsName, unk1: &::nn::settings::SettingsItemKey) -> Result<()> {
 		let req = Request::new(3)
@@ -15,7 +30,7 @@ impl IFirmwareDebugSettingsServer {
 		Ok(())
 	}
 
-	pub fn CreateSettingsItemKeyIterator(&self, unk0: &::nn::settings::SettingsName) -> Result<(::nn::settings::ISettingsItemKeyIterator)> {
+	pub fn CreateSettingsItemKeyIterator(&self, unk0: &::nn::settings::SettingsName) -> Result<::nn::settings::ISettingsItemKeyIterator> {
 		let req = Request::new(4)
 			.args(())
 			;

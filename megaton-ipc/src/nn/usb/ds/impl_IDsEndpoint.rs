@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IDsEndpoint(Session);
 
 impl IDsEndpoint {
-	pub fn PostBufferAsync(&self, size: u32, buffer: u64) -> Result<(u32)> {
+	pub fn PostBufferAsync(&self, size: u32, buffer: u64) -> Result<u32> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			size: u32,
@@ -30,7 +30,7 @@ impl IDsEndpoint {
 		Ok(())
 	}
 
-	pub fn GetCompletionEvent(&self, ) -> Result<(KObject)> {
+	pub fn GetCompletionEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(2)
 			.args(())
 			;
@@ -38,7 +38,7 @@ impl IDsEndpoint {
 		Ok(res.pop_handle())
 	}
 
-	pub fn GetReportData(&self, entries: &mut [::nn::usb::usb_report_entry]) -> Result<(u32)> {
+	pub fn GetReportData(&self, entries: &mut [::nn::usb::usb_report_entry]) -> Result<u32> {
 		let req = Request::new(3)
 			.args(())
 			;

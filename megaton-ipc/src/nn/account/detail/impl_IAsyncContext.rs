@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IAsyncContext(Session);
 
 impl IAsyncContext {
-	pub fn GetSystemEvent(&self, ) -> Result<(KObject)> {
+	pub fn GetSystemEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -22,7 +22,7 @@ impl IAsyncContext {
 		Ok(())
 	}
 
-	pub fn HasDone(&self, ) -> Result<(bool)> {
+	pub fn HasDone(&self, ) -> Result<bool> {
 		let req = Request::new(2)
 			.args(())
 			;

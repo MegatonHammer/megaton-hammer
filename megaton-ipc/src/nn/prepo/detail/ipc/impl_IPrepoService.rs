@@ -6,6 +6,33 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IPrepoService(Session);
 
 impl IPrepoService {
+	pub fn get_service() -> Result<IPrepoService> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"prepo:a\0").map(|s| unsafe { IPrepoService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		let r = sm.GetService(*b"prepo:m\0").map(|s| unsafe { IPrepoService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		let r = sm.GetService(*b"prepo:u\0").map(|s| unsafe { IPrepoService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		let r = sm.GetService(*b"prepo:s\0").map(|s| unsafe { IPrepoService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IPrepoService {
 	// fn SaveReport(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn SaveReportWithUser(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn RequestImmediateTransmission(&self, ) -> Result<()> {
@@ -16,7 +43,7 @@ impl IPrepoService {
 		Ok(())
 	}
 
-	pub fn GetTransmissionStatus(&self, ) -> Result<(i32)> {
+	pub fn GetTransmissionStatus(&self, ) -> Result<i32> {
 		let req = Request::new(10300)
 			.args(())
 			;
@@ -34,7 +61,7 @@ impl IPrepoService {
 		Ok(())
 	}
 
-	pub fn IsUserAgreementCheckEnabled(&self, ) -> Result<(bool)> {
+	pub fn IsUserAgreementCheckEnabled(&self, ) -> Result<bool> {
 		let req = Request::new(40100)
 			.args(())
 			;

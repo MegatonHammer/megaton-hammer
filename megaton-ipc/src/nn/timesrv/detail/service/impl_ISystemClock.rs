@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct ISystemClock(Session);
 
 impl ISystemClock {
-	pub fn GetCurrentTime(&self, ) -> Result<(::nn::time::PosixTime)> {
+	pub fn GetCurrentTime(&self, ) -> Result<::nn::time::PosixTime> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -22,7 +22,7 @@ impl ISystemClock {
 		Ok(())
 	}
 
-	pub fn GetSystemClockContext(&self, ) -> Result<(::nn::time::SystemClockContext)> {
+	pub fn GetSystemClockContext(&self, ) -> Result<::nn::time::SystemClockContext> {
 		let req = Request::new(2)
 			.args(())
 			;

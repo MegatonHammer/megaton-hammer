@@ -6,7 +6,34 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IStaticService(Session);
 
 impl IStaticService {
-	pub fn GetStandardUserSystemClock(&self, ) -> Result<(::nn::timesrv::detail::service::ISystemClock)> {
+	pub fn get_service() -> Result<IStaticService> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"time:s\0\0").map(|s| unsafe { IStaticService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		let r = sm.GetService(*b"time:u\0\0").map(|s| unsafe { IStaticService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		let r = sm.GetService(*b"time:r\0\0").map(|s| unsafe { IStaticService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		let r = sm.GetService(*b"time:a\0\0").map(|s| unsafe { IStaticService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IStaticService {
+	pub fn GetStandardUserSystemClock(&self, ) -> Result<::nn::timesrv::detail::service::ISystemClock> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -14,7 +41,7 @@ impl IStaticService {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetStandardNetworkSystemClock(&self, ) -> Result<(::nn::timesrv::detail::service::ISystemClock)> {
+	pub fn GetStandardNetworkSystemClock(&self, ) -> Result<::nn::timesrv::detail::service::ISystemClock> {
 		let req = Request::new(1)
 			.args(())
 			;
@@ -22,7 +49,7 @@ impl IStaticService {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetStandardSteadyClock(&self, ) -> Result<(::nn::timesrv::detail::service::ISteadyClock)> {
+	pub fn GetStandardSteadyClock(&self, ) -> Result<::nn::timesrv::detail::service::ISteadyClock> {
 		let req = Request::new(2)
 			.args(())
 			;
@@ -30,7 +57,7 @@ impl IStaticService {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetTimeZoneService(&self, ) -> Result<(::nn::timesrv::detail::service::ITimeZoneService)> {
+	pub fn GetTimeZoneService(&self, ) -> Result<::nn::timesrv::detail::service::ITimeZoneService> {
 		let req = Request::new(3)
 			.args(())
 			;
@@ -38,7 +65,7 @@ impl IStaticService {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetStandardLocalSystemClock(&self, ) -> Result<(::nn::timesrv::detail::service::ISystemClock)> {
+	pub fn GetStandardLocalSystemClock(&self, ) -> Result<::nn::timesrv::detail::service::ISystemClock> {
 		let req = Request::new(4)
 			.args(())
 			;
@@ -46,7 +73,7 @@ impl IStaticService {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn IsStandardUserSystemClockAutomaticCorrectionEnabled(&self, ) -> Result<(bool)> {
+	pub fn IsStandardUserSystemClockAutomaticCorrectionEnabled(&self, ) -> Result<bool> {
 		let req = Request::new(100)
 			.args(())
 			;
@@ -62,7 +89,7 @@ impl IStaticService {
 		Ok(())
 	}
 
-	pub fn IsStandardNetworkSystemClockAccuracySufficient(&self, ) -> Result<(bool)> {
+	pub fn IsStandardNetworkSystemClockAccuracySufficient(&self, ) -> Result<bool> {
 		let req = Request::new(200)
 			.args(())
 			;

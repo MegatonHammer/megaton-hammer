@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IAudioRenderer(Session);
 
 impl IAudioRenderer {
-	pub fn GetAudioRendererSampleRate(&self, ) -> Result<(u32)> {
+	pub fn GetAudioRendererSampleRate(&self, ) -> Result<u32> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -14,7 +14,7 @@ impl IAudioRenderer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetAudioRendererSampleCount(&self, ) -> Result<(u32)> {
+	pub fn GetAudioRendererSampleCount(&self, ) -> Result<u32> {
 		let req = Request::new(1)
 			.args(())
 			;
@@ -22,7 +22,7 @@ impl IAudioRenderer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetAudioRendererMixBufferCount(&self, ) -> Result<(u32)> {
+	pub fn GetAudioRendererMixBufferCount(&self, ) -> Result<u32> {
 		let req = Request::new(2)
 			.args(())
 			;
@@ -30,7 +30,7 @@ impl IAudioRenderer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetAudioRendererState(&self, ) -> Result<(u32)> {
+	pub fn GetAudioRendererState(&self, ) -> Result<u32> {
 		let req = Request::new(3)
 			.args(())
 			;
@@ -55,7 +55,7 @@ impl IAudioRenderer {
 		Ok(())
 	}
 
-	pub fn QuerySystemEvent(&self, ) -> Result<(KObject)> {
+	pub fn QuerySystemEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(7)
 			.args(())
 			;
@@ -71,7 +71,7 @@ impl IAudioRenderer {
 		Ok(())
 	}
 
-	pub fn GetAudioRendererRenderingTimeLimit(&self, ) -> Result<(u32)> {
+	pub fn GetAudioRendererRenderingTimeLimit(&self, ) -> Result<u32> {
 		let req = Request::new(9)
 			.args(())
 			;

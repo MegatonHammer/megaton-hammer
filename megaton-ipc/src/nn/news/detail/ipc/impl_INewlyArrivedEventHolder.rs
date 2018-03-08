@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct INewlyArrivedEventHolder(Session);
 
 impl INewlyArrivedEventHolder {
-	pub fn Unknown0(&self, ) -> Result<(KObject)> {
+	pub fn Unknown0(&self, ) -> Result<KObject> {
 		let req = Request::new(0)
 			.args(())
 			;

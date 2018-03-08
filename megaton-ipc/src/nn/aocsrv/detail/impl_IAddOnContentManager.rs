@@ -6,7 +6,22 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IAddOnContentManager(Session);
 
 impl IAddOnContentManager {
-	pub fn CountAddOnContentByApplicationId(&self, unk0: ::nn::ncm::ApplicationId) -> Result<(i32)> {
+	pub fn get_service() -> Result<IAddOnContentManager> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"aoc:u\0\0\0").map(|s| unsafe { IAddOnContentManager::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IAddOnContentManager {
+	pub fn CountAddOnContentByApplicationId(&self, unk0: ::nn::ncm::ApplicationId) -> Result<i32> {
 		let req = Request::new(0)
 			.args(unk0)
 			;
@@ -14,7 +29,7 @@ impl IAddOnContentManager {
 		Ok(*res.get_raw())
 	}
 
-	pub fn ListAddOnContentByApplicationId(&self, unk0: i32, unk1: i32, unk2: ::nn::ncm::ApplicationId, unk4: &mut [i32]) -> Result<(i32)> {
+	pub fn ListAddOnContentByApplicationId(&self, unk0: i32, unk1: i32, unk2: ::nn::ncm::ApplicationId, unk4: &mut [i32]) -> Result<i32> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: i32,
@@ -32,7 +47,7 @@ impl IAddOnContentManager {
 		Ok(*res.get_raw())
 	}
 
-	pub fn CountAddOnContent(&self, unk0: u64) -> Result<(i32)> {
+	pub fn CountAddOnContent(&self, unk0: u64) -> Result<i32> {
 		let req = Request::new(2)
 			.args(unk0)
 			.send_pid()
@@ -41,7 +56,7 @@ impl IAddOnContentManager {
 		Ok(*res.get_raw())
 	}
 
-	pub fn ListAddOnContent(&self, unk0: i32, unk1: i32, unk2: u64, unk5: &mut [i32]) -> Result<(i32)> {
+	pub fn ListAddOnContent(&self, unk0: i32, unk1: i32, unk2: u64, unk5: &mut [i32]) -> Result<i32> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: i32,
@@ -60,7 +75,7 @@ impl IAddOnContentManager {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetAddOnContentBaseIdByApplicationId(&self, unk0: ::nn::ncm::ApplicationId) -> Result<(u64)> {
+	pub fn GetAddOnContentBaseIdByApplicationId(&self, unk0: ::nn::ncm::ApplicationId) -> Result<u64> {
 		let req = Request::new(4)
 			.args(unk0)
 			;
@@ -68,7 +83,7 @@ impl IAddOnContentManager {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetAddOnContentBaseId(&self, unk0: u64) -> Result<(u64)> {
+	pub fn GetAddOnContentBaseId(&self, unk0: u64) -> Result<u64> {
 		let req = Request::new(5)
 			.args(unk0)
 			.send_pid()

@@ -6,7 +6,22 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct ILogService(Session);
 
 impl ILogService {
-	pub fn Initialize(&self, unk0: u64) -> Result<(::nn::lm::ILogger)> {
+	pub fn get_service() -> Result<ILogService> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"lm\0\0\0\0\0\0").map(|s| unsafe { ILogService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl ILogService {
+	pub fn Initialize(&self, unk0: u64) -> Result<::nn::lm::ILogger> {
 		let req = Request::new(0)
 			.args(unk0)
 			.send_pid()

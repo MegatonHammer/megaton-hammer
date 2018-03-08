@@ -14,7 +14,7 @@ impl IAdministrator {
 		Ok(())
 	}
 
-	pub fn GetAccountId(&self, ) -> Result<(::nn::account::NetworkServiceAccountId)> {
+	pub fn GetAccountId(&self, ) -> Result<::nn::account::NetworkServiceAccountId> {
 		let req = Request::new(1)
 			.args(())
 			;
@@ -22,7 +22,7 @@ impl IAdministrator {
 		Ok(*res.get_raw())
 	}
 
-	pub fn EnsureIdTokenCacheAsync(&self, ) -> Result<(::nn::account::detail::IAsyncContext)> {
+	pub fn EnsureIdTokenCacheAsync(&self, ) -> Result<::nn::account::detail::IAsyncContext> {
 		let req = Request::new(2)
 			.args(())
 			;
@@ -40,7 +40,7 @@ impl IAdministrator {
 		Ok(())
 	}
 
-	pub fn GetNintendoAccountId(&self, ) -> Result<(::nn::account::NintendoAccountId)> {
+	pub fn GetNintendoAccountId(&self, ) -> Result<::nn::account::NintendoAccountId> {
 		let req = Request::new(120)
 			.args(())
 			;
@@ -49,7 +49,7 @@ impl IAdministrator {
 	}
 
 	// fn GetNintendoAccountUserResourceCache(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn RefreshNintendoAccountUserResourceCacheAsync(&self, ) -> Result<(::nn::account::detail::IAsyncContext)> {
+	pub fn RefreshNintendoAccountUserResourceCacheAsync(&self, ) -> Result<::nn::account::detail::IAsyncContext> {
 		let req = Request::new(131)
 			.args(())
 			;
@@ -65,7 +65,7 @@ impl IAdministrator {
 		Ok((*res.get_raw(),unsafe { FromKObject::from_kobject(res.pop_handle()) }))
 	}
 
-	pub fn CreateAuthorizationRequest(&self, unk0: u32, unk1: KObject, unk2: &::nn::account::nas::NasClientInfo, unk3: &::nn::account::NintendoAccountAuthorizationRequestParameters) -> Result<(::nn::account::nas::IAuthorizationRequest)> {
+	pub fn CreateAuthorizationRequest(&self, unk0: u32, unk1: KObject, unk2: &::nn::account::nas::NasClientInfo, unk3: &::nn::account::NintendoAccountAuthorizationRequestParameters) -> Result<::nn::account::nas::IAuthorizationRequest> {
 		let req = Request::new(150)
 			.args(unk0)
 			;
@@ -73,7 +73,7 @@ impl IAdministrator {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn IsRegistered(&self, ) -> Result<(bool)> {
+	pub fn IsRegistered(&self, ) -> Result<bool> {
 		let req = Request::new(200)
 			.args(())
 			;
@@ -81,7 +81,7 @@ impl IAdministrator {
 		Ok(*res.get_raw())
 	}
 
-	pub fn RegisterAsync(&self, ) -> Result<(::nn::account::detail::IAsyncContext)> {
+	pub fn RegisterAsync(&self, ) -> Result<::nn::account::detail::IAsyncContext> {
 		let req = Request::new(201)
 			.args(())
 			;
@@ -89,7 +89,7 @@ impl IAdministrator {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn UnregisterAsync(&self, ) -> Result<(::nn::account::detail::IAsyncContext)> {
+	pub fn UnregisterAsync(&self, ) -> Result<::nn::account::detail::IAsyncContext> {
 		let req = Request::new(202)
 			.args(())
 			;
@@ -105,7 +105,7 @@ impl IAdministrator {
 		Ok(())
 	}
 
-	pub fn SynchronizeProfileAsync(&self, ) -> Result<(::nn::account::detail::IAsyncContext)> {
+	pub fn SynchronizeProfileAsync(&self, ) -> Result<::nn::account::detail::IAsyncContext> {
 		let req = Request::new(220)
 			.args(())
 			;
@@ -113,7 +113,7 @@ impl IAdministrator {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn UploadProfileAsync(&self, ) -> Result<(::nn::account::detail::IAsyncContext)> {
+	pub fn UploadProfileAsync(&self, ) -> Result<::nn::account::detail::IAsyncContext> {
 		let req = Request::new(221)
 			.args(())
 			;
@@ -129,7 +129,7 @@ impl IAdministrator {
 		Ok((*res.get_raw(),unsafe { FromKObject::from_kobject(res.pop_handle()) }))
 	}
 
-	pub fn IsLinkedWithNintendoAccount(&self, ) -> Result<(bool)> {
+	pub fn IsLinkedWithNintendoAccount(&self, ) -> Result<bool> {
 		let req = Request::new(250)
 			.args(())
 			;
@@ -137,7 +137,7 @@ impl IAdministrator {
 		Ok(*res.get_raw())
 	}
 
-	pub fn CreateProcedureToLinkWithNintendoAccount(&self, ) -> Result<(::nn::account::nas::IOAuthProcedureForNintendoAccountLinkage)> {
+	pub fn CreateProcedureToLinkWithNintendoAccount(&self, ) -> Result<::nn::account::nas::IOAuthProcedureForNintendoAccountLinkage> {
 		let req = Request::new(251)
 			.args(())
 			;
@@ -145,7 +145,7 @@ impl IAdministrator {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn ResumeProcedureToLinkWithNintendoAccount(&self, unk0: ::nn::account::detail::Uuid) -> Result<(::nn::account::nas::IOAuthProcedureForNintendoAccountLinkage)> {
+	pub fn ResumeProcedureToLinkWithNintendoAccount(&self, unk0: ::nn::account::detail::Uuid) -> Result<::nn::account::nas::IOAuthProcedureForNintendoAccountLinkage> {
 		let req = Request::new(252)
 			.args(unk0)
 			;
@@ -153,7 +153,7 @@ impl IAdministrator {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn CreateProcedureToUpdateLinkageStateOfNintendoAccount(&self, ) -> Result<(::nn::account::http::IOAuthProcedure)> {
+	pub fn CreateProcedureToUpdateLinkageStateOfNintendoAccount(&self, ) -> Result<::nn::account::http::IOAuthProcedure> {
 		let req = Request::new(255)
 			.args(())
 			;
@@ -161,7 +161,7 @@ impl IAdministrator {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn ResumeProcedureToUpdateLinkageStateOfNintendoAccount(&self, unk0: ::nn::account::detail::Uuid) -> Result<(::nn::account::http::IOAuthProcedure)> {
+	pub fn ResumeProcedureToUpdateLinkageStateOfNintendoAccount(&self, unk0: ::nn::account::detail::Uuid) -> Result<::nn::account::http::IOAuthProcedure> {
 		let req = Request::new(256)
 			.args(unk0)
 			;
@@ -169,7 +169,7 @@ impl IAdministrator {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn CreateProcedureToLinkNnidWithNintendoAccount(&self, ) -> Result<(::nn::account::http::IOAuthProcedure)> {
+	pub fn CreateProcedureToLinkNnidWithNintendoAccount(&self, ) -> Result<::nn::account::http::IOAuthProcedure> {
 		let req = Request::new(260)
 			.args(())
 			;
@@ -177,7 +177,7 @@ impl IAdministrator {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn ResumeProcedureToLinkNnidWithNintendoAccount(&self, unk0: ::nn::account::detail::Uuid) -> Result<(::nn::account::http::IOAuthProcedure)> {
+	pub fn ResumeProcedureToLinkNnidWithNintendoAccount(&self, unk0: ::nn::account::detail::Uuid) -> Result<::nn::account::http::IOAuthProcedure> {
 		let req = Request::new(261)
 			.args(unk0)
 			;
@@ -185,7 +185,7 @@ impl IAdministrator {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn ProxyProcedureToAcquireApplicationAuthorizationForNintendoAccount(&self, unk0: ::nn::account::detail::Uuid) -> Result<(::nn::account::http::IOAuthProcedure)> {
+	pub fn ProxyProcedureToAcquireApplicationAuthorizationForNintendoAccount(&self, unk0: ::nn::account::detail::Uuid) -> Result<::nn::account::http::IOAuthProcedure> {
 		let req = Request::new(280)
 			.args(unk0)
 			;
@@ -193,7 +193,7 @@ impl IAdministrator {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn DebugUnlinkNintendoAccountAsync(&self, ) -> Result<(::nn::account::detail::IAsyncContext)> {
+	pub fn DebugUnlinkNintendoAccountAsync(&self, ) -> Result<::nn::account::detail::IAsyncContext> {
 		let req = Request::new(997)
 			.args(())
 			;

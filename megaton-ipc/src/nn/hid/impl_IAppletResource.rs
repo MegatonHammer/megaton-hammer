@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IAppletResource(Session);
 
 impl IAppletResource {
-	pub fn GetSharedMemoryHandle(&self, ) -> Result<(KObject)> {
+	pub fn GetSharedMemoryHandle(&self, ) -> Result<KObject> {
 		let req = Request::new(0)
 			.args(())
 			;

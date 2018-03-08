@@ -6,30 +6,35 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IClient(Session);
 
 impl IClient {
-	pub fn Initialize(&self, unk0: u32, unk1: u32, unk2: u32, unk3: u32, unk4: u32, unk5: u32, unk6: u32, unk7: u32, pid: u64, transferMemorySize: u64, unk10: KObject) -> Result<(u32)> {
+	pub fn get_service() -> Result<IClient> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"bsd:u\0\0\0").map(|s| unsafe { IClient::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		let r = sm.GetService(*b"bsd:s\0\0\0").map(|s| unsafe { IClient::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IClient {
+	pub fn Initialize(&self, config: ::nn::socket::BsdBufferConfig, pid: u64, transferMemorySize: u64, unk3: KObject) -> Result<u32> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
-			unk0: u32,
-			unk1: u32,
-			unk2: u32,
-			unk3: u32,
-			unk4: u32,
-			unk5: u32,
-			unk6: u32,
-			unk7: u32,
+			config: ::nn::socket::BsdBufferConfig,
 			pid: u64,
 			transferMemorySize: u64,
 		}
 		let req = Request::new(0)
 			.args(InRaw {
-				unk0,
-				unk1,
-				unk2,
-				unk3,
-				unk4,
-				unk5,
-				unk6,
-				unk7,
+				config,
 				pid,
 				transferMemorySize,
 			})

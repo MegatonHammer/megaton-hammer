@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IContentStorage(Session);
 
 impl IContentStorage {
-	pub fn GetRootEntry(&self, ) -> Result<(u128)> {
+	pub fn GetRootEntry(&self, ) -> Result<u128> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -95,7 +95,7 @@ impl IContentStorage {
 	}
 
 	// fn Unknown11(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn GetNumberOfEntries(&self, ) -> Result<(u32)> {
+	pub fn GetNumberOfEntries(&self, ) -> Result<u32> {
 		let req = Request::new(12)
 			.args(())
 			;
@@ -175,7 +175,7 @@ impl IContentStorage {
 		Ok(())
 	}
 
-	pub fn GetFreeSpace(&self, ) -> Result<(u64)> {
+	pub fn GetFreeSpace(&self, ) -> Result<u64> {
 		let req = Request::new(22)
 			.args(())
 			;
@@ -183,7 +183,7 @@ impl IContentStorage {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetTotalSpace(&self, ) -> Result<(u64)> {
+	pub fn GetTotalSpace(&self, ) -> Result<u64> {
 		let req = Request::new(23)
 			.args(())
 			;

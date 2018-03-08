@@ -1,7 +1,5 @@
 mod impl_IAsyncData;
 pub use self::impl_IAsyncData::*;
-mod impl_INetworkInstallManager;
-pub use self::impl_INetworkInstallManager::*;
 mod impl_IShopServiceManager;
 pub use self::impl_IShopServiceManager::*;
 mod impl_IAsyncValue;
@@ -10,3 +8,5 @@ mod impl_IAsyncResult;
 pub use self::impl_IAsyncResult::*;
 mod impl_IAsyncProgressResult;
 pub use self::impl_IAsyncProgressResult::*;
+mod impl_INetworkInstallManager;
+pub use self::impl_INetworkInstallManager::*;

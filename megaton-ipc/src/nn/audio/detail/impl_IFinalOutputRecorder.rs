@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IFinalOutputRecorder(Session);
 
 impl IFinalOutputRecorder {
-	pub fn GetFinalOutputRecorderState(&self, ) -> Result<(u32)> {
+	pub fn GetFinalOutputRecorderState(&self, ) -> Result<u32> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -31,7 +31,7 @@ impl IFinalOutputRecorder {
 	}
 
 	// fn AppendFinalOutputRecorderBuffer(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn RegisterBufferEvent(&self, ) -> Result<(KObject)> {
+	pub fn RegisterBufferEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(4)
 			.args(())
 			;
@@ -40,7 +40,7 @@ impl IFinalOutputRecorder {
 	}
 
 	// fn GetReleasedFinalOutputRecorderBuffer(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn ContainsFinalOutputRecorderBuffer(&self, unk0: u64) -> Result<(u8)> {
+	pub fn ContainsFinalOutputRecorderBuffer(&self, unk0: u64) -> Result<u8> {
 		let req = Request::new(6)
 			.args(unk0)
 			;

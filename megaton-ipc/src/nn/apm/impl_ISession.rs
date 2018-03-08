@@ -22,7 +22,7 @@ impl ISession {
 		Ok(())
 	}
 
-	pub fn GetPerformanceConfiguration(&self, unk0: ::nn::apm::PerformanceMode) -> Result<(::nn::apm::PerformanceConfiguration)> {
+	pub fn GetPerformanceConfiguration(&self, unk0: ::nn::apm::PerformanceMode) -> Result<::nn::apm::PerformanceConfiguration> {
 		let req = Request::new(1)
 			.args(unk0)
 			;

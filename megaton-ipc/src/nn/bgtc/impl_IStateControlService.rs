@@ -6,7 +6,22 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IStateControlService(Session);
 
 impl IStateControlService {
-	pub fn Unknown1(&self, ) -> Result<(u32)> {
+	pub fn get_service() -> Result<IStateControlService> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"bgtc:sc\0").map(|s| unsafe { IStateControlService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IStateControlService {
+	pub fn Unknown1(&self, ) -> Result<u32> {
 		let req = Request::new(1)
 			.args(())
 			;
@@ -14,7 +29,7 @@ impl IStateControlService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown2(&self, ) -> Result<(KObject)> {
+	pub fn Unknown2(&self, ) -> Result<KObject> {
 		let req = Request::new(2)
 			.args(())
 			;

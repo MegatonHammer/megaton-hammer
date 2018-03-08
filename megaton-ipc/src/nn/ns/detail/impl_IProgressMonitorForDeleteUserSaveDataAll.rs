@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IProgressMonitorForDeleteUserSaveDataAll(Session);
 
 impl IProgressMonitorForDeleteUserSaveDataAll {
-	pub fn Unknown0(&self, ) -> Result<(KObject)> {
+	pub fn Unknown0(&self, ) -> Result<KObject> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -14,7 +14,7 @@ impl IProgressMonitorForDeleteUserSaveDataAll {
 		Ok(res.pop_handle())
 	}
 
-	pub fn Unknown1(&self, ) -> Result<(u8)> {
+	pub fn Unknown1(&self, ) -> Result<u8> {
 		let req = Request::new(1)
 			.args(())
 			;

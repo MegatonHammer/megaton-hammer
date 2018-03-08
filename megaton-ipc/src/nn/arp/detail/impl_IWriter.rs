@@ -6,7 +6,22 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IWriter(Session);
 
 impl IWriter {
-	pub fn GetIRegistrar(&self, ) -> Result<(Session)> {
+	pub fn get_service() -> Result<IWriter> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"arp:w\0\0\0").map(|s| unsafe { IWriter::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IWriter {
+	pub fn GetIRegistrar(&self, ) -> Result<Session> {
 		let req = Request::new(0)
 			.args(())
 			;

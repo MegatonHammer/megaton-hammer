@@ -22,7 +22,7 @@ impl IAsyncData {
 		Ok(())
 	}
 
-	pub fn Unknown2(&self, ) -> Result<(u64)> {
+	pub fn Unknown2(&self, ) -> Result<u64> {
 		let req = Request::new(2)
 			.args(())
 			;

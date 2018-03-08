@@ -22,7 +22,7 @@ impl IAsyncProgressResult {
 		Ok(())
 	}
 
-	pub fn Unknown2(&self, ) -> Result<(u128)> {
+	pub fn Unknown2(&self, ) -> Result<u128> {
 		let req = Request::new(2)
 			.args(())
 			;

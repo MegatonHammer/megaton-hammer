@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IGuestLoginRequest(Session);
 
 impl IGuestLoginRequest {
-	pub fn GetSessionId(&self, ) -> Result<(::nn::account::detail::Uuid)> {
+	pub fn GetSessionId(&self, ) -> Result<::nn::account::detail::Uuid> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -14,7 +14,7 @@ impl IGuestLoginRequest {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetAccountId(&self, ) -> Result<(::nn::account::NetworkServiceAccountId)> {
+	pub fn GetAccountId(&self, ) -> Result<::nn::account::NetworkServiceAccountId> {
 		let req = Request::new(12)
 			.args(())
 			;
@@ -22,7 +22,7 @@ impl IGuestLoginRequest {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetLinkedNintendoAccountId(&self, ) -> Result<(::nn::account::NintendoAccountId)> {
+	pub fn GetLinkedNintendoAccountId(&self, ) -> Result<::nn::account::NintendoAccountId> {
 		let req = Request::new(13)
 			.args(())
 			;

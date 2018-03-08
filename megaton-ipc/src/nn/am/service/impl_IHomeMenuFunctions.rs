@@ -30,7 +30,7 @@ impl IHomeMenuFunctions {
 		Ok(())
 	}
 
-	pub fn PopFromGeneralChannel(&self, ) -> Result<(::nn::am::service::IStorage)> {
+	pub fn PopFromGeneralChannel(&self, ) -> Result<::nn::am::service::IStorage> {
 		let req = Request::new(20)
 			.args(())
 			;
@@ -38,7 +38,7 @@ impl IHomeMenuFunctions {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetPopFromGeneralChannelEvent(&self, ) -> Result<(KObject)> {
+	pub fn GetPopFromGeneralChannelEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(21)
 			.args(())
 			;
@@ -46,7 +46,7 @@ impl IHomeMenuFunctions {
 		Ok(res.pop_handle())
 	}
 
-	pub fn GetHomeButtonWriterLockAccessor(&self, ) -> Result<(::nn::am::service::ILockAccessor)> {
+	pub fn GetHomeButtonWriterLockAccessor(&self, ) -> Result<::nn::am::service::ILockAccessor> {
 		let req = Request::new(30)
 			.args(())
 			;
@@ -54,7 +54,7 @@ impl IHomeMenuFunctions {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetWriterLockAccessorEx(&self, unk0: i32) -> Result<(::nn::am::service::ILockAccessor)> {
+	pub fn GetWriterLockAccessorEx(&self, unk0: i32) -> Result<::nn::am::service::ILockAccessor> {
 		let req = Request::new(31)
 			.args(unk0)
 			;

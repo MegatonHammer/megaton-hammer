@@ -313,7 +313,7 @@ for name, cmds in ifaces.items():
 		print("", file=f)
 		print("pub struct %s(Session);" % ifacename, file=f)
 		print("", file=f)
-		if name in services and name == "nn::sm::detail::IUserInterface":
+		if name in services:
 			print("impl %s {" % ifacename, file=f)
 			print("\tpub fn get_service() -> Result<%s> {" % ifacename, file=f)
 			# sm: has a different way to get acquired.
@@ -329,9 +329,19 @@ for name, cmds in ifaces.items():
 				print("\t\t} else {", file=f)
 				print("\t\t\treturn Ok(unsafe { %s::from_kobject(KObject::new(session)) });" % ifacename, file=f)
 				print("\t\t}", file=f)
-			#else:
-			#	# Use sm
-			#	print("\t\t
+			elif name in services:
+				print("\t\tuse nn::sm::detail::IUserInterface;", file=f)
+				print("\t\tuse megaton_hammer::kernel::svc;", file=f);
+				print("\t\tuse megaton_hammer::error::Error;", file=f);
+				print("", file=f)
+				print("\t\tlet sm = IUserInterface::get_service()?;", file=f)
+				for s in services[name]:
+					s_name = s + ("\\0" * (8 - len(s)))
+					print("\t\tlet r = sm.GetService(*b\"%s\").map(|s| unsafe { %s::from_kobject(s) });" % (s_name, ifacename), file=f)
+					print("\t\tif let Ok(service) = r {", file=f)
+					print("\t\t\treturn Ok(service);", file=f)
+					print("\t\t}", file=f)
+				print("\t\tr", file=f)
 			print("\t}", file=f)
 			print("}", file=f)
 			print("", file=f)
@@ -398,7 +408,9 @@ for name, val in types.items():
 			print("#[derive(Debug, Clone)]", file=f)
 			print("pub struct %s {" % ifacename, file=f)
 			for structField in val[1]:
-				print("\t%s: %s," % (structField[0], getType(False, structField[1])), file=f)
+				for line in structField[2]:
+					print("\t/// %s" % line, file=f)
+				print("\tpub %s: %s," % (structField[0], getType(False, structField[1])), file=f)
 			print("}", file=f)
 		elif val[0] == 'unknown': # This... kinda sucks.
 			print("pub type %s = ();" % ifacename, file=f)

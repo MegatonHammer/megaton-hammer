@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IProcessWindingController(Session);
 
 impl IProcessWindingController {
-	pub fn GetLaunchReason(&self, ) -> Result<(::nn::am::service::AppletProcessLaunchReason)> {
+	pub fn GetLaunchReason(&self, ) -> Result<::nn::am::service::AppletProcessLaunchReason> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -14,7 +14,7 @@ impl IProcessWindingController {
 		Ok(*res.get_raw())
 	}
 
-	pub fn OpenCallingLibraryApplet(&self, ) -> Result<(::nn::am::service::ILibraryAppletAccessor)> {
+	pub fn OpenCallingLibraryApplet(&self, ) -> Result<::nn::am::service::ILibraryAppletAccessor> {
 		let req = Request::new(11)
 			.args(())
 			;
@@ -30,7 +30,7 @@ impl IProcessWindingController {
 		Ok(())
 	}
 
-	pub fn PopContext(&self, ) -> Result<(::nn::am::service::IStorage)> {
+	pub fn PopContext(&self, ) -> Result<::nn::am::service::IStorage> {
 		let req = Request::new(22)
 			.args(())
 			;

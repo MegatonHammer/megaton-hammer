@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IAudioOut(Session);
 
 impl IAudioOut {
-	pub fn GetAudioOutState(&self, ) -> Result<(u32)> {
+	pub fn GetAudioOutState(&self, ) -> Result<u32> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -31,7 +31,7 @@ impl IAudioOut {
 	}
 
 	// fn AppendAudioOutBuffer(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn RegisterBufferEvent(&self, ) -> Result<(KObject)> {
+	pub fn RegisterBufferEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(4)
 			.args(())
 			;
@@ -40,7 +40,7 @@ impl IAudioOut {
 	}
 
 	// fn GetReleasedAudioOutBuffer(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn ContainsAudioOutBuffer(&self, unk0: u64) -> Result<(u8)> {
+	pub fn ContainsAudioOutBuffer(&self, unk0: u64) -> Result<u8> {
 		let req = Request::new(6)
 			.args(unk0)
 			;

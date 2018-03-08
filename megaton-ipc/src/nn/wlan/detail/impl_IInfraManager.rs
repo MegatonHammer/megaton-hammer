@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IInfraManager(Session);
 
 impl IInfraManager {
+	pub fn get_service() -> Result<IInfraManager> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"wlan:inf").map(|s| unsafe { IInfraManager::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IInfraManager {
 	pub fn Unknown0(&self, ) -> Result<()> {
 		let req = Request::new(0)
 			.args(())
@@ -86,7 +101,7 @@ impl IInfraManager {
 		Ok(())
 	}
 
-	pub fn Unknown10(&self, ) -> Result<(u32)> {
+	pub fn Unknown10(&self, ) -> Result<u32> {
 		let req = Request::new(10)
 			.args(())
 			;
@@ -102,7 +117,7 @@ impl IInfraManager {
 		Ok(())
 	}
 
-	pub fn Unknown12(&self, ) -> Result<(u32)> {
+	pub fn Unknown12(&self, ) -> Result<u32> {
 		let req = Request::new(12)
 			.args(())
 			;
@@ -150,7 +165,7 @@ impl IInfraManager {
 		Ok(())
 	}
 
-	pub fn Unknown18(&self, ) -> Result<(u32)> {
+	pub fn Unknown18(&self, ) -> Result<u32> {
 		let req = Request::new(18)
 			.args(())
 			;
@@ -174,7 +189,7 @@ impl IInfraManager {
 		Ok(())
 	}
 
-	pub fn Unknown21(&self, ) -> Result<(u32)> {
+	pub fn Unknown21(&self, ) -> Result<u32> {
 		let req = Request::new(21)
 			.args(())
 			;

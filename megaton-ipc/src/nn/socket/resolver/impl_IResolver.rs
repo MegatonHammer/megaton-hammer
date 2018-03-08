@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IResolver(Session);
 
 impl IResolver {
+	pub fn get_service() -> Result<IResolver> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"sfdnsres").map(|s| unsafe { IResolver::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IResolver {
 	// fn SetDnsAddressesPrivate(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn GetDnsAddressPrivate(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn GetHostByName(&self, UNKNOWN) -> Result<UNKNOWN>;
@@ -14,7 +29,7 @@ impl IResolver {
 	// fn GetGaiStringError(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn GetAddrInfo(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn GetNameInfo(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn RequestCancelHandle(&self, unk0: u64) -> Result<(u32)> {
+	pub fn RequestCancelHandle(&self, unk0: u64) -> Result<u32> {
 		let req = Request::new(8)
 			.args(unk0)
 			.send_pid()

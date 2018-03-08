@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IRequest(Session);
 
 impl IRequest {
+	pub fn get_service() -> Result<IRequest> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"mm:u\0\0\0\0").map(|s| unsafe { IRequest::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IRequest {
 	pub fn Unknown0(&self, unk0: u32, unk1: u32, unk2: u32) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -50,7 +65,7 @@ impl IRequest {
 		Ok(())
 	}
 
-	pub fn Unknown3(&self, unk0: u32) -> Result<(u32)> {
+	pub fn Unknown3(&self, unk0: u32) -> Result<u32> {
 		let req = Request::new(3)
 			.args(unk0)
 			;
@@ -92,7 +107,7 @@ impl IRequest {
 		Ok(())
 	}
 
-	pub fn module_get_clk_rate(&self, unk0: u32) -> Result<(u32)> {
+	pub fn module_get_clk_rate(&self, unk0: u32) -> Result<u32> {
 		let req = Request::new(7)
 			.args(unk0)
 			;

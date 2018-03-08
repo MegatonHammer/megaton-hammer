@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IApplicationFunctions(Session);
 
 impl IApplicationFunctions {
-	pub fn PopLaunchParameter(&self, unk0: u32) -> Result<(::nn::am::service::IStorage)> {
+	pub fn PopLaunchParameter(&self, unk0: u32) -> Result<::nn::am::service::IStorage> {
 		let req = Request::new(1)
 			.args(unk0)
 			;
@@ -40,7 +40,7 @@ impl IApplicationFunctions {
 		Ok(())
 	}
 
-	pub fn EnsureSaveData(&self, unk0: ::nn::account::Uid) -> Result<(i64)> {
+	pub fn EnsureSaveData(&self, unk0: ::nn::account::Uid) -> Result<i64> {
 		let req = Request::new(20)
 			.args(unk0)
 			;
@@ -48,7 +48,7 @@ impl IApplicationFunctions {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetDesiredLanguage(&self, ) -> Result<(::nn::settings::LanguageCode)> {
+	pub fn GetDesiredLanguage(&self, ) -> Result<::nn::settings::LanguageCode> {
 		let req = Request::new(21)
 			.args(())
 			;
@@ -64,7 +64,7 @@ impl IApplicationFunctions {
 		Ok(())
 	}
 
-	pub fn GetDisplayVersion(&self, ) -> Result<(::nn::oe::DisplayVersion)> {
+	pub fn GetDisplayVersion(&self, ) -> Result<::nn::oe::DisplayVersion> {
 		let req = Request::new(23)
 			.args(())
 			;
@@ -84,7 +84,7 @@ impl IApplicationFunctions {
 		Ok((res.get_raw().unk0.clone(),res.get_raw().unk1.clone()))
 	}
 
-	pub fn ExtendSaveData(&self, unk0: u8, unk1: ::nn::account::Uid, unk2: i64, unk3: i64) -> Result<(i64)> {
+	pub fn ExtendSaveData(&self, unk0: u8, unk1: ::nn::account::Uid, unk2: i64, unk3: i64) -> Result<i64> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: u8,
@@ -156,7 +156,7 @@ impl IApplicationFunctions {
 		Ok(())
 	}
 
-	pub fn NotifyRunning(&self, ) -> Result<(bool)> {
+	pub fn NotifyRunning(&self, ) -> Result<bool> {
 		let req = Request::new(40)
 			.args(())
 			;
@@ -164,7 +164,7 @@ impl IApplicationFunctions {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetPseudoDeviceId(&self, ) -> Result<(::nn::util::Uuid)> {
+	pub fn GetPseudoDeviceId(&self, ) -> Result<::nn::util::Uuid> {
 		let req = Request::new(50)
 			.args(())
 			;
@@ -180,7 +180,7 @@ impl IApplicationFunctions {
 		Ok(())
 	}
 
-	pub fn IsGamePlayRecordingSupported(&self, ) -> Result<(bool)> {
+	pub fn IsGamePlayRecordingSupported(&self, ) -> Result<bool> {
 		let req = Request::new(65)
 			.args(())
 			;

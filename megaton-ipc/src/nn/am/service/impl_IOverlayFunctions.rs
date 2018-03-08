@@ -22,7 +22,7 @@ impl IOverlayFunctions {
 		Ok(())
 	}
 
-	pub fn GetApplicationIdForLogo(&self, ) -> Result<(::nn::ncm::ApplicationId)> {
+	pub fn GetApplicationIdForLogo(&self, ) -> Result<::nn::ncm::ApplicationId> {
 		let req = Request::new(2)
 			.args(())
 			;

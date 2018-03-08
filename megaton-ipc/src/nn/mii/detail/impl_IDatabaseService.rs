@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IDatabaseService(Session);
 
 impl IDatabaseService {
-	pub fn IsUpdated(&self, unk0: i32) -> Result<(bool)> {
+	pub fn IsUpdated(&self, unk0: i32) -> Result<bool> {
 		let req = Request::new(0)
 			.args(unk0)
 			;
@@ -14,7 +14,7 @@ impl IDatabaseService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn IsFullDatabase(&self, ) -> Result<(bool)> {
+	pub fn IsFullDatabase(&self, ) -> Result<bool> {
 		let req = Request::new(1)
 			.args(())
 			;
@@ -22,7 +22,7 @@ impl IDatabaseService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetCount(&self, unk0: i32) -> Result<(i32)> {
+	pub fn GetCount(&self, unk0: i32) -> Result<i32> {
 		let req = Request::new(2)
 			.args(unk0)
 			;
@@ -30,7 +30,7 @@ impl IDatabaseService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Get(&self, unk0: i32, unk2: &mut [::nn::mii::CharInfoElement]) -> Result<(i32)> {
+	pub fn Get(&self, unk0: i32, unk2: &mut [::nn::mii::CharInfoElement]) -> Result<i32> {
 		let req = Request::new(3)
 			.args(unk0)
 			;
@@ -38,7 +38,7 @@ impl IDatabaseService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Get1(&self, unk0: i32, unk2: &mut [::nn::mii::CharInfo]) -> Result<(i32)> {
+	pub fn Get1(&self, unk0: i32, unk2: &mut [::nn::mii::CharInfo]) -> Result<i32> {
 		let req = Request::new(4)
 			.args(unk0)
 			;
@@ -46,7 +46,7 @@ impl IDatabaseService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn UpdateLatest(&self, unk0: ::nn::mii::CharInfo, unk1: i32) -> Result<(::nn::mii::CharInfo)> {
+	pub fn UpdateLatest(&self, unk0: ::nn::mii::CharInfo, unk1: i32) -> Result<::nn::mii::CharInfo> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: ::nn::mii::CharInfo,
@@ -62,7 +62,7 @@ impl IDatabaseService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn BuildRandom(&self, unk0: i32, unk1: i32, unk2: i32) -> Result<(::nn::mii::CharInfo)> {
+	pub fn BuildRandom(&self, unk0: i32, unk1: i32, unk2: i32) -> Result<::nn::mii::CharInfo> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: i32,
@@ -80,7 +80,7 @@ impl IDatabaseService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn BuildDefault(&self, unk0: i32) -> Result<(::nn::mii::CharInfo)> {
+	pub fn BuildDefault(&self, unk0: i32) -> Result<::nn::mii::CharInfo> {
 		let req = Request::new(7)
 			.args(unk0)
 			;
@@ -88,7 +88,7 @@ impl IDatabaseService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Get2(&self, unk0: i32, unk2: &mut [::nn::mii::StoreDataElement]) -> Result<(i32)> {
+	pub fn Get2(&self, unk0: i32, unk2: &mut [::nn::mii::StoreDataElement]) -> Result<i32> {
 		let req = Request::new(8)
 			.args(unk0)
 			;
@@ -96,7 +96,7 @@ impl IDatabaseService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Get3(&self, unk0: i32, unk2: &mut [::nn::mii::StoreData]) -> Result<(i32)> {
+	pub fn Get3(&self, unk0: i32, unk2: &mut [::nn::mii::StoreData]) -> Result<i32> {
 		let req = Request::new(9)
 			.args(unk0)
 			;
@@ -104,7 +104,7 @@ impl IDatabaseService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn UpdateLatest1(&self, unk0: ::nn::mii::StoreData, unk1: i32) -> Result<(::nn::mii::StoreData)> {
+	pub fn UpdateLatest1(&self, unk0: ::nn::mii::StoreData, unk1: i32) -> Result<::nn::mii::StoreData> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: ::nn::mii::StoreData,
@@ -120,7 +120,7 @@ impl IDatabaseService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn FindIndex(&self, unk0: ::nn::mii::CreateId, unk1: bool) -> Result<(i32)> {
+	pub fn FindIndex(&self, unk0: ::nn::mii::CreateId, unk1: bool) -> Result<i32> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: ::nn::mii::CreateId,
@@ -194,7 +194,7 @@ impl IDatabaseService {
 
 	// fn Import(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn Export(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn IsBrokenDatabaseWithClearFlag(&self, ) -> Result<(bool)> {
+	pub fn IsBrokenDatabaseWithClearFlag(&self, ) -> Result<bool> {
 		let req = Request::new(20)
 			.args(())
 			;
@@ -202,7 +202,7 @@ impl IDatabaseService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetIndex(&self, unk0: ::nn::mii::CharInfo) -> Result<(i32)> {
+	pub fn GetIndex(&self, unk0: ::nn::mii::CharInfo) -> Result<i32> {
 		let req = Request::new(21)
 			.args(unk0)
 			;

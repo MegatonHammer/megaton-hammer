@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IQueryService(Session);
 
 impl IQueryService {
+	pub fn get_service() -> Result<IQueryService> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"pdm:qry\0").map(|s| unsafe { IQueryService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IQueryService {
 	// fn Unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn Unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn Unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;

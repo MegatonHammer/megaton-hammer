@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IFinalOutputRecorderManager(Session);
 
 impl IFinalOutputRecorderManager {
+	pub fn get_service() -> Result<IFinalOutputRecorderManager> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"audrec:u").map(|s| unsafe { IFinalOutputRecorderManager::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IFinalOutputRecorderManager {
 	pub fn OpenFinalOutputRecorder(&self, unk0: u64, unk1: u64, unk2: KObject) -> Result<(u128, Session)> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {

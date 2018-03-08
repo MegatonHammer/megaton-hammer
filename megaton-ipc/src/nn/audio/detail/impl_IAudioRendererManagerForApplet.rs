@@ -6,7 +6,22 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IAudioRendererManagerForApplet(Session);
 
 impl IAudioRendererManagerForApplet {
-	pub fn Unknown0(&self, unk0: u64, unk1: u64) -> Result<(KObject)> {
+	pub fn get_service() -> Result<IAudioRendererManagerForApplet> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"audren:a").map(|s| unsafe { IAudioRendererManagerForApplet::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IAudioRendererManagerForApplet {
+	pub fn Unknown0(&self, unk0: u64, unk1: u64) -> Result<KObject> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: u64,
@@ -22,7 +37,7 @@ impl IAudioRendererManagerForApplet {
 		Ok(res.pop_handle())
 	}
 
-	pub fn Unknown1(&self, unk0: u64, unk1: u64) -> Result<(KObject)> {
+	pub fn Unknown1(&self, unk0: u64, unk1: u64) -> Result<KObject> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: u64,
@@ -38,7 +53,7 @@ impl IAudioRendererManagerForApplet {
 		Ok(res.pop_handle())
 	}
 
-	pub fn Unknown2(&self, unk0: u64) -> Result<(u32)> {
+	pub fn Unknown2(&self, unk0: u64) -> Result<u32> {
 		let req = Request::new(2)
 			.args(unk0)
 			;

@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IETicketService(Session);
 
 impl IETicketService {
+	pub fn get_service() -> Result<IETicketService> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"es\0\0\0\0\0\0").map(|s| unsafe { IETicketService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IETicketService {
 	pub fn Unknown1(&self, ) -> Result<()> {
 		let req = Request::new(1)
 			.args(())
@@ -49,7 +64,7 @@ impl IETicketService {
 		Ok(())
 	}
 
-	pub fn Unknown9(&self, ) -> Result<(u32)> {
+	pub fn Unknown9(&self, ) -> Result<u32> {
 		let req = Request::new(9)
 			.args(())
 			;
@@ -57,7 +72,7 @@ impl IETicketService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown10(&self, ) -> Result<(u32)> {
+	pub fn Unknown10(&self, ) -> Result<u32> {
 		let req = Request::new(10)
 			.args(())
 			;

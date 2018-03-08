@@ -6,7 +6,22 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IManager(Session);
 
 impl IManager {
-	pub fn Unknown0(&self, unk0: u32) -> Result<(Session)> {
+	pub fn get_service() -> Result<IManager> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"sasbus\0\0").map(|s| unsafe { IManager::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IManager {
+	pub fn Unknown0(&self, unk0: u32) -> Result<Session> {
 		let req = Request::new(0)
 			.args(unk0)
 			;

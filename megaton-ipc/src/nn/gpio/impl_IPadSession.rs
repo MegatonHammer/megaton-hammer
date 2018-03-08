@@ -14,7 +14,7 @@ impl IPadSession {
 		Ok(())
 	}
 
-	pub fn GetDirection(&self, ) -> Result<(u32)> {
+	pub fn GetDirection(&self, ) -> Result<u32> {
 		let req = Request::new(1)
 			.args(())
 			;
@@ -30,7 +30,7 @@ impl IPadSession {
 		Ok(())
 	}
 
-	pub fn GetInterruptMode(&self, ) -> Result<(u32)> {
+	pub fn GetInterruptMode(&self, ) -> Result<u32> {
 		let req = Request::new(3)
 			.args(())
 			;
@@ -46,7 +46,7 @@ impl IPadSession {
 		Ok(())
 	}
 
-	pub fn GetInterruptEnable(&self, ) -> Result<(u8)> {
+	pub fn GetInterruptEnable(&self, ) -> Result<u8> {
 		let req = Request::new(5)
 			.args(())
 			;
@@ -54,7 +54,7 @@ impl IPadSession {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetInterruptStatus(&self, ) -> Result<(u32)> {
+	pub fn GetInterruptStatus(&self, ) -> Result<u32> {
 		let req = Request::new(6)
 			.args(())
 			;
@@ -78,7 +78,7 @@ impl IPadSession {
 		Ok(())
 	}
 
-	pub fn GetValue(&self, ) -> Result<(u32)> {
+	pub fn GetValue(&self, ) -> Result<u32> {
 		let req = Request::new(9)
 			.args(())
 			;
@@ -86,7 +86,7 @@ impl IPadSession {
 		Ok(*res.get_raw())
 	}
 
-	pub fn BindInterrupt(&self, ) -> Result<(KObject)> {
+	pub fn BindInterrupt(&self, ) -> Result<KObject> {
 		let req = Request::new(10)
 			.args(())
 			;
@@ -110,7 +110,7 @@ impl IPadSession {
 		Ok(())
 	}
 
-	pub fn GetDebounceEnabled(&self, ) -> Result<(u8)> {
+	pub fn GetDebounceEnabled(&self, ) -> Result<u8> {
 		let req = Request::new(13)
 			.args(())
 			;
@@ -126,7 +126,7 @@ impl IPadSession {
 		Ok(())
 	}
 
-	pub fn GetDebounceTime(&self, ) -> Result<(u32)> {
+	pub fn GetDebounceTime(&self, ) -> Result<u32> {
 		let req = Request::new(15)
 			.args(())
 			;

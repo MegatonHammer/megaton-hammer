@@ -6,7 +6,22 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct ISslService(Session);
 
 impl ISslService {
-	pub fn CreateContext(&self, unk0: ::nn::ssl::sf::SslVersion, unk1: u64) -> Result<(::nn::ssl::sf::ISslContext)> {
+	pub fn get_service() -> Result<ISslService> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"ssl\0\0\0\0\0").map(|s| unsafe { ISslService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl ISslService {
+	pub fn CreateContext(&self, unk0: ::nn::ssl::sf::SslVersion, unk1: u64) -> Result<::nn::ssl::sf::ISslContext> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: ::nn::ssl::sf::SslVersion,
@@ -23,7 +38,7 @@ impl ISslService {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetContextCount(&self, ) -> Result<(u32)> {
+	pub fn GetContextCount(&self, ) -> Result<u32> {
 		let req = Request::new(1)
 			.args(())
 			;

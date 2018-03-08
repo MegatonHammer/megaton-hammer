@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IBoardPowerControlManager(Session);
 
 impl IBoardPowerControlManager {
+	pub fn get_service() -> Result<IBoardPowerControlManager> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"bpc\0\0\0\0\0").map(|s| unsafe { IBoardPowerControlManager::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IBoardPowerControlManager {
 	pub fn ShutdownSystem(&self, ) -> Result<()> {
 		let req = Request::new(0)
 			.args(())
@@ -22,7 +37,7 @@ impl IBoardPowerControlManager {
 		Ok(())
 	}
 
-	pub fn GetWakeupReason(&self, ) -> Result<(u32)> {
+	pub fn GetWakeupReason(&self, ) -> Result<u32> {
 		let req = Request::new(2)
 			.args(())
 			;
@@ -30,7 +45,7 @@ impl IBoardPowerControlManager {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetShutdownReason(&self, ) -> Result<(u32)> {
+	pub fn GetShutdownReason(&self, ) -> Result<u32> {
 		let req = Request::new(3)
 			.args(())
 			;
@@ -38,7 +53,7 @@ impl IBoardPowerControlManager {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetAcOk(&self, ) -> Result<(u8)> {
+	pub fn GetAcOk(&self, ) -> Result<u8> {
 		let req = Request::new(4)
 			.args(())
 			;
@@ -46,7 +61,7 @@ impl IBoardPowerControlManager {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetBoardPowerControlEvent(&self, unk0: u32) -> Result<(KObject)> {
+	pub fn GetBoardPowerControlEvent(&self, unk0: u32) -> Result<KObject> {
 		let req = Request::new(5)
 			.args(unk0)
 			;
@@ -54,7 +69,7 @@ impl IBoardPowerControlManager {
 		Ok(res.pop_handle())
 	}
 
-	pub fn GetSleepButtonState(&self, ) -> Result<(u32)> {
+	pub fn GetSleepButtonState(&self, ) -> Result<u32> {
 		let req = Request::new(6)
 			.args(())
 			;
@@ -62,7 +77,7 @@ impl IBoardPowerControlManager {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetPowerEvent(&self, unk0: u32) -> Result<(KObject)> {
+	pub fn GetPowerEvent(&self, unk0: u32) -> Result<KObject> {
 		let req = Request::new(7)
 			.args(unk0)
 			;
@@ -70,7 +85,7 @@ impl IBoardPowerControlManager {
 		Ok(res.pop_handle())
 	}
 
-	pub fn Unknown8(&self, unk0: u64) -> Result<(u32)> {
+	pub fn Unknown8(&self, unk0: u64) -> Result<u32> {
 		let req = Request::new(8)
 			.args(unk0)
 			;

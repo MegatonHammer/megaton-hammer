@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IStorage(Session);
 
 impl IStorage {
-	pub fn Open(&self, ) -> Result<(::nn::am::service::IStorageAccessor)> {
+	pub fn Open(&self, ) -> Result<::nn::am::service::IStorageAccessor> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -14,7 +14,7 @@ impl IStorage {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn OpenTransferStorage(&self, ) -> Result<(::nn::am::service::ITransferStorageAccessor)> {
+	pub fn OpenTransferStorage(&self, ) -> Result<::nn::am::service::ITransferStorageAccessor> {
 		let req = Request::new(1)
 			.args(())
 			;

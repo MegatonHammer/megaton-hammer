@@ -6,7 +6,22 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IInformationInterface(Session);
 
 impl IInformationInterface {
-	pub fn GetTitleId(&self, unk0: u64) -> Result<(u64)> {
+	pub fn get_service() -> Result<IInformationInterface> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"pm:info\0").map(|s| unsafe { IInformationInterface::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IInformationInterface {
+	pub fn GetTitleId(&self, unk0: u64) -> Result<u64> {
 		let req = Request::new(0)
 			.args(unk0)
 			;

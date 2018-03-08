@@ -6,7 +6,34 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IParentalControlServiceFactory(Session);
 
 impl IParentalControlServiceFactory {
-	pub fn GetService(&self, unk0: u64) -> Result<(::nn::pctl::detail::ipc::IParentalControlService)> {
+	pub fn get_service() -> Result<IParentalControlServiceFactory> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"pctl:s\0\0").map(|s| unsafe { IParentalControlServiceFactory::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		let r = sm.GetService(*b"pctl:r\0\0").map(|s| unsafe { IParentalControlServiceFactory::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		let r = sm.GetService(*b"pctl:a\0\0").map(|s| unsafe { IParentalControlServiceFactory::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		let r = sm.GetService(*b"pctl\0\0\0\0").map(|s| unsafe { IParentalControlServiceFactory::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IParentalControlServiceFactory {
+	pub fn GetService(&self, unk0: u64) -> Result<::nn::pctl::detail::ipc::IParentalControlService> {
 		let req = Request::new(0)
 			.args(unk0)
 			.send_pid()

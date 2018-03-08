@@ -6,7 +6,22 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IBaasAccessTokenAccessor(Session);
 
 impl IBaasAccessTokenAccessor {
-	pub fn EnsureCacheAsync(&self, unk0: ::nn::account::Uid) -> Result<(::nn::account::detail::IAsyncContext)> {
+	pub fn get_service() -> Result<IBaasAccessTokenAccessor> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"acc:aa\0\0").map(|s| unsafe { IBaasAccessTokenAccessor::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IBaasAccessTokenAccessor {
+	pub fn EnsureCacheAsync(&self, unk0: ::nn::account::Uid) -> Result<::nn::account::detail::IAsyncContext> {
 		let req = Request::new(0)
 			.args(unk0)
 			;
@@ -15,7 +30,7 @@ impl IBaasAccessTokenAccessor {
 	}
 
 	// fn LoadCache(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn GetDeviceAccountId(&self, unk0: ::nn::account::Uid) -> Result<(u64)> {
+	pub fn GetDeviceAccountId(&self, unk0: ::nn::account::Uid) -> Result<u64> {
 		let req = Request::new(2)
 			.args(unk0)
 			;
@@ -23,7 +38,7 @@ impl IBaasAccessTokenAccessor {
 		Ok(*res.get_raw())
 	}
 
-	pub fn RegisterNotificationTokenAsync(&self, unk0: ::nn::npns::NotificationToken, unk1: ::nn::account::Uid) -> Result<(::nn::account::detail::IAsyncContext)> {
+	pub fn RegisterNotificationTokenAsync(&self, unk0: ::nn::npns::NotificationToken, unk1: ::nn::account::Uid) -> Result<::nn::account::detail::IAsyncContext> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: ::nn::npns::NotificationToken,
@@ -39,7 +54,7 @@ impl IBaasAccessTokenAccessor {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn UnregisterNotificationTokenAsync(&self, unk0: ::nn::account::Uid) -> Result<(::nn::account::detail::IAsyncContext)> {
+	pub fn UnregisterNotificationTokenAsync(&self, unk0: ::nn::account::Uid) -> Result<::nn::account::detail::IAsyncContext> {
 		let req = Request::new(51)
 			.args(unk0)
 			;

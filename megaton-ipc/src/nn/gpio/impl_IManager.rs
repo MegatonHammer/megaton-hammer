@@ -6,7 +6,22 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IManager(Session);
 
 impl IManager {
-	pub fn Unknown0(&self, unk0: u32) -> Result<(Session)> {
+	pub fn get_service() -> Result<IManager> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"gpio\0\0\0\0").map(|s| unsafe { IManager::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IManager {
+	pub fn Unknown0(&self, unk0: u32) -> Result<Session> {
 		let req = Request::new(0)
 			.args(unk0)
 			;
@@ -14,7 +29,7 @@ impl IManager {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetPadSession(&self, unk0: u32) -> Result<(::nn::gpio::IPadSession)> {
+	pub fn GetPadSession(&self, unk0: u32) -> Result<::nn::gpio::IPadSession> {
 		let req = Request::new(1)
 			.args(unk0)
 			;
@@ -22,7 +37,7 @@ impl IManager {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn Unknown2(&self, unk0: u32) -> Result<(Session)> {
+	pub fn Unknown2(&self, unk0: u32) -> Result<Session> {
 		let req = Request::new(2)
 			.args(unk0)
 			;
@@ -30,7 +45,7 @@ impl IManager {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn Unknown3(&self, unk0: u32) -> Result<(u8)> {
+	pub fn Unknown3(&self, unk0: u32) -> Result<u8> {
 		let req = Request::new(3)
 			.args(unk0)
 			;
@@ -38,7 +53,7 @@ impl IManager {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown4(&self, ) -> Result<(u128)> {
+	pub fn Unknown4(&self, ) -> Result<u128> {
 		let req = Request::new(4)
 			.args(())
 			;

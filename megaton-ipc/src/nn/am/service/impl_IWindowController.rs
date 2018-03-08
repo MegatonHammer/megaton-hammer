@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IWindowController(Session);
 
 impl IWindowController {
-	pub fn CreateWindow(&self, unk0: ::nn::am::service::WindowCreationOption) -> Result<(::nn::am::service::IWindow)> {
+	pub fn CreateWindow(&self, unk0: ::nn::am::service::WindowCreationOption) -> Result<::nn::am::service::IWindow> {
 		let req = Request::new(0)
 			.args(unk0)
 			;
@@ -14,7 +14,7 @@ impl IWindowController {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetAppletResourceUserId(&self, ) -> Result<(::nn::applet::AppletResourceUserId)> {
+	pub fn GetAppletResourceUserId(&self, ) -> Result<::nn::applet::AppletResourceUserId> {
 		let req = Request::new(1)
 			.args(())
 			;

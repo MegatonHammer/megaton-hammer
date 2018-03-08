@@ -38,7 +38,7 @@ impl IContentManagementInterface {
 		Ok(())
 	}
 
-	pub fn Unknown600(&self, unk0: u64) -> Result<(u32)> {
+	pub fn Unknown600(&self, unk0: u64) -> Result<u32> {
 		let req = Request::new(600)
 			.args(unk0)
 			;
@@ -62,7 +62,7 @@ impl IContentManagementInterface {
 		Ok(())
 	}
 
-	pub fn Unknown607(&self, ) -> Result<(u8)> {
+	pub fn Unknown607(&self, ) -> Result<u8> {
 		let req = Request::new(607)
 			.args(())
 			;

@@ -6,7 +6,22 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IPrivateService(Session);
 
 impl IPrivateService {
-	pub fn Unknown0(&self, ) -> Result<(KObject)> {
+	pub fn get_service() -> Result<IPrivateService> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"fatal:p\0").map(|s| unsafe { IPrivateService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IPrivateService {
+	pub fn Unknown0(&self, ) -> Result<KObject> {
 		let req = Request::new(0)
 			.args(())
 			;

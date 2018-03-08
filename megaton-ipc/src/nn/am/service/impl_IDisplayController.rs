@@ -44,7 +44,7 @@ impl IDisplayController {
 		Ok(())
 	}
 
-	pub fn AcquireLastApplicationCaptureBuffer(&self, ) -> Result<(KObject)> {
+	pub fn AcquireLastApplicationCaptureBuffer(&self, ) -> Result<KObject> {
 		let req = Request::new(10)
 			.args(())
 			;
@@ -60,7 +60,7 @@ impl IDisplayController {
 		Ok(())
 	}
 
-	pub fn AcquireLastForegroundCaptureBuffer(&self, ) -> Result<(KObject)> {
+	pub fn AcquireLastForegroundCaptureBuffer(&self, ) -> Result<KObject> {
 		let req = Request::new(12)
 			.args(())
 			;
@@ -76,7 +76,7 @@ impl IDisplayController {
 		Ok(())
 	}
 
-	pub fn AcquireCallerAppletCaptureBuffer(&self, ) -> Result<(KObject)> {
+	pub fn AcquireCallerAppletCaptureBuffer(&self, ) -> Result<KObject> {
 		let req = Request::new(14)
 			.args(())
 			;

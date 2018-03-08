@@ -6,7 +6,22 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IUserServiceCreator(Session);
 
 impl IUserServiceCreator {
-	pub fn GetUserLocalCommunicationService(&self, ) -> Result<(Session)> {
+	pub fn get_service() -> Result<IUserServiceCreator> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"ldn:u\0\0\0").map(|s| unsafe { IUserServiceCreator::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IUserServiceCreator {
+	pub fn GetUserLocalCommunicationService(&self, ) -> Result<Session> {
 		let req = Request::new(0)
 			.args(())
 			;

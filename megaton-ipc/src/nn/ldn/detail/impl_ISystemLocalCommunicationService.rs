@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct ISystemLocalCommunicationService(Session);
 
 impl ISystemLocalCommunicationService {
-	pub fn Unknown0(&self, ) -> Result<(u32)> {
+	pub fn Unknown0(&self, ) -> Result<u32> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -34,7 +34,7 @@ impl ISystemLocalCommunicationService {
 		Ok((res.get_raw().unk0.clone(),res.get_raw().unk1.clone()))
 	}
 
-	pub fn Unknown3(&self, ) -> Result<(u16)> {
+	pub fn Unknown3(&self, ) -> Result<u16> {
 		let req = Request::new(3)
 			.args(())
 			;
@@ -44,7 +44,7 @@ impl ISystemLocalCommunicationService {
 
 	// fn Unknown4(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn Unknown5(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn GetUnkWaitEvent(&self, ) -> Result<(KObject)> {
+	pub fn GetUnkWaitEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(100)
 			.args(())
 			;

@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct ISslConnection(Session);
 
 impl ISslConnection {
-	pub fn SetSocketDescriptor(&self, unk0: i32) -> Result<(i32)> {
+	pub fn SetSocketDescriptor(&self, unk0: i32) -> Result<i32> {
 		let req = Request::new(0)
 			.args(unk0)
 			;
@@ -31,7 +31,7 @@ impl ISslConnection {
 		Ok(())
 	}
 
-	pub fn GetSocketDescriptor(&self, ) -> Result<(i32)> {
+	pub fn GetSocketDescriptor(&self, ) -> Result<i32> {
 		let req = Request::new(4)
 			.args(())
 			;
@@ -40,7 +40,7 @@ impl ISslConnection {
 	}
 
 	// fn GetHostName(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn GetVerifyOption(&self, ) -> Result<(::nn::ssl::sf::VerifyOption)> {
+	pub fn GetVerifyOption(&self, ) -> Result<::nn::ssl::sf::VerifyOption> {
 		let req = Request::new(6)
 			.args(())
 			;
@@ -48,7 +48,7 @@ impl ISslConnection {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetIoMode(&self, ) -> Result<(::nn::ssl::sf::IoMode)> {
+	pub fn GetIoMode(&self, ) -> Result<::nn::ssl::sf::IoMode> {
 		let req = Request::new(7)
 			.args(())
 			;
@@ -67,7 +67,7 @@ impl ISslConnection {
 	// fn DoHandshakeGetServerCert(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn Read(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn Write(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn Pending(&self, ) -> Result<(i32)> {
+	pub fn Pending(&self, ) -> Result<i32> {
 		let req = Request::new(12)
 			.args(())
 			;
@@ -76,7 +76,7 @@ impl ISslConnection {
 	}
 
 	// fn Peek(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn Poll(&self, unk0: ::nn::ssl::sf::PollEvent, unk1: u32) -> Result<(::nn::ssl::sf::PollEvent)> {
+	pub fn Poll(&self, unk0: ::nn::ssl::sf::PollEvent, unk1: u32) -> Result<::nn::ssl::sf::PollEvent> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: ::nn::ssl::sf::PollEvent,
@@ -100,7 +100,7 @@ impl ISslConnection {
 		Ok(())
 	}
 
-	pub fn GetNeededServerCertBufferSize(&self, ) -> Result<(u32)> {
+	pub fn GetNeededServerCertBufferSize(&self, ) -> Result<u32> {
 		let req = Request::new(16)
 			.args(())
 			;
@@ -116,7 +116,7 @@ impl ISslConnection {
 		Ok(())
 	}
 
-	pub fn GetSessionCacheMode(&self, ) -> Result<(::nn::ssl::sf::SessionCacheMode)> {
+	pub fn GetSessionCacheMode(&self, ) -> Result<::nn::ssl::sf::SessionCacheMode> {
 		let req = Request::new(18)
 			.args(())
 			;
@@ -140,7 +140,7 @@ impl ISslConnection {
 		Ok(())
 	}
 
-	pub fn GetRenegotiationMode(&self, ) -> Result<(::nn::ssl::sf::RenegotiationMode)> {
+	pub fn GetRenegotiationMode(&self, ) -> Result<::nn::ssl::sf::RenegotiationMode> {
 		let req = Request::new(21)
 			.args(())
 			;
@@ -164,7 +164,7 @@ impl ISslConnection {
 		Ok(())
 	}
 
-	pub fn GetOption(&self, unk0: ::nn::ssl::sf::OptionType) -> Result<(bool)> {
+	pub fn GetOption(&self, unk0: ::nn::ssl::sf::OptionType) -> Result<bool> {
 		let req = Request::new(23)
 			.args(unk0)
 			;

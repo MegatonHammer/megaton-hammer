@@ -14,7 +14,7 @@ impl ISettingsItemKeyIterator {
 		Ok(())
 	}
 
-	pub fn GetKeySize(&self, ) -> Result<(u64)> {
+	pub fn GetKeySize(&self, ) -> Result<u64> {
 		let req = Request::new(1)
 			.args(())
 			;

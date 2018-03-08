@@ -10,7 +10,7 @@ impl IAudioDevice {
 	// fn Unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn Unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn Unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn Unknown4(&self, ) -> Result<(KObject)> {
+	pub fn Unknown4(&self, ) -> Result<KObject> {
 		let req = Request::new(4)
 			.args(())
 			;
@@ -18,7 +18,7 @@ impl IAudioDevice {
 		Ok(res.pop_handle())
 	}
 
-	pub fn Unknown5(&self, ) -> Result<(u32)> {
+	pub fn Unknown5(&self, ) -> Result<u32> {
 		let req = Request::new(5)
 			.args(())
 			;
@@ -30,7 +30,7 @@ impl IAudioDevice {
 	// fn Unknown7(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn Unknown8(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn Unknown10(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn Unknown11(&self, ) -> Result<(KObject)> {
+	pub fn Unknown11(&self, ) -> Result<KObject> {
 		let req = Request::new(11)
 			.args(())
 			;
@@ -38,7 +38,7 @@ impl IAudioDevice {
 		Ok(res.pop_handle())
 	}
 
-	pub fn Unknown12(&self, ) -> Result<(KObject)> {
+	pub fn Unknown12(&self, ) -> Result<KObject> {
 		let req = Request::new(12)
 			.args(())
 			;

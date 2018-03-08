@@ -6,7 +6,22 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IAudioController(Session);
 
 impl IAudioController {
-	pub fn Unknown0(&self, unk0: u32) -> Result<(u32)> {
+	pub fn get_service() -> Result<IAudioController> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"audctl\0\0").map(|s| unsafe { IAudioController::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IAudioController {
+	pub fn Unknown0(&self, unk0: u32) -> Result<u32> {
 		let req = Request::new(0)
 			.args(unk0)
 			;
@@ -30,7 +45,7 @@ impl IAudioController {
 		Ok(())
 	}
 
-	pub fn Unknown2(&self, ) -> Result<(u32)> {
+	pub fn Unknown2(&self, ) -> Result<u32> {
 		let req = Request::new(2)
 			.args(())
 			;
@@ -38,7 +53,7 @@ impl IAudioController {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown3(&self, ) -> Result<(u32)> {
+	pub fn Unknown3(&self, ) -> Result<u32> {
 		let req = Request::new(3)
 			.args(())
 			;
@@ -86,7 +101,7 @@ impl IAudioController {
 		Ok(())
 	}
 
-	pub fn Unknown8(&self, ) -> Result<(u32)> {
+	pub fn Unknown8(&self, ) -> Result<u32> {
 		let req = Request::new(8)
 			.args(())
 			;
@@ -94,7 +109,7 @@ impl IAudioController {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown9(&self, unk0: u32) -> Result<(u32)> {
+	pub fn Unknown9(&self, unk0: u32) -> Result<u32> {
 		let req = Request::new(9)
 			.args(unk0)
 			;
@@ -126,7 +141,7 @@ impl IAudioController {
 		Ok(())
 	}
 
-	pub fn Unknown12(&self, ) -> Result<(u32)> {
+	pub fn Unknown12(&self, ) -> Result<u32> {
 		let req = Request::new(12)
 			.args(())
 			;
@@ -134,7 +149,7 @@ impl IAudioController {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown13(&self, unk0: u32) -> Result<(u32)> {
+	pub fn Unknown13(&self, unk0: u32) -> Result<u32> {
 		let req = Request::new(13)
 			.args(unk0)
 			;
@@ -182,7 +197,7 @@ impl IAudioController {
 		Ok(())
 	}
 
-	pub fn Unknown18(&self, ) -> Result<(u32)> {
+	pub fn Unknown18(&self, ) -> Result<u32> {
 		let req = Request::new(18)
 			.args(())
 			;
@@ -190,7 +205,7 @@ impl IAudioController {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown19(&self, ) -> Result<(KObject)> {
+	pub fn Unknown19(&self, ) -> Result<KObject> {
 		let req = Request::new(19)
 			.args(())
 			;
@@ -198,7 +213,7 @@ impl IAudioController {
 		Ok(res.pop_handle())
 	}
 
-	pub fn Unknown20(&self, ) -> Result<(KObject)> {
+	pub fn Unknown20(&self, ) -> Result<KObject> {
 		let req = Request::new(20)
 			.args(())
 			;
@@ -206,7 +221,7 @@ impl IAudioController {
 		Ok(res.pop_handle())
 	}
 
-	pub fn Unknown21(&self, ) -> Result<(u32)> {
+	pub fn Unknown21(&self, ) -> Result<u32> {
 		let req = Request::new(21)
 			.args(())
 			;

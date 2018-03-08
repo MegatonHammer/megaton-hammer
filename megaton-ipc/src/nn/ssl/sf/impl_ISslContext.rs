@@ -22,7 +22,7 @@ impl ISslContext {
 		Ok(())
 	}
 
-	pub fn GetOption(&self, unk0: ::nn::ssl::sf::ContextOption) -> Result<(i32)> {
+	pub fn GetOption(&self, unk0: ::nn::ssl::sf::ContextOption) -> Result<i32> {
 		let req = Request::new(1)
 			.args(unk0)
 			;
@@ -30,7 +30,7 @@ impl ISslContext {
 		Ok(*res.get_raw())
 	}
 
-	pub fn CreateConnection(&self, ) -> Result<(::nn::ssl::sf::ISslConnection)> {
+	pub fn CreateConnection(&self, ) -> Result<::nn::ssl::sf::ISslConnection> {
 		let req = Request::new(2)
 			.args(())
 			;
@@ -38,7 +38,7 @@ impl ISslContext {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetConnectionCount(&self, ) -> Result<(u32)> {
+	pub fn GetConnectionCount(&self, ) -> Result<u32> {
 		let req = Request::new(3)
 			.args(())
 			;
@@ -64,7 +64,7 @@ impl ISslContext {
 		Ok(())
 	}
 
-	pub fn RegisterInternalPki(&self, unk0: ::nn::ssl::sf::InternalPki) -> Result<(u64)> {
+	pub fn RegisterInternalPki(&self, unk0: ::nn::ssl::sf::InternalPki) -> Result<u64> {
 		let req = Request::new(8)
 			.args(unk0)
 			;

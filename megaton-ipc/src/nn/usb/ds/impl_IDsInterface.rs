@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IDsInterface(Session);
 
 impl IDsInterface {
-	pub fn GetDsEndpoint(&self, unk0: &::nn::usb::usb_endpoint_descriptor) -> Result<(::nn::usb::ds::IDsEndpoint)> {
+	pub fn GetDsEndpoint(&self, unk0: &::nn::usb::usb_endpoint_descriptor) -> Result<::nn::usb::ds::IDsEndpoint> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -14,7 +14,7 @@ impl IDsInterface {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetSetupEvent(&self, ) -> Result<(KObject)> {
+	pub fn GetSetupEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(1)
 			.args(())
 			;
@@ -39,7 +39,7 @@ impl IDsInterface {
 		Ok(())
 	}
 
-	pub fn CtrlInPostBufferAsync(&self, size: u32, buffer: u64) -> Result<(u32)> {
+	pub fn CtrlInPostBufferAsync(&self, size: u32, buffer: u64) -> Result<u32> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			size: u32,
@@ -55,7 +55,7 @@ impl IDsInterface {
 		Ok(*res.get_raw())
 	}
 
-	pub fn CtrlOutPostBufferAsync(&self, size: u32, buffer: u64) -> Result<(u32)> {
+	pub fn CtrlOutPostBufferAsync(&self, size: u32, buffer: u64) -> Result<u32> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			size: u32,
@@ -71,7 +71,7 @@ impl IDsInterface {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetCtrlInCompletionEvent(&self, ) -> Result<(KObject)> {
+	pub fn GetCtrlInCompletionEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(7)
 			.args(())
 			;
@@ -80,7 +80,7 @@ impl IDsInterface {
 	}
 
 	// fn GetCtrlInReportData(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn GetCtrlOutCompletionEvent(&self, ) -> Result<(KObject)> {
+	pub fn GetCtrlOutCompletionEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(9)
 			.args(())
 			;

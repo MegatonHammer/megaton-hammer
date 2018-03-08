@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IAlbumAccessorService(Session);
 
 impl IAlbumAccessorService {
+	pub fn get_service() -> Result<IAlbumAccessorService> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"caps:a\0\0").map(|s| unsafe { IAlbumAccessorService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IAlbumAccessorService {
 	pub fn Unknown0(&self, ) -> Result<()> {
 		let req = Request::new(0)
 			.args(())
@@ -134,7 +149,7 @@ impl IAlbumAccessorService {
 		Ok(())
 	}
 
-	pub fn Unknown401(&self, ) -> Result<(u8)> {
+	pub fn Unknown401(&self, ) -> Result<u8> {
 		let req = Request::new(401)
 			.args(())
 			;

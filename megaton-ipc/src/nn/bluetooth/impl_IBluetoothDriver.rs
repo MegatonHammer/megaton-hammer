@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IBluetoothDriver(Session);
 
 impl IBluetoothDriver {
+	pub fn get_service() -> Result<IBluetoothDriver> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"btdrv\0\0\0").map(|s| unsafe { IBluetoothDriver::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IBluetoothDriver {
 	pub fn Unknown0(&self, ) -> Result<()> {
 		let req = Request::new(0)
 			.args(())
@@ -14,7 +29,7 @@ impl IBluetoothDriver {
 		Ok(())
 	}
 
-	pub fn Init(&self, ) -> Result<(KObject)> {
+	pub fn Init(&self, ) -> Result<KObject> {
 		let req = Request::new(1)
 			.args(())
 			;
@@ -245,7 +260,7 @@ impl IBluetoothDriver {
 		Ok(())
 	}
 
-	pub fn Unknown36(&self, ) -> Result<(KObject)> {
+	pub fn Unknown36(&self, ) -> Result<KObject> {
 		let req = Request::new(36)
 			.args(())
 			;
@@ -286,7 +301,7 @@ impl IBluetoothDriver {
 		Ok(())
 	}
 
-	pub fn GetIsBluetoothBoostEnabled(&self, ) -> Result<(u8)> {
+	pub fn GetIsBluetoothBoostEnabled(&self, ) -> Result<u8> {
 		let req = Request::new(42)
 			.args(())
 			;
@@ -302,7 +317,7 @@ impl IBluetoothDriver {
 		Ok(())
 	}
 
-	pub fn GetIsBluetoothAfhEnabled(&self, ) -> Result<(u8)> {
+	pub fn GetIsBluetoothAfhEnabled(&self, ) -> Result<u8> {
 		let req = Request::new(44)
 			.args(())
 			;

@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IDeviceOperator(Session);
 
 impl IDeviceOperator {
-	pub fn IsSdCardInserted(&self, ) -> Result<(u8)> {
+	pub fn IsSdCardInserted(&self, ) -> Result<u8> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -14,7 +14,7 @@ impl IDeviceOperator {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetSdCardSpeedMode(&self, ) -> Result<(u64)> {
+	pub fn GetSdCardSpeedMode(&self, ) -> Result<u64> {
 		let req = Request::new(1)
 			.args(())
 			;
@@ -24,7 +24,7 @@ impl IDeviceOperator {
 
 	// fn GetSdCardCid(&self, UNKNOWN) -> Result<UNKNOWN>;
 	#[cfg(feature = "switch-2.0.0")]
-	pub fn GetSdCardUserAreaSize(&self, ) -> Result<(u64)> {
+	pub fn GetSdCardUserAreaSize(&self, ) -> Result<u64> {
 		let req = Request::new(3)
 			.args(())
 			;
@@ -33,7 +33,7 @@ impl IDeviceOperator {
 	}
 
 	#[cfg(feature = "switch-2.0.0")]
-	pub fn GetSdCardProtectedAreaSize(&self, ) -> Result<(u64)> {
+	pub fn GetSdCardProtectedAreaSize(&self, ) -> Result<u64> {
 		let req = Request::new(4)
 			.args(())
 			;
@@ -43,7 +43,7 @@ impl IDeviceOperator {
 
 	// fn GetAndClearSdCardErrorInfo(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn GetMmcCid(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn GetMmcSpeedMode(&self, ) -> Result<(u64)> {
+	pub fn GetMmcSpeedMode(&self, ) -> Result<u64> {
 		let req = Request::new(101)
 			.args(())
 			;
@@ -59,7 +59,7 @@ impl IDeviceOperator {
 		Ok(())
 	}
 
-	pub fn GetMmcPartitionSize(&self, unk0: u32) -> Result<(u64)> {
+	pub fn GetMmcPartitionSize(&self, unk0: u32) -> Result<u64> {
 		let req = Request::new(111)
 			.args(unk0)
 			;
@@ -68,7 +68,7 @@ impl IDeviceOperator {
 	}
 
 	#[cfg(feature = "switch-2.0.0")]
-	pub fn GetMmcPatrolCount(&self, ) -> Result<(u32)> {
+	pub fn GetMmcPatrolCount(&self, ) -> Result<u32> {
 		let req = Request::new(112)
 			.args(())
 			;
@@ -78,7 +78,7 @@ impl IDeviceOperator {
 
 	// fn GetAndClearMmcErrorInfo(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn GetMmcExtendedCsd(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn IsGameCardInserted(&self, ) -> Result<(u8)> {
+	pub fn IsGameCardInserted(&self, ) -> Result<u8> {
 		let req = Request::new(200)
 			.args(())
 			;
@@ -102,7 +102,7 @@ impl IDeviceOperator {
 		Ok(())
 	}
 
-	pub fn GetGameCardHandle(&self, ) -> Result<(u32)> {
+	pub fn GetGameCardHandle(&self, ) -> Result<u32> {
 		let req = Request::new(202)
 			.args(())
 			;
@@ -130,7 +130,7 @@ impl IDeviceOperator {
 		Ok(())
 	}
 
-	pub fn GetGameCardAttribute(&self, unk0: u32) -> Result<(u8)> {
+	pub fn GetGameCardAttribute(&self, unk0: u32) -> Result<u8> {
 		let req = Request::new(205)
 			.args(unk0)
 			;
@@ -164,7 +164,7 @@ impl IDeviceOperator {
 	}
 
 	#[cfg(feature = "switch-2.0.0")]
-	pub fn GetGameCardErrorInfo(&self, ) -> Result<(u128)> {
+	pub fn GetGameCardErrorInfo(&self, ) -> Result<u128> {
 		let req = Request::new(216)
 			.args(())
 			;
@@ -182,7 +182,7 @@ impl IDeviceOperator {
 		Ok(())
 	}
 
-	pub fn GetSpeedEmulationMode(&self, ) -> Result<(u32)> {
+	pub fn GetSpeedEmulationMode(&self, ) -> Result<u32> {
 		let req = Request::new(301)
 			.args(())
 			;

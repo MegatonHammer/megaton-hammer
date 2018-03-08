@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct ILibraryAppletAccessor(Session);
 
 impl ILibraryAppletAccessor {
-	pub fn GetAppletStateChangedEvent(&self, ) -> Result<(KObject)> {
+	pub fn GetAppletStateChangedEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -14,7 +14,7 @@ impl ILibraryAppletAccessor {
 		Ok(res.pop_handle())
 	}
 
-	pub fn IsCompleted(&self, ) -> Result<(bool)> {
+	pub fn IsCompleted(&self, ) -> Result<bool> {
 		let req = Request::new(1)
 			.args(())
 			;
@@ -70,7 +70,7 @@ impl ILibraryAppletAccessor {
 		Ok(())
 	}
 
-	pub fn PopOutData(&self, ) -> Result<(::nn::am::service::IStorage)> {
+	pub fn PopOutData(&self, ) -> Result<::nn::am::service::IStorage> {
 		let req = Request::new(101)
 			.args(())
 			;
@@ -94,7 +94,7 @@ impl ILibraryAppletAccessor {
 		Ok(())
 	}
 
-	pub fn PopInteractiveOutData(&self, ) -> Result<(::nn::am::service::IStorage)> {
+	pub fn PopInteractiveOutData(&self, ) -> Result<::nn::am::service::IStorage> {
 		let req = Request::new(104)
 			.args(())
 			;
@@ -102,7 +102,7 @@ impl ILibraryAppletAccessor {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetPopOutDataEvent(&self, ) -> Result<(KObject)> {
+	pub fn GetPopOutDataEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(105)
 			.args(())
 			;
@@ -110,7 +110,7 @@ impl ILibraryAppletAccessor {
 		Ok(res.pop_handle())
 	}
 
-	pub fn GetPopInteractiveOutDataEvent(&self, ) -> Result<(KObject)> {
+	pub fn GetPopInteractiveOutDataEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(106)
 			.args(())
 			;
@@ -118,7 +118,7 @@ impl ILibraryAppletAccessor {
 		Ok(res.pop_handle())
 	}
 
-	pub fn NeedsToExitProcess(&self, ) -> Result<(bool)> {
+	pub fn NeedsToExitProcess(&self, ) -> Result<bool> {
 		let req = Request::new(110)
 			.args(())
 			;
@@ -126,7 +126,7 @@ impl ILibraryAppletAccessor {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetLibraryAppletInfo(&self, ) -> Result<(::nn::am::service::LibraryAppletInfo)> {
+	pub fn GetLibraryAppletInfo(&self, ) -> Result<::nn::am::service::LibraryAppletInfo> {
 		let req = Request::new(120)
 			.args(())
 			;
@@ -142,7 +142,7 @@ impl ILibraryAppletAccessor {
 		Ok(())
 	}
 
-	pub fn GetIndirectLayerConsumerHandle(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<(u64)> {
+	pub fn GetIndirectLayerConsumerHandle(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<u64> {
 		let req = Request::new(160)
 			.args(unk0)
 			.send_pid()

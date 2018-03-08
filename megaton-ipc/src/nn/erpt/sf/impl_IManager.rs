@@ -14,7 +14,7 @@ impl IManager {
 		Ok(())
 	}
 
-	pub fn Unknown1(&self, ) -> Result<(KObject)> {
+	pub fn Unknown1(&self, ) -> Result<KObject> {
 		let req = Request::new(1)
 			.args(())
 			;

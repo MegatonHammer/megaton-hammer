@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IFloatingRegistrationRequest(Session);
 
 impl IFloatingRegistrationRequest {
-	pub fn GetSessionId(&self, ) -> Result<(::nn::account::detail::Uuid)> {
+	pub fn GetSessionId(&self, ) -> Result<::nn::account::detail::Uuid> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -14,7 +14,7 @@ impl IFloatingRegistrationRequest {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetAccountId(&self, ) -> Result<(::nn::account::NetworkServiceAccountId)> {
+	pub fn GetAccountId(&self, ) -> Result<::nn::account::NetworkServiceAccountId> {
 		let req = Request::new(12)
 			.args(())
 			;
@@ -22,7 +22,7 @@ impl IFloatingRegistrationRequest {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetLinkedNintendoAccountId(&self, ) -> Result<(::nn::account::NintendoAccountId)> {
+	pub fn GetLinkedNintendoAccountId(&self, ) -> Result<::nn::account::NintendoAccountId> {
 		let req = Request::new(13)
 			.args(())
 			;
@@ -48,7 +48,7 @@ impl IFloatingRegistrationRequest {
 		Ok((*res.get_raw(),unsafe { FromKObject::from_kobject(res.pop_handle()) }))
 	}
 
-	pub fn RegisterWithUidAsync(&self, unk0: ::nn::account::Uid) -> Result<(::nn::account::detail::IAsyncContext)> {
+	pub fn RegisterWithUidAsync(&self, unk0: ::nn::account::Uid) -> Result<::nn::account::detail::IAsyncContext> {
 		let req = Request::new(101)
 			.args(unk0)
 			;
@@ -65,7 +65,7 @@ impl IFloatingRegistrationRequest {
 		Ok(())
 	}
 
-	pub fn EnsureIdTokenCacheAsync(&self, ) -> Result<(::nn::account::detail::IAsyncContext)> {
+	pub fn EnsureIdTokenCacheAsync(&self, ) -> Result<::nn::account::detail::IAsyncContext> {
 		let req = Request::new(111)
 			.args(())
 			;

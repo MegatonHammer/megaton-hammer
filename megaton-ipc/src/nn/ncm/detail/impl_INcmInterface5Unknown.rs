@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct INcmInterface5Unknown(Session);
 
 impl INcmInterface5Unknown {
-	pub fn Unknown5(&self, ) -> Result<(u64)> {
+	pub fn Unknown5(&self, ) -> Result<u64> {
 		let req = Request::new(5)
 			.args(())
 			;
@@ -14,7 +14,7 @@ impl INcmInterface5Unknown {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown7(&self, ) -> Result<(u64)> {
+	pub fn Unknown7(&self, ) -> Result<u64> {
 		let req = Request::new(7)
 			.args(())
 			;

@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct ISteadyClock(Session);
 
 impl ISteadyClock {
-	pub fn GetCurrentTimePoint(&self, ) -> Result<(::nn::time::SteadyClockTimePoint)> {
+	pub fn GetCurrentTimePoint(&self, ) -> Result<::nn::time::SteadyClockTimePoint> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -14,7 +14,7 @@ impl ISteadyClock {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetTestOffset(&self, ) -> Result<(::nn::TimeSpanType)> {
+	pub fn GetTestOffset(&self, ) -> Result<::nn::TimeSpanType> {
 		let req = Request::new(2)
 			.args(())
 			;
@@ -30,7 +30,7 @@ impl ISteadyClock {
 		Ok(())
 	}
 
-	pub fn GetRtcValue(&self, ) -> Result<(i64)> {
+	pub fn GetRtcValue(&self, ) -> Result<i64> {
 		let req = Request::new(100)
 			.args(())
 			;
@@ -38,7 +38,7 @@ impl ISteadyClock {
 		Ok(*res.get_raw())
 	}
 
-	pub fn IsRtcResetDetected(&self, ) -> Result<(bool)> {
+	pub fn IsRtcResetDetected(&self, ) -> Result<bool> {
 		let req = Request::new(101)
 			.args(())
 			;
@@ -46,7 +46,7 @@ impl ISteadyClock {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetSetupResutltValue(&self, ) -> Result<(u32)> {
+	pub fn GetSetupResutltValue(&self, ) -> Result<u32> {
 		let req = Request::new(102)
 			.args(())
 			;
@@ -54,7 +54,7 @@ impl ISteadyClock {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetInternalOffset(&self, ) -> Result<(::nn::TimeSpanType)> {
+	pub fn GetInternalOffset(&self, ) -> Result<::nn::TimeSpanType> {
 		let req = Request::new(200)
 			.args(())
 			;

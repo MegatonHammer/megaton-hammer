@@ -6,7 +6,22 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct ISystemUpdateInterface(Session);
 
 impl ISystemUpdateInterface {
-	pub fn Unknown0(&self, ) -> Result<(u8)> {
+	pub fn get_service() -> Result<ISystemUpdateInterface> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"ns:su\0\0\0").map(|s| unsafe { ISystemUpdateInterface::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl ISystemUpdateInterface {
+	pub fn Unknown0(&self, ) -> Result<u8> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -14,7 +29,7 @@ impl ISystemUpdateInterface {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetISystemUpdateControl(&self, ) -> Result<(Session)> {
+	pub fn GetISystemUpdateControl(&self, ) -> Result<Session> {
 		let req = Request::new(1)
 			.args(())
 			;
@@ -62,7 +77,7 @@ impl ISystemUpdateInterface {
 		Ok(())
 	}
 
-	pub fn GetNsSuWaitEvent(&self, ) -> Result<(KObject)> {
+	pub fn GetNsSuWaitEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(9)
 			.args(())
 			;

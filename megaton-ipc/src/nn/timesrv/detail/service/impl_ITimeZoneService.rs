@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct ITimeZoneService(Session);
 
 impl ITimeZoneService {
-	pub fn GetDeviceLocationName(&self, ) -> Result<(::nn::time::LocationName)> {
+	pub fn GetDeviceLocationName(&self, ) -> Result<::nn::time::LocationName> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -22,7 +22,7 @@ impl ITimeZoneService {
 		Ok(())
 	}
 
-	pub fn GetTotalLocationNameCount(&self, ) -> Result<(i32)> {
+	pub fn GetTotalLocationNameCount(&self, ) -> Result<i32> {
 		let req = Request::new(2)
 			.args(())
 			;
@@ -30,7 +30,7 @@ impl ITimeZoneService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn LoadLocationNameList(&self, unk0: i32, unk2: &mut [::nn::time::LocationName]) -> Result<(i32)> {
+	pub fn LoadLocationNameList(&self, unk0: i32, unk2: &mut [::nn::time::LocationName]) -> Result<i32> {
 		let req = Request::new(3)
 			.args(unk0)
 			;
@@ -46,7 +46,7 @@ impl ITimeZoneService {
 		Ok(())
 	}
 
-	pub fn GetTimeZoneRuleVersion(&self, ) -> Result<(::nn::time::TimeZoneRuleVersion)> {
+	pub fn GetTimeZoneRuleVersion(&self, ) -> Result<::nn::time::TimeZoneRuleVersion> {
 		let req = Request::new(5)
 			.args(())
 			;
@@ -78,7 +78,7 @@ impl ITimeZoneService {
 		Ok((res.get_raw().unk1.clone(),res.get_raw().unk2.clone()))
 	}
 
-	pub fn ToPosixTime(&self, unk0: ::nn::time::CalendarTime, unk1: &::nn::time::TimeZoneRule, unk3: &mut [::nn::time::PosixTime]) -> Result<(i32)> {
+	pub fn ToPosixTime(&self, unk0: ::nn::time::CalendarTime, unk1: &::nn::time::TimeZoneRule, unk3: &mut [::nn::time::PosixTime]) -> Result<i32> {
 		let req = Request::new(201)
 			.args(unk0)
 			;
@@ -86,7 +86,7 @@ impl ITimeZoneService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn ToPosixTimeWithMyRule(&self, unk0: ::nn::time::CalendarTime, unk2: &mut [::nn::time::PosixTime]) -> Result<(i32)> {
+	pub fn ToPosixTimeWithMyRule(&self, unk0: ::nn::time::CalendarTime, unk2: &mut [::nn::time::PosixTime]) -> Result<i32> {
 		let req = Request::new(202)
 			.args(unk0)
 			;

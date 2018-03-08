@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IContentManager(Session);
 
 impl IContentManager {
+	pub fn get_service() -> Result<IContentManager> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"ncm\0\0\0\0\0").map(|s| unsafe { IContentManager::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IContentManager {
 	pub fn Unknown0(&self, unk0: u8) -> Result<()> {
 		let req = Request::new(0)
 			.args(unk0)

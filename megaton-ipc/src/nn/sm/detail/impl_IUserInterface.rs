@@ -30,7 +30,7 @@ impl IUserInterface {
 		Ok(())
 	}
 
-	pub fn GetService(&self, name: ::ServiceName) -> Result<(KObject)> {
+	pub fn GetService(&self, name: ::ServiceName) -> Result<KObject> {
 		let req = Request::new(1)
 			.args(name)
 			;
@@ -38,7 +38,7 @@ impl IUserInterface {
 		Ok(res.pop_handle())
 	}
 
-	pub fn RegisterService(&self, name: ::ServiceName, unk1: u8, maxHandles: u32) -> Result<(KObject)> {
+	pub fn RegisterService(&self, name: ::ServiceName, unk1: u8, maxHandles: u32) -> Result<KObject> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			name: ::ServiceName,

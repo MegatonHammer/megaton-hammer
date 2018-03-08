@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct INetworkProfile(Session);
 
 impl INetworkProfile {
-	pub fn Update(&self, unk0: &::nn::nifm::detail::sf::NetworkProfileData) -> Result<(::nn::util::Uuid)> {
+	pub fn Update(&self, unk0: &::nn::nifm::detail::sf::NetworkProfileData) -> Result<::nn::util::Uuid> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -14,7 +14,7 @@ impl INetworkProfile {
 		Ok(*res.get_raw())
 	}
 
-	pub fn PersistOld(&self, unk0: ::nn::util::Uuid) -> Result<(::nn::util::Uuid)> {
+	pub fn PersistOld(&self, unk0: ::nn::util::Uuid) -> Result<::nn::util::Uuid> {
 		let req = Request::new(1)
 			.args(unk0)
 			;
@@ -22,7 +22,7 @@ impl INetworkProfile {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Persist(&self, ) -> Result<(::nn::util::Uuid)> {
+	pub fn Persist(&self, ) -> Result<::nn::util::Uuid> {
 		let req = Request::new(2)
 			.args(())
 			;

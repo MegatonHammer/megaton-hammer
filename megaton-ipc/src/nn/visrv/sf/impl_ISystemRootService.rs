@@ -6,7 +6,22 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct ISystemRootService(Session);
 
 impl ISystemRootService {
-	pub fn GetDisplayService(&self, unk0: u32) -> Result<(::nn::visrv::sf::IApplicationDisplayService)> {
+	pub fn get_service() -> Result<ISystemRootService> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"vi:s\0\0\0\0").map(|s| unsafe { ISystemRootService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl ISystemRootService {
+	pub fn GetDisplayService(&self, unk0: u32) -> Result<::nn::visrv::sf::IApplicationDisplayService> {
 		let req = Request::new(1)
 			.args(unk0)
 			;
@@ -14,7 +29,7 @@ impl ISystemRootService {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetDisplayServiceWithProxyNameExchange(&self, unk0: ::nn::vi::ProxyName, unk1: u32) -> Result<(::nn::visrv::sf::IApplicationDisplayService)> {
+	pub fn GetDisplayServiceWithProxyNameExchange(&self, unk0: ::nn::vi::ProxyName, unk1: u32) -> Result<::nn::visrv::sf::IApplicationDisplayService> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: ::nn::vi::ProxyName,

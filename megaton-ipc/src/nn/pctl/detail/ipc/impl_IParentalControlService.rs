@@ -62,7 +62,7 @@ impl IParentalControlService {
 		Ok(())
 	}
 
-	pub fn IsRestrictionTemporaryUnlocked(&self, ) -> Result<(bool)> {
+	pub fn IsRestrictionTemporaryUnlocked(&self, ) -> Result<bool> {
 		let req = Request::new(1006)
 			.args(())
 			;
@@ -94,7 +94,7 @@ impl IParentalControlService {
 		Ok(())
 	}
 
-	pub fn IsRestrictedSystemSettingsEntered(&self, ) -> Result<(bool)> {
+	pub fn IsRestrictedSystemSettingsEntered(&self, ) -> Result<bool> {
 		let req = Request::new(1010)
 			.args(())
 			;
@@ -110,7 +110,7 @@ impl IParentalControlService {
 		Ok(())
 	}
 
-	pub fn GetRestrictedFeatures(&self, ) -> Result<(i32)> {
+	pub fn GetRestrictedFeatures(&self, ) -> Result<i32> {
 		let req = Request::new(1012)
 			.args(())
 			;
@@ -118,7 +118,7 @@ impl IParentalControlService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn IsRestrictionEnabled(&self, ) -> Result<(bool)> {
+	pub fn IsRestrictionEnabled(&self, ) -> Result<bool> {
 		let req = Request::new(1031)
 			.args(())
 			;
@@ -126,7 +126,7 @@ impl IParentalControlService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetSafetyLevel(&self, ) -> Result<(i32)> {
+	pub fn GetSafetyLevel(&self, ) -> Result<i32> {
 		let req = Request::new(1032)
 			.args(())
 			;
@@ -142,7 +142,7 @@ impl IParentalControlService {
 		Ok(())
 	}
 
-	pub fn GetSafetyLevelSettings(&self, unk0: i32) -> Result<(::nn::pctl::SafetyLevelSettings)> {
+	pub fn GetSafetyLevelSettings(&self, unk0: i32) -> Result<::nn::pctl::SafetyLevelSettings> {
 		let req = Request::new(1034)
 			.args(unk0)
 			;
@@ -150,7 +150,7 @@ impl IParentalControlService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetCurrentSettings(&self, ) -> Result<(::nn::pctl::SafetyLevelSettings)> {
+	pub fn GetCurrentSettings(&self, ) -> Result<::nn::pctl::SafetyLevelSettings> {
 		let req = Request::new(1035)
 			.args(())
 			;
@@ -166,7 +166,7 @@ impl IParentalControlService {
 		Ok(())
 	}
 
-	pub fn GetDefaultRatingOrganization(&self, ) -> Result<(i32)> {
+	pub fn GetDefaultRatingOrganization(&self, ) -> Result<i32> {
 		let req = Request::new(1037)
 			.args(())
 			;
@@ -182,7 +182,7 @@ impl IParentalControlService {
 		Ok(())
 	}
 
-	pub fn GetFreeCommunicationApplicationListCount(&self, ) -> Result<(i32)> {
+	pub fn GetFreeCommunicationApplicationListCount(&self, ) -> Result<i32> {
 		let req = Request::new(1039)
 			.args(())
 			;
@@ -206,7 +206,7 @@ impl IParentalControlService {
 		Ok(())
 	}
 
-	pub fn GetFreeCommunicationApplicationList(&self, unk0: i32, unk2: &mut [::nn::pctl::FreeCommunicationApplicationInfo]) -> Result<(i32)> {
+	pub fn GetFreeCommunicationApplicationList(&self, unk0: i32, unk2: &mut [::nn::pctl::FreeCommunicationApplicationInfo]) -> Result<i32> {
 		let req = Request::new(1044)
 			.args(unk0)
 			;
@@ -262,7 +262,7 @@ impl IParentalControlService {
 		Ok(())
 	}
 
-	pub fn GenerateInquiryCode(&self, ) -> Result<(::nn::pctl::InquiryCode)> {
+	pub fn GenerateInquiryCode(&self, ) -> Result<::nn::pctl::InquiryCode> {
 		let req = Request::new(1204)
 			.args(())
 			;
@@ -270,7 +270,7 @@ impl IParentalControlService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn CheckMasterKey(&self, unk0: ::nn::pctl::InquiryCode, unk1: &[i8]) -> Result<(bool)> {
+	pub fn CheckMasterKey(&self, unk0: ::nn::pctl::InquiryCode, unk1: &[i8]) -> Result<bool> {
 		let req = Request::new(1205)
 			.args(unk0)
 			;
@@ -278,7 +278,7 @@ impl IParentalControlService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetPinCodeLength(&self, ) -> Result<(i32)> {
+	pub fn GetPinCodeLength(&self, ) -> Result<i32> {
 		let req = Request::new(1206)
 			.args(())
 			;
@@ -286,7 +286,7 @@ impl IParentalControlService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetPinCodeChangedEvent(&self, ) -> Result<(KObject)> {
+	pub fn GetPinCodeChangedEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(1207)
 			.args(())
 			;
@@ -294,7 +294,7 @@ impl IParentalControlService {
 		Ok(res.pop_handle())
 	}
 
-	pub fn IsPairingActive(&self, ) -> Result<(bool)> {
+	pub fn IsPairingActive(&self, ) -> Result<bool> {
 		let req = Request::new(1403)
 			.args(())
 			;
@@ -302,7 +302,7 @@ impl IParentalControlService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetSettingsLastUpdated(&self, ) -> Result<(::nn::time::PosixTime)> {
+	pub fn GetSettingsLastUpdated(&self, ) -> Result<::nn::time::PosixTime> {
 		let req = Request::new(1406)
 			.args(())
 			;
@@ -310,7 +310,7 @@ impl IParentalControlService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetPairingAccountInfo(&self, unk0: ::nn::pctl::detail::PairingInfoBase) -> Result<(::nn::pctl::detail::PairingAccountInfoBase)> {
+	pub fn GetPairingAccountInfo(&self, unk0: ::nn::pctl::detail::PairingInfoBase) -> Result<::nn::pctl::detail::PairingAccountInfoBase> {
 		let req = Request::new(1411)
 			.args(unk0)
 			;
@@ -318,7 +318,7 @@ impl IParentalControlService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetAccountNickname(&self, unk0: ::nn::pctl::detail::PairingAccountInfoBase, unk2: &mut [i8]) -> Result<(u32)> {
+	pub fn GetAccountNickname(&self, unk0: ::nn::pctl::detail::PairingAccountInfoBase, unk2: &mut [i8]) -> Result<u32> {
 		let req = Request::new(1421)
 			.args(unk0)
 			;
@@ -326,7 +326,7 @@ impl IParentalControlService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetAccountState(&self, unk0: ::nn::pctl::detail::PairingAccountInfoBase) -> Result<(i32)> {
+	pub fn GetAccountState(&self, unk0: ::nn::pctl::detail::PairingAccountInfoBase) -> Result<i32> {
 		let req = Request::new(1424)
 			.args(unk0)
 			;
@@ -334,7 +334,7 @@ impl IParentalControlService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetSynchronizationEvent(&self, ) -> Result<(KObject)> {
+	pub fn GetSynchronizationEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(1432)
 			.args(())
 			;
@@ -358,7 +358,7 @@ impl IParentalControlService {
 		Ok(())
 	}
 
-	pub fn IsPlayTimerEnabled(&self, ) -> Result<(bool)> {
+	pub fn IsPlayTimerEnabled(&self, ) -> Result<bool> {
 		let req = Request::new(1453)
 			.args(())
 			;
@@ -366,7 +366,7 @@ impl IParentalControlService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetPlayTimerRemainingTime(&self, ) -> Result<(::nn::TimeSpanType)> {
+	pub fn GetPlayTimerRemainingTime(&self, ) -> Result<::nn::TimeSpanType> {
 		let req = Request::new(1454)
 			.args(())
 			;
@@ -374,7 +374,7 @@ impl IParentalControlService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn IsRestrictedByPlayTimer(&self, ) -> Result<(bool)> {
+	pub fn IsRestrictedByPlayTimer(&self, ) -> Result<bool> {
 		let req = Request::new(1455)
 			.args(())
 			;
@@ -382,7 +382,7 @@ impl IParentalControlService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetPlayTimerSettings(&self, ) -> Result<(::nn::pctl::PlayTimerSettings)> {
+	pub fn GetPlayTimerSettings(&self, ) -> Result<::nn::pctl::PlayTimerSettings> {
 		let req = Request::new(1456)
 			.args(())
 			;
@@ -390,7 +390,7 @@ impl IParentalControlService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetPlayTimerEventToRequestSuspension(&self, ) -> Result<(KObject)> {
+	pub fn GetPlayTimerEventToRequestSuspension(&self, ) -> Result<KObject> {
 		let req = Request::new(1457)
 			.args(())
 			;
@@ -414,7 +414,7 @@ impl IParentalControlService {
 		Ok(())
 	}
 
-	pub fn GetUnlinkedEvent(&self, ) -> Result<(KObject)> {
+	pub fn GetUnlinkedEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(1473)
 			.args(())
 			;
@@ -430,7 +430,7 @@ impl IParentalControlService {
 		Ok(())
 	}
 
-	pub fn DisableAllFeatures(&self, ) -> Result<(bool)> {
+	pub fn DisableAllFeatures(&self, ) -> Result<bool> {
 		let req = Request::new(1601)
 			.args(())
 			;
@@ -438,7 +438,7 @@ impl IParentalControlService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn PostEnableAllFeatures(&self, ) -> Result<(bool)> {
+	pub fn PostEnableAllFeatures(&self, ) -> Result<bool> {
 		let req = Request::new(1602)
 			.args(())
 			;
@@ -490,7 +490,7 @@ impl IParentalControlService {
 		Ok(())
 	}
 
-	pub fn GetPlayTimerSpentTimeForTest(&self, ) -> Result<(::nn::TimeSpanType)> {
+	pub fn GetPlayTimerSpentTimeForTest(&self, ) -> Result<::nn::TimeSpanType> {
 		let req = Request::new(1952)
 			.args(())
 			;
@@ -506,7 +506,7 @@ impl IParentalControlService {
 		Ok((*res.get_raw(),res.pop_handle()))
 	}
 
-	pub fn FinishRequestPairing(&self, unk0: ::nn::pctl::detail::AsyncData) -> Result<(::nn::pctl::detail::PairingInfoBase)> {
+	pub fn FinishRequestPairing(&self, unk0: ::nn::pctl::detail::AsyncData) -> Result<::nn::pctl::detail::PairingInfoBase> {
 		let req = Request::new(2002)
 			.args(unk0)
 			;
@@ -522,7 +522,7 @@ impl IParentalControlService {
 		Ok((*res.get_raw(),res.pop_handle()))
 	}
 
-	pub fn FinishAuthorizePairing(&self, unk0: ::nn::pctl::detail::AsyncData) -> Result<(::nn::pctl::detail::PairingInfoBase)> {
+	pub fn FinishAuthorizePairing(&self, unk0: ::nn::pctl::detail::AsyncData) -> Result<::nn::pctl::detail::PairingInfoBase> {
 		let req = Request::new(2004)
 			.args(unk0)
 			;
@@ -538,7 +538,7 @@ impl IParentalControlService {
 		Ok((*res.get_raw(),res.pop_handle()))
 	}
 
-	pub fn FinishRetrievePairingInfo(&self, unk0: ::nn::pctl::detail::AsyncData) -> Result<(::nn::pctl::detail::PairingInfoBase)> {
+	pub fn FinishRetrievePairingInfo(&self, unk0: ::nn::pctl::detail::AsyncData) -> Result<::nn::pctl::detail::PairingInfoBase> {
 		let req = Request::new(2006)
 			.args(unk0)
 			;
@@ -569,7 +569,7 @@ impl IParentalControlService {
 		Ok((res.get_raw().unk1.clone(),res.get_raw().unk2.clone(),res.pop_handle()))
 	}
 
-	pub fn FinishGetAccountMiiImageContentType(&self, unk0: ::nn::pctl::detail::AsyncData, unk2: &mut [i8]) -> Result<(u32)> {
+	pub fn FinishGetAccountMiiImageContentType(&self, unk0: ::nn::pctl::detail::AsyncData, unk2: &mut [i8]) -> Result<u32> {
 		let req = Request::new(2012)
 			.args(unk0)
 			;
@@ -593,7 +593,7 @@ impl IParentalControlService {
 		Ok(())
 	}
 
-	pub fn FinishSynchronizeParentalControlSettingsWithLastUpdated(&self, unk0: ::nn::pctl::detail::AsyncData) -> Result<(::nn::time::PosixTime)> {
+	pub fn FinishSynchronizeParentalControlSettingsWithLastUpdated(&self, unk0: ::nn::pctl::detail::AsyncData) -> Result<::nn::time::PosixTime> {
 		let req = Request::new(2015)
 			.args(unk0)
 			;

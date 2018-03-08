@@ -14,7 +14,7 @@ impl IApplicationManagerInterface {
 		Ok(())
 	}
 
-	pub fn Unknown1(&self, ) -> Result<(u64)> {
+	pub fn Unknown1(&self, ) -> Result<u64> {
 		let req = Request::new(1)
 			.args(())
 			;
@@ -22,7 +22,7 @@ impl IApplicationManagerInterface {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown2(&self, ) -> Result<(KObject)> {
+	pub fn Unknown2(&self, ) -> Result<KObject> {
 		let req = Request::new(2)
 			.args(())
 			;
@@ -54,7 +54,7 @@ impl IApplicationManagerInterface {
 		Ok(())
 	}
 
-	pub fn Unknown6(&self, ) -> Result<(u8)> {
+	pub fn Unknown6(&self, ) -> Result<u8> {
 		let req = Request::new(6)
 			.args(())
 			;
@@ -118,7 +118,7 @@ impl IApplicationManagerInterface {
 		Ok(())
 	}
 
-	pub fn Unknown19(&self, unk0: u64) -> Result<(u64)> {
+	pub fn Unknown19(&self, unk0: u64) -> Result<u64> {
 		let req = Request::new(19)
 			.args(unk0)
 			;
@@ -272,7 +272,7 @@ impl IApplicationManagerInterface {
 		Ok(())
 	}
 
-	pub fn Unknown44(&self, ) -> Result<(KObject)> {
+	pub fn Unknown44(&self, ) -> Result<KObject> {
 		let req = Request::new(44)
 			.args(())
 			;
@@ -280,7 +280,7 @@ impl IApplicationManagerInterface {
 		Ok(res.pop_handle())
 	}
 
-	pub fn Unknown45(&self, ) -> Result<(KObject)> {
+	pub fn Unknown45(&self, ) -> Result<KObject> {
 		let req = Request::new(45)
 			.args(())
 			;
@@ -288,7 +288,7 @@ impl IApplicationManagerInterface {
 		Ok(res.pop_handle())
 	}
 
-	pub fn Unknown46(&self, ) -> Result<(u128)> {
+	pub fn Unknown46(&self, ) -> Result<u128> {
 		let req = Request::new(46)
 			.args(())
 			;
@@ -312,7 +312,7 @@ impl IApplicationManagerInterface {
 		Ok(())
 	}
 
-	pub fn Unknown49(&self, ) -> Result<(KObject)> {
+	pub fn Unknown49(&self, ) -> Result<KObject> {
 		let req = Request::new(49)
 			.args(())
 			;
@@ -320,7 +320,7 @@ impl IApplicationManagerInterface {
 		Ok(res.pop_handle())
 	}
 
-	pub fn Unknown52(&self, ) -> Result<(KObject)> {
+	pub fn Unknown52(&self, ) -> Result<KObject> {
 		let req = Request::new(52)
 			.args(())
 			;
@@ -344,7 +344,7 @@ impl IApplicationManagerInterface {
 		Ok(())
 	}
 
-	pub fn Unknown55(&self, unk0: u32) -> Result<(u8)> {
+	pub fn Unknown55(&self, unk0: u32) -> Result<u8> {
 		let req = Request::new(55)
 			.args(unk0)
 			;
@@ -400,7 +400,7 @@ impl IApplicationManagerInterface {
 		Ok(())
 	}
 
-	pub fn Unknown61(&self, ) -> Result<(u128)> {
+	pub fn Unknown61(&self, ) -> Result<u128> {
 		let req = Request::new(61)
 			.args(())
 			;
@@ -408,7 +408,7 @@ impl IApplicationManagerInterface {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown62(&self, ) -> Result<(Session)> {
+	pub fn Unknown62(&self, ) -> Result<Session> {
 		let req = Request::new(62)
 			.args(())
 			;
@@ -416,7 +416,7 @@ impl IApplicationManagerInterface {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn Unknown63(&self, unk0: u64) -> Result<(u8)> {
+	pub fn Unknown63(&self, unk0: u64) -> Result<u8> {
 		let req = Request::new(63)
 			.args(unk0)
 			;
@@ -432,7 +432,7 @@ impl IApplicationManagerInterface {
 		Ok(())
 	}
 
-	pub fn Unknown65(&self, ) -> Result<(Session)> {
+	pub fn Unknown65(&self, ) -> Result<Session> {
 		let req = Request::new(65)
 			.args(())
 			;
@@ -440,7 +440,7 @@ impl IApplicationManagerInterface {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn Unknown66(&self, ) -> Result<(u128)> {
+	pub fn Unknown66(&self, ) -> Result<u128> {
 		let req = Request::new(66)
 			.args(())
 			;
@@ -568,7 +568,7 @@ impl IApplicationManagerInterface {
 		Ok(())
 	}
 
-	pub fn Unknown300(&self, ) -> Result<(KObject)> {
+	pub fn Unknown300(&self, ) -> Result<KObject> {
 		let req = Request::new(300)
 			.args(())
 			;
@@ -577,7 +577,7 @@ impl IApplicationManagerInterface {
 	}
 
 	// fn Unknown301(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn Unknown302(&self, unk0: u64) -> Result<(u64)> {
+	pub fn Unknown302(&self, unk0: u64) -> Result<u64> {
 		let req = Request::new(302)
 			.args(unk0)
 			;
@@ -593,7 +593,7 @@ impl IApplicationManagerInterface {
 		Ok(())
 	}
 
-	pub fn Unknown304(&self, ) -> Result<(u64)> {
+	pub fn Unknown304(&self, ) -> Result<u64> {
 		let req = Request::new(304)
 			.args(())
 			;
@@ -609,7 +609,7 @@ impl IApplicationManagerInterface {
 		Ok(())
 	}
 
-	pub fn Unknown306(&self, ) -> Result<(u64)> {
+	pub fn Unknown306(&self, ) -> Result<u64> {
 		let req = Request::new(306)
 			.args(())
 			;
@@ -649,7 +649,7 @@ impl IApplicationManagerInterface {
 		Ok(())
 	}
 
-	pub fn Unknown403(&self, ) -> Result<(u32)> {
+	pub fn Unknown403(&self, ) -> Result<u32> {
 		let req = Request::new(403)
 			.args(())
 			;
@@ -690,7 +690,7 @@ impl IApplicationManagerInterface {
 		Ok(())
 	}
 
-	pub fn Unknown505(&self, ) -> Result<(KObject)> {
+	pub fn Unknown505(&self, ) -> Result<KObject> {
 		let req = Request::new(505)
 			.args(())
 			;
@@ -698,7 +698,7 @@ impl IApplicationManagerInterface {
 		Ok(res.pop_handle())
 	}
 
-	pub fn Unknown506(&self, ) -> Result<(u8)> {
+	pub fn Unknown506(&self, ) -> Result<u8> {
 		let req = Request::new(506)
 			.args(())
 			;
@@ -722,7 +722,7 @@ impl IApplicationManagerInterface {
 		Ok(())
 	}
 
-	pub fn Unknown600(&self, unk0: u64) -> Result<(u32)> {
+	pub fn Unknown600(&self, unk0: u64) -> Result<u32> {
 		let req = Request::new(600)
 			.args(unk0)
 			;
@@ -949,7 +949,7 @@ impl IApplicationManagerInterface {
 		Ok(())
 	}
 
-	pub fn Unknown1200(&self, ) -> Result<(u8)> {
+	pub fn Unknown1200(&self, ) -> Result<u8> {
 		let req = Request::new(1200)
 			.args(())
 			;
@@ -957,7 +957,7 @@ impl IApplicationManagerInterface {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown1300(&self, unk0: u64) -> Result<(u8)> {
+	pub fn Unknown1300(&self, unk0: u64) -> Result<u8> {
 		let req = Request::new(1300)
 			.args(unk0)
 			;
@@ -1013,7 +1013,7 @@ impl IApplicationManagerInterface {
 		Ok(())
 	}
 
-	pub fn Unknown1501(&self, ) -> Result<(u8)> {
+	pub fn Unknown1501(&self, ) -> Result<u8> {
 		let req = Request::new(1501)
 			.args(())
 			;
@@ -1070,7 +1070,7 @@ impl IApplicationManagerInterface {
 		Ok(())
 	}
 
-	pub fn Unknown1702(&self, unk0: u64) -> Result<(u8)> {
+	pub fn Unknown1702(&self, unk0: u64) -> Result<u8> {
 		let req = Request::new(1702)
 			.args(unk0)
 			;
@@ -1078,7 +1078,7 @@ impl IApplicationManagerInterface {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown1800(&self, ) -> Result<(u8)> {
+	pub fn Unknown1800(&self, ) -> Result<u8> {
 		let req = Request::new(1800)
 			.args(())
 			;
@@ -1086,7 +1086,7 @@ impl IApplicationManagerInterface {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown1801(&self, ) -> Result<(u64)> {
+	pub fn Unknown1801(&self, ) -> Result<u64> {
 		let req = Request::new(1801)
 			.args(())
 			;
@@ -1096,7 +1096,7 @@ impl IApplicationManagerInterface {
 
 	// fn Unknown1802(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn Unknown1803(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn Unknown1900(&self, unk0: u32) -> Result<(u8)> {
+	pub fn Unknown1900(&self, unk0: u32) -> Result<u8> {
 		let req = Request::new(1900)
 			.args(unk0)
 			;

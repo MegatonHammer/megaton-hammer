@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IPcvService(Session);
 
 impl IPcvService {
+	pub fn get_service() -> Result<IPcvService> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"pcv\0\0\0\0\0").map(|s| unsafe { IPcvService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IPcvService {
 	pub fn SetPowerEnabled(&self, unk0: bool, unk1: i32) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -54,7 +69,7 @@ impl IPcvService {
 		Ok(())
 	}
 
-	pub fn GetClockRate(&self, unk0: i32) -> Result<(u32)> {
+	pub fn GetClockRate(&self, unk0: i32) -> Result<u32> {
 		let req = Request::new(3)
 			.args(unk0)
 			;
@@ -62,7 +77,7 @@ impl IPcvService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetState(&self, unk0: i32) -> Result<(::nn::pcv::ModuleState)> {
+	pub fn GetState(&self, unk0: i32) -> Result<::nn::pcv::ModuleState> {
 		let req = Request::new(4)
 			.args(unk0)
 			;
@@ -138,7 +153,7 @@ impl IPcvService {
 		Ok(())
 	}
 
-	pub fn GetVoltageEnabled(&self, unk0: i32) -> Result<(bool)> {
+	pub fn GetVoltageEnabled(&self, unk0: i32) -> Result<bool> {
 		let req = Request::new(9)
 			.args(unk0)
 			;
@@ -175,7 +190,7 @@ impl IPcvService {
 		Ok(())
 	}
 
-	pub fn GetVoltageValue(&self, unk0: i32) -> Result<(i32)> {
+	pub fn GetVoltageValue(&self, unk0: i32) -> Result<i32> {
 		let req = Request::new(12)
 			.args(unk0)
 			;
@@ -183,7 +198,7 @@ impl IPcvService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetTemperatureThresholds(&self, unk0: i32, unk2: &mut [::nn::pcv::TemperatureThreshold]) -> Result<(i32)> {
+	pub fn GetTemperatureThresholds(&self, unk0: i32, unk2: &mut [::nn::pcv::TemperatureThreshold]) -> Result<i32> {
 		let req = Request::new(13)
 			.args(unk0)
 			;
@@ -207,7 +222,7 @@ impl IPcvService {
 		Ok(())
 	}
 
-	pub fn IsInitialized(&self, ) -> Result<(bool)> {
+	pub fn IsInitialized(&self, ) -> Result<bool> {
 		let req = Request::new(16)
 			.args(())
 			;
@@ -263,7 +278,7 @@ impl IPcvService {
 		Ok(())
 	}
 
-	pub fn GetPowerClockInfoEvent(&self, ) -> Result<(KObject)> {
+	pub fn GetPowerClockInfoEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(21)
 			.args(())
 			;
@@ -271,7 +286,7 @@ impl IPcvService {
 		Ok(res.pop_handle())
 	}
 
-	pub fn GetOscillatorClock(&self, ) -> Result<(u32)> {
+	pub fn GetOscillatorClock(&self, ) -> Result<u32> {
 		let req = Request::new(22)
 			.args(())
 			;
@@ -279,7 +294,7 @@ impl IPcvService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetDvfsTable(&self, unk0: i32, unk1: i32, unk3: &mut [u32], unk4: &mut [i32]) -> Result<(i32)> {
+	pub fn GetDvfsTable(&self, unk0: i32, unk1: i32, unk3: &mut [u32], unk4: &mut [i32]) -> Result<i32> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: i32,
@@ -295,7 +310,7 @@ impl IPcvService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetModuleStateTable(&self, unk0: i32, unk2: &mut [::nn::pcv::ModuleState]) -> Result<(i32)> {
+	pub fn GetModuleStateTable(&self, unk0: i32, unk2: &mut [::nn::pcv::ModuleState]) -> Result<i32> {
 		let req = Request::new(24)
 			.args(unk0)
 			;
@@ -303,7 +318,7 @@ impl IPcvService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetPowerDomainStateTable(&self, unk0: i32, unk2: &mut [::nn::pcv::PowerDomainState]) -> Result<(i32)> {
+	pub fn GetPowerDomainStateTable(&self, unk0: i32, unk2: &mut [::nn::pcv::PowerDomainState]) -> Result<i32> {
 		let req = Request::new(25)
 			.args(unk0)
 			;
@@ -311,7 +326,7 @@ impl IPcvService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetFuseInfo(&self, unk0: i32, unk2: &mut [u32]) -> Result<(i32)> {
+	pub fn GetFuseInfo(&self, unk0: i32, unk2: &mut [u32]) -> Result<i32> {
 		let req = Request::new(26)
 			.args(unk0)
 			;

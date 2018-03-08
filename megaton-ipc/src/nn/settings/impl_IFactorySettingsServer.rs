@@ -6,7 +6,22 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IFactorySettingsServer(Session);
 
 impl IFactorySettingsServer {
-	pub fn GetBluetoothBdAddress(&self, ) -> Result<(::nn::settings::factory::BdAddress)> {
+	pub fn get_service() -> Result<IFactorySettingsServer> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"set:cal\0").map(|s| unsafe { IFactorySettingsServer::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IFactorySettingsServer {
+	pub fn GetBluetoothBdAddress(&self, ) -> Result<::nn::settings::factory::BdAddress> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -14,7 +29,7 @@ impl IFactorySettingsServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetConfigurationId1(&self, ) -> Result<(::nn::settings::factory::ConfigurationId1)> {
+	pub fn GetConfigurationId1(&self, ) -> Result<::nn::settings::factory::ConfigurationId1> {
 		let req = Request::new(1)
 			.args(())
 			;
@@ -22,7 +37,7 @@ impl IFactorySettingsServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetAccelerometerOffset(&self, ) -> Result<(::nn::settings::factory::AccelerometerOffset)> {
+	pub fn GetAccelerometerOffset(&self, ) -> Result<::nn::settings::factory::AccelerometerOffset> {
 		let req = Request::new(2)
 			.args(())
 			;
@@ -30,7 +45,7 @@ impl IFactorySettingsServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetAccelerometerScale(&self, ) -> Result<(::nn::settings::factory::AccelerometerScale)> {
+	pub fn GetAccelerometerScale(&self, ) -> Result<::nn::settings::factory::AccelerometerScale> {
 		let req = Request::new(3)
 			.args(())
 			;
@@ -38,7 +53,7 @@ impl IFactorySettingsServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetGyroscopeOffset(&self, ) -> Result<(::nn::settings::factory::GyroscopeOffset)> {
+	pub fn GetGyroscopeOffset(&self, ) -> Result<::nn::settings::factory::GyroscopeOffset> {
 		let req = Request::new(4)
 			.args(())
 			;
@@ -46,7 +61,7 @@ impl IFactorySettingsServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetGyroscopeScale(&self, ) -> Result<(::nn::settings::factory::GyroscopeScale)> {
+	pub fn GetGyroscopeScale(&self, ) -> Result<::nn::settings::factory::GyroscopeScale> {
 		let req = Request::new(5)
 			.args(())
 			;
@@ -54,7 +69,7 @@ impl IFactorySettingsServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetWirelessLanMacAddress(&self, ) -> Result<(::nn::settings::factory::MacAddress)> {
+	pub fn GetWirelessLanMacAddress(&self, ) -> Result<::nn::settings::factory::MacAddress> {
 		let req = Request::new(6)
 			.args(())
 			;
@@ -62,7 +77,7 @@ impl IFactorySettingsServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetWirelessLanCountryCodeCount(&self, ) -> Result<(i32)> {
+	pub fn GetWirelessLanCountryCodeCount(&self, ) -> Result<i32> {
 		let req = Request::new(7)
 			.args(())
 			;
@@ -70,7 +85,7 @@ impl IFactorySettingsServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetWirelessLanCountryCodes(&self, unk1: &mut [::nn::settings::factory::CountryCode]) -> Result<(i32)> {
+	pub fn GetWirelessLanCountryCodes(&self, unk1: &mut [::nn::settings::factory::CountryCode]) -> Result<i32> {
 		let req = Request::new(8)
 			.args(())
 			;
@@ -78,7 +93,7 @@ impl IFactorySettingsServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetSerialNumber(&self, ) -> Result<(::nn::settings::factory::SerialNumber)> {
+	pub fn GetSerialNumber(&self, ) -> Result<::nn::settings::factory::SerialNumber> {
 		let req = Request::new(9)
 			.args(())
 			;
@@ -102,7 +117,7 @@ impl IFactorySettingsServer {
 		Ok(())
 	}
 
-	pub fn GetBatteryLot(&self, ) -> Result<(::nn::settings::factory::BatteryLot)> {
+	pub fn GetBatteryLot(&self, ) -> Result<::nn::settings::factory::BatteryLot> {
 		let req = Request::new(12)
 			.args(())
 			;
@@ -158,7 +173,7 @@ impl IFactorySettingsServer {
 		Ok(())
 	}
 
-	pub fn GetEciDeviceKey(&self, ) -> Result<(::nn::settings::factory::EccB233DeviceKey)> {
+	pub fn GetEciDeviceKey(&self, ) -> Result<::nn::settings::factory::EccB233DeviceKey> {
 		let req = Request::new(20)
 			.args(())
 			;
@@ -174,7 +189,7 @@ impl IFactorySettingsServer {
 		Ok(())
 	}
 
-	pub fn GetSpeakerParameter(&self, ) -> Result<(::nn::settings::factory::SpeakerParameter)> {
+	pub fn GetSpeakerParameter(&self, ) -> Result<::nn::settings::factory::SpeakerParameter> {
 		let req = Request::new(22)
 			.args(())
 			;

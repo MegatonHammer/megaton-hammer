@@ -6,7 +6,22 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IPmService(Session);
 
 impl IPmService {
-	pub fn GetIPmModule(&self, ) -> Result<(::nn::psc::sf::IPmModule)> {
+	pub fn get_service() -> Result<IPmService> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"psc:m\0\0\0").map(|s| unsafe { IPmService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IPmService {
+	pub fn GetIPmModule(&self, ) -> Result<::nn::psc::sf::IPmModule> {
 		let req = Request::new(0)
 			.args(())
 			;

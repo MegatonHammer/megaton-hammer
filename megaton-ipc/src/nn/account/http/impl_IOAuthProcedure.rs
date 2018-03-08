@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IOAuthProcedure(Session);
 
 impl IOAuthProcedure {
-	pub fn PrepareAsync(&self, ) -> Result<(::nn::account::detail::IAsyncContext)> {
+	pub fn PrepareAsync(&self, ) -> Result<::nn::account::detail::IAsyncContext> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -30,7 +30,7 @@ impl IOAuthProcedure {
 		Ok(())
 	}
 
-	pub fn ApplyResponseAsync(&self, unk0: &[i8]) -> Result<(::nn::account::detail::IAsyncContext)> {
+	pub fn ApplyResponseAsync(&self, unk0: &[i8]) -> Result<::nn::account::detail::IAsyncContext> {
 		let req = Request::new(3)
 			.args(())
 			;
@@ -38,7 +38,7 @@ impl IOAuthProcedure {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn Suspend(&self, ) -> Result<(::nn::account::detail::Uuid)> {
+	pub fn Suspend(&self, ) -> Result<::nn::account::detail::Uuid> {
 		let req = Request::new(10)
 			.args(())
 			;

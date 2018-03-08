@@ -22,7 +22,7 @@ impl ILockAccessor {
 		Ok(())
 	}
 
-	pub fn GetEvent(&self, ) -> Result<(KObject)> {
+	pub fn GetEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(3)
 			.args(())
 			;

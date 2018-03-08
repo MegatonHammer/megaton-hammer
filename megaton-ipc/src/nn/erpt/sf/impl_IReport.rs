@@ -23,7 +23,7 @@ impl IReport {
 		Ok(())
 	}
 
-	pub fn Unknown3(&self, ) -> Result<(u32)> {
+	pub fn Unknown3(&self, ) -> Result<u32> {
 		let req = Request::new(3)
 			.args(())
 			;
@@ -39,7 +39,7 @@ impl IReport {
 		Ok(())
 	}
 
-	pub fn Unknown5(&self, ) -> Result<(u64)> {
+	pub fn Unknown5(&self, ) -> Result<u64> {
 		let req = Request::new(5)
 			.args(())
 			;

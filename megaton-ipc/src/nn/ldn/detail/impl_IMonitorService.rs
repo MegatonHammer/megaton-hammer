@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IMonitorService(Session);
 
 impl IMonitorService {
-	pub fn GetNifmStatus(&self, ) -> Result<(u32)> {
+	pub fn GetNifmStatus(&self, ) -> Result<u32> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -34,7 +34,7 @@ impl IMonitorService {
 		Ok((res.get_raw().unk0.clone(),res.get_raw().unk1.clone()))
 	}
 
-	pub fn Unknown3(&self, ) -> Result<(u16)> {
+	pub fn Unknown3(&self, ) -> Result<u16> {
 		let req = Request::new(3)
 			.args(())
 			;

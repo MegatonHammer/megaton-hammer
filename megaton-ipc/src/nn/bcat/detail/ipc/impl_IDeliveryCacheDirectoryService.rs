@@ -14,7 +14,7 @@ impl IDeliveryCacheDirectoryService {
 		Ok(())
 	}
 
-	pub fn Read(&self, unk1: &mut [::nn::bcat::DeliveryCacheDirectoryEntry]) -> Result<(i32)> {
+	pub fn Read(&self, unk1: &mut [::nn::bcat::DeliveryCacheDirectoryEntry]) -> Result<i32> {
 		let req = Request::new(1)
 			.args(())
 			;
@@ -22,7 +22,7 @@ impl IDeliveryCacheDirectoryService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetCount(&self, ) -> Result<(i32)> {
+	pub fn GetCount(&self, ) -> Result<i32> {
 		let req = Request::new(2)
 			.args(())
 			;

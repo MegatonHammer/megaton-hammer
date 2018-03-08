@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IStorageAccessor(Session);
 
 impl IStorageAccessor {
-	pub fn GetSize(&self, ) -> Result<(i64)> {
+	pub fn GetSize(&self, ) -> Result<i64> {
 		let req = Request::new(0)
 			.args(())
 			;

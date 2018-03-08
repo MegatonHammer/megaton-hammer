@@ -14,7 +14,7 @@ impl IChannelSession {
 		Ok(())
 	}
 
-	pub fn GetPeriod(&self, ) -> Result<(u64)> {
+	pub fn GetPeriod(&self, ) -> Result<u64> {
 		let req = Request::new(1)
 			.args(())
 			;
@@ -30,7 +30,7 @@ impl IChannelSession {
 		Ok(())
 	}
 
-	pub fn GetDuty(&self, ) -> Result<(u32)> {
+	pub fn GetDuty(&self, ) -> Result<u32> {
 		let req = Request::new(3)
 			.args(())
 			;
@@ -46,7 +46,7 @@ impl IChannelSession {
 		Ok(())
 	}
 
-	pub fn GetEnabled(&self, ) -> Result<(u8)> {
+	pub fn GetEnabled(&self, ) -> Result<u8> {
 		let req = Request::new(5)
 			.args(())
 			;

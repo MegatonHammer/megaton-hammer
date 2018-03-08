@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IAsyncValue(Session);
 
 impl IAsyncValue {
-	pub fn Unknown0(&self, ) -> Result<(u64)> {
+	pub fn Unknown0(&self, ) -> Result<u64> {
 		let req = Request::new(0)
 			.args(())
 			;

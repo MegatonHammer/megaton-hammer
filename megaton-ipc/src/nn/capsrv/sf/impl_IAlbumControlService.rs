@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IAlbumControlService(Session);
 
 impl IAlbumControlService {
+	pub fn get_service() -> Result<IAlbumControlService> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"caps:c\0\0").map(|s| unsafe { IAlbumControlService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IAlbumControlService {
 	pub fn Unknown2001(&self, unk0: u8) -> Result<()> {
 		let req = Request::new(2001)
 			.args(unk0)
@@ -54,7 +69,7 @@ impl IAlbumControlService {
 		Ok(())
 	}
 
-	pub fn Unknown2013(&self, unk0: u64) -> Result<(u64)> {
+	pub fn Unknown2013(&self, unk0: u64) -> Result<u64> {
 		let req = Request::new(2013)
 			.args(unk0)
 			;

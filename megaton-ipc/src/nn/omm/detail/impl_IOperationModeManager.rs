@@ -6,7 +6,22 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IOperationModeManager(Session);
 
 impl IOperationModeManager {
-	pub fn GetOperationMode(&self, ) -> Result<(u8)> {
+	pub fn get_service() -> Result<IOperationModeManager> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"omm\0\0\0\0\0").map(|s| unsafe { IOperationModeManager::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IOperationModeManager {
+	pub fn GetOperationMode(&self, ) -> Result<u8> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -14,7 +29,7 @@ impl IOperationModeManager {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetOperationModeChangeEvent(&self, ) -> Result<(KObject)> {
+	pub fn GetOperationModeChangeEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(1)
 			.args(())
 			;
@@ -46,7 +61,7 @@ impl IOperationModeManager {
 		Ok(())
 	}
 
-	pub fn GetCradleStatus(&self, ) -> Result<(u8)> {
+	pub fn GetCradleStatus(&self, ) -> Result<u8> {
 		let req = Request::new(5)
 			.args(())
 			;

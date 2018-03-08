@@ -78,7 +78,7 @@ impl IGlobalStateController {
 		Ok(())
 	}
 
-	pub fn ShouldSleepOnBoot(&self, ) -> Result<(bool)> {
+	pub fn ShouldSleepOnBoot(&self, ) -> Result<bool> {
 		let req = Request::new(14)
 			.args(())
 			;

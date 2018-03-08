@@ -1,12 +1,12 @@
+mod impl_IBcatService;
+pub use self::impl_IBcatService::*;
 mod impl_IDeliveryCacheProgressService;
 pub use self::impl_IDeliveryCacheProgressService::*;
 mod impl_IDeliveryCacheFileService;
 pub use self::impl_IDeliveryCacheFileService::*;
+mod impl_IDeliveryCacheDirectoryService;
+pub use self::impl_IDeliveryCacheDirectoryService::*;
 mod impl_IServiceCreator;
 pub use self::impl_IServiceCreator::*;
 mod impl_IDeliveryCacheStorageService;
 pub use self::impl_IDeliveryCacheStorageService::*;
-mod impl_IDeliveryCacheDirectoryService;
-pub use self::impl_IDeliveryCacheDirectoryService::*;
-mod impl_IBcatService;
-pub use self::impl_IBcatService::*;

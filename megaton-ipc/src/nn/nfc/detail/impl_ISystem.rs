@@ -15,7 +15,7 @@ impl ISystem {
 		Ok(())
 	}
 
-	pub fn Unknown2(&self, ) -> Result<(u32)> {
+	pub fn Unknown2(&self, ) -> Result<u32> {
 		let req = Request::new(2)
 			.args(())
 			;
@@ -23,7 +23,7 @@ impl ISystem {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown3(&self, ) -> Result<(u8)> {
+	pub fn Unknown3(&self, ) -> Result<u8> {
 		let req = Request::new(3)
 			.args(())
 			;

@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IRequest(Session);
 
 impl IRequest {
-	pub fn GetRequestState(&self, ) -> Result<(i32)> {
+	pub fn GetRequestState(&self, ) -> Result<i32> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -158,7 +158,7 @@ impl IRequest {
 		Ok(())
 	}
 
-	pub fn GetRequirement(&self, ) -> Result<(::nn::nifm::Requirement)> {
+	pub fn GetRequirement(&self, ) -> Result<::nn::nifm::Requirement> {
 		let req = Request::new(19)
 			.args(())
 			;
@@ -166,7 +166,7 @@ impl IRequest {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetRevision(&self, ) -> Result<(u32)> {
+	pub fn GetRevision(&self, ) -> Result<u32> {
 		let req = Request::new(20)
 			.args(())
 			;
@@ -175,7 +175,7 @@ impl IRequest {
 	}
 
 	// fn GetAppletInfo(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn GetAdditionalInfo(&self, unk1: &mut Option<::nn::nifm::AdditionalInfo>) -> Result<(u32)> {
+	pub fn GetAdditionalInfo(&self, unk1: &mut Option<::nn::nifm::AdditionalInfo>) -> Result<u32> {
 		let req = Request::new(22)
 			.args(())
 			;

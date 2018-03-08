@@ -6,6 +6,25 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IManager(Session);
 
 impl IManager {
+	pub fn get_service() -> Result<IManager> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"nsd:a\0\0\0").map(|s| unsafe { IManager::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		let r = sm.GetService(*b"nsd:u\0\0\0").map(|s| unsafe { IManager::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IManager {
 	pub fn GetSettingName(&self, unk0: [u8; 0x100]) -> Result<()> {
 		let req = Request::new(10)
 			.args(())
@@ -22,7 +41,7 @@ impl IManager {
 		Ok(())
 	}
 
-	pub fn GetDeviceId(&self, ) -> Result<(u128)> {
+	pub fn GetDeviceId(&self, ) -> Result<u128> {
 		let req = Request::new(12)
 			.args(())
 			;
@@ -47,7 +66,7 @@ impl IManager {
 		Ok(())
 	}
 
-	pub fn ResolveEx(&self, unk0: [u8; 0x100], unk2: [u8; 0x100]) -> Result<(u32)> {
+	pub fn ResolveEx(&self, unk0: [u8; 0x100], unk2: [u8; 0x100]) -> Result<u32> {
 		let req = Request::new(21)
 			.args(())
 			;
@@ -63,7 +82,7 @@ impl IManager {
 		Ok(())
 	}
 
-	pub fn GetNasServiceSettingEx(&self, unk0: [u8; 0x10], unk2: [u8; 0x108]) -> Result<(u32)> {
+	pub fn GetNasServiceSettingEx(&self, unk0: [u8; 0x10], unk2: [u8; 0x108]) -> Result<u32> {
 		let req = Request::new(31)
 			.args(())
 			;
@@ -79,7 +98,7 @@ impl IManager {
 		Ok(())
 	}
 
-	pub fn GetNasRequestFqdnEx(&self, unk1: [u8; 0x100]) -> Result<(u32)> {
+	pub fn GetNasRequestFqdnEx(&self, unk1: [u8; 0x100]) -> Result<u32> {
 		let req = Request::new(41)
 			.args(())
 			;
@@ -95,7 +114,7 @@ impl IManager {
 		Ok(())
 	}
 
-	pub fn GetNasApiFqdnEx(&self, unk1: [u8; 0x100]) -> Result<(u32)> {
+	pub fn GetNasApiFqdnEx(&self, unk1: [u8; 0x100]) -> Result<u32> {
 		let req = Request::new(43)
 			.args(())
 			;

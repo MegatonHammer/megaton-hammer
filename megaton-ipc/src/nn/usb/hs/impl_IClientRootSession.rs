@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IClientRootSession(Session);
 
 impl IClientRootSession {
+	pub fn get_service() -> Result<IClientRootSession> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"usb:hs\0\0").map(|s| unsafe { IClientRootSession::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IClientRootSession {
 	pub fn Unknown0(&self, ) -> Result<()> {
 		let req = Request::new(0)
 			.args(())
@@ -54,7 +69,7 @@ impl IClientRootSession {
 		Ok(())
 	}
 
-	pub fn Unknown6(&self, ) -> Result<(KObject)> {
+	pub fn Unknown6(&self, ) -> Result<KObject> {
 		let req = Request::new(6)
 			.args(())
 			;

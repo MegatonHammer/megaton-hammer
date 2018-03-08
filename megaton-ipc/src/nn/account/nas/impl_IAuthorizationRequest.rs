@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IAuthorizationRequest(Session);
 
 impl IAuthorizationRequest {
-	pub fn GetSessionId(&self, ) -> Result<(::nn::account::detail::Uuid)> {
+	pub fn GetSessionId(&self, ) -> Result<::nn::account::detail::Uuid> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -14,7 +14,7 @@ impl IAuthorizationRequest {
 		Ok(*res.get_raw())
 	}
 
-	pub fn InvokeWithoutInteractionAsync(&self, ) -> Result<(::nn::account::detail::IAsyncContext)> {
+	pub fn InvokeWithoutInteractionAsync(&self, ) -> Result<::nn::account::detail::IAsyncContext> {
 		let req = Request::new(10)
 			.args(())
 			;
@@ -22,7 +22,7 @@ impl IAuthorizationRequest {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn IsAuthorized(&self, ) -> Result<(bool)> {
+	pub fn IsAuthorized(&self, ) -> Result<bool> {
 		let req = Request::new(19)
 			.args(())
 			;

@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct ICecManager(Session);
 
 impl ICecManager {
+	pub fn get_service() -> Result<ICecManager> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"cec-mgr\0").map(|s| unsafe { ICecManager::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl ICecManager {
 	pub fn Unknown0(&self, ) -> Result<()> {
 		let req = Request::new(0)
 			.args(())
@@ -14,7 +29,7 @@ impl ICecManager {
 		Ok(())
 	}
 
-	pub fn Unknown1(&self, unk0: u32) -> Result<(u32)> {
+	pub fn Unknown1(&self, unk0: u32) -> Result<u32> {
 		let req = Request::new(1)
 			.args(unk0)
 			;

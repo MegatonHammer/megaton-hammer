@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IAudioInManagerForDebugger(Session);
 
 impl IAudioInManagerForDebugger {
+	pub fn get_service() -> Result<IAudioInManagerForDebugger> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"audin:d\0").map(|s| unsafe { IAudioInManagerForDebugger::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IAudioInManagerForDebugger {
 	pub fn ListAudioIns(&self, unk0: u64) -> Result<()> {
 		let req = Request::new(0)
 			.args(unk0)

@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IDsService(Session);
 
 impl IDsService {
+	pub fn get_service() -> Result<IDsService> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"usb:ds\0\0").map(|s| unsafe { IDsService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IDsService {
 	pub fn BindDevice(&self, complexId: u32) -> Result<()> {
 		let req = Request::new(0)
 			.args(complexId)
@@ -23,7 +38,7 @@ impl IDsService {
 	}
 
 	// fn GetDsInterface(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn GetStateChangeEvent(&self, ) -> Result<(KObject)> {
+	pub fn GetStateChangeEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(3)
 			.args(())
 			;
@@ -31,7 +46,7 @@ impl IDsService {
 		Ok(res.pop_handle())
 	}
 
-	pub fn GetState(&self, ) -> Result<(u32)> {
+	pub fn GetState(&self, ) -> Result<u32> {
 		let req = Request::new(4)
 			.args(())
 			;

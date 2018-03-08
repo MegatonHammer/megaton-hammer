@@ -6,7 +6,22 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IAccountServiceForSystemService(Session);
 
 impl IAccountServiceForSystemService {
-	pub fn GetUserCount(&self, ) -> Result<(i32)> {
+	pub fn get_service() -> Result<IAccountServiceForSystemService> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"acc:u1\0\0").map(|s| unsafe { IAccountServiceForSystemService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IAccountServiceForSystemService {
+	pub fn GetUserCount(&self, ) -> Result<i32> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -14,7 +29,7 @@ impl IAccountServiceForSystemService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetUserExistence(&self, unk0: ::nn::account::Uid) -> Result<(bool)> {
+	pub fn GetUserExistence(&self, unk0: ::nn::account::Uid) -> Result<bool> {
 		let req = Request::new(1)
 			.args(unk0)
 			;
@@ -38,7 +53,7 @@ impl IAccountServiceForSystemService {
 		Ok(())
 	}
 
-	pub fn GetLastOpenedUser(&self, ) -> Result<(::nn::account::Uid)> {
+	pub fn GetLastOpenedUser(&self, ) -> Result<::nn::account::Uid> {
 		let req = Request::new(4)
 			.args(())
 			;
@@ -46,7 +61,7 @@ impl IAccountServiceForSystemService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetProfile(&self, unk0: ::nn::account::Uid) -> Result<(::nn::account::profile::IProfile)> {
+	pub fn GetProfile(&self, unk0: ::nn::account::Uid) -> Result<::nn::account::profile::IProfile> {
 		let req = Request::new(5)
 			.args(unk0)
 			;
@@ -54,7 +69,7 @@ impl IAccountServiceForSystemService {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetProfileDigest(&self, unk0: ::nn::account::Uid) -> Result<(::nn::account::ProfileDigest)> {
+	pub fn GetProfileDigest(&self, unk0: ::nn::account::Uid) -> Result<::nn::account::ProfileDigest> {
 		let req = Request::new(6)
 			.args(unk0)
 			;
@@ -62,7 +77,7 @@ impl IAccountServiceForSystemService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn IsUserRegistrationRequestPermitted(&self, unk0: u64) -> Result<(bool)> {
+	pub fn IsUserRegistrationRequestPermitted(&self, unk0: u64) -> Result<bool> {
 		let req = Request::new(50)
 			.args(unk0)
 			.send_pid()
@@ -71,7 +86,7 @@ impl IAccountServiceForSystemService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn TrySelectUserWithoutInteraction(&self, unk0: bool) -> Result<(::nn::account::Uid)> {
+	pub fn TrySelectUserWithoutInteraction(&self, unk0: bool) -> Result<::nn::account::Uid> {
 		let req = Request::new(51)
 			.args(unk0)
 			;
@@ -79,7 +94,7 @@ impl IAccountServiceForSystemService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetUserRegistrationNotifier(&self, ) -> Result<(::nn::account::detail::INotifier)> {
+	pub fn GetUserRegistrationNotifier(&self, ) -> Result<::nn::account::detail::INotifier> {
 		let req = Request::new(100)
 			.args(())
 			;
@@ -87,7 +102,7 @@ impl IAccountServiceForSystemService {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetUserStateChangeNotifier(&self, ) -> Result<(::nn::account::detail::INotifier)> {
+	pub fn GetUserStateChangeNotifier(&self, ) -> Result<::nn::account::detail::INotifier> {
 		let req = Request::new(101)
 			.args(())
 			;
@@ -95,7 +110,7 @@ impl IAccountServiceForSystemService {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetBaasAccountManagerForSystemService(&self, unk0: ::nn::account::Uid) -> Result<(::nn::account::baas::IManagerForSystemService)> {
+	pub fn GetBaasAccountManagerForSystemService(&self, unk0: ::nn::account::Uid) -> Result<::nn::account::baas::IManagerForSystemService> {
 		let req = Request::new(102)
 			.args(unk0)
 			;
@@ -103,7 +118,7 @@ impl IAccountServiceForSystemService {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetBaasUserAvailabilityChangeNotifier(&self, ) -> Result<(::nn::account::detail::INotifier)> {
+	pub fn GetBaasUserAvailabilityChangeNotifier(&self, ) -> Result<::nn::account::detail::INotifier> {
 		let req = Request::new(103)
 			.args(())
 			;
@@ -111,7 +126,7 @@ impl IAccountServiceForSystemService {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetProfileUpdateNotifier(&self, ) -> Result<(::nn::account::detail::INotifier)> {
+	pub fn GetProfileUpdateNotifier(&self, ) -> Result<::nn::account::detail::INotifier> {
 		let req = Request::new(104)
 			.args(())
 			;

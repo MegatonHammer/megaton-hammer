@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct ISocketManager(Session);
 
 impl ISocketManager {
+	pub fn get_service() -> Result<ISocketManager> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"wlan:soc").map(|s| unsafe { ISocketManager::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl ISocketManager {
 	// fn Unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn Unknown1(&self, unk0: u32) -> Result<()> {
 		let req = Request::new(1)
@@ -63,7 +78,7 @@ impl ISocketManager {
 		Ok(())
 	}
 
-	pub fn Unknown8(&self, ) -> Result<(u64)> {
+	pub fn Unknown8(&self, ) -> Result<u64> {
 		let req = Request::new(8)
 			.args(())
 			;

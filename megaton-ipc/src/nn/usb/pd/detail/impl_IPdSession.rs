@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IPdSession(Session);
 
 impl IPdSession {
-	pub fn Unknown0(&self, ) -> Result<(KObject)> {
+	pub fn Unknown0(&self, ) -> Result<KObject> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -30,7 +30,7 @@ impl IPdSession {
 		Ok(())
 	}
 
-	pub fn Unknown3(&self, ) -> Result<(u32)> {
+	pub fn Unknown3(&self, ) -> Result<u32> {
 		let req = Request::new(3)
 			.args(())
 			;

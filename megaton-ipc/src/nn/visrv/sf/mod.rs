@@ -1,12 +1,12 @@
-mod impl_ISystemRootService;
-pub use self::impl_ISystemRootService::*;
-mod impl_IManagerDisplayService;
-pub use self::impl_IManagerDisplayService::*;
-mod impl_IApplicationRootService;
-pub use self::impl_IApplicationRootService::*;
 mod impl_IApplicationDisplayService;
 pub use self::impl_IApplicationDisplayService::*;
 mod impl_ISystemDisplayService;
 pub use self::impl_ISystemDisplayService::*;
+mod impl_IManagerDisplayService;
+pub use self::impl_IManagerDisplayService::*;
+mod impl_ISystemRootService;
+pub use self::impl_ISystemRootService::*;
 mod impl_IManagerRootService;
 pub use self::impl_IManagerRootService::*;
+mod impl_IApplicationRootService;
+pub use self::impl_IApplicationRootService::*;

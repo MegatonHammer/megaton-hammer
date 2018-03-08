@@ -14,7 +14,7 @@ impl IGeneralService {
 		Ok(())
 	}
 
-	pub fn CreateScanRequest(&self, ) -> Result<(::nn::nifm::detail::IScanRequest)> {
+	pub fn CreateScanRequest(&self, ) -> Result<::nn::nifm::detail::IScanRequest> {
 		let req = Request::new(2)
 			.args(())
 			;
@@ -22,7 +22,7 @@ impl IGeneralService {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn CreateRequest(&self, unk0: i32) -> Result<(::nn::nifm::detail::IRequest)> {
+	pub fn CreateRequest(&self, unk0: i32) -> Result<::nn::nifm::detail::IRequest> {
 		let req = Request::new(4)
 			.args(unk0)
 			;
@@ -38,7 +38,7 @@ impl IGeneralService {
 		Ok(())
 	}
 
-	pub fn EnumerateNetworkInterfaces(&self, unk0: u32, unk2: &mut [::nn::nifm::detail::sf::NetworkInterfaceInfo]) -> Result<(i32)> {
+	pub fn EnumerateNetworkInterfaces(&self, unk0: u32, unk2: &mut [::nn::nifm::detail::sf::NetworkInterfaceInfo]) -> Result<i32> {
 		let req = Request::new(6)
 			.args(unk0)
 			;
@@ -46,7 +46,7 @@ impl IGeneralService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn EnumerateNetworkProfiles(&self, unk0: u8, unk2: &mut [::nn::nifm::detail::sf::NetworkProfileBasicInfo]) -> Result<(i32)> {
+	pub fn EnumerateNetworkProfiles(&self, unk0: u8, unk2: &mut [::nn::nifm::detail::sf::NetworkProfileBasicInfo]) -> Result<i32> {
 		let req = Request::new(7)
 			.args(unk0)
 			;
@@ -62,7 +62,7 @@ impl IGeneralService {
 		Ok(())
 	}
 
-	pub fn SetNetworkProfile(&self, unk0: &::nn::nifm::detail::sf::NetworkProfileData) -> Result<(::nn::util::Uuid)> {
+	pub fn SetNetworkProfile(&self, unk0: &::nn::nifm::detail::sf::NetworkProfileData) -> Result<::nn::util::Uuid> {
 		let req = Request::new(9)
 			.args(())
 			;
@@ -78,7 +78,7 @@ impl IGeneralService {
 		Ok(())
 	}
 
-	pub fn GetScanData(&self, unk1: &mut [::nn::nifm::detail::sf::AccessPointData]) -> Result<(i32)> {
+	pub fn GetScanData(&self, unk1: &mut [::nn::nifm::detail::sf::AccessPointData]) -> Result<i32> {
 		let req = Request::new(11)
 			.args(())
 			;
@@ -86,7 +86,7 @@ impl IGeneralService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetCurrentIpAddress(&self, ) -> Result<(::nn::nifm::IpV4Address)> {
+	pub fn GetCurrentIpAddress(&self, ) -> Result<::nn::nifm::IpV4Address> {
 		let req = Request::new(12)
 			.args(())
 			;
@@ -119,7 +119,7 @@ impl IGeneralService {
 		Ok(())
 	}
 
-	pub fn IsWirelessCommunicationEnabled(&self, ) -> Result<(bool)> {
+	pub fn IsWirelessCommunicationEnabled(&self, ) -> Result<bool> {
 		let req = Request::new(17)
 			.args(())
 			;
@@ -127,7 +127,7 @@ impl IGeneralService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetInternetConnectionStatus(&self, ) -> Result<(::nn::nifm::detail::sf::InternetConnectionStatus)> {
+	pub fn GetInternetConnectionStatus(&self, ) -> Result<::nn::nifm::detail::sf::InternetConnectionStatus> {
 		let req = Request::new(18)
 			.args(())
 			;
@@ -143,7 +143,7 @@ impl IGeneralService {
 		Ok(())
 	}
 
-	pub fn IsEthernetCommunicationEnabled(&self, ) -> Result<(bool)> {
+	pub fn IsEthernetCommunicationEnabled(&self, ) -> Result<bool> {
 		let req = Request::new(20)
 			.args(())
 			;
@@ -151,7 +151,7 @@ impl IGeneralService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn IsAnyInternetRequestAccepted(&self, unk0: &::nn::nifm::ClientId) -> Result<(bool)> {
+	pub fn IsAnyInternetRequestAccepted(&self, unk0: &::nn::nifm::ClientId) -> Result<bool> {
 		let req = Request::new(21)
 			.args(())
 			;
@@ -159,7 +159,7 @@ impl IGeneralService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn IsAnyForegroundRequestAccepted(&self, ) -> Result<(bool)> {
+	pub fn IsAnyForegroundRequestAccepted(&self, ) -> Result<bool> {
 		let req = Request::new(22)
 			.args(())
 			;
@@ -183,7 +183,7 @@ impl IGeneralService {
 		Ok(())
 	}
 
-	pub fn GetSsidListVersion(&self, ) -> Result<(::nn::nifm::SsidListVersion)> {
+	pub fn GetSsidListVersion(&self, ) -> Result<::nn::nifm::SsidListVersion> {
 		let req = Request::new(25)
 			.args(())
 			;
@@ -231,7 +231,7 @@ impl IGeneralService {
 		Ok(())
 	}
 
-	pub fn GetTelemetorySystemEventReadableHandle(&self, ) -> Result<(KObject)> {
+	pub fn GetTelemetorySystemEventReadableHandle(&self, ) -> Result<KObject> {
 		let req = Request::new(31)
 			.args(())
 			;

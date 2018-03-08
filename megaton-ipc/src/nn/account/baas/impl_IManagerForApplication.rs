@@ -14,7 +14,7 @@ impl IManagerForApplication {
 		Ok(())
 	}
 
-	pub fn GetAccountId(&self, ) -> Result<(::nn::account::NetworkServiceAccountId)> {
+	pub fn GetAccountId(&self, ) -> Result<::nn::account::NetworkServiceAccountId> {
 		let req = Request::new(1)
 			.args(())
 			;
@@ -22,7 +22,7 @@ impl IManagerForApplication {
 		Ok(*res.get_raw())
 	}
 
-	pub fn EnsureIdTokenCacheAsync(&self, ) -> Result<(::nn::account::detail::IAsyncContext)> {
+	pub fn EnsureIdTokenCacheAsync(&self, ) -> Result<::nn::account::detail::IAsyncContext> {
 		let req = Request::new(2)
 			.args(())
 			;
@@ -32,7 +32,7 @@ impl IManagerForApplication {
 
 	// fn LoadIdTokenCache(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn GetNintendoAccountUserResourceCacheForApplication(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn CreateAuthorizationRequest(&self, unk0: u32, unk1: KObject, unk2: &::nn::account::NintendoAccountAuthorizationRequestParameters) -> Result<(::nn::account::nas::IAuthorizationRequest)> {
+	pub fn CreateAuthorizationRequest(&self, unk0: u32, unk1: KObject, unk2: &::nn::account::NintendoAccountAuthorizationRequestParameters) -> Result<::nn::account::nas::IAuthorizationRequest> {
 		let req = Request::new(150)
 			.args(unk0)
 			;

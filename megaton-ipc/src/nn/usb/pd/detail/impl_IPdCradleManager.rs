@@ -6,7 +6,22 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IPdCradleManager(Session);
 
 impl IPdCradleManager {
-	pub fn Unknown0(&self, ) -> Result<(Session)> {
+	pub fn get_service() -> Result<IPdCradleManager> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"usb:pd:c").map(|s| unsafe { IPdCradleManager::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IPdCradleManager {
+	pub fn Unknown0(&self, ) -> Result<Session> {
 		let req = Request::new(0)
 			.args(())
 			;

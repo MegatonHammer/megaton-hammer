@@ -22,7 +22,7 @@ impl IAudioController {
 		Ok(())
 	}
 
-	pub fn GetMainAppletExpectedMasterVolume(&self, ) -> Result<(f32)> {
+	pub fn GetMainAppletExpectedMasterVolume(&self, ) -> Result<f32> {
 		let req = Request::new(1)
 			.args(())
 			;
@@ -30,7 +30,7 @@ impl IAudioController {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetLibraryAppletExpectedMasterVolume(&self, ) -> Result<(f32)> {
+	pub fn GetLibraryAppletExpectedMasterVolume(&self, ) -> Result<f32> {
 		let req = Request::new(2)
 			.args(())
 			;

@@ -23,7 +23,7 @@ impl IDeliveryCacheFileService {
 	}
 
 	// fn Read(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn GetSize(&self, ) -> Result<(i64)> {
+	pub fn GetSize(&self, ) -> Result<i64> {
 		let req = Request::new(2)
 			.args(())
 			;
@@ -31,7 +31,7 @@ impl IDeliveryCacheFileService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetDigest(&self, ) -> Result<(::nn::bcat::Digest)> {
+	pub fn GetDigest(&self, ) -> Result<::nn::bcat::Digest> {
 		let req = Request::new(3)
 			.args(())
 			;

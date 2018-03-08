@@ -14,7 +14,7 @@ impl IScanRequest {
 		Ok(())
 	}
 
-	pub fn IsProcessing(&self, ) -> Result<(bool)> {
+	pub fn IsProcessing(&self, ) -> Result<bool> {
 		let req = Request::new(1)
 			.args(())
 			;
@@ -30,7 +30,7 @@ impl IScanRequest {
 		Ok(())
 	}
 
-	pub fn GetSystemEventReadableHandle(&self, ) -> Result<(KObject)> {
+	pub fn GetSystemEventReadableHandle(&self, ) -> Result<KObject> {
 		let req = Request::new(3)
 			.args(())
 			;

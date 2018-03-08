@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IShellInterface(Session);
 
 impl IShellInterface {
+	pub fn get_service() -> Result<IShellInterface> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"pm:shell").map(|s| unsafe { IShellInterface::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IShellInterface {
 	pub fn LaunchProcess(&self, ) -> Result<()> {
 		let req = Request::new(0)
 			.args(())
@@ -30,7 +45,7 @@ impl IShellInterface {
 		Ok(())
 	}
 
-	pub fn GetProcessEventWaiter(&self, ) -> Result<(KObject)> {
+	pub fn GetProcessEventWaiter(&self, ) -> Result<KObject> {
 		let req = Request::new(3)
 			.args(())
 			;
@@ -38,7 +53,7 @@ impl IShellInterface {
 		Ok(res.pop_handle())
 	}
 
-	pub fn GetProcessEventType(&self, ) -> Result<(u128)> {
+	pub fn GetProcessEventType(&self, ) -> Result<u128> {
 		let req = Request::new(4)
 			.args(())
 			;
@@ -70,7 +85,7 @@ impl IShellInterface {
 		Ok(())
 	}
 
-	pub fn GetApplicationPid(&self, ) -> Result<(u64)> {
+	pub fn GetApplicationPid(&self, ) -> Result<u64> {
 		let req = Request::new(8)
 			.args(())
 			;

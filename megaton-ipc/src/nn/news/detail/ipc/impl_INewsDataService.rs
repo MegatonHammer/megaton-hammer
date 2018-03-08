@@ -16,7 +16,7 @@ impl INewsDataService {
 	}
 
 	// fn Unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn Unknown3(&self, ) -> Result<(u64)> {
+	pub fn Unknown3(&self, ) -> Result<u64> {
 		let req = Request::new(3)
 			.args(())
 			;

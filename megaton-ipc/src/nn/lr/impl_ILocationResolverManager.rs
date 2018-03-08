@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct ILocationResolverManager(Session);
 
 impl ILocationResolverManager {
+	pub fn get_service() -> Result<ILocationResolverManager> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"lr\0\0\0\0\0\0").map(|s| unsafe { ILocationResolverManager::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl ILocationResolverManager {
 	pub fn GetLocationResolver(&self, ) -> Result<()> {
 		let req = Request::new(0)
 			.args(())
@@ -14,7 +29,7 @@ impl ILocationResolverManager {
 		Ok(())
 	}
 
-	pub fn GetRegisteredLocationResolver(&self, ) -> Result<(Session)> {
+	pub fn GetRegisteredLocationResolver(&self, ) -> Result<Session> {
 		let req = Request::new(1)
 			.args(())
 			;
@@ -30,7 +45,7 @@ impl ILocationResolverManager {
 		Ok(())
 	}
 
-	pub fn GetAddOnContentLocationResolver(&self, ) -> Result<(Session)> {
+	pub fn GetAddOnContentLocationResolver(&self, ) -> Result<Session> {
 		let req = Request::new(3)
 			.args(())
 			;

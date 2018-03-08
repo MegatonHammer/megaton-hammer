@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IRequest(Session);
 
 impl IRequest {
-	pub fn Initialize(&self, unk0: ::nn::fgm::Module, unk1: u64) -> Result<(KObject)> {
+	pub fn Initialize(&self, unk0: ::nn::fgm::Module, unk1: u64) -> Result<KObject> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: ::nn::fgm::Module,
@@ -39,7 +39,7 @@ impl IRequest {
 		Ok(())
 	}
 
-	pub fn Get(&self, ) -> Result<(u32)> {
+	pub fn Get(&self, ) -> Result<u32> {
 		let req = Request::new(2)
 			.args(())
 			;

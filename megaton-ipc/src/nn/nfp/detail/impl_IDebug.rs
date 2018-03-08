@@ -125,7 +125,7 @@ impl IDebug {
 		Ok(())
 	}
 
-	pub fn Unknown17(&self, unk0: u64) -> Result<(KObject)> {
+	pub fn Unknown17(&self, unk0: u64) -> Result<KObject> {
 		let req = Request::new(17)
 			.args(unk0)
 			;
@@ -133,7 +133,7 @@ impl IDebug {
 		Ok(res.pop_handle())
 	}
 
-	pub fn Unknown18(&self, unk0: u64) -> Result<(KObject)> {
+	pub fn Unknown18(&self, unk0: u64) -> Result<KObject> {
 		let req = Request::new(18)
 			.args(unk0)
 			;
@@ -141,7 +141,7 @@ impl IDebug {
 		Ok(res.pop_handle())
 	}
 
-	pub fn Unknown19(&self, ) -> Result<(u32)> {
+	pub fn Unknown19(&self, ) -> Result<u32> {
 		let req = Request::new(19)
 			.args(())
 			;
@@ -149,7 +149,7 @@ impl IDebug {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown20(&self, unk0: u64) -> Result<(u32)> {
+	pub fn Unknown20(&self, unk0: u64) -> Result<u32> {
 		let req = Request::new(20)
 			.args(unk0)
 			;
@@ -157,7 +157,7 @@ impl IDebug {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown21(&self, unk0: u64) -> Result<(u32)> {
+	pub fn Unknown21(&self, unk0: u64) -> Result<u32> {
 		let req = Request::new(21)
 			.args(unk0)
 			;
@@ -165,7 +165,7 @@ impl IDebug {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown22(&self, unk0: u64) -> Result<(u32)> {
+	pub fn Unknown22(&self, unk0: u64) -> Result<u32> {
 		let req = Request::new(22)
 			.args(unk0)
 			;
@@ -173,7 +173,7 @@ impl IDebug {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown23(&self, ) -> Result<(KObject)> {
+	pub fn Unknown23(&self, ) -> Result<KObject> {
 		let req = Request::new(23)
 			.args(())
 			;
@@ -230,7 +230,7 @@ impl IDebug {
 		Ok(())
 	}
 
-	pub fn Unknown106(&self, unk0: u64) -> Result<(u8)> {
+	pub fn Unknown106(&self, unk0: u64) -> Result<u8> {
 		let req = Request::new(106)
 			.args(unk0)
 			;
@@ -324,7 +324,7 @@ impl IDebug {
 		Ok(())
 	}
 
-	pub fn Unknown307(&self, unk0: u64) -> Result<(KObject)> {
+	pub fn Unknown307(&self, unk0: u64) -> Result<KObject> {
 		let req = Request::new(307)
 			.args(unk0)
 			;
@@ -332,7 +332,7 @@ impl IDebug {
 		Ok(res.pop_handle())
 	}
 
-	pub fn Unknown308(&self, unk0: u64) -> Result<(KObject)> {
+	pub fn Unknown308(&self, unk0: u64) -> Result<KObject> {
 		let req = Request::new(308)
 			.args(unk0)
 			;
@@ -340,7 +340,7 @@ impl IDebug {
 		Ok(res.pop_handle())
 	}
 
-	pub fn Unknown309(&self, ) -> Result<(u32)> {
+	pub fn Unknown309(&self, ) -> Result<u32> {
 		let req = Request::new(309)
 			.args(())
 			;
@@ -348,7 +348,7 @@ impl IDebug {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown310(&self, unk0: u64) -> Result<(u32)> {
+	pub fn Unknown310(&self, unk0: u64) -> Result<u32> {
 		let req = Request::new(310)
 			.args(unk0)
 			;
@@ -356,7 +356,7 @@ impl IDebug {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown311(&self, unk0: u64) -> Result<(u32)> {
+	pub fn Unknown311(&self, unk0: u64) -> Result<u32> {
 		let req = Request::new(311)
 			.args(unk0)
 			;
@@ -380,7 +380,7 @@ impl IDebug {
 		Ok(())
 	}
 
-	pub fn Unknown314(&self, ) -> Result<(KObject)> {
+	pub fn Unknown314(&self, ) -> Result<KObject> {
 		let req = Request::new(314)
 			.args(())
 			;

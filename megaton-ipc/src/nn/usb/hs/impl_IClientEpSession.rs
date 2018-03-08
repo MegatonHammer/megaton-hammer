@@ -22,7 +22,7 @@ impl IClientEpSession {
 		Ok(())
 	}
 
-	pub fn Unknown2(&self, ) -> Result<(KObject)> {
+	pub fn Unknown2(&self, ) -> Result<KObject> {
 		let req = Request::new(2)
 			.args(())
 			;

@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct ICommonStateGetter(Session);
 
 impl ICommonStateGetter {
-	pub fn GetEventHandle(&self, ) -> Result<(KObject)> {
+	pub fn GetEventHandle(&self, ) -> Result<KObject> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -14,7 +14,7 @@ impl ICommonStateGetter {
 		Ok(res.pop_handle())
 	}
 
-	pub fn ReceiveMessage(&self, ) -> Result<(::nn::am::AppletMessage)> {
+	pub fn ReceiveMessage(&self, ) -> Result<::nn::am::AppletMessage> {
 		let req = Request::new(1)
 			.args(())
 			;
@@ -22,7 +22,7 @@ impl ICommonStateGetter {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetThisAppletKind(&self, ) -> Result<(::nn::am::service::AppletKind)> {
+	pub fn GetThisAppletKind(&self, ) -> Result<::nn::am::service::AppletKind> {
 		let req = Request::new(2)
 			.args(())
 			;
@@ -46,7 +46,7 @@ impl ICommonStateGetter {
 		Ok(())
 	}
 
-	pub fn GetOperationMode(&self, ) -> Result<(u8)> {
+	pub fn GetOperationMode(&self, ) -> Result<u8> {
 		let req = Request::new(5)
 			.args(())
 			;
@@ -54,7 +54,7 @@ impl ICommonStateGetter {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetPerformanceMode(&self, ) -> Result<(u32)> {
+	pub fn GetPerformanceMode(&self, ) -> Result<u32> {
 		let req = Request::new(6)
 			.args(())
 			;
@@ -62,7 +62,7 @@ impl ICommonStateGetter {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetCradleStatus(&self, ) -> Result<(u8)> {
+	pub fn GetCradleStatus(&self, ) -> Result<u8> {
 		let req = Request::new(7)
 			.args(())
 			;
@@ -70,7 +70,7 @@ impl ICommonStateGetter {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetBootMode(&self, ) -> Result<(u8)> {
+	pub fn GetBootMode(&self, ) -> Result<u8> {
 		let req = Request::new(8)
 			.args(())
 			;
@@ -78,7 +78,7 @@ impl ICommonStateGetter {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetCurrentFocusState(&self, ) -> Result<(u8)> {
+	pub fn GetCurrentFocusState(&self, ) -> Result<u8> {
 		let req = Request::new(9)
 			.args(())
 			;
@@ -110,7 +110,7 @@ impl ICommonStateGetter {
 		Ok(())
 	}
 
-	pub fn GetAcquiredSleepLockEvent(&self, ) -> Result<(KObject)> {
+	pub fn GetAcquiredSleepLockEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(13)
 			.args(())
 			;
@@ -126,7 +126,7 @@ impl ICommonStateGetter {
 		Ok(())
 	}
 
-	pub fn GetHomeButtonReaderLockAccessor(&self, ) -> Result<(::nn::am::service::ILockAccessor)> {
+	pub fn GetHomeButtonReaderLockAccessor(&self, ) -> Result<::nn::am::service::ILockAccessor> {
 		let req = Request::new(30)
 			.args(())
 			;
@@ -134,7 +134,7 @@ impl ICommonStateGetter {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetReaderLockAccessorEx(&self, unk0: i32) -> Result<(::nn::am::service::ILockAccessor)> {
+	pub fn GetReaderLockAccessorEx(&self, unk0: i32) -> Result<::nn::am::service::ILockAccessor> {
 		let req = Request::new(31)
 			.args(unk0)
 			;
@@ -156,7 +156,7 @@ impl ICommonStateGetter {
 		Ok((res.get_raw().unk0.clone(),res.get_raw().unk1.clone(),res.get_raw().unk2.clone(),res.get_raw().unk3.clone()))
 	}
 
-	pub fn IsVrModeEnabled(&self, ) -> Result<(bool)> {
+	pub fn IsVrModeEnabled(&self, ) -> Result<bool> {
 		let req = Request::new(50)
 			.args(())
 			;
@@ -172,7 +172,7 @@ impl ICommonStateGetter {
 		Ok(())
 	}
 
-	pub fn IsInControllerFirmwareUpdateSection(&self, ) -> Result<(bool)> {
+	pub fn IsInControllerFirmwareUpdateSection(&self, ) -> Result<bool> {
 		let req = Request::new(55)
 			.args(())
 			;
@@ -192,7 +192,7 @@ impl ICommonStateGetter {
 		Ok((res.get_raw().unk0.clone(),res.get_raw().unk1.clone()))
 	}
 
-	pub fn GetDefaultDisplayResolutionChangeEvent(&self, ) -> Result<(KObject)> {
+	pub fn GetDefaultDisplayResolutionChangeEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(61)
 			.args(())
 			;

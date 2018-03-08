@@ -6,7 +6,22 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IApplicationRootService(Session);
 
 impl IApplicationRootService {
-	pub fn GetDisplayService(&self, unk0: u32) -> Result<(::nn::visrv::sf::IApplicationDisplayService)> {
+	pub fn get_service() -> Result<IApplicationRootService> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"vi:u\0\0\0\0").map(|s| unsafe { IApplicationRootService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IApplicationRootService {
+	pub fn GetDisplayService(&self, unk0: u32) -> Result<::nn::visrv::sf::IApplicationDisplayService> {
 		let req = Request::new(0)
 			.args(unk0)
 			;

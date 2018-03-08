@@ -22,7 +22,7 @@ impl IPdCradleSession {
 		Ok(())
 	}
 
-	pub fn Unknown1(&self, unk0: u32) -> Result<(u32)> {
+	pub fn Unknown1(&self, unk0: u32) -> Result<u32> {
 		let req = Request::new(1)
 			.args(unk0)
 			;

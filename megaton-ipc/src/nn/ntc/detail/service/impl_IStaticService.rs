@@ -6,7 +6,22 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IStaticService(Session);
 
 impl IStaticService {
-	pub fn Unknown0(&self, unk0: u32, unk1: u32) -> Result<(Session)> {
+	pub fn get_service() -> Result<IStaticService> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"ntc\0\0\0\0\0").map(|s| unsafe { IStaticService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IStaticService {
+	pub fn Unknown0(&self, unk0: u32, unk1: u32) -> Result<Session> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: u32,

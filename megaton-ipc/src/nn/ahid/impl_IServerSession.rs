@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IServerSession(Session);
 
 impl IServerSession {
+	pub fn get_service() -> Result<IServerSession> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"ahid:cd\0").map(|s| unsafe { IServerSession::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IServerSession {
 	pub fn Unknown0(&self, ) -> Result<()> {
 		let req = Request::new(0)
 			.args(())

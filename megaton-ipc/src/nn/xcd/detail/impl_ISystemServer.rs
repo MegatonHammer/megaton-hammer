@@ -6,7 +6,22 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct ISystemServer(Session);
 
 impl ISystemServer {
-	pub fn Unknown0(&self, unk0: u64) -> Result<(u8)> {
+	pub fn get_service() -> Result<ISystemServer> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"xcd:sys\0").map(|s| unsafe { ISystemServer::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl ISystemServer {
+	pub fn Unknown0(&self, unk0: u64) -> Result<u8> {
 		let req = Request::new(0)
 			.args(unk0)
 			;
@@ -22,7 +37,7 @@ impl ISystemServer {
 		Ok(())
 	}
 
-	pub fn Unknown2(&self, unk0: u64) -> Result<(u8)> {
+	pub fn Unknown2(&self, unk0: u64) -> Result<u8> {
 		let req = Request::new(2)
 			.args(unk0)
 			;
@@ -142,7 +157,7 @@ impl ISystemServer {
 		Ok(())
 	}
 
-	pub fn Unknown101(&self, ) -> Result<(u64)> {
+	pub fn Unknown101(&self, ) -> Result<u64> {
 		let req = Request::new(101)
 			.args(())
 			;
@@ -150,7 +165,7 @@ impl ISystemServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown102(&self, ) -> Result<(u64)> {
+	pub fn Unknown102(&self, ) -> Result<u64> {
 		let req = Request::new(102)
 			.args(())
 			;

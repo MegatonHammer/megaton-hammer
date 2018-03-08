@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct ISystemUpdateControl(Session);
 
 impl ISystemUpdateControl {
-	pub fn Unknown0(&self, ) -> Result<(u8)> {
+	pub fn Unknown0(&self, ) -> Result<u8> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -30,7 +30,7 @@ impl ISystemUpdateControl {
 		Ok(())
 	}
 
-	pub fn Unknown3(&self, ) -> Result<(u128)> {
+	pub fn Unknown3(&self, ) -> Result<u128> {
 		let req = Request::new(3)
 			.args(())
 			;
@@ -54,7 +54,7 @@ impl ISystemUpdateControl {
 		Ok(())
 	}
 
-	pub fn Unknown6(&self, ) -> Result<(u128)> {
+	pub fn Unknown6(&self, ) -> Result<u128> {
 		let req = Request::new(6)
 			.args(())
 			;
@@ -62,7 +62,7 @@ impl ISystemUpdateControl {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown7(&self, ) -> Result<(u8)> {
+	pub fn Unknown7(&self, ) -> Result<u8> {
 		let req = Request::new(7)
 			.args(())
 			;

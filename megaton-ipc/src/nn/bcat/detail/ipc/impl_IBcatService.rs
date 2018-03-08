@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IBcatService(Session);
 
 impl IBcatService {
-	pub fn RequestSyncDeliveryCache(&self, ) -> Result<(::nn::bcat::detail::ipc::IDeliveryCacheProgressService)> {
+	pub fn RequestSyncDeliveryCache(&self, ) -> Result<::nn::bcat::detail::ipc::IDeliveryCacheProgressService> {
 		let req = Request::new(10100)
 			.args(())
 			;
@@ -14,7 +14,7 @@ impl IBcatService {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn RequestSyncDeliveryCacheWithApplicationId(&self, unk0: u32, unk1: ::nn::ApplicationId) -> Result<(::nn::bcat::detail::ipc::IDeliveryCacheProgressService)> {
+	pub fn RequestSyncDeliveryCacheWithApplicationId(&self, unk0: u32, unk1: ::nn::ApplicationId) -> Result<::nn::bcat::detail::ipc::IDeliveryCacheProgressService> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: u32,
@@ -78,7 +78,7 @@ impl IBcatService {
 		Ok(())
 	}
 
-	pub fn EnumerateBackgroundDeliveryTask(&self, unk1: &mut [::nn::bcat::TaskInfo]) -> Result<(i32)> {
+	pub fn EnumerateBackgroundDeliveryTask(&self, unk1: &mut [::nn::bcat::TaskInfo]) -> Result<i32> {
 		let req = Request::new(90100)
 			.args(())
 			;
@@ -95,7 +95,7 @@ impl IBcatService {
 		Ok(())
 	}
 
-	pub fn GetPushNotificationLog(&self, unk1: &mut [::nn::bcat::PushNotificationLog]) -> Result<(i32)> {
+	pub fn GetPushNotificationLog(&self, unk1: &mut [::nn::bcat::PushNotificationLog]) -> Result<i32> {
 		let req = Request::new(90300)
 			.args(())
 			;

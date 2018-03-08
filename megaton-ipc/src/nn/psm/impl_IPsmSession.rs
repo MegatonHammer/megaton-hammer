@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IPsmSession(Session);
 
 impl IPsmSession {
-	pub fn BindStateChangeEvent(&self, ) -> Result<(KObject)> {
+	pub fn BindStateChangeEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(0)
 			.args(())
 			;

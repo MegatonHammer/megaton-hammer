@@ -6,7 +6,22 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct ISettingsServer(Session);
 
 impl ISettingsServer {
-	pub fn GetLanguageCode(&self, ) -> Result<(::nn::settings::LanguageCode)> {
+	pub fn get_service() -> Result<ISettingsServer> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"set\0\0\0\0\0").map(|s| unsafe { ISettingsServer::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl ISettingsServer {
+	pub fn GetLanguageCode(&self, ) -> Result<::nn::settings::LanguageCode> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -14,7 +29,7 @@ impl ISettingsServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetAvailableLanguageCodes(&self, unk1: &mut [::nn::settings::LanguageCode]) -> Result<(i32)> {
+	pub fn GetAvailableLanguageCodes(&self, unk1: &mut [::nn::settings::LanguageCode]) -> Result<i32> {
 		let req = Request::new(1)
 			.args(())
 			;
@@ -31,7 +46,7 @@ impl ISettingsServer {
 		Ok(())
 	}
 
-	pub fn GetAvailableLanguageCodeCount(&self, ) -> Result<(i32)> {
+	pub fn GetAvailableLanguageCodeCount(&self, ) -> Result<i32> {
 		let req = Request::new(3)
 			.args(())
 			;
@@ -39,7 +54,7 @@ impl ISettingsServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetRegionCode(&self, ) -> Result<(i32)> {
+	pub fn GetRegionCode(&self, ) -> Result<i32> {
 		let req = Request::new(4)
 			.args(())
 			;

@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IAppletAccessor(Session);
 
 impl IAppletAccessor {
-	pub fn GetAppletStateChangedEvent(&self, ) -> Result<(KObject)> {
+	pub fn GetAppletStateChangedEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -14,7 +14,7 @@ impl IAppletAccessor {
 		Ok(res.pop_handle())
 	}
 
-	pub fn IsCompleted(&self, ) -> Result<(bool)> {
+	pub fn IsCompleted(&self, ) -> Result<bool> {
 		let req = Request::new(1)
 			.args(())
 			;

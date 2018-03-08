@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IIrSensorSystemServer(Session);
 
 impl IIrSensorSystemServer {
+	pub fn get_service() -> Result<IIrSensorSystemServer> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"irs:sys\0").map(|s| unsafe { IIrSensorSystemServer::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IIrSensorSystemServer {
 	pub fn SetAppletResourceUserId(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		let req = Request::new(500)
 			.args(unk0)

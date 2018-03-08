@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IHidDebugServer(Session);
 
 impl IHidDebugServer {
+	pub fn get_service() -> Result<IHidDebugServer> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"hid:dbg\0").map(|s| unsafe { IHidDebugServer::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IHidDebugServer {
 	pub fn DeactivateDebugPad(&self, ) -> Result<()> {
 		let req = Request::new(0)
 			.args(())
@@ -343,7 +358,7 @@ impl IHidDebugServer {
 		Ok((res.get_raw().unk0.clone(),res.get_raw().unk1.clone()))
 	}
 
-	pub fn GetFirmwareVersion(&self, unk0: u32, unk1: ::nn::hid::system::DeviceType) -> Result<(::nn::hid::system::FirmwareVersion)> {
+	pub fn GetFirmwareVersion(&self, unk0: u32, unk1: ::nn::hid::system::DeviceType) -> Result<::nn::hid::system::FirmwareVersion> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: u32,
@@ -359,7 +374,7 @@ impl IHidDebugServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetDestinationFirmwareVersion(&self, unk0: u32, unk1: ::nn::hid::system::DeviceType) -> Result<(::nn::hid::system::FirmwareVersion)> {
+	pub fn GetDestinationFirmwareVersion(&self, unk0: u32, unk1: ::nn::hid::system::DeviceType) -> Result<::nn::hid::system::FirmwareVersion> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: u32,
@@ -391,7 +406,7 @@ impl IHidDebugServer {
 		Ok(())
 	}
 
-	pub fn GetAvailableFirmwareVersionForRevert(&self, unk0: ::nn::hid::system::UniquePadId) -> Result<(::nn::hid::system::FirmwareVersion)> {
+	pub fn GetAvailableFirmwareVersionForRevert(&self, unk0: ::nn::hid::system::UniquePadId) -> Result<::nn::hid::system::FirmwareVersion> {
 		let req = Request::new(209)
 			.args(unk0)
 			;

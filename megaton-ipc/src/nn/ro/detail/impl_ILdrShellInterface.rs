@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct ILdrShellInterface(Session);
 
 impl ILdrShellInterface {
+	pub fn get_service() -> Result<ILdrShellInterface> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"ldr:shel").map(|s| unsafe { ILdrShellInterface::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl ILdrShellInterface {
 	pub fn AddProcessToLaunchQueue(&self, unk0: [u8; 0x200], size: u32, appID: ::nn::ncm::ApplicationId) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {

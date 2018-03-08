@@ -14,7 +14,7 @@ impl INcmInterface4Unknown {
 		Ok(())
 	}
 
-	pub fn Unknown13(&self, ) -> Result<(u64)> {
+	pub fn Unknown13(&self, ) -> Result<u64> {
 		let req = Request::new(13)
 			.args(())
 			;

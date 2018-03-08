@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IServiceManager(Session);
 
 impl IServiceManager {
-	pub fn Unknown0(&self, unk0: u64) -> Result<(Session)> {
+	pub fn Unknown0(&self, unk0: u64) -> Result<Session> {
 		let req = Request::new(0)
 			.args(unk0)
 			.send_pid()

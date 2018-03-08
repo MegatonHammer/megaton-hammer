@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IEventNotifier(Session);
 
 impl IEventNotifier {
-	pub fn BindEvent(&self, ) -> Result<(KObject)> {
+	pub fn BindEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(0)
 			.args(())
 			;

@@ -6,7 +6,22 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IGeneralInterface(Session);
 
 impl IGeneralInterface {
-	pub fn GetConfig(&self, unk0: u32) -> Result<(u64)> {
+	pub fn get_service() -> Result<IGeneralInterface> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"spl:\0\0\0\0").map(|s| unsafe { IGeneralInterface::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IGeneralInterface {
+	pub fn GetConfig(&self, unk0: u32) -> Result<u64> {
 		let req = Request::new(0)
 			.args(unk0)
 			;
@@ -78,7 +93,7 @@ impl IGeneralInterface {
 		Ok(())
 	}
 
-	pub fn IsDevelopment(&self, ) -> Result<(u8)> {
+	pub fn IsDevelopment(&self, ) -> Result<u8> {
 		let req = Request::new(11)
 			.args(())
 			;
@@ -160,7 +175,7 @@ impl IGeneralInterface {
 	}
 
 	#[cfg(feature = "switch-2.0.0")]
-	pub fn LockAesEngine(&self, ) -> Result<(u32)> {
+	pub fn LockAesEngine(&self, ) -> Result<u32> {
 		let req = Request::new(21)
 			.args(())
 			;
@@ -178,7 +193,7 @@ impl IGeneralInterface {
 	}
 
 	#[cfg(feature = "switch-2.0.0")]
-	pub fn GetSplWaitEvent(&self, ) -> Result<(KObject)> {
+	pub fn GetSplWaitEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(23)
 			.args(())
 			;

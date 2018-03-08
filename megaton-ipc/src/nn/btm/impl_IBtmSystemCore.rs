@@ -30,7 +30,7 @@ impl IBtmSystemCore {
 		Ok(())
 	}
 
-	pub fn Unknown3(&self, ) -> Result<(u8)> {
+	pub fn Unknown3(&self, ) -> Result<u8> {
 		let req = Request::new(3)
 			.args(())
 			;
@@ -54,7 +54,7 @@ impl IBtmSystemCore {
 		Ok(())
 	}
 
-	pub fn Unknown6(&self, ) -> Result<(u8)> {
+	pub fn Unknown6(&self, ) -> Result<u8> {
 		let req = Request::new(6)
 			.args(())
 			;
@@ -78,7 +78,7 @@ impl IBtmSystemCore {
 		Ok(())
 	}
 
-	pub fn Unknown9(&self, ) -> Result<(u8)> {
+	pub fn Unknown9(&self, ) -> Result<u8> {
 		let req = Request::new(9)
 			.args(())
 			;

@@ -6,7 +6,22 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IPmService(Session);
 
 impl IPmService {
-	pub fn Unknown0(&self, ) -> Result<(KObject)> {
+	pub fn get_service() -> Result<IPmService> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"usb:pm\0\0").map(|s| unsafe { IPmService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IPmService {
+	pub fn Unknown0(&self, ) -> Result<KObject> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -22,7 +37,7 @@ impl IPmService {
 		Ok(())
 	}
 
-	pub fn Unknown2(&self, ) -> Result<(KObject)> {
+	pub fn Unknown2(&self, ) -> Result<KObject> {
 		let req = Request::new(2)
 			.args(())
 			;
@@ -30,7 +45,7 @@ impl IPmService {
 		Ok(res.pop_handle())
 	}
 
-	pub fn Unknown3(&self, ) -> Result<(u32)> {
+	pub fn Unknown3(&self, ) -> Result<u32> {
 		let req = Request::new(3)
 			.args(())
 			;

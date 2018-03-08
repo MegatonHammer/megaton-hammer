@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IClientIfSession(Session);
 
 impl IClientIfSession {
-	pub fn Unknown0(&self, ) -> Result<(KObject)> {
+	pub fn Unknown0(&self, ) -> Result<KObject> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -38,7 +38,7 @@ impl IClientIfSession {
 		Ok(())
 	}
 
-	pub fn Unknown4(&self, ) -> Result<(u32)> {
+	pub fn Unknown4(&self, ) -> Result<u32> {
 		let req = Request::new(4)
 			.args(())
 			;
@@ -54,7 +54,7 @@ impl IClientIfSession {
 		Ok(())
 	}
 
-	pub fn Unknown6(&self, ) -> Result<(KObject)> {
+	pub fn Unknown6(&self, ) -> Result<KObject> {
 		let req = Request::new(6)
 			.args(())
 			;

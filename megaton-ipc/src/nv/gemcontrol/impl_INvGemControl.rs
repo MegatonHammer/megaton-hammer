@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct INvGemControl(Session);
 
 impl INvGemControl {
+	pub fn get_service() -> Result<INvGemControl> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"nvgem:c\0").map(|s| unsafe { INvGemControl::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl INvGemControl {
 	pub fn Unknown0(&self, ) -> Result<()> {
 		let req = Request::new(0)
 			.args(())

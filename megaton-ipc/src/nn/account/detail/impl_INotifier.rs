@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct INotifier(Session);
 
 impl INotifier {
-	pub fn GetSystemEvent(&self, ) -> Result<(KObject)> {
+	pub fn GetSystemEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(0)
 			.args(())
 			;

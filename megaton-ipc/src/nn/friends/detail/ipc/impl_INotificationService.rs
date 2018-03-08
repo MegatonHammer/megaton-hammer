@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct INotificationService(Session);
 
 impl INotificationService {
-	pub fn GetEvent(&self, ) -> Result<(KObject)> {
+	pub fn GetEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -22,7 +22,7 @@ impl INotificationService {
 		Ok(())
 	}
 
-	pub fn Pop(&self, ) -> Result<(::nn::friends::detail::ipc::SizedNotificationInfo)> {
+	pub fn Pop(&self, ) -> Result<::nn::friends::detail::ipc::SizedNotificationInfo> {
 		let req = Request::new(2)
 			.args(())
 			;

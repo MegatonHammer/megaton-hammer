@@ -14,7 +14,7 @@ impl IController {
 		Ok(())
 	}
 
-	pub fn Unknown1(&self, unk0: u32) -> Result<(u32)> {
+	pub fn Unknown1(&self, unk0: u32) -> Result<u32> {
 		let req = Request::new(1)
 			.args(unk0)
 			;
@@ -22,7 +22,7 @@ impl IController {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown2(&self, ) -> Result<(u32)> {
+	pub fn Unknown2(&self, ) -> Result<u32> {
 		let req = Request::new(2)
 			.args(())
 			;
@@ -38,7 +38,7 @@ impl IController {
 		Ok(())
 	}
 
-	pub fn Unknown4(&self, ) -> Result<(u32)> {
+	pub fn Unknown4(&self, ) -> Result<u32> {
 		let req = Request::new(4)
 			.args(())
 			;
@@ -62,7 +62,7 @@ impl IController {
 		Ok(())
 	}
 
-	pub fn Unknown7(&self, ) -> Result<(u32)> {
+	pub fn Unknown7(&self, ) -> Result<u32> {
 		let req = Request::new(7)
 			.args(())
 			;

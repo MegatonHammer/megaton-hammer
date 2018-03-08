@@ -6,6 +6,33 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct INvDrvServices(Session);
 
 impl INvDrvServices {
+	pub fn get_service() -> Result<INvDrvServices> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"nvdrv:s\0").map(|s| unsafe { INvDrvServices::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		let r = sm.GetService(*b"nvdrv:t\0").map(|s| unsafe { INvDrvServices::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		let r = sm.GetService(*b"nvdrv:a\0").map(|s| unsafe { INvDrvServices::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		let r = sm.GetService(*b"nvdrv\0\0\0").map(|s| unsafe { INvDrvServices::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl INvDrvServices {
 	pub fn Open(&self, ) -> Result<()> {
 		let req = Request::new(0)
 			.args(())

@@ -14,7 +14,7 @@ impl ISession {
 		Ok(())
 	}
 
-	pub fn Unknown1(&self, ) -> Result<(u32)> {
+	pub fn Unknown1(&self, ) -> Result<u32> {
 		let req = Request::new(1)
 			.args(())
 			;

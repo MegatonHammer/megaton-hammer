@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IScreenShotService(Session);
 
 impl IScreenShotService {
+	pub fn get_service() -> Result<IScreenShotService> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"caps:ss\0").map(|s| unsafe { IScreenShotService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IScreenShotService {
 	pub fn Unknown201(&self, ) -> Result<()> {
 		let req = Request::new(201)
 			.args(())

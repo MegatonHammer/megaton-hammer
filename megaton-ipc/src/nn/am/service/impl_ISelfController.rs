@@ -46,7 +46,7 @@ impl ISelfController {
 		Ok(())
 	}
 
-	pub fn GetLibraryAppletLaunchableEvent(&self, ) -> Result<(KObject)> {
+	pub fn GetLibraryAppletLaunchableEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(9)
 			.args(())
 			;
@@ -144,7 +144,7 @@ impl ISelfController {
 		Ok(())
 	}
 
-	pub fn CreateManagedDisplayLayer(&self, ) -> Result<(u64)> {
+	pub fn CreateManagedDisplayLayer(&self, ) -> Result<u64> {
 		let req = Request::new(40)
 			.args(())
 			;
@@ -204,7 +204,7 @@ impl ISelfController {
 		Ok(())
 	}
 
-	pub fn GetIdleTimeDetectionExtension(&self, ) -> Result<(u32)> {
+	pub fn GetIdleTimeDetectionExtension(&self, ) -> Result<u32> {
 		let req = Request::new(63)
 			.args(())
 			;
@@ -228,7 +228,7 @@ impl ISelfController {
 		Ok(())
 	}
 
-	pub fn GetCurrentIlluminance(&self, ) -> Result<(f32)> {
+	pub fn GetCurrentIlluminance(&self, ) -> Result<f32> {
 		let req = Request::new(66)
 			.args(())
 			;
@@ -236,7 +236,7 @@ impl ISelfController {
 		Ok(*res.get_raw())
 	}
 
-	pub fn IsIlluminanceAvailable(&self, ) -> Result<(bool)> {
+	pub fn IsIlluminanceAvailable(&self, ) -> Result<bool> {
 		let req = Request::new(67)
 			.args(())
 			;

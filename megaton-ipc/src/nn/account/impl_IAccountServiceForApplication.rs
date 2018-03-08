@@ -6,7 +6,22 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IAccountServiceForApplication(Session);
 
 impl IAccountServiceForApplication {
-	pub fn GetUserCount(&self, ) -> Result<(i32)> {
+	pub fn get_service() -> Result<IAccountServiceForApplication> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"acc:u0\0\0").map(|s| unsafe { IAccountServiceForApplication::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IAccountServiceForApplication {
+	pub fn GetUserCount(&self, ) -> Result<i32> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -14,7 +29,7 @@ impl IAccountServiceForApplication {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetUserExistence(&self, unk0: ::nn::account::Uid) -> Result<(bool)> {
+	pub fn GetUserExistence(&self, unk0: ::nn::account::Uid) -> Result<bool> {
 		let req = Request::new(1)
 			.args(unk0)
 			;
@@ -38,7 +53,7 @@ impl IAccountServiceForApplication {
 		Ok(())
 	}
 
-	pub fn GetLastOpenedUser(&self, ) -> Result<(::nn::account::Uid)> {
+	pub fn GetLastOpenedUser(&self, ) -> Result<::nn::account::Uid> {
 		let req = Request::new(4)
 			.args(())
 			;
@@ -46,7 +61,7 @@ impl IAccountServiceForApplication {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetProfile(&self, unk0: ::nn::account::Uid) -> Result<(::nn::account::profile::IProfile)> {
+	pub fn GetProfile(&self, unk0: ::nn::account::Uid) -> Result<::nn::account::profile::IProfile> {
 		let req = Request::new(5)
 			.args(unk0)
 			;
@@ -54,7 +69,7 @@ impl IAccountServiceForApplication {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetProfileDigest(&self, unk0: ::nn::account::Uid) -> Result<(::nn::account::ProfileDigest)> {
+	pub fn GetProfileDigest(&self, unk0: ::nn::account::Uid) -> Result<::nn::account::ProfileDigest> {
 		let req = Request::new(6)
 			.args(unk0)
 			;
@@ -62,7 +77,7 @@ impl IAccountServiceForApplication {
 		Ok(*res.get_raw())
 	}
 
-	pub fn IsUserRegistrationRequestPermitted(&self, unk0: u64) -> Result<(bool)> {
+	pub fn IsUserRegistrationRequestPermitted(&self, unk0: u64) -> Result<bool> {
 		let req = Request::new(50)
 			.args(unk0)
 			.send_pid()
@@ -71,7 +86,7 @@ impl IAccountServiceForApplication {
 		Ok(*res.get_raw())
 	}
 
-	pub fn TrySelectUserWithoutInteraction(&self, unk0: bool) -> Result<(::nn::account::Uid)> {
+	pub fn TrySelectUserWithoutInteraction(&self, unk0: bool) -> Result<::nn::account::Uid> {
 		let req = Request::new(51)
 			.args(unk0)
 			;
@@ -88,7 +103,7 @@ impl IAccountServiceForApplication {
 		Ok(())
 	}
 
-	pub fn GetBaasAccountManagerForApplication(&self, unk0: ::nn::account::Uid) -> Result<(::nn::account::baas::IManagerForApplication)> {
+	pub fn GetBaasAccountManagerForApplication(&self, unk0: ::nn::account::Uid) -> Result<::nn::account::baas::IManagerForApplication> {
 		let req = Request::new(101)
 			.args(unk0)
 			;
@@ -96,7 +111,7 @@ impl IAccountServiceForApplication {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn AuthenticateApplicationAsync(&self, ) -> Result<(::nn::account::detail::IAsyncContext)> {
+	pub fn AuthenticateApplicationAsync(&self, ) -> Result<::nn::account::detail::IAsyncContext> {
 		let req = Request::new(102)
 			.args(())
 			;
@@ -113,7 +128,7 @@ impl IAccountServiceForApplication {
 		Ok(())
 	}
 
-	pub fn CreateGuestLoginRequest(&self, unk0: u32, unk1: KObject) -> Result<(::nn::account::baas::IGuestLoginRequest)> {
+	pub fn CreateGuestLoginRequest(&self, unk0: u32, unk1: KObject) -> Result<::nn::account::baas::IGuestLoginRequest> {
 		let req = Request::new(120)
 			.args(unk0)
 			;

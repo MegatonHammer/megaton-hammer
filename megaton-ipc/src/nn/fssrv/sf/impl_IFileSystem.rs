@@ -70,7 +70,7 @@ impl IFileSystem {
 		Ok(())
 	}
 
-	pub fn GetEntryType(&self, path: &[u8; 0x301]) -> Result<(u32)> {
+	pub fn GetEntryType(&self, path: &[u8; 0x301]) -> Result<u32> {
 		let req = Request::new(7)
 			.args(())
 			;
@@ -78,7 +78,7 @@ impl IFileSystem {
 		Ok(*res.get_raw())
 	}
 
-	pub fn OpenFile(&self, mode: u32, path: &[u8; 0x301]) -> Result<(::nn::fssrv::sf::IFile)> {
+	pub fn OpenFile(&self, mode: u32, path: &[u8; 0x301]) -> Result<::nn::fssrv::sf::IFile> {
 		let req = Request::new(8)
 			.args(mode)
 			;
@@ -86,7 +86,7 @@ impl IFileSystem {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn OpenDirectory(&self, unk0: u32, path: &[u8; 0x301]) -> Result<(::nn::fssrv::sf::IDirectory)> {
+	pub fn OpenDirectory(&self, unk0: u32, path: &[u8; 0x301]) -> Result<::nn::fssrv::sf::IDirectory> {
 		let req = Request::new(9)
 			.args(unk0)
 			;
@@ -102,7 +102,7 @@ impl IFileSystem {
 		Ok(())
 	}
 
-	pub fn GetFreeSpaceSize(&self, path: &[u8; 0x301]) -> Result<(u64)> {
+	pub fn GetFreeSpaceSize(&self, path: &[u8; 0x301]) -> Result<u64> {
 		let req = Request::new(11)
 			.args(())
 			;
@@ -110,7 +110,7 @@ impl IFileSystem {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetTotalSpaceSize(&self, path: &[u8; 0x301]) -> Result<(u64)> {
+	pub fn GetTotalSpaceSize(&self, path: &[u8; 0x301]) -> Result<u64> {
 		let req = Request::new(12)
 			.args(())
 			;

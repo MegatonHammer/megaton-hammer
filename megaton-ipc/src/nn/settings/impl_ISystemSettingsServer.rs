@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct ISystemSettingsServer(Session);
 
 impl ISystemSettingsServer {
+	pub fn get_service() -> Result<ISystemSettingsServer> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"set:sys\0").map(|s| unsafe { ISystemSettingsServer::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl ISystemSettingsServer {
 	pub fn SetLanguageCode(&self, unk0: ::nn::settings::LanguageCode) -> Result<()> {
 		let req = Request::new(0)
 			.args(unk0)
@@ -22,7 +37,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetNetworkSettings(&self, unk1: &mut [::nn::settings::system::NetworkSettings]) -> Result<(i32)> {
+	pub fn GetNetworkSettings(&self, unk1: &mut [::nn::settings::system::NetworkSettings]) -> Result<i32> {
 		let req = Request::new(2)
 			.args(())
 			;
@@ -47,7 +62,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetLockScreenFlag(&self, ) -> Result<(bool)> {
+	pub fn GetLockScreenFlag(&self, ) -> Result<bool> {
 		let req = Request::new(7)
 			.args(())
 			;
@@ -63,7 +78,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetBacklightSettings(&self, ) -> Result<(::nn::settings::system::BacklightSettings)> {
+	pub fn GetBacklightSettings(&self, ) -> Result<::nn::settings::system::BacklightSettings> {
 		let req = Request::new(9)
 			.args(())
 			;
@@ -87,7 +102,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetBluetoothDevicesSettings(&self, unk1: &mut [::nn::settings::system::BluetoothDevicesSettings]) -> Result<(i32)> {
+	pub fn GetBluetoothDevicesSettings(&self, unk1: &mut [::nn::settings::system::BluetoothDevicesSettings]) -> Result<i32> {
 		let req = Request::new(12)
 			.args(())
 			;
@@ -95,7 +110,7 @@ impl ISystemSettingsServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetExternalSteadyClockSourceId(&self, ) -> Result<(::nn::util::Uuid)> {
+	pub fn GetExternalSteadyClockSourceId(&self, ) -> Result<::nn::util::Uuid> {
 		let req = Request::new(13)
 			.args(())
 			;
@@ -111,7 +126,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetUserSystemClockContext(&self, ) -> Result<(::nn::time::SystemClockContext)> {
+	pub fn GetUserSystemClockContext(&self, ) -> Result<::nn::time::SystemClockContext> {
 		let req = Request::new(15)
 			.args(())
 			;
@@ -127,7 +142,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetAccountSettings(&self, ) -> Result<(::nn::settings::system::AccountSettings)> {
+	pub fn GetAccountSettings(&self, ) -> Result<::nn::settings::system::AccountSettings> {
 		let req = Request::new(17)
 			.args(())
 			;
@@ -143,7 +158,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetAudioVolume(&self, unk0: i32) -> Result<(::nn::settings::system::AudioVolume)> {
+	pub fn GetAudioVolume(&self, unk0: i32) -> Result<::nn::settings::system::AudioVolume> {
 		let req = Request::new(19)
 			.args(unk0)
 			;
@@ -167,7 +182,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetEulaVersions(&self, unk1: &mut [::nn::settings::system::EulaVersion]) -> Result<(i32)> {
+	pub fn GetEulaVersions(&self, unk1: &mut [::nn::settings::system::EulaVersion]) -> Result<i32> {
 		let req = Request::new(21)
 			.args(())
 			;
@@ -183,7 +198,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetColorSetId(&self, ) -> Result<(i32)> {
+	pub fn GetColorSetId(&self, ) -> Result<i32> {
 		let req = Request::new(23)
 			.args(())
 			;
@@ -199,7 +214,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetConsoleInformationUploadFlag(&self, ) -> Result<(bool)> {
+	pub fn GetConsoleInformationUploadFlag(&self, ) -> Result<bool> {
 		let req = Request::new(25)
 			.args(())
 			;
@@ -215,7 +230,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetAutomaticApplicationDownloadFlag(&self, ) -> Result<(bool)> {
+	pub fn GetAutomaticApplicationDownloadFlag(&self, ) -> Result<bool> {
 		let req = Request::new(27)
 			.args(())
 			;
@@ -231,7 +246,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetNotificationSettings(&self, ) -> Result<(::nn::settings::system::NotificationSettings)> {
+	pub fn GetNotificationSettings(&self, ) -> Result<::nn::settings::system::NotificationSettings> {
 		let req = Request::new(29)
 			.args(())
 			;
@@ -247,7 +262,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetAccountNotificationSettings(&self, unk1: &mut [::nn::settings::system::AccountNotificationSettings]) -> Result<(i32)> {
+	pub fn GetAccountNotificationSettings(&self, unk1: &mut [::nn::settings::system::AccountNotificationSettings]) -> Result<i32> {
 		let req = Request::new(31)
 			.args(())
 			;
@@ -263,7 +278,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetVibrationMasterVolume(&self, ) -> Result<(f32)> {
+	pub fn GetVibrationMasterVolume(&self, ) -> Result<f32> {
 		let req = Request::new(35)
 			.args(())
 			;
@@ -279,7 +294,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetSettingsItemValueSize(&self, unk0: &::nn::settings::SettingsName, unk1: &::nn::settings::SettingsItemKey) -> Result<(u64)> {
+	pub fn GetSettingsItemValueSize(&self, unk0: &::nn::settings::SettingsName, unk1: &::nn::settings::SettingsItemKey) -> Result<u64> {
 		let req = Request::new(37)
 			.args(())
 			;
@@ -288,7 +303,7 @@ impl ISystemSettingsServer {
 	}
 
 	// fn GetSettingsItemValue(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn GetTvSettings(&self, ) -> Result<(::nn::settings::system::TvSettings)> {
+	pub fn GetTvSettings(&self, ) -> Result<::nn::settings::system::TvSettings> {
 		let req = Request::new(39)
 			.args(())
 			;
@@ -320,7 +335,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetAudioOutputMode(&self, unk0: i32) -> Result<(i32)> {
+	pub fn GetAudioOutputMode(&self, unk0: i32) -> Result<i32> {
 		let req = Request::new(43)
 			.args(unk0)
 			;
@@ -344,7 +359,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn IsForceMuteOnHeadphoneRemoved(&self, ) -> Result<(bool)> {
+	pub fn IsForceMuteOnHeadphoneRemoved(&self, ) -> Result<bool> {
 		let req = Request::new(45)
 			.args(())
 			;
@@ -360,7 +375,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetQuestFlag(&self, ) -> Result<(bool)> {
+	pub fn GetQuestFlag(&self, ) -> Result<bool> {
 		let req = Request::new(47)
 			.args(())
 			;
@@ -376,7 +391,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetDataDeletionSettings(&self, ) -> Result<(::nn::settings::system::DataDeletionSettings)> {
+	pub fn GetDataDeletionSettings(&self, ) -> Result<::nn::settings::system::DataDeletionSettings> {
 		let req = Request::new(49)
 			.args(())
 			;
@@ -392,7 +407,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetInitialSystemAppletProgramId(&self, ) -> Result<(::nn::ncm::ProgramId)> {
+	pub fn GetInitialSystemAppletProgramId(&self, ) -> Result<::nn::ncm::ProgramId> {
 		let req = Request::new(51)
 			.args(())
 			;
@@ -400,7 +415,7 @@ impl ISystemSettingsServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetOverlayDispProgramId(&self, ) -> Result<(::nn::ncm::ProgramId)> {
+	pub fn GetOverlayDispProgramId(&self, ) -> Result<::nn::ncm::ProgramId> {
 		let req = Request::new(52)
 			.args(())
 			;
@@ -408,7 +423,7 @@ impl ISystemSettingsServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetDeviceTimeZoneLocationName(&self, ) -> Result<(::nn::time::LocationName)> {
+	pub fn GetDeviceTimeZoneLocationName(&self, ) -> Result<::nn::time::LocationName> {
 		let req = Request::new(53)
 			.args(())
 			;
@@ -424,7 +439,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetWirelessCertificationFileSize(&self, ) -> Result<(u64)> {
+	pub fn GetWirelessCertificationFileSize(&self, ) -> Result<u64> {
 		let req = Request::new(55)
 			.args(())
 			;
@@ -441,7 +456,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetNetworkSystemClockContext(&self, ) -> Result<(::nn::time::SystemClockContext)> {
+	pub fn GetNetworkSystemClockContext(&self, ) -> Result<::nn::time::SystemClockContext> {
 		let req = Request::new(58)
 			.args(())
 			;
@@ -457,7 +472,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn IsUserSystemClockAutomaticCorrectionEnabled(&self, ) -> Result<(bool)> {
+	pub fn IsUserSystemClockAutomaticCorrectionEnabled(&self, ) -> Result<bool> {
 		let req = Request::new(60)
 			.args(())
 			;
@@ -473,7 +488,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetDebugModeFlag(&self, ) -> Result<(bool)> {
+	pub fn GetDebugModeFlag(&self, ) -> Result<bool> {
 		let req = Request::new(62)
 			.args(())
 			;
@@ -481,7 +496,7 @@ impl ISystemSettingsServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetPrimaryAlbumStorage(&self, ) -> Result<(i32)> {
+	pub fn GetPrimaryAlbumStorage(&self, ) -> Result<i32> {
 		let req = Request::new(63)
 			.args(())
 			;
@@ -497,7 +512,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetUsb30EnableFlag(&self, ) -> Result<(bool)> {
+	pub fn GetUsb30EnableFlag(&self, ) -> Result<bool> {
 		let req = Request::new(65)
 			.args(())
 			;
@@ -513,7 +528,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetBatteryLot(&self, ) -> Result<(::nn::settings::system::BatteryLot)> {
+	pub fn GetBatteryLot(&self, ) -> Result<::nn::settings::system::BatteryLot> {
 		let req = Request::new(67)
 			.args(())
 			;
@@ -521,7 +536,7 @@ impl ISystemSettingsServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetSerialNumber(&self, ) -> Result<(::nn::settings::system::SerialNumber)> {
+	pub fn GetSerialNumber(&self, ) -> Result<::nn::settings::system::SerialNumber> {
 		let req = Request::new(68)
 			.args(())
 			;
@@ -529,7 +544,7 @@ impl ISystemSettingsServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetNfcEnableFlag(&self, ) -> Result<(bool)> {
+	pub fn GetNfcEnableFlag(&self, ) -> Result<bool> {
 		let req = Request::new(69)
 			.args(())
 			;
@@ -545,7 +560,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetSleepSettings(&self, ) -> Result<(::nn::settings::system::SleepSettings)> {
+	pub fn GetSleepSettings(&self, ) -> Result<::nn::settings::system::SleepSettings> {
 		let req = Request::new(71)
 			.args(())
 			;
@@ -561,7 +576,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetWirelessLanEnableFlag(&self, ) -> Result<(bool)> {
+	pub fn GetWirelessLanEnableFlag(&self, ) -> Result<bool> {
 		let req = Request::new(73)
 			.args(())
 			;
@@ -577,7 +592,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetInitialLaunchSettings(&self, ) -> Result<(::nn::settings::system::InitialLaunchSettings)> {
+	pub fn GetInitialLaunchSettings(&self, ) -> Result<::nn::settings::system::InitialLaunchSettings> {
 		let req = Request::new(75)
 			.args(())
 			;
@@ -609,7 +624,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetProductModel(&self, ) -> Result<(i32)> {
+	pub fn GetProductModel(&self, ) -> Result<i32> {
 		let req = Request::new(79)
 			.args(())
 			;
@@ -617,7 +632,7 @@ impl ISystemSettingsServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetLdnChannel(&self, ) -> Result<(i32)> {
+	pub fn GetLdnChannel(&self, ) -> Result<i32> {
 		let req = Request::new(80)
 			.args(())
 			;
@@ -633,7 +648,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn AcquireTelemetryDirtyFlagEventHandle(&self, ) -> Result<(KObject)> {
+	pub fn AcquireTelemetryDirtyFlagEventHandle(&self, ) -> Result<KObject> {
 		let req = Request::new(82)
 			.args(())
 			;
@@ -641,7 +656,7 @@ impl ISystemSettingsServer {
 		Ok(res.pop_handle())
 	}
 
-	pub fn GetTelemetryDirtyFlags(&self, ) -> Result<(::nn::settings::system::TelemetryDirtyFlag)> {
+	pub fn GetTelemetryDirtyFlags(&self, ) -> Result<::nn::settings::system::TelemetryDirtyFlag> {
 		let req = Request::new(83)
 			.args(())
 			;
@@ -649,7 +664,7 @@ impl ISystemSettingsServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetPtmBatteryLot(&self, ) -> Result<(::nn::settings::factory::BatteryLot)> {
+	pub fn GetPtmBatteryLot(&self, ) -> Result<::nn::settings::factory::BatteryLot> {
 		let req = Request::new(84)
 			.args(())
 			;
@@ -665,7 +680,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetPtmFuelGaugeParameter(&self, ) -> Result<(::nn::settings::system::PtmFuelGaugeParameter)> {
+	pub fn GetPtmFuelGaugeParameter(&self, ) -> Result<::nn::settings::system::PtmFuelGaugeParameter> {
 		let req = Request::new(86)
 			.args(())
 			;
@@ -681,7 +696,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetBluetoothEnableFlag(&self, ) -> Result<(bool)> {
+	pub fn GetBluetoothEnableFlag(&self, ) -> Result<bool> {
 		let req = Request::new(88)
 			.args(())
 			;
@@ -697,7 +712,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetMiiAuthorId(&self, ) -> Result<(::nn::util::Uuid)> {
+	pub fn GetMiiAuthorId(&self, ) -> Result<::nn::util::Uuid> {
 		let req = Request::new(90)
 			.args(())
 			;
@@ -713,7 +728,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetShutdownRtcValue(&self, ) -> Result<(i64)> {
+	pub fn GetShutdownRtcValue(&self, ) -> Result<i64> {
 		let req = Request::new(92)
 			.args(())
 			;
@@ -721,7 +736,7 @@ impl ISystemSettingsServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn AcquireFatalDirtyFlagEventHandle(&self, ) -> Result<(KObject)> {
+	pub fn AcquireFatalDirtyFlagEventHandle(&self, ) -> Result<KObject> {
 		let req = Request::new(93)
 			.args(())
 			;
@@ -729,7 +744,7 @@ impl ISystemSettingsServer {
 		Ok(res.pop_handle())
 	}
 
-	pub fn GetFatalDirtyFlags(&self, ) -> Result<(::nn::settings::system::FatalDirtyFlag)> {
+	pub fn GetFatalDirtyFlags(&self, ) -> Result<::nn::settings::system::FatalDirtyFlag> {
 		let req = Request::new(94)
 			.args(())
 			;
@@ -738,7 +753,7 @@ impl ISystemSettingsServer {
 	}
 
 	#[cfg(feature = "switch-2.0.0")]
-	pub fn GetAutoUpdateEnableFlag(&self, ) -> Result<(bool)> {
+	pub fn GetAutoUpdateEnableFlag(&self, ) -> Result<bool> {
 		let req = Request::new(95)
 			.args(())
 			;
@@ -756,7 +771,7 @@ impl ISystemSettingsServer {
 	}
 
 	#[cfg(feature = "switch-2.0.0")]
-	pub fn GetNxControllerSettings(&self, unk1: &mut [::nn::settings::system::NxControllerSettings]) -> Result<(i32)> {
+	pub fn GetNxControllerSettings(&self, unk1: &mut [::nn::settings::system::NxControllerSettings]) -> Result<i32> {
 		let req = Request::new(97)
 			.args(())
 			;
@@ -774,7 +789,7 @@ impl ISystemSettingsServer {
 	}
 
 	#[cfg(feature = "switch-2.0.0")]
-	pub fn GetBatteryPercentageFlag(&self, ) -> Result<(bool)> {
+	pub fn GetBatteryPercentageFlag(&self, ) -> Result<bool> {
 		let req = Request::new(99)
 			.args(())
 			;
@@ -792,7 +807,7 @@ impl ISystemSettingsServer {
 	}
 
 	#[cfg(feature = "switch-2.0.0")]
-	pub fn GetExternalRtcResetFlag(&self, ) -> Result<(bool)> {
+	pub fn GetExternalRtcResetFlag(&self, ) -> Result<bool> {
 		let req = Request::new(101)
 			.args(())
 			;
@@ -810,7 +825,7 @@ impl ISystemSettingsServer {
 	}
 
 	#[cfg(feature = "switch-3.0.0")]
-	pub fn GetUsbFullKeyEnableFlag(&self, ) -> Result<(bool)> {
+	pub fn GetUsbFullKeyEnableFlag(&self, ) -> Result<bool> {
 		let req = Request::new(103)
 			.args(())
 			;
@@ -837,7 +852,7 @@ impl ISystemSettingsServer {
 	}
 
 	#[cfg(feature = "switch-3.0.0")]
-	pub fn GetExternalSteadyClockInternalOffset(&self, ) -> Result<(i64)> {
+	pub fn GetExternalSteadyClockInternalOffset(&self, ) -> Result<i64> {
 		let req = Request::new(106)
 			.args(())
 			;
@@ -846,7 +861,7 @@ impl ISystemSettingsServer {
 	}
 
 	#[cfg(feature = "switch-3.0.0")]
-	pub fn GetBacklightSettingsEx(&self, ) -> Result<(::nn::settings::system::BacklightSettingsEx)> {
+	pub fn GetBacklightSettingsEx(&self, ) -> Result<::nn::settings::system::BacklightSettingsEx> {
 		let req = Request::new(107)
 			.args(())
 			;
@@ -864,7 +879,7 @@ impl ISystemSettingsServer {
 	}
 
 	#[cfg(feature = "switch-3.0.0")]
-	pub fn GetHeadphoneVolumeWarningCount(&self, ) -> Result<(i32)> {
+	pub fn GetHeadphoneVolumeWarningCount(&self, ) -> Result<i32> {
 		let req = Request::new(109)
 			.args(())
 			;
@@ -882,7 +897,7 @@ impl ISystemSettingsServer {
 	}
 
 	#[cfg(feature = "switch-3.0.0")]
-	pub fn GetBluetoothAfhEnableFlag(&self, ) -> Result<(bool)> {
+	pub fn GetBluetoothAfhEnableFlag(&self, ) -> Result<bool> {
 		let req = Request::new(111)
 			.args(())
 			;
@@ -900,7 +915,7 @@ impl ISystemSettingsServer {
 	}
 
 	#[cfg(feature = "switch-3.0.0")]
-	pub fn GetBluetoothBoostEnableFlag(&self, ) -> Result<(bool)> {
+	pub fn GetBluetoothBoostEnableFlag(&self, ) -> Result<bool> {
 		let req = Request::new(113)
 			.args(())
 			;
@@ -918,7 +933,7 @@ impl ISystemSettingsServer {
 	}
 
 	#[cfg(feature = "switch-3.0.0")]
-	pub fn GetInRepairProcessEnableFlag(&self, ) -> Result<(bool)> {
+	pub fn GetInRepairProcessEnableFlag(&self, ) -> Result<bool> {
 		let req = Request::new(115)
 			.args(())
 			;
@@ -936,7 +951,7 @@ impl ISystemSettingsServer {
 	}
 
 	#[cfg(feature = "switch-3.0.0")]
-	pub fn GetHeadphoneVolumeUpdateFlag(&self, ) -> Result<(bool)> {
+	pub fn GetHeadphoneVolumeUpdateFlag(&self, ) -> Result<bool> {
 		let req = Request::new(117)
 			.args(())
 			;
@@ -968,7 +983,7 @@ impl ISystemSettingsServer {
 	}
 
 	#[cfg(feature = "switch-3.0.0")]
-	pub fn GetPushNotificationActivityModeOnSleep(&self, ) -> Result<(i32)> {
+	pub fn GetPushNotificationActivityModeOnSleep(&self, ) -> Result<i32> {
 		let req = Request::new(120)
 			.args(())
 			;

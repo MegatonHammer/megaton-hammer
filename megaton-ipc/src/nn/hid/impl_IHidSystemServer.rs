@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IHidSystemServer(Session);
 
 impl IHidSystemServer {
+	pub fn get_service() -> Result<IHidSystemServer> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"hid:sys\0").map(|s| unsafe { IHidSystemServer::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IHidSystemServer {
 	pub fn SendKeyboardLockKeyEvent(&self, unk0: ::nn::hid::system::KeyboardLockKeyEvent) -> Result<()> {
 		let req = Request::new(31)
 			.args(unk0)
@@ -14,7 +29,7 @@ impl IHidSystemServer {
 		Ok(())
 	}
 
-	pub fn AcquireHomeButtonEventHandle(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<(KObject)> {
+	pub fn AcquireHomeButtonEventHandle(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<KObject> {
 		let req = Request::new(101)
 			.args(unk0)
 			.send_pid()
@@ -32,7 +47,7 @@ impl IHidSystemServer {
 		Ok(())
 	}
 
-	pub fn AcquireSleepButtonEventHandle(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<(KObject)> {
+	pub fn AcquireSleepButtonEventHandle(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<KObject> {
 		let req = Request::new(121)
 			.args(unk0)
 			.send_pid()
@@ -50,7 +65,7 @@ impl IHidSystemServer {
 		Ok(())
 	}
 
-	pub fn AcquireCaptureButtonEventHandle(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<(KObject)> {
+	pub fn AcquireCaptureButtonEventHandle(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<KObject> {
 		let req = Request::new(141)
 			.args(unk0)
 			.send_pid()
@@ -68,7 +83,7 @@ impl IHidSystemServer {
 		Ok(())
 	}
 
-	pub fn AcquireNfcDeviceUpdateEventHandle(&self, ) -> Result<(KObject)> {
+	pub fn AcquireNfcDeviceUpdateEventHandle(&self, ) -> Result<KObject> {
 		let req = Request::new(210)
 			.args(())
 			;
@@ -76,7 +91,7 @@ impl IHidSystemServer {
 		Ok(res.pop_handle())
 	}
 
-	pub fn GetNpadsWithNfc(&self, unk1: &mut [u32]) -> Result<(i64)> {
+	pub fn GetNpadsWithNfc(&self, unk1: &mut [u32]) -> Result<i64> {
 		let req = Request::new(211)
 			.args(())
 			;
@@ -84,7 +99,7 @@ impl IHidSystemServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn AcquireNfcActivateEventHandle(&self, unk0: u32) -> Result<(KObject)> {
+	pub fn AcquireNfcActivateEventHandle(&self, unk0: u32) -> Result<KObject> {
 		let req = Request::new(212)
 			.args(unk0)
 			;
@@ -111,7 +126,7 @@ impl IHidSystemServer {
 		Ok(())
 	}
 
-	pub fn AcquireIrSensorEventHandle(&self, unk0: u32) -> Result<(KObject)> {
+	pub fn AcquireIrSensorEventHandle(&self, unk0: u32) -> Result<KObject> {
 		let req = Request::new(230)
 			.args(unk0)
 			;
@@ -173,7 +188,7 @@ impl IHidSystemServer {
 		Ok(())
 	}
 
-	pub fn GetLastActiveNpad(&self, ) -> Result<(u32)> {
+	pub fn GetLastActiveNpad(&self, ) -> Result<u32> {
 		let req = Request::new(306)
 			.args(())
 			;
@@ -212,7 +227,7 @@ impl IHidSystemServer {
 		Ok(())
 	}
 
-	pub fn GetUniquePadsFromNpad(&self, unk0: u32, unk2: &mut [::nn::hid::system::UniquePadId]) -> Result<(i64)> {
+	pub fn GetUniquePadsFromNpad(&self, unk0: u32, unk2: &mut [::nn::hid::system::UniquePadId]) -> Result<i64> {
 		let req = Request::new(321)
 			.args(unk0)
 			;
@@ -220,7 +235,7 @@ impl IHidSystemServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetIrSensorState(&self, unk0: u32, unk1: ::nn::applet::AppletResourceUserId) -> Result<(i64)> {
+	pub fn GetIrSensorState(&self, unk0: u32, unk1: ::nn::applet::AppletResourceUserId) -> Result<i64> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: u32,
@@ -237,7 +252,7 @@ impl IHidSystemServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetXcdHandleForNpadWithIrSensor(&self, unk0: u32, unk1: ::nn::applet::AppletResourceUserId) -> Result<(u64)> {
+	pub fn GetXcdHandleForNpadWithIrSensor(&self, unk0: u32, unk1: ::nn::applet::AppletResourceUserId) -> Result<u64> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: u32,
@@ -342,7 +357,7 @@ impl IHidSystemServer {
 		Ok(())
 	}
 
-	pub fn GetVibrationMasterVolume(&self, ) -> Result<(f32)> {
+	pub fn GetVibrationMasterVolume(&self, ) -> Result<f32> {
 		let req = Request::new(511)
 			.args(())
 			;
@@ -382,7 +397,7 @@ impl IHidSystemServer {
 		Ok(())
 	}
 
-	pub fn AcquirePlayReportControllerUsageUpdateEvent(&self, ) -> Result<(KObject)> {
+	pub fn AcquirePlayReportControllerUsageUpdateEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(540)
 			.args(())
 			;
@@ -390,7 +405,7 @@ impl IHidSystemServer {
 		Ok(res.pop_handle())
 	}
 
-	pub fn GetPlayReportControllerUsages(&self, unk1: &mut [::nn::hid::system::PlayReportControllerUsage]) -> Result<(i64)> {
+	pub fn GetPlayReportControllerUsages(&self, unk1: &mut [::nn::hid::system::PlayReportControllerUsage]) -> Result<i64> {
 		let req = Request::new(541)
 			.args(())
 			;
@@ -398,7 +413,7 @@ impl IHidSystemServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn AcquirePlayReportRegisteredDeviceUpdateEvent(&self, ) -> Result<(KObject)> {
+	pub fn AcquirePlayReportRegisteredDeviceUpdateEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(542)
 			.args(())
 			;
@@ -406,7 +421,7 @@ impl IHidSystemServer {
 		Ok(res.pop_handle())
 	}
 
-	pub fn GetRegisteredDevices(&self, unk1: &mut [::nn::hid::system::RegisteredDevice]) -> Result<(i64)> {
+	pub fn GetRegisteredDevices(&self, unk1: &mut [::nn::hid::system::RegisteredDevice]) -> Result<i64> {
 		let req = Request::new(543)
 			.args(())
 			;
@@ -414,7 +429,7 @@ impl IHidSystemServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn AcquireConnectionTriggerTimeoutEvent(&self, ) -> Result<(KObject)> {
+	pub fn AcquireConnectionTriggerTimeoutEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(544)
 			.args(())
 			;
@@ -430,7 +445,7 @@ impl IHidSystemServer {
 		Ok(())
 	}
 
-	pub fn AcquireDeviceRegisteredEventForControllerSupport(&self, ) -> Result<(KObject)> {
+	pub fn AcquireDeviceRegisteredEventForControllerSupport(&self, ) -> Result<KObject> {
 		let req = Request::new(546)
 			.args(())
 			;
@@ -438,7 +453,7 @@ impl IHidSystemServer {
 		Ok(res.pop_handle())
 	}
 
-	pub fn GetAllowedBluetoothLinksCount(&self, ) -> Result<(i64)> {
+	pub fn GetAllowedBluetoothLinksCount(&self, ) -> Result<i64> {
 		let req = Request::new(547)
 			.args(())
 			;
@@ -463,7 +478,7 @@ impl IHidSystemServer {
 		Ok(())
 	}
 
-	pub fn AcquireUniquePadConnectionEventHandle(&self, ) -> Result<(KObject)> {
+	pub fn AcquireUniquePadConnectionEventHandle(&self, ) -> Result<KObject> {
 		let req = Request::new(702)
 			.args(())
 			;
@@ -471,7 +486,7 @@ impl IHidSystemServer {
 		Ok(res.pop_handle())
 	}
 
-	pub fn GetUniquePadIds(&self, unk1: &mut [::nn::hid::system::UniquePadId]) -> Result<(i64)> {
+	pub fn GetUniquePadIds(&self, unk1: &mut [::nn::hid::system::UniquePadId]) -> Result<i64> {
 		let req = Request::new(703)
 			.args(())
 			;
@@ -479,7 +494,7 @@ impl IHidSystemServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn AcquireJoyDetachOnBluetoothOffEventHandle(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<(KObject)> {
+	pub fn AcquireJoyDetachOnBluetoothOffEventHandle(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<KObject> {
 		let req = Request::new(751)
 			.args(unk0)
 			.send_pid()
@@ -488,7 +503,7 @@ impl IHidSystemServer {
 		Ok(res.pop_handle())
 	}
 
-	pub fn ListSixAxisSensorHandles(&self, unk0: ::nn::hid::system::UniquePadId, unk2: &mut [::nn::hid::system::UniqueSixAxisSensorHandle]) -> Result<(i64)> {
+	pub fn ListSixAxisSensorHandles(&self, unk0: ::nn::hid::system::UniquePadId, unk2: &mut [::nn::hid::system::UniqueSixAxisSensorHandle]) -> Result<i64> {
 		let req = Request::new(800)
 			.args(unk0)
 			;
@@ -496,7 +511,7 @@ impl IHidSystemServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn IsSixAxisSensorUserCalibrationSupported(&self, unk0: ::nn::hid::system::UniqueSixAxisSensorHandle) -> Result<(bool)> {
+	pub fn IsSixAxisSensorUserCalibrationSupported(&self, unk0: ::nn::hid::system::UniqueSixAxisSensorHandle) -> Result<bool> {
 		let req = Request::new(801)
 			.args(unk0)
 			;
@@ -528,7 +543,7 @@ impl IHidSystemServer {
 		Ok(())
 	}
 
-	pub fn GetUniquePadBluetoothAddress(&self, unk0: ::nn::hid::system::UniquePadId) -> Result<(::nn::bluetooth::Address)> {
+	pub fn GetUniquePadBluetoothAddress(&self, unk0: ::nn::hid::system::UniquePadId) -> Result<::nn::bluetooth::Address> {
 		let req = Request::new(805)
 			.args(unk0)
 			;
@@ -608,7 +623,7 @@ impl IHidSystemServer {
 		Ok(())
 	}
 
-	pub fn IsUsbFullKeyControllerEnabled(&self, ) -> Result<(bool)> {
+	pub fn IsUsbFullKeyControllerEnabled(&self, ) -> Result<bool> {
 		let req = Request::new(850)
 			.args(())
 			;
@@ -624,7 +639,7 @@ impl IHidSystemServer {
 		Ok(())
 	}
 
-	pub fn IsUsbConnected(&self, unk0: ::nn::hid::system::UniquePadId) -> Result<(bool)> {
+	pub fn IsUsbConnected(&self, unk0: ::nn::hid::system::UniquePadId) -> Result<bool> {
 		let req = Request::new(852)
 			.args(unk0)
 			;
@@ -657,7 +672,7 @@ impl IHidSystemServer {
 		Ok(())
 	}
 
-	pub fn GetFirmwareVersion(&self, unk0: ::nn::hid::system::UniquePadId) -> Result<(::nn::hid::system::FirmwareVersion)> {
+	pub fn GetFirmwareVersion(&self, unk0: ::nn::hid::system::UniquePadId) -> Result<::nn::hid::system::FirmwareVersion> {
 		let req = Request::new(1001)
 			.args(unk0)
 			;
@@ -665,7 +680,7 @@ impl IHidSystemServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetAvailableFirmwareVersion(&self, unk0: ::nn::hid::system::UniquePadId) -> Result<(::nn::hid::system::FirmwareVersion)> {
+	pub fn GetAvailableFirmwareVersion(&self, unk0: ::nn::hid::system::UniquePadId) -> Result<::nn::hid::system::FirmwareVersion> {
 		let req = Request::new(1002)
 			.args(unk0)
 			;
@@ -673,7 +688,7 @@ impl IHidSystemServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn IsFirmwareUpdateAvailable(&self, unk0: ::nn::hid::system::UniquePadId) -> Result<(bool)> {
+	pub fn IsFirmwareUpdateAvailable(&self, unk0: ::nn::hid::system::UniquePadId) -> Result<bool> {
 		let req = Request::new(1003)
 			.args(unk0)
 			;
@@ -681,7 +696,7 @@ impl IHidSystemServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn CheckFirmwareUpdateRequired(&self, unk0: ::nn::hid::system::UniquePadId) -> Result<(i64)> {
+	pub fn CheckFirmwareUpdateRequired(&self, unk0: ::nn::hid::system::UniquePadId) -> Result<i64> {
 		let req = Request::new(1004)
 			.args(unk0)
 			;
@@ -689,7 +704,7 @@ impl IHidSystemServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn StartFirmwareUpdate(&self, unk0: ::nn::hid::system::UniquePadId) -> Result<(::nn::hid::system::FirmwareUpdateDeviceHandle)> {
+	pub fn StartFirmwareUpdate(&self, unk0: ::nn::hid::system::UniquePadId) -> Result<::nn::hid::system::FirmwareUpdateDeviceHandle> {
 		let req = Request::new(1005)
 			.args(unk0)
 			;
@@ -705,7 +720,7 @@ impl IHidSystemServer {
 		Ok(())
 	}
 
-	pub fn GetFirmwareUpdateState(&self, unk0: ::nn::hid::system::FirmwareUpdateDeviceHandle) -> Result<(::nn::hid::system::FirmwareUpdateState)> {
+	pub fn GetFirmwareUpdateState(&self, unk0: ::nn::hid::system::FirmwareUpdateDeviceHandle) -> Result<::nn::hid::system::FirmwareUpdateState> {
 		let req = Request::new(1007)
 			.args(unk0)
 			;

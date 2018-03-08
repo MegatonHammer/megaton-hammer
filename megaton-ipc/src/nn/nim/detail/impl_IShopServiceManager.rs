@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IShopServiceManager(Session);
 
 impl IShopServiceManager {
+	pub fn get_service() -> Result<IShopServiceManager> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"nim:shp\0").map(|s| unsafe { IShopServiceManager::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IShopServiceManager {
 	pub fn Unknown0(&self, ) -> Result<()> {
 		let req = Request::new(0)
 			.args(())
@@ -71,7 +86,7 @@ impl IShopServiceManager {
 		Ok(())
 	}
 
-	pub fn Unknown107(&self, unk0: u64) -> Result<(u8)> {
+	pub fn Unknown107(&self, unk0: u64) -> Result<u8> {
 		let req = Request::new(107)
 			.args(unk0)
 			;

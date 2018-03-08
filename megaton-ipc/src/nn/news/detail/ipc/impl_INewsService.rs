@@ -17,7 +17,7 @@ impl INewsService {
 	}
 
 	// fn Unknown30101(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn Unknown30200(&self, ) -> Result<(u8)> {
+	pub fn Unknown30200(&self, ) -> Result<u8> {
 		let req = Request::new(30200)
 			.args(())
 			;

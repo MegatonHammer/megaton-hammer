@@ -6,7 +6,22 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IRtcManager(Session);
 
 impl IRtcManager {
-	pub fn GetExternalRtcValue(&self, ) -> Result<(u64)> {
+	pub fn get_service() -> Result<IRtcManager> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"bpc:r\0\0\0").map(|s| unsafe { IRtcManager::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IRtcManager {
+	pub fn GetExternalRtcValue(&self, ) -> Result<u64> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -22,7 +37,7 @@ impl IRtcManager {
 		Ok(())
 	}
 
-	pub fn ReadExternalRtcResetFlag(&self, ) -> Result<(u8)> {
+	pub fn ReadExternalRtcResetFlag(&self, ) -> Result<u8> {
 		let req = Request::new(2)
 			.args(())
 			;

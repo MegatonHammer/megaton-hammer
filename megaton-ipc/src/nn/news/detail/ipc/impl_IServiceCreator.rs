@@ -6,7 +6,38 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IServiceCreator(Session);
 
 impl IServiceCreator {
-	pub fn Unknown0(&self, ) -> Result<(Session)> {
+	pub fn get_service() -> Result<IServiceCreator> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"news:a\0\0").map(|s| unsafe { IServiceCreator::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		let r = sm.GetService(*b"news:c\0\0").map(|s| unsafe { IServiceCreator::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		let r = sm.GetService(*b"news:m\0\0").map(|s| unsafe { IServiceCreator::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		let r = sm.GetService(*b"news:p\0\0").map(|s| unsafe { IServiceCreator::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		let r = sm.GetService(*b"news:v\0\0").map(|s| unsafe { IServiceCreator::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IServiceCreator {
+	pub fn Unknown0(&self, ) -> Result<Session> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -14,7 +45,7 @@ impl IServiceCreator {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn Unknown1(&self, ) -> Result<(Session)> {
+	pub fn Unknown1(&self, ) -> Result<Session> {
 		let req = Request::new(1)
 			.args(())
 			;
@@ -22,7 +53,7 @@ impl IServiceCreator {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn Unknown2(&self, ) -> Result<(Session)> {
+	pub fn Unknown2(&self, ) -> Result<Session> {
 		let req = Request::new(2)
 			.args(())
 			;
@@ -30,7 +61,7 @@ impl IServiceCreator {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn Unknown3(&self, ) -> Result<(Session)> {
+	pub fn Unknown3(&self, ) -> Result<Session> {
 		let req = Request::new(3)
 			.args(())
 			;
@@ -38,7 +69,7 @@ impl IServiceCreator {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn Unknown4(&self, ) -> Result<(Session)> {
+	pub fn Unknown4(&self, ) -> Result<Session> {
 		let req = Request::new(4)
 			.args(())
 			;

@@ -6,6 +6,21 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct ITaskService(Session);
 
 impl ITaskService {
+	pub fn get_service() -> Result<ITaskService> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"bgtc:t\0\0").map(|s| unsafe { ITaskService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl ITaskService {
 	pub fn Unknown1(&self, ) -> Result<()> {
 		let req = Request::new(1)
 			.args(())
@@ -22,7 +37,7 @@ impl ITaskService {
 		Ok(())
 	}
 
-	pub fn Unknown3(&self, ) -> Result<(KObject)> {
+	pub fn Unknown3(&self, ) -> Result<KObject> {
 		let req = Request::new(3)
 			.args(())
 			;
@@ -30,7 +45,7 @@ impl ITaskService {
 		Ok(res.pop_handle())
 	}
 
-	pub fn Unknown4(&self, ) -> Result<(u8)> {
+	pub fn Unknown4(&self, ) -> Result<u8> {
 		let req = Request::new(4)
 			.args(())
 			;
@@ -39,7 +54,7 @@ impl ITaskService {
 	}
 
 	// fn Unknown5(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn Unknown6(&self, ) -> Result<(u8)> {
+	pub fn Unknown6(&self, ) -> Result<u8> {
 		let req = Request::new(6)
 			.args(())
 			;
@@ -55,7 +70,7 @@ impl ITaskService {
 		Ok(())
 	}
 
-	pub fn Unknown12(&self, ) -> Result<(u32)> {
+	pub fn Unknown12(&self, ) -> Result<u32> {
 		let req = Request::new(12)
 			.args(())
 			;
@@ -71,7 +86,7 @@ impl ITaskService {
 		Ok(())
 	}
 
-	pub fn Unknown14(&self, ) -> Result<(KObject)> {
+	pub fn Unknown14(&self, ) -> Result<KObject> {
 		let req = Request::new(14)
 			.args(())
 			;
@@ -95,7 +110,7 @@ impl ITaskService {
 		Ok(())
 	}
 
-	pub fn Unknown101(&self, ) -> Result<(u32)> {
+	pub fn Unknown101(&self, ) -> Result<u32> {
 		let req = Request::new(101)
 			.args(())
 			;
@@ -103,7 +118,7 @@ impl ITaskService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown102(&self, ) -> Result<(u8)> {
+	pub fn Unknown102(&self, ) -> Result<u8> {
 		let req = Request::new(102)
 			.args(())
 			;
@@ -111,7 +126,7 @@ impl ITaskService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown103(&self, ) -> Result<(u8)> {
+	pub fn Unknown103(&self, ) -> Result<u8> {
 		let req = Request::new(103)
 			.args(())
 			;

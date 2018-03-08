@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IApplicationDisplayService(Session);
 
 impl IApplicationDisplayService {
-	pub fn GetRelayService(&self, ) -> Result<(::nns::hosbinder::IHOSBinderDriver)> {
+	pub fn GetRelayService(&self, ) -> Result<::nns::hosbinder::IHOSBinderDriver> {
 		let req = Request::new(100)
 			.args(())
 			;
@@ -14,7 +14,7 @@ impl IApplicationDisplayService {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetSystemDisplayService(&self, ) -> Result<(::nn::visrv::sf::ISystemDisplayService)> {
+	pub fn GetSystemDisplayService(&self, ) -> Result<::nn::visrv::sf::ISystemDisplayService> {
 		let req = Request::new(101)
 			.args(())
 			;
@@ -22,7 +22,7 @@ impl IApplicationDisplayService {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetManagerDisplayService(&self, ) -> Result<(::nn::visrv::sf::IManagerDisplayService)> {
+	pub fn GetManagerDisplayService(&self, ) -> Result<::nn::visrv::sf::IManagerDisplayService> {
 		let req = Request::new(102)
 			.args(())
 			;
@@ -31,7 +31,7 @@ impl IApplicationDisplayService {
 	}
 
 	#[cfg(feature = "switch-2.0.0")]
-	pub fn GetIndirectDisplayTransactionService(&self, ) -> Result<(::nns::hosbinder::IHOSBinderDriver)> {
+	pub fn GetIndirectDisplayTransactionService(&self, ) -> Result<::nns::hosbinder::IHOSBinderDriver> {
 		let req = Request::new(103)
 			.args(())
 			;
@@ -39,7 +39,7 @@ impl IApplicationDisplayService {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn ListDisplays(&self, unk1: &mut [::nn::vi::DisplayInfo]) -> Result<(i64)> {
+	pub fn ListDisplays(&self, unk1: &mut [::nn::vi::DisplayInfo]) -> Result<i64> {
 		let req = Request::new(1000)
 			.args(())
 			;
@@ -47,7 +47,7 @@ impl IApplicationDisplayService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn OpenDisplay(&self, unk0: ::nn::vi::DisplayName) -> Result<(u64)> {
+	pub fn OpenDisplay(&self, unk0: ::nn::vi::DisplayName) -> Result<u64> {
 		let req = Request::new(1010)
 			.args(unk0)
 			;
@@ -55,7 +55,7 @@ impl IApplicationDisplayService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn OpenDefaultDisplay(&self, ) -> Result<(u64)> {
+	pub fn OpenDefaultDisplay(&self, ) -> Result<u64> {
 		let req = Request::new(1011)
 			.args(())
 			;
@@ -155,7 +155,7 @@ impl IApplicationDisplayService {
 		Ok((res.get_raw().unk2.clone(),res.get_raw().unk3.clone()))
 	}
 
-	pub fn GetDisplayVsyncEvent(&self, unk0: u64) -> Result<(KObject)> {
+	pub fn GetDisplayVsyncEvent(&self, unk0: u64) -> Result<KObject> {
 		let req = Request::new(5202)
 			.args(unk0)
 			;
@@ -163,7 +163,7 @@ impl IApplicationDisplayService {
 		Ok(res.pop_handle())
 	}
 
-	pub fn GetDisplayVsyncEventForDebug(&self, unk0: u64) -> Result<(KObject)> {
+	pub fn GetDisplayVsyncEventForDebug(&self, unk0: u64) -> Result<KObject> {
 		let req = Request::new(5203)
 			.args(unk0)
 			;

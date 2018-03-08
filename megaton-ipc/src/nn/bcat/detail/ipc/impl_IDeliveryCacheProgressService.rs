@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IDeliveryCacheProgressService(Session);
 
 impl IDeliveryCacheProgressService {
-	pub fn GetEvent(&self, ) -> Result<(KObject)> {
+	pub fn GetEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(0)
 			.args(())
 			;

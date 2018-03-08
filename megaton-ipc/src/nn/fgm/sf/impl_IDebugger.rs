@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IDebugger(Session);
 
 impl IDebugger {
-	pub fn Initialize(&self, unk0: u64, unk1: KObject) -> Result<(KObject)> {
+	pub fn Initialize(&self, unk0: u64, unk1: KObject) -> Result<KObject> {
 		let req = Request::new(0)
 			.args(unk0)
 			;

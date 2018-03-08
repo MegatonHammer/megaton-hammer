@@ -8,7 +8,7 @@ pub struct IHtcManager(Session);
 impl IHtcManager {
 	// fn Unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn Unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn Unknown2(&self, ) -> Result<(KObject)> {
+	pub fn Unknown2(&self, ) -> Result<KObject> {
 		let req = Request::new(2)
 			.args(())
 			;
@@ -16,7 +16,7 @@ impl IHtcManager {
 		Ok(res.pop_handle())
 	}
 
-	pub fn Unknown3(&self, ) -> Result<(KObject)> {
+	pub fn Unknown3(&self, ) -> Result<KObject> {
 		let req = Request::new(3)
 			.args(())
 			;
@@ -24,7 +24,7 @@ impl IHtcManager {
 		Ok(res.pop_handle())
 	}
 
-	pub fn Unknown4(&self, ) -> Result<(KObject)> {
+	pub fn Unknown4(&self, ) -> Result<KObject> {
 		let req = Request::new(4)
 			.args(())
 			;
@@ -32,7 +32,7 @@ impl IHtcManager {
 		Ok(res.pop_handle())
 	}
 
-	pub fn Unknown5(&self, ) -> Result<(KObject)> {
+	pub fn Unknown5(&self, ) -> Result<KObject> {
 		let req = Request::new(5)
 			.args(())
 			;

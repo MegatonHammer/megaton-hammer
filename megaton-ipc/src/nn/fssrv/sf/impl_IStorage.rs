@@ -54,7 +54,7 @@ impl IStorage {
 		Ok(())
 	}
 
-	pub fn GetSize(&self, ) -> Result<(u64)> {
+	pub fn GetSize(&self, ) -> Result<u64> {
 		let req = Request::new(4)
 			.args(())
 			;

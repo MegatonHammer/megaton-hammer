@@ -125,7 +125,7 @@ impl IUser {
 		Ok(())
 	}
 
-	pub fn Unknown17(&self, unk0: u64) -> Result<(KObject)> {
+	pub fn Unknown17(&self, unk0: u64) -> Result<KObject> {
 		let req = Request::new(17)
 			.args(unk0)
 			;
@@ -133,7 +133,7 @@ impl IUser {
 		Ok(res.pop_handle())
 	}
 
-	pub fn Unknown18(&self, unk0: u64) -> Result<(KObject)> {
+	pub fn Unknown18(&self, unk0: u64) -> Result<KObject> {
 		let req = Request::new(18)
 			.args(unk0)
 			;
@@ -141,7 +141,7 @@ impl IUser {
 		Ok(res.pop_handle())
 	}
 
-	pub fn Unknown19(&self, ) -> Result<(u32)> {
+	pub fn Unknown19(&self, ) -> Result<u32> {
 		let req = Request::new(19)
 			.args(())
 			;
@@ -149,7 +149,7 @@ impl IUser {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown20(&self, unk0: u64) -> Result<(u32)> {
+	pub fn Unknown20(&self, unk0: u64) -> Result<u32> {
 		let req = Request::new(20)
 			.args(unk0)
 			;
@@ -157,7 +157,7 @@ impl IUser {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown21(&self, unk0: u64) -> Result<(u32)> {
+	pub fn Unknown21(&self, unk0: u64) -> Result<u32> {
 		let req = Request::new(21)
 			.args(unk0)
 			;
@@ -165,7 +165,7 @@ impl IUser {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown22(&self, unk0: u64) -> Result<(u32)> {
+	pub fn Unknown22(&self, unk0: u64) -> Result<u32> {
 		let req = Request::new(22)
 			.args(unk0)
 			;
@@ -173,7 +173,7 @@ impl IUser {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown23(&self, ) -> Result<(KObject)> {
+	pub fn Unknown23(&self, ) -> Result<KObject> {
 		let req = Request::new(23)
 			.args(())
 			;

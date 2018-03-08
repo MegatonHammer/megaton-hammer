@@ -6,7 +6,7 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IDeliveryCacheStorageService(Session);
 
 impl IDeliveryCacheStorageService {
-	pub fn CreateFileService(&self, ) -> Result<(::nn::bcat::detail::ipc::IDeliveryCacheFileService)> {
+	pub fn CreateFileService(&self, ) -> Result<::nn::bcat::detail::ipc::IDeliveryCacheFileService> {
 		let req = Request::new(0)
 			.args(())
 			;
@@ -14,7 +14,7 @@ impl IDeliveryCacheStorageService {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn CreateDirectoryService(&self, ) -> Result<(::nn::bcat::detail::ipc::IDeliveryCacheDirectoryService)> {
+	pub fn CreateDirectoryService(&self, ) -> Result<::nn::bcat::detail::ipc::IDeliveryCacheDirectoryService> {
 		let req = Request::new(1)
 			.args(())
 			;
@@ -22,7 +22,7 @@ impl IDeliveryCacheStorageService {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn EnumerateDeliveryCacheDirectory(&self, unk1: &mut [::nn::bcat::DirectoryName]) -> Result<(i32)> {
+	pub fn EnumerateDeliveryCacheDirectory(&self, unk1: &mut [::nn::bcat::DirectoryName]) -> Result<i32> {
 		let req = Request::new(10)
 			.args(())
 			;

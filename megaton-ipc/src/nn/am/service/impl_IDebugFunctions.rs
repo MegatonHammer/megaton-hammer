@@ -14,7 +14,7 @@ impl IDebugFunctions {
 		Ok(())
 	}
 
-	pub fn OpenMainApplication(&self, ) -> Result<(::nn::am::service::IApplicationAccessor)> {
+	pub fn OpenMainApplication(&self, ) -> Result<::nn::am::service::IApplicationAccessor> {
 		let req = Request::new(1)
 			.args(())
 			;

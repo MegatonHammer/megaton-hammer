@@ -1,4 +1,5 @@
 pub mod detail;
+pub type Requirement = [u8; 0x24];
 pub type SsidListVersion = u128;
 pub type IpSettingData = ();
 pub type IpAddressSetting = [u8; 0xd];
@@ -7,4 +8,3 @@ pub type TelemetryInfo = ();
 pub type IpV4Address = u32;
 pub type ClientId = ();
 pub type DnsSetting = [u8; 9];
-pub type Requirement = [u8; 0x24];

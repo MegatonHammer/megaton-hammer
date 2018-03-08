@@ -22,7 +22,7 @@ impl IPortSession {
 		Ok(())
 	}
 
-	pub fn Unknown2(&self, ) -> Result<(u64)> {
+	pub fn Unknown2(&self, ) -> Result<u64> {
 		let req = Request::new(2)
 			.args(())
 			;
@@ -38,7 +38,7 @@ impl IPortSession {
 		Ok(())
 	}
 
-	pub fn Unknown4(&self, ) -> Result<(u64)> {
+	pub fn Unknown4(&self, ) -> Result<u64> {
 		let req = Request::new(4)
 			.args(())
 			;
@@ -62,7 +62,7 @@ impl IPortSession {
 		Ok(())
 	}
 
-	pub fn Unknown7(&self, unk0: u32) -> Result<(u8)> {
+	pub fn Unknown7(&self, unk0: u32) -> Result<u8> {
 		let req = Request::new(7)
 			.args(unk0)
 			;

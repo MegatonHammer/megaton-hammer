@@ -6,7 +6,30 @@ use megaton_hammer::ipc::{Request, Response};
 pub struct IStaticService(Session);
 
 impl IStaticService {
-	pub fn CreateGeneralServiceOld(&self, ) -> Result<(::nn::nifm::detail::IGeneralService)> {
+	pub fn get_service() -> Result<IStaticService> {
+		use nn::sm::detail::IUserInterface;
+		use megaton_hammer::kernel::svc;
+		use megaton_hammer::error::Error;
+
+		let sm = IUserInterface::get_service()?;
+		let r = sm.GetService(*b"nifm:a\0\0").map(|s| unsafe { IStaticService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		let r = sm.GetService(*b"nifm:s\0\0").map(|s| unsafe { IStaticService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		let r = sm.GetService(*b"nifm:u\0\0").map(|s| unsafe { IStaticService::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
+impl IStaticService {
+	pub fn CreateGeneralServiceOld(&self, ) -> Result<::nn::nifm::detail::IGeneralService> {
 		let req = Request::new(4)
 			.args(())
 			;
@@ -14,7 +37,7 @@ impl IStaticService {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn CreateGeneralService(&self, unk0: u64) -> Result<(::nn::nifm::detail::IGeneralService)> {
+	pub fn CreateGeneralService(&self, unk0: u64) -> Result<::nn::nifm::detail::IGeneralService> {
 		let req = Request::new(5)
 			.args(unk0)
 			.send_pid()
