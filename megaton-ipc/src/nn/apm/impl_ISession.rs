@@ -1,7 +1,7 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct ISession(Session);
 
@@ -21,13 +21,15 @@ impl ISession {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn GetPerformanceConfiguration(&self, unk0: ::nn::apm::PerformanceMode) -> Result<::nn::apm::PerformanceConfiguration> {
+
+	pub fn GetPerformanceConfiguration(&self, unk0: ::nn::apm::PerformanceMode) -> Result<(::nn::apm::PerformanceConfiguration)> {
 		let req = Request::new(1)
 			.args(unk0)
 			;
 		let mut res : Response<::nn::apm::PerformanceConfiguration> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 }
 
 impl FromKObject for ISession {

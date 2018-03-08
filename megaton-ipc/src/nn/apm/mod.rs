@@ -1,12 +1,12 @@
 mod impl_ISession;
 pub use self::impl_ISession::*;
-mod impl_ISystemManager;
-pub use self::impl_ISystemManager::*;
 mod impl_IManagerPrivileged;
 pub use self::impl_IManagerPrivileged::*;
+mod impl_ISystemManager;
+pub use self::impl_ISystemManager::*;
 mod impl_IManager;
 pub use self::impl_IManager::*;
+pub type ThrottlingState = [u8; 0x28];
 pub type PerformanceMode = u32;
 pub type EventTarget = u32;
 pub type PerformanceConfiguration = u32;
-pub type ThrottlingState = [u8; 0x28];

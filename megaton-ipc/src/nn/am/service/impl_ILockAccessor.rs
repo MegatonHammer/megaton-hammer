@@ -1,12 +1,19 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct ILockAccessor(Session);
 
 impl ILockAccessor {
-	// fn TryLock(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn TryLock(&self, unk0: bool) -> Result<(bool, KObject)> {
+		let req = Request::new(1)
+			.args(unk0)
+			;
+		let mut res : Response<bool> = self.0.send(req)?;
+		Ok((*res.get_raw(),res.pop_handle()))
+	}
+
 	pub fn Unlock(&self, ) -> Result<()> {
 		let req = Request::new(2)
 			.args(())
@@ -14,7 +21,15 @@ impl ILockAccessor {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	// fn GetEvent(&self, UNKNOWN) -> Result<UNKNOWN>;
+
+	pub fn GetEvent(&self, ) -> Result<(KObject)> {
+		let req = Request::new(3)
+			.args(())
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(res.pop_handle())
+	}
+
 }
 
 impl FromKObject for ILockAccessor {

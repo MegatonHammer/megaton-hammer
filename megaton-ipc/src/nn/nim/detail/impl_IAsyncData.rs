@@ -1,7 +1,7 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct IAsyncData(Session);
 
@@ -13,6 +13,7 @@ impl IAsyncData {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown1(&self, ) -> Result<()> {
 		let req = Request::new(1)
 			.args(())
@@ -20,13 +21,15 @@ impl IAsyncData {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn Unknown2(&self, ) -> Result<u64> {
+
+	pub fn Unknown2(&self, ) -> Result<(u64)> {
 		let req = Request::new(2)
 			.args(())
 			;
 		let mut res : Response<u64> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn Unknown3(&self, ) -> Result<()> {
 		let req = Request::new(3)
 			.args(())
@@ -34,6 +37,7 @@ impl IAsyncData {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown4(&self, ) -> Result<()> {
 		let req = Request::new(4)
 			.args(())
@@ -41,6 +45,7 @@ impl IAsyncData {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 }
 
 impl FromKObject for IAsyncData {

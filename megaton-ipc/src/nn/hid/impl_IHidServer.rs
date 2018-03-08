@@ -1,12 +1,12 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct IHidServer(Session);
 
 impl IHidServer {
-	pub fn CreateAppletResource(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<::nn::hid::IAppletResource> {
+	pub fn CreateAppletResource(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<(::nn::hid::IAppletResource)> {
 		let req = Request::new(0)
 			.args(unk0)
 			.send_pid()
@@ -14,6 +14,7 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
+
 	pub fn ActivateDebugPad(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		let req = Request::new(1)
 			.args(unk0)
@@ -22,6 +23,7 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn ActivateTouchScreen(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		let req = Request::new(11)
 			.args(unk0)
@@ -30,6 +32,7 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn ActivateMouse(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		let req = Request::new(21)
 			.args(unk0)
@@ -38,6 +41,7 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn ActivateKeyboard(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		let req = Request::new(31)
 			.args(unk0)
@@ -46,7 +50,15 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	// fn AcquireXpadIdEventHandle(&self, UNKNOWN) -> Result<UNKNOWN>;
+
+	pub fn AcquireXpadIdEventHandle(&self, unk0: u64) -> Result<(KObject)> {
+		let req = Request::new(40)
+			.args(unk0)
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(res.pop_handle())
+	}
+
 	pub fn ReleaseXpadIdEventHandle(&self, unk0: u64) -> Result<()> {
 		let req = Request::new(41)
 			.args(unk0)
@@ -54,6 +66,7 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn ActivateXpad(&self, unk0: ::nn::hid::BasicXpadId, unk1: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -70,13 +83,15 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn GetXpadIds(&self, unk1: &mut [::nn::hid::BasicXpadId]) -> Result<i64> {
+
+	pub fn GetXpadIds(&self, unk1: &mut [::nn::hid::BasicXpadId]) -> Result<(i64)> {
 		let req = Request::new(55)
 			.args(())
 			;
 		let mut res : Response<i64> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn ActivateJoyXpad(&self, unk0: ::nn::hid::JoyXpadId) -> Result<()> {
 		let req = Request::new(56)
 			.args(unk0)
@@ -84,14 +99,23 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	// fn GetJoyXpadLifoHandle(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn GetJoyXpadIds(&self, unk1: &mut [::nn::hid::JoyXpadId]) -> Result<i64> {
+
+	pub fn GetJoyXpadLifoHandle(&self, unk0: ::nn::hid::JoyXpadId) -> Result<(KObject)> {
+		let req = Request::new(58)
+			.args(unk0)
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(res.pop_handle())
+	}
+
+	pub fn GetJoyXpadIds(&self, unk1: &mut [::nn::hid::JoyXpadId]) -> Result<(i64)> {
 		let req = Request::new(59)
 			.args(())
 			;
 		let mut res : Response<i64> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn ActivateSixAxisSensor(&self, unk0: ::nn::hid::BasicXpadId) -> Result<()> {
 		let req = Request::new(60)
 			.args(unk0)
@@ -99,6 +123,7 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn DeactivateSixAxisSensor(&self, unk0: ::nn::hid::BasicXpadId) -> Result<()> {
 		let req = Request::new(61)
 			.args(unk0)
@@ -106,7 +131,15 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	// fn GetSixAxisSensorLifoHandle(&self, UNKNOWN) -> Result<UNKNOWN>;
+
+	pub fn GetSixAxisSensorLifoHandle(&self, unk0: ::nn::hid::BasicXpadId) -> Result<(KObject)> {
+		let req = Request::new(62)
+			.args(unk0)
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(res.pop_handle())
+	}
+
 	pub fn ActivateJoySixAxisSensor(&self, unk0: ::nn::hid::JoyXpadId) -> Result<()> {
 		let req = Request::new(63)
 			.args(unk0)
@@ -114,6 +147,7 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn DeactivateJoySixAxisSensor(&self, unk0: ::nn::hid::JoyXpadId) -> Result<()> {
 		let req = Request::new(64)
 			.args(unk0)
@@ -121,7 +155,15 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	// fn GetJoySixAxisSensorLifoHandle(&self, UNKNOWN) -> Result<UNKNOWN>;
+
+	pub fn GetJoySixAxisSensorLifoHandle(&self, unk0: ::nn::hid::JoyXpadId) -> Result<(KObject)> {
+		let req = Request::new(65)
+			.args(unk0)
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(res.pop_handle())
+	}
+
 	pub fn StartSixAxisSensor(&self, unk0: ::nn::hid::SixAxisSensorHandle, unk1: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -138,6 +180,7 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn StopSixAxisSensor(&self, unk0: ::nn::hid::SixAxisSensorHandle, unk1: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -154,7 +197,8 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn IsSixAxisSensorFusionEnabled(&self, unk0: ::nn::hid::SixAxisSensorHandle, unk1: ::nn::applet::AppletResourceUserId) -> Result<bool> {
+
+	pub fn IsSixAxisSensorFusionEnabled(&self, unk0: ::nn::hid::SixAxisSensorHandle, unk1: ::nn::applet::AppletResourceUserId) -> Result<(bool)> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: ::nn::hid::SixAxisSensorHandle,
@@ -170,6 +214,7 @@ impl IHidServer {
 		let mut res : Response<bool> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn EnableSixAxisSensorFusion(&self, unk0: bool, unk1: ::nn::hid::SixAxisSensorHandle, unk2: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -188,6 +233,7 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn SetSixAxisSensorFusionParameters(&self, unk0: ::nn::hid::SixAxisSensorHandle, unk1: f32, unk2: f32, unk3: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -208,6 +254,7 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn GetSixAxisSensorFusionParameters(&self, unk0: ::nn::hid::SixAxisSensorHandle, unk1: ::nn::applet::AppletResourceUserId) -> Result<(f32, f32)> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -228,6 +275,7 @@ impl IHidServer {
 		let mut res : Response<OutRaw> = self.0.send(req)?;
 		Ok((res.get_raw().unk3.clone(),res.get_raw().unk4.clone()))
 	}
+
 	pub fn ResetSixAxisSensorFusionParameters(&self, unk0: ::nn::hid::SixAxisSensorHandle, unk1: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -244,6 +292,7 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn SetAccelerometerParameters(&self, unk0: ::nn::hid::SixAxisSensorHandle, unk1: f32, unk2: f32, unk3: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -264,6 +313,7 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn GetAccelerometerParameters(&self, unk0: ::nn::hid::SixAxisSensorHandle, unk1: ::nn::applet::AppletResourceUserId) -> Result<(f32, f32)> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -284,6 +334,7 @@ impl IHidServer {
 		let mut res : Response<OutRaw> = self.0.send(req)?;
 		Ok((res.get_raw().unk3.clone(),res.get_raw().unk4.clone()))
 	}
+
 	pub fn ResetAccelerometerParameters(&self, unk0: ::nn::hid::SixAxisSensorHandle, unk1: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -300,6 +351,7 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn SetAccelerometerPlayMode(&self, unk0: ::nn::hid::SixAxisSensorHandle, unk1: u32, unk2: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -318,7 +370,8 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn GetAccelerometerPlayMode(&self, unk0: ::nn::hid::SixAxisSensorHandle, unk1: ::nn::applet::AppletResourceUserId) -> Result<u32> {
+
+	pub fn GetAccelerometerPlayMode(&self, unk0: ::nn::hid::SixAxisSensorHandle, unk1: ::nn::applet::AppletResourceUserId) -> Result<(u32)> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: ::nn::hid::SixAxisSensorHandle,
@@ -334,6 +387,7 @@ impl IHidServer {
 		let mut res : Response<u32> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn ResetAccelerometerPlayMode(&self, unk0: ::nn::hid::SixAxisSensorHandle, unk1: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -350,6 +404,7 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn SetGyroscopeZeroDriftMode(&self, unk0: ::nn::hid::SixAxisSensorHandle, unk1: u32, unk2: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -368,7 +423,8 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn GetGyroscopeZeroDriftMode(&self, unk0: ::nn::hid::SixAxisSensorHandle, unk1: ::nn::applet::AppletResourceUserId) -> Result<u32> {
+
+	pub fn GetGyroscopeZeroDriftMode(&self, unk0: ::nn::hid::SixAxisSensorHandle, unk1: ::nn::applet::AppletResourceUserId) -> Result<(u32)> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: ::nn::hid::SixAxisSensorHandle,
@@ -384,6 +440,7 @@ impl IHidServer {
 		let mut res : Response<u32> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn ResetGyroscopeZeroDriftMode(&self, unk0: ::nn::hid::SixAxisSensorHandle, unk1: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -400,7 +457,8 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn IsSixAxisSensorAtRest(&self, unk0: ::nn::hid::SixAxisSensorHandle, unk1: ::nn::applet::AppletResourceUserId) -> Result<bool> {
+
+	pub fn IsSixAxisSensorAtRest(&self, unk0: ::nn::hid::SixAxisSensorHandle, unk1: ::nn::applet::AppletResourceUserId) -> Result<(bool)> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: ::nn::hid::SixAxisSensorHandle,
@@ -416,6 +474,7 @@ impl IHidServer {
 		let mut res : Response<bool> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn ActivateGesture(&self, unk0: i32, unk1: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -432,6 +491,7 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn SetSupportedNpadStyleSet(&self, unk0: ::nn::hid::NpadStyleTag, unk1: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -448,7 +508,8 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn GetSupportedNpadStyleSet(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<::nn::hid::NpadStyleTag> {
+
+	pub fn GetSupportedNpadStyleSet(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<(::nn::hid::NpadStyleTag)> {
 		let req = Request::new(101)
 			.args(unk0)
 			.send_pid()
@@ -456,6 +517,7 @@ impl IHidServer {
 		let mut res : Response<::nn::hid::NpadStyleTag> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn SetSupportedNpadIdType(&self, unk0: ::nn::applet::AppletResourceUserId, unk2: &[u32]) -> Result<()> {
 		let req = Request::new(102)
 			.args(unk0)
@@ -464,6 +526,7 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn ActivateNpad(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		let req = Request::new(103)
 			.args(unk0)
@@ -472,6 +535,7 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn DeactivateNpad(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		let req = Request::new(104)
 			.args(unk0)
@@ -480,7 +544,26 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	// fn AcquireNpadStyleSetUpdateEventHandle(&self, UNKNOWN) -> Result<UNKNOWN>;
+
+	pub fn AcquireNpadStyleSetUpdateEventHandle(&self, unk0: u32, unk1: ::nn::applet::AppletResourceUserId, unk2: u64) -> Result<(KObject)> {
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: u32,
+			unk1: ::nn::applet::AppletResourceUserId,
+			unk2: u64,
+		}
+		let req = Request::new(106)
+			.args(InRaw {
+				unk0,
+				unk1,
+				unk2,
+			})
+			.send_pid()
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(res.pop_handle())
+	}
+
 	pub fn DisconnectNpad(&self, unk0: u32, unk1: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -497,13 +580,15 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn GetPlayerLedPattern(&self, unk0: u32) -> Result<u64> {
+
+	pub fn GetPlayerLedPattern(&self, unk0: u32) -> Result<(u64)> {
 		let req = Request::new(108)
 			.args(unk0)
 			;
 		let mut res : Response<u64> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn SetNpadJoyHoldType(&self, unk0: ::nn::applet::AppletResourceUserId, unk1: i64) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -520,7 +605,8 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn GetNpadJoyHoldType(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<i64> {
+
+	pub fn GetNpadJoyHoldType(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<(i64)> {
 		let req = Request::new(121)
 			.args(unk0)
 			.send_pid()
@@ -528,6 +614,7 @@ impl IHidServer {
 		let mut res : Response<i64> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn SetNpadJoyAssignmentModeSingleByDefault(&self, unk0: u32, unk1: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -544,6 +631,7 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn SetNpadJoyAssignmentModeSingle(&self, unk0: u32, unk1: ::nn::applet::AppletResourceUserId, unk2: i64) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -562,6 +650,7 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn SetNpadJoyAssignmentModeDual(&self, unk0: u32, unk1: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -578,6 +667,7 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn MergeSingleJoyAsDualJoy(&self, unk0: u32, unk1: u32, unk2: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -596,6 +686,7 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn StartLrAssignmentMode(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		let req = Request::new(126)
 			.args(unk0)
@@ -604,6 +695,7 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn StopLrAssignmentMode(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		let req = Request::new(127)
 			.args(unk0)
@@ -612,6 +704,7 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn SetNpadHandheldActivationMode(&self, unk0: ::nn::applet::AppletResourceUserId, unk1: i64) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -628,7 +721,8 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn GetNpadHandheldActivationMode(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<i64> {
+
+	pub fn GetNpadHandheldActivationMode(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<(i64)> {
 		let req = Request::new(129)
 			.args(unk0)
 			.send_pid()
@@ -636,6 +730,7 @@ impl IHidServer {
 		let mut res : Response<i64> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn SwapNpadAssignment(&self, unk0: u32, unk1: u32, unk2: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -654,7 +749,8 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn IsUnintendedHomeButtonInputProtectionEnabled(&self, unk0: u32, unk1: ::nn::applet::AppletResourceUserId) -> Result<bool> {
+
+	pub fn IsUnintendedHomeButtonInputProtectionEnabled(&self, unk0: u32, unk1: ::nn::applet::AppletResourceUserId) -> Result<(bool)> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: u32,
@@ -670,6 +766,7 @@ impl IHidServer {
 		let mut res : Response<bool> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn EnableUnintendedHomeButtonInputProtection(&self, unk0: bool, unk1: u32, unk2: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -688,15 +785,17 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn GetVibrationDeviceInfo(&self, unk0: ::nn::hid::VibrationDeviceHandle) -> Result<::nn::hid::VibrationDeviceInfoForIpc> {
+
+	pub fn GetVibrationDeviceInfo(&self, unk0: ::nn::hid::VibrationDeviceHandle) -> Result<(::nn::hid::VibrationDeviceInfoForIpc)> {
 		let req = Request::new(200)
 			.args(unk0)
 			;
 		let mut res : Response<::nn::hid::VibrationDeviceInfoForIpc> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	// fn SendVibrationValue(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn GetActualVibrationValue(&self, unk0: ::nn::hid::VibrationDeviceHandle, unk1: ::nn::applet::AppletResourceUserId) -> Result<::nn::hid::VibrationValue> {
+	pub fn GetActualVibrationValue(&self, unk0: ::nn::hid::VibrationDeviceHandle, unk1: ::nn::applet::AppletResourceUserId) -> Result<(::nn::hid::VibrationValue)> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: ::nn::hid::VibrationDeviceHandle,
@@ -712,13 +811,15 @@ impl IHidServer {
 		let mut res : Response<::nn::hid::VibrationValue> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
-	pub fn CreateActiveVibrationDeviceList(&self, ) -> Result<::nn::hid::IActiveVibrationDeviceList> {
+
+	pub fn CreateActiveVibrationDeviceList(&self, ) -> Result<(::nn::hid::IActiveVibrationDeviceList)> {
 		let req = Request::new(203)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
+
 	pub fn PermitVibration(&self, unk0: bool) -> Result<()> {
 		let req = Request::new(204)
 			.args(unk0)
@@ -726,13 +827,15 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn IsVibrationPermitted(&self, ) -> Result<bool> {
+
+	pub fn IsVibrationPermitted(&self, ) -> Result<(bool)> {
 		let req = Request::new(205)
 			.args(())
 			;
 		let mut res : Response<bool> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn SendVibrationValues(&self, unk0: ::nn::applet::AppletResourceUserId, unk1: &[::nn::hid::VibrationDeviceHandle], unk2: &[::nn::hid::VibrationValue]) -> Result<()> {
 		let req = Request::new(206)
 			.args(unk0)
@@ -740,6 +843,7 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn ActivateConsoleSixAxisSensor(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		let req = Request::new(300)
 			.args(unk0)
@@ -748,6 +852,7 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn StartConsoleSixAxisSensor(&self, unk0: ::nn::hid::ConsoleSixAxisSensorHandle, unk1: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -764,6 +869,7 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn StopConsoleSixAxisSensor(&self, unk0: ::nn::hid::ConsoleSixAxisSensorHandle, unk1: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -780,13 +886,15 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn IsUsbFullKeyControllerEnabled(&self, ) -> Result<bool> {
+
+	pub fn IsUsbFullKeyControllerEnabled(&self, ) -> Result<(bool)> {
 		let req = Request::new(400)
 			.args(())
 			;
 		let mut res : Response<bool> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn EnableUsbFullKeyController(&self, unk0: bool) -> Result<()> {
 		let req = Request::new(401)
 			.args(unk0)
@@ -794,13 +902,15 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn IsUsbFullKeyControllerConnected(&self, unk0: u32) -> Result<bool> {
+
+	pub fn IsUsbFullKeyControllerConnected(&self, unk0: u32) -> Result<(bool)> {
 		let req = Request::new(402)
 			.args(unk0)
 			;
 		let mut res : Response<bool> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn SetNpadCommunicationMode(&self, unk0: ::nn::applet::AppletResourceUserId, unk1: i64) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -817,13 +927,15 @@ impl IHidServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn GetNpadCommunicationMode(&self, ) -> Result<i64> {
+
+	pub fn GetNpadCommunicationMode(&self, ) -> Result<(i64)> {
 		let req = Request::new(1001)
 			.args(())
 			;
 		let mut res : Response<i64> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 }
 
 impl FromKObject for IHidServer {

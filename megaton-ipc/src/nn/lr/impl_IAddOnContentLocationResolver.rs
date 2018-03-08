@@ -1,7 +1,7 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct IAddOnContentLocationResolver(Session);
 
@@ -13,6 +13,7 @@ impl IAddOnContentLocationResolver {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn RegisterAddOnContent(&self, unk0: u8, unk1: u64) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -28,6 +29,7 @@ impl IAddOnContentLocationResolver {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn ClearAddOnContentLocationResolver(&self, ) -> Result<()> {
 		let req = Request::new(2)
 			.args(())
@@ -35,6 +37,7 @@ impl IAddOnContentLocationResolver {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 }
 
 impl FromKObject for IAddOnContentLocationResolver {

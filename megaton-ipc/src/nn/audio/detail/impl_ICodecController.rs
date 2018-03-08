@@ -1,7 +1,7 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct ICodecController(Session);
 
@@ -13,6 +13,7 @@ impl ICodecController {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn FinalizeCodecController(&self, ) -> Result<()> {
 		let req = Request::new(1)
 			.args(())
@@ -20,6 +21,7 @@ impl ICodecController {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn SleepCodecController(&self, ) -> Result<()> {
 		let req = Request::new(2)
 			.args(())
@@ -27,6 +29,7 @@ impl ICodecController {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn WakeCodecController(&self, ) -> Result<()> {
 		let req = Request::new(3)
 			.args(())
@@ -34,6 +37,7 @@ impl ICodecController {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn SetCodecVolume(&self, ) -> Result<()> {
 		let req = Request::new(4)
 			.args(())
@@ -41,6 +45,7 @@ impl ICodecController {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn GetCodecVolumeMax(&self, ) -> Result<()> {
 		let req = Request::new(5)
 			.args(())
@@ -48,6 +53,7 @@ impl ICodecController {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn GetCodecVolumeMin(&self, ) -> Result<()> {
 		let req = Request::new(6)
 			.args(())
@@ -55,6 +61,7 @@ impl ICodecController {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn SetCodecActiveTarget(&self, ) -> Result<()> {
 		let req = Request::new(7)
 			.args(())
@@ -62,6 +69,7 @@ impl ICodecController {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown(&self, ) -> Result<()> {
 		let req = Request::new(8)
 			.args(())
@@ -69,6 +77,7 @@ impl ICodecController {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn BindCodecHeadphoneMicJackInterrupt(&self, ) -> Result<()> {
 		let req = Request::new(9)
 			.args(())
@@ -76,6 +85,7 @@ impl ICodecController {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn IsCodecHeadphoneMicJackInserted(&self, ) -> Result<()> {
 		let req = Request::new(10)
 			.args(())
@@ -83,6 +93,7 @@ impl ICodecController {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn ClearCodecHeadphoneMicJackInterrupt(&self, ) -> Result<()> {
 		let req = Request::new(11)
 			.args(())
@@ -90,6 +101,7 @@ impl ICodecController {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn IsCodecDeviceRequested(&self, ) -> Result<()> {
 		let req = Request::new(12)
 			.args(())
@@ -97,6 +109,7 @@ impl ICodecController {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 }
 
 impl FromKObject for ICodecController {

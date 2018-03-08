@@ -1,7 +1,7 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct IOverlayFunctions(Session);
 
@@ -13,6 +13,7 @@ impl IOverlayFunctions {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn EndToWatchShortHomeButtonMessage(&self, ) -> Result<()> {
 		let req = Request::new(1)
 			.args(())
@@ -20,13 +21,15 @@ impl IOverlayFunctions {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn GetApplicationIdForLogo(&self, ) -> Result<::nn::ncm::ApplicationId> {
+
+	pub fn GetApplicationIdForLogo(&self, ) -> Result<(::nn::ncm::ApplicationId)> {
 		let req = Request::new(2)
 			.args(())
 			;
 		let mut res : Response<::nn::ncm::ApplicationId> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn SetGpuTimeSliceBoost(&self, unk0: u64) -> Result<()> {
 		let req = Request::new(3)
 			.args(unk0)
@@ -34,6 +37,7 @@ impl IOverlayFunctions {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn SetAutoSleepTimeAndDimmingTimeEnabled(&self, unk0: bool) -> Result<()> {
 		let req = Request::new(4)
 			.args(unk0)
@@ -41,6 +45,7 @@ impl IOverlayFunctions {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn TerminateApplicationAndSetReason(&self, unk0: u32) -> Result<()> {
 		let req = Request::new(5)
 			.args(unk0)
@@ -48,6 +53,7 @@ impl IOverlayFunctions {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn SetScreenShotPermissionGlobally(&self, unk0: bool) -> Result<()> {
 		let req = Request::new(6)
 			.args(unk0)
@@ -55,6 +61,7 @@ impl IOverlayFunctions {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 }
 
 impl FromKObject for IOverlayFunctions {

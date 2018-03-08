@@ -1,26 +1,35 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct ICommonStateGetter(Session);
 
 impl ICommonStateGetter {
-	// fn GetEventHandle(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn ReceiveMessage(&self, ) -> Result<::nn::am::AppletMessage> {
+	pub fn GetEventHandle(&self, ) -> Result<(KObject)> {
+		let req = Request::new(0)
+			.args(())
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(res.pop_handle())
+	}
+
+	pub fn ReceiveMessage(&self, ) -> Result<(::nn::am::AppletMessage)> {
 		let req = Request::new(1)
 			.args(())
 			;
 		let mut res : Response<::nn::am::AppletMessage> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
-	pub fn GetThisAppletKind(&self, ) -> Result<::nn::am::service::AppletKind> {
+
+	pub fn GetThisAppletKind(&self, ) -> Result<(::nn::am::service::AppletKind)> {
 		let req = Request::new(2)
 			.args(())
 			;
 		let mut res : Response<::nn::am::service::AppletKind> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn AllowToEnterSleep(&self, ) -> Result<()> {
 		let req = Request::new(3)
 			.args(())
@@ -28,6 +37,7 @@ impl ICommonStateGetter {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn DisallowToEnterSleep(&self, ) -> Result<()> {
 		let req = Request::new(4)
 			.args(())
@@ -35,41 +45,47 @@ impl ICommonStateGetter {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn GetOperationMode(&self, ) -> Result<u8> {
+
+	pub fn GetOperationMode(&self, ) -> Result<(u8)> {
 		let req = Request::new(5)
 			.args(())
 			;
 		let mut res : Response<u8> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
-	pub fn GetPerformanceMode(&self, ) -> Result<u32> {
+
+	pub fn GetPerformanceMode(&self, ) -> Result<(u32)> {
 		let req = Request::new(6)
 			.args(())
 			;
 		let mut res : Response<u32> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
-	pub fn GetCradleStatus(&self, ) -> Result<u8> {
+
+	pub fn GetCradleStatus(&self, ) -> Result<(u8)> {
 		let req = Request::new(7)
 			.args(())
 			;
 		let mut res : Response<u8> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
-	pub fn GetBootMode(&self, ) -> Result<u8> {
+
+	pub fn GetBootMode(&self, ) -> Result<(u8)> {
 		let req = Request::new(8)
 			.args(())
 			;
 		let mut res : Response<u8> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
-	pub fn GetCurrentFocusState(&self, ) -> Result<u8> {
+
+	pub fn GetCurrentFocusState(&self, ) -> Result<(u8)> {
 		let req = Request::new(9)
 			.args(())
 			;
 		let mut res : Response<u8> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn RequestToAcquireSleepLock(&self, ) -> Result<()> {
 		let req = Request::new(10)
 			.args(())
@@ -77,6 +93,7 @@ impl ICommonStateGetter {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn ReleaseSleepLock(&self, ) -> Result<()> {
 		let req = Request::new(11)
 			.args(())
@@ -84,6 +101,7 @@ impl ICommonStateGetter {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn ReleaseSleepLockTransiently(&self, ) -> Result<()> {
 		let req = Request::new(12)
 			.args(())
@@ -91,7 +109,15 @@ impl ICommonStateGetter {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	// fn GetAcquiredSleepLockEvent(&self, UNKNOWN) -> Result<UNKNOWN>;
+
+	pub fn GetAcquiredSleepLockEvent(&self, ) -> Result<(KObject)> {
+		let req = Request::new(13)
+			.args(())
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(res.pop_handle())
+	}
+
 	pub fn PushToGeneralChannel(&self, unk0: ::nn::am::service::IStorage) -> Result<()> {
 		let req = Request::new(20)
 			.args(())
@@ -99,20 +125,23 @@ impl ICommonStateGetter {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn GetHomeButtonReaderLockAccessor(&self, ) -> Result<::nn::am::service::ILockAccessor> {
+
+	pub fn GetHomeButtonReaderLockAccessor(&self, ) -> Result<(::nn::am::service::ILockAccessor)> {
 		let req = Request::new(30)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
-	pub fn GetReaderLockAccessorEx(&self, unk0: i32) -> Result<::nn::am::service::ILockAccessor> {
+
+	pub fn GetReaderLockAccessorEx(&self, unk0: i32) -> Result<(::nn::am::service::ILockAccessor)> {
 		let req = Request::new(31)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
+
 	pub fn GetCradleFwVersion(&self, ) -> Result<(u32, u32, u32, u32)> {
 		let req = Request::new(40)
 			.args(())
@@ -126,13 +155,15 @@ impl ICommonStateGetter {
 		let mut res : Response<OutRaw> = self.0.send(req)?;
 		Ok((res.get_raw().unk0.clone(),res.get_raw().unk1.clone(),res.get_raw().unk2.clone(),res.get_raw().unk3.clone()))
 	}
-	pub fn IsVrModeEnabled(&self, ) -> Result<bool> {
+
+	pub fn IsVrModeEnabled(&self, ) -> Result<(bool)> {
 		let req = Request::new(50)
 			.args(())
 			;
 		let mut res : Response<bool> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn SetVrModeEnabled(&self, unk0: bool) -> Result<()> {
 		let req = Request::new(51)
 			.args(unk0)
@@ -140,13 +171,15 @@ impl ICommonStateGetter {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn IsInControllerFirmwareUpdateSection(&self, ) -> Result<bool> {
+
+	pub fn IsInControllerFirmwareUpdateSection(&self, ) -> Result<(bool)> {
 		let req = Request::new(55)
 			.args(())
 			;
 		let mut res : Response<bool> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn GetDefaultDisplayResolution(&self, ) -> Result<(i32, i32)> {
 		let req = Request::new(60)
 			.args(())
@@ -158,7 +191,15 @@ impl ICommonStateGetter {
 		let mut res : Response<OutRaw> = self.0.send(req)?;
 		Ok((res.get_raw().unk0.clone(),res.get_raw().unk1.clone()))
 	}
-	// fn GetDefaultDisplayResolutionChangeEvent(&self, UNKNOWN) -> Result<UNKNOWN>;
+
+	pub fn GetDefaultDisplayResolutionChangeEvent(&self, ) -> Result<(KObject)> {
+		let req = Request::new(61)
+			.args(())
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(res.pop_handle())
+	}
+
 }
 
 impl FromKObject for ICommonStateGetter {

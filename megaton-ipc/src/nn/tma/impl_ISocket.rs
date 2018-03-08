@@ -1,7 +1,7 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct ISocket(Session);
 
@@ -17,28 +17,9 @@ impl ISocket {
 		let mut res : Response<OutRaw> = self.0.send(req)?;
 		Ok((res.get_raw().unk0.clone(),res.get_raw().unk1.clone()))
 	}
-	pub fn Unknown1(&self, unk0: [u8; 0x42]) -> Result<(u32, u32)> {
-		let req = Request::new(1)
-			.args(unk0)
-			;
-		#[repr(C)] #[derive(Clone)] struct OutRaw {
-			unk1: u32,
-			unk2: u32,
-		}
-		let mut res : Response<OutRaw> = self.0.send(req)?;
-		Ok((res.get_raw().unk1.clone(),res.get_raw().unk2.clone()))
-	}
-	pub fn Unknown2(&self, unk0: [u8; 0x42]) -> Result<(u32, u32)> {
-		let req = Request::new(2)
-			.args(unk0)
-			;
-		#[repr(C)] #[derive(Clone)] struct OutRaw {
-			unk1: u32,
-			unk2: u32,
-		}
-		let mut res : Response<OutRaw> = self.0.send(req)?;
-		Ok((res.get_raw().unk1.clone(),res.get_raw().unk2.clone()))
-	}
+
+	// fn Unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn Unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn Unknown3(&self, unk0: u32) -> Result<(u32, u32)> {
 		let req = Request::new(3)
 			.args(unk0)
@@ -50,17 +31,8 @@ impl ISocket {
 		let mut res : Response<OutRaw> = self.0.send(req)?;
 		Ok((res.get_raw().unk1.clone(),res.get_raw().unk2.clone()))
 	}
-	pub fn Unknown4(&self, ) -> Result<([u8; 0x42], u32, Session)> {
-		let req = Request::new(4)
-			.args(())
-			;
-		#[repr(C)] #[derive(Clone)] struct OutRaw {
-			unk0: [u8; 0x42],
-			unk1: u32,
-		}
-		let mut res : Response<OutRaw> = self.0.send(req)?;
-		Ok((res.get_raw().unk0.clone(),res.get_raw().unk1.clone(),unsafe { FromKObject::from_kobject(res.pop_handle()) }))
-	}
+
+	// fn Unknown4(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn Unknown5(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn Unknown6(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn Unknown7(&self, unk0: u32) -> Result<(u32, u32)> {
@@ -74,6 +46,7 @@ impl ISocket {
 		let mut res : Response<OutRaw> = self.0.send(req)?;
 		Ok((res.get_raw().unk1.clone(),res.get_raw().unk2.clone()))
 	}
+
 	pub fn Unknown8(&self, unk0: u32, unk1: u32) -> Result<(u32, u32)> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -93,21 +66,53 @@ impl ISocket {
 		let mut res : Response<OutRaw> = self.0.send(req)?;
 		Ok((res.get_raw().unk2.clone(),res.get_raw().unk3.clone()))
 	}
-	// fn Unknown9(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn Unknown10(&self, unk0: u32) -> Result<([u8; 0x42], u32, Session)> {
-		let req = Request::new(10)
-			.args(unk0)
+
+	pub fn Unknown9(&self, ) -> Result<(u32, KObject)> {
+		let req = Request::new(9)
+			.args(())
 			;
-		#[repr(C)] #[derive(Clone)] struct OutRaw {
-			unk1: [u8; 0x42],
-			unk2: u32,
-		}
-		let mut res : Response<OutRaw> = self.0.send(req)?;
-		Ok((res.get_raw().unk1.clone(),res.get_raw().unk2.clone(),unsafe { FromKObject::from_kobject(res.pop_handle()) }))
+		let mut res : Response<u32> = self.0.send(req)?;
+		Ok((*res.get_raw(),res.pop_handle()))
 	}
-	// fn Unknown11(&self, UNKNOWN) -> Result<UNKNOWN>;
+
+	// fn Unknown10(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn Unknown11(&self, unk0: u32, unk1: u32) -> Result<(u32, KObject)> {
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: u32,
+			unk1: u32,
+		}
+		let req = Request::new(11)
+			.args(InRaw {
+				unk0,
+				unk1,
+			})
+			;
+		let mut res : Response<u32> = self.0.send(req)?;
+		Ok((*res.get_raw(),res.pop_handle()))
+	}
+
 	// fn Unknown12(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn Unknown13(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn Unknown13(&self, unk0: u32, unk1: u32, unk2: u32, unk3: u64, unk4: KObject) -> Result<(u32, KObject)> {
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: u32,
+			unk1: u32,
+			unk2: u32,
+			unk3: u64,
+		}
+		let req = Request::new(13)
+			.args(InRaw {
+				unk0,
+				unk1,
+				unk2,
+				unk3,
+			})
+			;
+		let mut res : Response<u32> = self.0.send(req)?;
+		Ok((*res.get_raw(),res.pop_handle()))
+	}
+
 	// fn Unknown14(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn Unknown15(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn Unknown16(&self, unk0: u32) -> Result<(u32, u64)> {
@@ -121,6 +126,7 @@ impl ISocket {
 		let mut res : Response<OutRaw> = self.0.send(req)?;
 		Ok((res.get_raw().unk1.clone(),res.get_raw().unk2.clone()))
 	}
+
 }
 
 impl FromKObject for ISocket {

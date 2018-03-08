@@ -1,7 +1,7 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct IIrSensorSystemServer(Session);
 
@@ -13,6 +13,7 @@ impl IIrSensorSystemServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn RegisterAppletResourceUserId(&self, unk0: bool, unk1: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -28,6 +29,7 @@ impl IIrSensorSystemServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn UnregisterAppletResourceUserId(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		let req = Request::new(502)
 			.args(unk0)
@@ -35,6 +37,7 @@ impl IIrSensorSystemServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn EnableAppletToGetInput(&self, unk0: bool, unk1: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -50,6 +53,7 @@ impl IIrSensorSystemServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 }
 
 impl FromKObject for IIrSensorSystemServer {

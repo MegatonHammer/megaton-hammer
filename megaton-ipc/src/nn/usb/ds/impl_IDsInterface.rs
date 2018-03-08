@@ -1,19 +1,27 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct IDsInterface(Session);
 
 impl IDsInterface {
-	pub fn GetDsEndpoint(&self, unk0: &::nn::usb::usb_endpoint_descriptor) -> Result<::nn::usb::ds::IDsEndpoint> {
+	pub fn GetDsEndpoint(&self, unk0: &::nn::usb::usb_endpoint_descriptor) -> Result<(::nn::usb::ds::IDsEndpoint)> {
 		let req = Request::new(0)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
-	// fn GetSetupEvent(&self, UNKNOWN) -> Result<UNKNOWN>;
+
+	pub fn GetSetupEvent(&self, ) -> Result<(KObject)> {
+		let req = Request::new(1)
+			.args(())
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(res.pop_handle())
+	}
+
 	// fn Unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn EnableInterface(&self, ) -> Result<()> {
 		let req = Request::new(3)
@@ -22,6 +30,7 @@ impl IDsInterface {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn DisableInterface(&self, ) -> Result<()> {
 		let req = Request::new(4)
 			.args(())
@@ -29,7 +38,8 @@ impl IDsInterface {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn CtrlInPostBufferAsync(&self, size: u32, buffer: u64) -> Result<u32> {
+
+	pub fn CtrlInPostBufferAsync(&self, size: u32, buffer: u64) -> Result<(u32)> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			size: u32,
@@ -44,7 +54,8 @@ impl IDsInterface {
 		let mut res : Response<u32> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
-	pub fn CtrlOutPostBufferAsync(&self, size: u32, buffer: u64) -> Result<u32> {
+
+	pub fn CtrlOutPostBufferAsync(&self, size: u32, buffer: u64) -> Result<(u32)> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			size: u32,
@@ -59,22 +70,25 @@ impl IDsInterface {
 		let mut res : Response<u32> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
-	// fn GetCtrlInCompletionEvent(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn GetCtrlInReportData(&self, ) -> Result<[u8; 0x84]> {
-		let req = Request::new(8)
+
+	pub fn GetCtrlInCompletionEvent(&self, ) -> Result<(KObject)> {
+		let req = Request::new(7)
 			.args(())
 			;
-		let mut res : Response<[u8; 0x84]> = self.0.send(req)?;
-		Ok(*res.get_raw())
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(res.pop_handle())
 	}
-	// fn GetCtrlOutCompletionEvent(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn GetCtrlOutReportData(&self, ) -> Result<[u8; 0x84]> {
-		let req = Request::new(10)
+
+	// fn GetCtrlInReportData(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn GetCtrlOutCompletionEvent(&self, ) -> Result<(KObject)> {
+		let req = Request::new(9)
 			.args(())
 			;
-		let mut res : Response<[u8; 0x84]> = self.0.send(req)?;
-		Ok(*res.get_raw())
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(res.pop_handle())
 	}
+
+	// fn GetCtrlOutReportData(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn StallCtrl(&self, ) -> Result<()> {
 		let req = Request::new(11)
 			.args(())
@@ -82,6 +96,7 @@ impl IDsInterface {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 }
 
 impl FromKObject for IDsInterface {

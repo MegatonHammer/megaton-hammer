@@ -1,7 +1,7 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct IDisplayController(Session);
 
@@ -14,6 +14,7 @@ impl IDisplayController {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	// fn GetLastApplicationCaptureImage(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn GetCallerAppletCaptureImage(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn UpdateCallerAppletCaptureImage(&self, ) -> Result<()> {
@@ -23,6 +24,7 @@ impl IDisplayController {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	// fn GetLastForegroundCaptureImageEx(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn GetLastApplicationCaptureImageEx(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn GetCallerAppletCaptureImageEx(&self, UNKNOWN) -> Result<UNKNOWN>;
@@ -41,7 +43,15 @@ impl IDisplayController {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	// fn AcquireLastApplicationCaptureBuffer(&self, UNKNOWN) -> Result<UNKNOWN>;
+
+	pub fn AcquireLastApplicationCaptureBuffer(&self, ) -> Result<(KObject)> {
+		let req = Request::new(10)
+			.args(())
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(res.pop_handle())
+	}
+
 	pub fn ReleaseLastApplicationCaptureBuffer(&self, ) -> Result<()> {
 		let req = Request::new(11)
 			.args(())
@@ -49,7 +59,15 @@ impl IDisplayController {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	// fn AcquireLastForegroundCaptureBuffer(&self, UNKNOWN) -> Result<UNKNOWN>;
+
+	pub fn AcquireLastForegroundCaptureBuffer(&self, ) -> Result<(KObject)> {
+		let req = Request::new(12)
+			.args(())
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(res.pop_handle())
+	}
+
 	pub fn ReleaseLastForegroundCaptureBuffer(&self, ) -> Result<()> {
 		let req = Request::new(13)
 			.args(())
@@ -57,7 +75,15 @@ impl IDisplayController {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	// fn AcquireCallerAppletCaptureBuffer(&self, UNKNOWN) -> Result<UNKNOWN>;
+
+	pub fn AcquireCallerAppletCaptureBuffer(&self, ) -> Result<(KObject)> {
+		let req = Request::new(14)
+			.args(())
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(res.pop_handle())
+	}
+
 	pub fn ReleaseCallerAppletCaptureBuffer(&self, ) -> Result<()> {
 		let req = Request::new(15)
 			.args(())
@@ -65,9 +91,31 @@ impl IDisplayController {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	// fn AcquireLastApplicationCaptureBufferEx(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn AcquireLastForegroundCaptureBufferEx(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn AcquireCallerAppletCaptureBufferEx(&self, UNKNOWN) -> Result<UNKNOWN>;
+
+	pub fn AcquireLastApplicationCaptureBufferEx(&self, ) -> Result<(bool, KObject)> {
+		let req = Request::new(16)
+			.args(())
+			;
+		let mut res : Response<bool> = self.0.send(req)?;
+		Ok((*res.get_raw(),res.pop_handle()))
+	}
+
+	pub fn AcquireLastForegroundCaptureBufferEx(&self, ) -> Result<(bool, KObject)> {
+		let req = Request::new(17)
+			.args(())
+			;
+		let mut res : Response<bool> = self.0.send(req)?;
+		Ok((*res.get_raw(),res.pop_handle()))
+	}
+
+	pub fn AcquireCallerAppletCaptureBufferEx(&self, ) -> Result<(bool, KObject)> {
+		let req = Request::new(18)
+			.args(())
+			;
+		let mut res : Response<bool> = self.0.send(req)?;
+		Ok((*res.get_raw(),res.pop_handle()))
+	}
+
 	pub fn ClearCaptureBuffer(&self, unk0: bool, unk1: i32, unk2: u32) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -85,6 +133,7 @@ impl IDisplayController {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn ClearAppletTransitionBuffer(&self, unk0: u32) -> Result<()> {
 		let req = Request::new(21)
 			.args(unk0)
@@ -92,6 +141,7 @@ impl IDisplayController {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 }
 
 impl FromKObject for IDisplayController {

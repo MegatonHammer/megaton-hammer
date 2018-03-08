@@ -1,25 +1,27 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct IManager(Session);
 
 impl IManager {
-	pub fn DoesUartExist(&self, unk0: u32) -> Result<u8> {
+	pub fn DoesUartExist(&self, unk0: u32) -> Result<(u8)> {
 		let req = Request::new(0)
 			.args(unk0)
 			;
 		let mut res : Response<u8> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
-	pub fn DoesUartExistForTest(&self, unk0: u32) -> Result<u8> {
+
+	pub fn DoesUartExistForTest(&self, unk0: u32) -> Result<(u8)> {
 		let req = Request::new(1)
 			.args(unk0)
 			;
 		let mut res : Response<u8> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn SetUartBaudrate(&self, ) -> Result<()> {
 		let req = Request::new(2)
 			.args(())
@@ -27,6 +29,7 @@ impl IManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn SetUartBaudrateForTest(&self, ) -> Result<()> {
 		let req = Request::new(3)
 			.args(())
@@ -34,6 +37,7 @@ impl IManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn IsSomethingUartValid(&self, ) -> Result<()> {
 		let req = Request::new(4)
 			.args(())
@@ -41,6 +45,7 @@ impl IManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn IsSomethingUartValidForTest(&self, ) -> Result<()> {
 		let req = Request::new(5)
 			.args(())
@@ -48,13 +53,15 @@ impl IManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn GetSession(&self, ) -> Result<Session> {
+
+	pub fn GetSession(&self, ) -> Result<(Session)> {
 		let req = Request::new(6)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
+
 	pub fn IsSomethingUartValid2(&self, ) -> Result<()> {
 		let req = Request::new(7)
 			.args(())
@@ -62,6 +69,7 @@ impl IManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn IsSomethingUartValid2ForTest(&self, ) -> Result<()> {
 		let req = Request::new(8)
 			.args(())
@@ -69,6 +77,7 @@ impl IManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 }
 
 impl FromKObject for IManager {

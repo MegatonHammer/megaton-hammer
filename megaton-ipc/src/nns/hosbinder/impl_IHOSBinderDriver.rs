@@ -1,7 +1,7 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct IHOSBinderDriver(Session);
 
@@ -24,7 +24,23 @@ impl IHOSBinderDriver {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	// fn GetNativeHandle(&self, UNKNOWN) -> Result<UNKNOWN>;
+
+	pub fn GetNativeHandle(&self, unk0: i32, unk1: u32) -> Result<(KObject)> {
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: i32,
+			unk1: u32,
+		}
+		let req = Request::new(2)
+			.args(InRaw {
+				unk0,
+				unk1,
+			})
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(res.pop_handle())
+	}
+
 	// fn TransactParcelAuto(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 

@@ -1,7 +1,7 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct IQueryService(Session);
 
@@ -24,6 +24,7 @@ impl IQueryService {
 		let mut res : Response<OutRaw> = self.0.send(req)?;
 		Ok((res.get_raw().unk1.clone(),res.get_raw().unk2.clone(),res.get_raw().unk3.clone(),res.get_raw().unk4.clone(),res.get_raw().unk5.clone()))
 	}
+
 	pub fn Unknown5(&self, unk0: u64, unk1: u64, unk2: u64) -> Result<(u64, u64, u64, u64, u64)> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -48,6 +49,7 @@ impl IQueryService {
 		let mut res : Response<OutRaw> = self.0.send(req)?;
 		Ok((res.get_raw().unk3.clone(),res.get_raw().unk4.clone(),res.get_raw().unk5.clone(),res.get_raw().unk6.clone(),res.get_raw().unk7.clone()))
 	}
+
 	pub fn Unknown6(&self, unk0: u64, unk1: u64) -> Result<(u64, u64, u64, u64, u64)> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -70,6 +72,7 @@ impl IQueryService {
 		let mut res : Response<OutRaw> = self.0.send(req)?;
 		Ok((res.get_raw().unk2.clone(),res.get_raw().unk3.clone(),res.get_raw().unk4.clone(),res.get_raw().unk5.clone(),res.get_raw().unk6.clone()))
 	}
+
 	// fn Unknown7(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn Unknown8(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn Unknown9(&self, ) -> Result<(u32, u32, u32)> {
@@ -84,6 +87,7 @@ impl IQueryService {
 		let mut res : Response<OutRaw> = self.0.send(req)?;
 		Ok((res.get_raw().unk0.clone(),res.get_raw().unk1.clone(),res.get_raw().unk2.clone()))
 	}
+
 	// fn Unknown10(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 

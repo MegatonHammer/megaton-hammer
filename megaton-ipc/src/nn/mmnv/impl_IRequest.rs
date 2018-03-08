@@ -1,7 +1,7 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct IRequest(Session);
 
@@ -23,6 +23,7 @@ impl IRequest {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown1(&self, unk0: u32) -> Result<()> {
 		let req = Request::new(1)
 			.args(unk0)
@@ -30,6 +31,7 @@ impl IRequest {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown2(&self, unk0: u32, unk1: u32, unk2: u32) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -47,13 +49,15 @@ impl IRequest {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn Unknown3(&self, unk0: u32) -> Result<u32> {
+
+	pub fn Unknown3(&self, unk0: u32) -> Result<(u32)> {
 		let req = Request::new(3)
 			.args(unk0)
 			;
 		let mut res : Response<u32> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn module_init_clk(&self, ) -> Result<()> {
 		let req = Request::new(4)
 			.args(())
@@ -61,6 +65,7 @@ impl IRequest {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn module_deinit_clk(&self, unk0: u32) -> Result<()> {
 		let req = Request::new(5)
 			.args(unk0)
@@ -68,6 +73,7 @@ impl IRequest {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn module_set_clk_rate(&self, unk0: u32, unk1: u32, unk2: u32) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -85,13 +91,15 @@ impl IRequest {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn module_get_clk_rate(&self, unk0: u32) -> Result<u32> {
+
+	pub fn module_get_clk_rate(&self, unk0: u32) -> Result<(u32)> {
 		let req = Request::new(7)
 			.args(unk0)
 			;
 		let mut res : Response<u32> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 }
 
 impl FromKObject for IRequest {

@@ -1,13 +1,13 @@
 pub mod http;
+pub mod profile;
 mod impl_IAccountServiceForSystemService;
 pub use self::impl_IAccountServiceForSystemService::*;
 pub mod baas;
-pub mod profile;
 mod impl_IAccountServiceForAdministrator;
 pub use self::impl_IAccountServiceForAdministrator::*;
+pub mod nas;
 mod impl_IAccountServiceForApplication;
 pub use self::impl_IAccountServiceForApplication::*;
-pub mod nas;
 pub mod detail;
 mod impl_IBaasAccessTokenAccessor;
 pub use self::impl_IBaasAccessTokenAccessor::*;

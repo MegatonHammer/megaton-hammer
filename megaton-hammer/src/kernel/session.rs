@@ -1,4 +1,4 @@
-use ipc::ll::{Request, Response};
+use ipc::{Request, Response};
 use kernel::svc::send_sync_request;
 use kernel::{FromKObject, KObject};
 use error::*;

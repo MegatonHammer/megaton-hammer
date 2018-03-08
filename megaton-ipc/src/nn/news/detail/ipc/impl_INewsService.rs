@@ -1,7 +1,7 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct INewsService(Session);
 
@@ -15,14 +15,16 @@ impl INewsService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	// fn Unknown30101(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn Unknown30200(&self, ) -> Result<u8> {
+	pub fn Unknown30200(&self, ) -> Result<(u8)> {
 		let req = Request::new(30200)
 			.args(())
 			;
 		let mut res : Response<u8> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	// fn Unknown30300(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn Unknown30400(&self, ) -> Result<()> {
 		let req = Request::new(30400)
@@ -31,6 +33,7 @@ impl INewsService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown40100(&self, ) -> Result<()> {
 		let req = Request::new(40100)
 			.args(())
@@ -38,6 +41,7 @@ impl INewsService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown40101(&self, unk0: u64) -> Result<()> {
 		let req = Request::new(40101)
 			.args(unk0)
@@ -45,6 +49,7 @@ impl INewsService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown40200(&self, ) -> Result<()> {
 		let req = Request::new(40200)
 			.args(())
@@ -52,6 +57,7 @@ impl INewsService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown40201(&self, ) -> Result<()> {
 		let req = Request::new(40201)
 			.args(())
@@ -59,6 +65,7 @@ impl INewsService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	// fn Unknown90100(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 

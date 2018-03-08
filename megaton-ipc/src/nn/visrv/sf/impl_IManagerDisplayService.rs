@@ -1,7 +1,7 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct IManagerDisplayService(Session);
 
@@ -17,7 +17,8 @@ impl IManagerDisplayService {
 		let mut res : Response<OutRaw> = self.0.send(req)?;
 		Ok((res.get_raw().unk1.clone(),res.get_raw().unk2.clone()))
 	}
-	pub fn CreateManagedLayer(&self, unk0: u32, unk1: u64, unk2: ::nn::applet::AppletResourceUserId) -> Result<u64> {
+
+	pub fn CreateManagedLayer(&self, unk0: u32, unk1: u64, unk2: ::nn::applet::AppletResourceUserId) -> Result<(u64)> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: u32,
@@ -34,6 +35,7 @@ impl IManagerDisplayService {
 		let mut res : Response<u64> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn DestroyManagedLayer(&self, unk0: u64) -> Result<()> {
 		let req = Request::new(2011)
 			.args(unk0)
@@ -41,13 +43,15 @@ impl IManagerDisplayService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn CreateIndirectLayer(&self, ) -> Result<u64> {
+
+	pub fn CreateIndirectLayer(&self, ) -> Result<(u64)> {
 		let req = Request::new(2050)
 			.args(())
 			;
 		let mut res : Response<u64> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn DestroyIndirectLayer(&self, unk0: u64) -> Result<()> {
 		let req = Request::new(2051)
 			.args(unk0)
@@ -55,7 +59,8 @@ impl IManagerDisplayService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn CreateIndirectProducerEndPoint(&self, unk0: u64, unk1: ::nn::applet::AppletResourceUserId) -> Result<u64> {
+
+	pub fn CreateIndirectProducerEndPoint(&self, unk0: u64, unk1: ::nn::applet::AppletResourceUserId) -> Result<(u64)> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: u64,
@@ -70,6 +75,7 @@ impl IManagerDisplayService {
 		let mut res : Response<u64> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn DestroyIndirectProducerEndPoint(&self, unk0: u64) -> Result<()> {
 		let req = Request::new(2053)
 			.args(unk0)
@@ -77,7 +83,8 @@ impl IManagerDisplayService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn CreateIndirectConsumerEndPoint(&self, unk0: u64, unk1: ::nn::applet::AppletResourceUserId) -> Result<u64> {
+
+	pub fn CreateIndirectConsumerEndPoint(&self, unk0: u64, unk1: ::nn::applet::AppletResourceUserId) -> Result<(u64)> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: u64,
@@ -92,6 +99,7 @@ impl IManagerDisplayService {
 		let mut res : Response<u64> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn DestroyIndirectConsumerEndPoint(&self, unk0: u64) -> Result<()> {
 		let req = Request::new(2055)
 			.args(unk0)
@@ -99,7 +107,15 @@ impl IManagerDisplayService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	// fn AcquireLayerTexturePresentingEvent(&self, UNKNOWN) -> Result<UNKNOWN>;
+
+	pub fn AcquireLayerTexturePresentingEvent(&self, unk0: u64) -> Result<(KObject)> {
+		let req = Request::new(2300)
+			.args(unk0)
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(res.pop_handle())
+	}
+
 	pub fn ReleaseLayerTexturePresentingEvent(&self, unk0: u64) -> Result<()> {
 		let req = Request::new(2301)
 			.args(unk0)
@@ -107,14 +123,23 @@ impl IManagerDisplayService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	// fn GetDisplayHotplugEvent(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn GetDisplayHotplugState(&self, unk0: u64) -> Result<u32> {
+
+	pub fn GetDisplayHotplugEvent(&self, unk0: u64) -> Result<(KObject)> {
+		let req = Request::new(2302)
+			.args(unk0)
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(res.pop_handle())
+	}
+
+	pub fn GetDisplayHotplugState(&self, unk0: u64) -> Result<(u32)> {
 		let req = Request::new(2402)
 			.args(unk0)
 			;
 		let mut res : Response<u32> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn SetDisplayAlpha(&self, unk0: f32, unk1: u64) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -130,6 +155,7 @@ impl IManagerDisplayService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn SetDisplayLayerStack(&self, unk0: u32, unk1: u64) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -145,6 +171,7 @@ impl IManagerDisplayService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn SetDisplayPowerState(&self, unk0: u32, unk1: u64) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -160,6 +187,7 @@ impl IManagerDisplayService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn AddToLayerStack(&self, unk0: u32, unk1: u64) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -175,6 +203,7 @@ impl IManagerDisplayService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn RemoveFromLayerStack(&self, unk0: u32, unk1: u64) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -190,6 +219,7 @@ impl IManagerDisplayService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn SetLayerVisibility(&self, unk0: bool, unk1: u64) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -205,6 +235,7 @@ impl IManagerDisplayService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn SetContentVisibility(&self, unk0: bool) -> Result<()> {
 		let req = Request::new(7000)
 			.args(unk0)
@@ -212,6 +243,7 @@ impl IManagerDisplayService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn SetConductorLayer(&self, unk0: bool, unk1: u64) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -227,6 +259,7 @@ impl IManagerDisplayService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn SetIndirectProducerFlipOffset(&self, unk0: u64, unk1: u64, unk2: ::nn::TimeSpan) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -244,6 +277,7 @@ impl IManagerDisplayService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 }
 
 impl FromKObject for IManagerDisplayService {

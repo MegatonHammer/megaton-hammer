@@ -1,7 +1,7 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct IPrepoService(Session);
 
@@ -15,13 +15,15 @@ impl IPrepoService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn GetTransmissionStatus(&self, ) -> Result<i32> {
+
+	pub fn GetTransmissionStatus(&self, ) -> Result<(i32)> {
 		let req = Request::new(10300)
 			.args(())
 			;
 		let mut res : Response<i32> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	// fn SaveSystemReport(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn SaveSystemReportWithUser(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn ClearStorage(&self, ) -> Result<()> {
@@ -31,13 +33,15 @@ impl IPrepoService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn IsUserAgreementCheckEnabled(&self, ) -> Result<bool> {
+
+	pub fn IsUserAgreementCheckEnabled(&self, ) -> Result<(bool)> {
 		let req = Request::new(40100)
 			.args(())
 			;
 		let mut res : Response<bool> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn SetUserAgreementCheckEnabled(&self, unk0: bool) -> Result<()> {
 		let req = Request::new(40101)
 			.args(unk0)
@@ -45,6 +49,7 @@ impl IPrepoService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn GetStorageUsage(&self, ) -> Result<(i64, i64)> {
 		let req = Request::new(90100)
 			.args(())
@@ -56,6 +61,7 @@ impl IPrepoService {
 		let mut res : Response<OutRaw> = self.0.send(req)?;
 		Ok((res.get_raw().unk0.clone(),res.get_raw().unk1.clone()))
 	}
+
 }
 
 impl FromKObject for IPrepoService {

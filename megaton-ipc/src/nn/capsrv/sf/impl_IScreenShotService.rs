@@ -1,7 +1,7 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct IScreenShotService(Session);
 
@@ -13,6 +13,7 @@ impl IScreenShotService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown202(&self, ) -> Result<()> {
 		let req = Request::new(202)
 			.args(())
@@ -20,6 +21,7 @@ impl IScreenShotService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown203(&self, ) -> Result<()> {
 		let req = Request::new(203)
 			.args(())
@@ -27,6 +29,7 @@ impl IScreenShotService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown204(&self, ) -> Result<()> {
 		let req = Request::new(204)
 			.args(())
@@ -34,6 +37,7 @@ impl IScreenShotService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 }
 
 impl FromKObject for IScreenShotService {

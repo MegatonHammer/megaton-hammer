@@ -1,7 +1,7 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct IReader(Session);
 
@@ -13,6 +13,7 @@ impl IReader {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn ReadHeader1(&self, ) -> Result<()> {
 		let req = Request::new(1)
 			.args(())
@@ -20,6 +21,7 @@ impl IReader {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn ReadData0(&self, ) -> Result<()> {
 		let req = Request::new(2)
 			.args(())
@@ -27,6 +29,7 @@ impl IReader {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn ReadData1(&self, ) -> Result<()> {
 		let req = Request::new(3)
 			.args(())
@@ -34,6 +37,7 @@ impl IReader {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 }
 
 impl FromKObject for IReader {

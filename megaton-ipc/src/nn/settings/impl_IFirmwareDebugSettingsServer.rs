@@ -1,7 +1,7 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct IFirmwareDebugSettingsServer(Session);
 
@@ -14,13 +14,15 @@ impl IFirmwareDebugSettingsServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn CreateSettingsItemKeyIterator(&self, unk0: &::nn::settings::SettingsName) -> Result<::nn::settings::ISettingsItemKeyIterator> {
+
+	pub fn CreateSettingsItemKeyIterator(&self, unk0: &::nn::settings::SettingsName) -> Result<(::nn::settings::ISettingsItemKeyIterator)> {
 		let req = Request::new(4)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
+
 	#[cfg(feature = "switch-4.0.0")]
 	pub fn ReadSettings(&self, ) -> Result<()> {
 		let req = Request::new(10)
@@ -29,6 +31,7 @@ impl IFirmwareDebugSettingsServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	#[cfg(feature = "switch-4.0.0")]
 	pub fn ResetSettings(&self, ) -> Result<()> {
 		let req = Request::new(11)
@@ -37,6 +40,7 @@ impl IFirmwareDebugSettingsServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	#[cfg(feature = "switch-4.0.0")]
 	pub fn SetWebInspectorFlag(&self, ) -> Result<()> {
 		let req = Request::new(20)
@@ -45,6 +49,7 @@ impl IFirmwareDebugSettingsServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	#[cfg(feature = "switch-4.0.0")]
 	pub fn SetAllowedSslHosts(&self, ) -> Result<()> {
 		let req = Request::new(21)
@@ -53,6 +58,7 @@ impl IFirmwareDebugSettingsServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	#[cfg(feature = "switch-4.0.0")]
 	pub fn SetHostFsMountPoint(&self, ) -> Result<()> {
 		let req = Request::new(22)
@@ -61,6 +67,7 @@ impl IFirmwareDebugSettingsServer {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 }
 
 impl FromKObject for IFirmwareDebugSettingsServer {

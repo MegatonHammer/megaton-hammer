@@ -1,7 +1,7 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct IAudioController(Session);
 
@@ -21,20 +21,23 @@ impl IAudioController {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn GetMainAppletExpectedMasterVolume(&self, ) -> Result<f32> {
+
+	pub fn GetMainAppletExpectedMasterVolume(&self, ) -> Result<(f32)> {
 		let req = Request::new(1)
 			.args(())
 			;
 		let mut res : Response<f32> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
-	pub fn GetLibraryAppletExpectedMasterVolume(&self, ) -> Result<f32> {
+
+	pub fn GetLibraryAppletExpectedMasterVolume(&self, ) -> Result<(f32)> {
 		let req = Request::new(2)
 			.args(())
 			;
 		let mut res : Response<f32> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn ChangeMainAppletMasterVolume(&self, unk0: f32, unk1: i64) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -50,6 +53,7 @@ impl IAudioController {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn SetTransparentVolumeRate(&self, unk0: f32) -> Result<()> {
 		let req = Request::new(4)
 			.args(unk0)
@@ -57,6 +61,7 @@ impl IAudioController {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 }
 
 impl FromKObject for IAudioController {

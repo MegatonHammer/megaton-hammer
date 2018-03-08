@@ -1,12 +1,12 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct IStaticService(Session);
 
 impl IStaticService {
-	pub fn Unknown0(&self, unk0: u32, unk1: u32) -> Result<Session> {
+	pub fn Unknown0(&self, unk0: u32, unk1: u32) -> Result<(Session)> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: u32,
@@ -21,6 +21,7 @@ impl IStaticService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
+
 	pub fn Unknown100(&self, ) -> Result<()> {
 		let req = Request::new(100)
 			.args(())
@@ -28,6 +29,7 @@ impl IStaticService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown101(&self, ) -> Result<()> {
 		let req = Request::new(101)
 			.args(())
@@ -35,6 +37,7 @@ impl IStaticService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 }
 
 impl FromKObject for IStaticService {

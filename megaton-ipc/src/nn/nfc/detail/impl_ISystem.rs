@@ -1,7 +1,7 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct ISystem(Session);
 
@@ -14,20 +14,23 @@ impl ISystem {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn Unknown2(&self, ) -> Result<u32> {
+
+	pub fn Unknown2(&self, ) -> Result<(u32)> {
 		let req = Request::new(2)
 			.args(())
 			;
 		let mut res : Response<u32> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
-	pub fn Unknown3(&self, ) -> Result<u8> {
+
+	pub fn Unknown3(&self, ) -> Result<(u8)> {
 		let req = Request::new(3)
 			.args(())
 			;
 		let mut res : Response<u8> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn Unknown100(&self, unk0: u8) -> Result<()> {
 		let req = Request::new(100)
 			.args(unk0)
@@ -35,6 +38,7 @@ impl ISystem {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 }
 
 impl FromKObject for ISystem {

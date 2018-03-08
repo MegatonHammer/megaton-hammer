@@ -9,9 +9,9 @@ pub struct CalendarTime {
 	minute: u8,
 	second: u8,
 }
-pub type TimeZoneRuleVersion = u128;
 pub type PosixTime = u64;
+pub type TimeZoneRuleVersion = u128;
+pub type TimeZoneRule = ();
 pub mod sf;
 pub type LocationName = [u8; 0x24];
-pub type TimeZoneRule = ();
 pub type SteadyClockTimePoint = [u8; 0x18];

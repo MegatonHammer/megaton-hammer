@@ -1,7 +1,7 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct IScanRequest(Session);
 
@@ -13,13 +13,15 @@ impl IScanRequest {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn IsProcessing(&self, ) -> Result<bool> {
+
+	pub fn IsProcessing(&self, ) -> Result<(bool)> {
 		let req = Request::new(1)
 			.args(())
 			;
 		let mut res : Response<bool> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn GetResult(&self, ) -> Result<()> {
 		let req = Request::new(2)
 			.args(())
@@ -27,7 +29,15 @@ impl IScanRequest {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	// fn GetSystemEventReadableHandle(&self, UNKNOWN) -> Result<UNKNOWN>;
+
+	pub fn GetSystemEventReadableHandle(&self, ) -> Result<(KObject)> {
+		let req = Request::new(3)
+			.args(())
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(res.pop_handle())
+	}
+
 }
 
 impl FromKObject for IScanRequest {

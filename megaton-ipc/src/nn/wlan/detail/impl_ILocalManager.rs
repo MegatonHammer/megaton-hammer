@@ -1,7 +1,7 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct ILocalManager(Session);
 
@@ -13,6 +13,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown1(&self, ) -> Result<()> {
 		let req = Request::new(1)
 			.args(())
@@ -20,6 +21,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown2(&self, ) -> Result<()> {
 		let req = Request::new(2)
 			.args(())
@@ -27,6 +29,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown3(&self, ) -> Result<()> {
 		let req = Request::new(3)
 			.args(())
@@ -34,6 +37,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown4(&self, ) -> Result<()> {
 		let req = Request::new(4)
 			.args(())
@@ -41,6 +45,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown5(&self, ) -> Result<()> {
 		let req = Request::new(5)
 			.args(())
@@ -48,6 +53,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown6(&self, ) -> Result<()> {
 		let req = Request::new(6)
 			.args(())
@@ -55,6 +61,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown7(&self, ) -> Result<()> {
 		let req = Request::new(7)
 			.args(())
@@ -62,6 +69,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown8(&self, ) -> Result<()> {
 		let req = Request::new(8)
 			.args(())
@@ -69,6 +77,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown9(&self, ) -> Result<()> {
 		let req = Request::new(9)
 			.args(())
@@ -76,6 +85,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown10(&self, ) -> Result<()> {
 		let req = Request::new(10)
 			.args(())
@@ -83,6 +93,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown11(&self, ) -> Result<()> {
 		let req = Request::new(11)
 			.args(())
@@ -90,6 +101,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown12(&self, ) -> Result<()> {
 		let req = Request::new(12)
 			.args(())
@@ -97,6 +109,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown13(&self, ) -> Result<()> {
 		let req = Request::new(13)
 			.args(())
@@ -104,6 +117,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown14(&self, ) -> Result<()> {
 		let req = Request::new(14)
 			.args(())
@@ -111,6 +125,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown15(&self, ) -> Result<()> {
 		let req = Request::new(15)
 			.args(())
@@ -118,6 +133,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown16(&self, unk0: u32) -> Result<()> {
 		let req = Request::new(16)
 			.args(unk0)
@@ -125,6 +141,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown17(&self, ) -> Result<()> {
 		let req = Request::new(17)
 			.args(())
@@ -132,6 +149,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown18(&self, ) -> Result<()> {
 		let req = Request::new(18)
 			.args(())
@@ -139,6 +157,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown19(&self, ) -> Result<()> {
 		let req = Request::new(19)
 			.args(())
@@ -146,7 +165,15 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	// fn Unknown20(&self, UNKNOWN) -> Result<UNKNOWN>;
+
+	pub fn Unknown20(&self, ) -> Result<(KObject)> {
+		let req = Request::new(20)
+			.args(())
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(res.pop_handle())
+	}
+
 	pub fn Unknown21(&self, ) -> Result<()> {
 		let req = Request::new(21)
 			.args(())
@@ -154,13 +181,15 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn Unknown22(&self, ) -> Result<u32> {
+
+	pub fn Unknown22(&self, ) -> Result<(u32)> {
 		let req = Request::new(22)
 			.args(())
 			;
 		let mut res : Response<u32> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn Unknown23(&self, ) -> Result<()> {
 		let req = Request::new(23)
 			.args(())
@@ -168,6 +197,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown24(&self, ) -> Result<()> {
 		let req = Request::new(24)
 			.args(())
@@ -175,6 +205,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown25(&self, unk0: u32) -> Result<()> {
 		let req = Request::new(25)
 			.args(unk0)
@@ -182,6 +213,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown26(&self, ) -> Result<()> {
 		let req = Request::new(26)
 			.args(())
@@ -189,6 +221,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown27(&self, unk0: u32) -> Result<()> {
 		let req = Request::new(27)
 			.args(unk0)
@@ -196,6 +229,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown28(&self, ) -> Result<()> {
 		let req = Request::new(28)
 			.args(())
@@ -203,6 +237,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown29(&self, unk0: u32) -> Result<()> {
 		let req = Request::new(29)
 			.args(unk0)
@@ -210,6 +245,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown30(&self, ) -> Result<()> {
 		let req = Request::new(30)
 			.args(())
@@ -217,6 +253,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown31(&self, ) -> Result<()> {
 		let req = Request::new(31)
 			.args(())
@@ -224,6 +261,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown32(&self, ) -> Result<()> {
 		let req = Request::new(32)
 			.args(())
@@ -231,6 +269,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown33(&self, ) -> Result<()> {
 		let req = Request::new(33)
 			.args(())
@@ -238,6 +277,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown34(&self, ) -> Result<()> {
 		let req = Request::new(34)
 			.args(())
@@ -245,6 +285,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown35(&self, ) -> Result<()> {
 		let req = Request::new(35)
 			.args(())
@@ -252,6 +293,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown36(&self, ) -> Result<()> {
 		let req = Request::new(36)
 			.args(())
@@ -259,6 +301,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown37(&self, ) -> Result<()> {
 		let req = Request::new(37)
 			.args(())
@@ -266,6 +309,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown38(&self, ) -> Result<()> {
 		let req = Request::new(38)
 			.args(())
@@ -273,6 +317,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown39(&self, unk0: u32) -> Result<()> {
 		let req = Request::new(39)
 			.args(unk0)
@@ -280,6 +325,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown40(&self, ) -> Result<()> {
 		let req = Request::new(40)
 			.args(())
@@ -287,6 +333,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown41(&self, ) -> Result<()> {
 		let req = Request::new(41)
 			.args(())
@@ -294,6 +341,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Unknown42(&self, unk0: u32) -> Result<()> {
 		let req = Request::new(42)
 			.args(unk0)
@@ -301,13 +349,15 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn Unknown43(&self, ) -> Result<u32> {
+
+	pub fn Unknown43(&self, ) -> Result<(u32)> {
 		let req = Request::new(43)
 			.args(())
 			;
 		let mut res : Response<u32> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	pub fn Unknown44(&self, unk0: u32) -> Result<()> {
 		let req = Request::new(44)
 			.args(unk0)
@@ -315,6 +365,7 @@ impl ILocalManager {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 }
 
 impl FromKObject for ILocalManager {

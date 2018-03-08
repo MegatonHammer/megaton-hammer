@@ -1,7 +1,7 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct IUserInterface(Session);
 
@@ -14,8 +14,33 @@ impl IUserInterface {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	// fn GetService(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn RegisterService(&self, UNKNOWN) -> Result<UNKNOWN>;
+
+	pub fn GetService(&self, name: ::ServiceName) -> Result<(KObject)> {
+		let req = Request::new(1)
+			.args(name)
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(res.pop_handle())
+	}
+
+	pub fn RegisterService(&self, name: ::ServiceName, unk1: u8, maxHandles: u32) -> Result<(KObject)> {
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			name: ::ServiceName,
+			unk1: u8,
+			maxHandles: u32,
+		}
+		let req = Request::new(2)
+			.args(InRaw {
+				name,
+				unk1,
+				maxHandles,
+			})
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(res.pop_handle())
+	}
+
 	pub fn UnregisterService(&self, name: ::ServiceName) -> Result<()> {
 		let req = Request::new(3)
 			.args(name)
@@ -23,6 +48,7 @@ impl IUserInterface {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 }
 
 impl FromKObject for IUserInterface {

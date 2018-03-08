@@ -1,12 +1,19 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct IPsmSession(Session);
 
 impl IPsmSession {
-	// fn BindStateChangeEvent(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn BindStateChangeEvent(&self, ) -> Result<(KObject)> {
+		let req = Request::new(0)
+			.args(())
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(res.pop_handle())
+	}
+
 	pub fn UnbindStateChangeEvent(&self, ) -> Result<()> {
 		let req = Request::new(1)
 			.args(())
@@ -14,6 +21,7 @@ impl IPsmSession {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn SetChargerTypeChangeEventEnabled(&self, unk0: u8) -> Result<()> {
 		let req = Request::new(2)
 			.args(unk0)
@@ -21,6 +29,7 @@ impl IPsmSession {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn SetPowerSupplyChangeEventEnabled(&self, unk0: u8) -> Result<()> {
 		let req = Request::new(3)
 			.args(unk0)
@@ -28,6 +37,7 @@ impl IPsmSession {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn SetBatteryVoltageStateChangeEventEnabled(&self, unk0: u8) -> Result<()> {
 		let req = Request::new(4)
 			.args(unk0)
@@ -35,6 +45,7 @@ impl IPsmSession {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 }
 
 impl FromKObject for IPsmSession {

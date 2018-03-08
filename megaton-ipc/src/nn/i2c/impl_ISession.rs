@@ -1,7 +1,7 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct ISession(Session);
 
@@ -16,6 +16,7 @@ impl ISession {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn Receive(&self, ) -> Result<()> {
 		let req = Request::new(4)
 			.args(())
@@ -23,6 +24,7 @@ impl ISession {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 	pub fn ExecuteCommandList(&self, ) -> Result<()> {
 		let req = Request::new(5)
 			.args(())
@@ -30,6 +32,7 @@ impl ISession {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 }
 
 impl FromKObject for ISession {

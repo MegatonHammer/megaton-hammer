@@ -1,7 +1,7 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct IDsService(Session);
 
@@ -13,16 +13,32 @@ impl IDsService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	// fn BindClientProcess(&self, UNKNOWN) -> Result<UNKNOWN>;
+
+	pub fn BindClientProcess(&self, unk0: KObject) -> Result<()> {
+		let req = Request::new(1)
+			.args(())
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	// fn GetDsInterface(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn GetStateChangeEvent(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn GetState(&self, ) -> Result<u32> {
+	pub fn GetStateChangeEvent(&self, ) -> Result<(KObject)> {
+		let req = Request::new(3)
+			.args(())
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(res.pop_handle())
+	}
+
+	pub fn GetState(&self, ) -> Result<(u32)> {
 		let req = Request::new(4)
 			.args(())
 			;
 		let mut res : Response<u32> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 	#[cfg(feature = "switch-2.0.0")]
 	pub fn SetVidPidBcd(&self, descriptor: &::nn::usb::usb_descriptor_data) -> Result<()> {
 		let req = Request::new(5)
@@ -31,6 +47,7 @@ impl IDsService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
+
 }
 
 impl FromKObject for IDsService {

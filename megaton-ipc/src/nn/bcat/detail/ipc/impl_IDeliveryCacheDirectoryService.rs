@@ -1,7 +1,7 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
-use megaton_hammer::ipc::ll::{Request, Response};
+use megaton_hammer::ipc::{Request, Response};
 
 pub struct IDeliveryCacheDirectoryService(Session);
 
@@ -13,20 +13,23 @@ impl IDeliveryCacheDirectoryService {
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
-	pub fn Read(&self, unk1: &mut [::nn::bcat::DeliveryCacheDirectoryEntry]) -> Result<i32> {
+
+	pub fn Read(&self, unk1: &mut [::nn::bcat::DeliveryCacheDirectoryEntry]) -> Result<(i32)> {
 		let req = Request::new(1)
 			.args(())
 			;
 		let mut res : Response<i32> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
-	pub fn GetCount(&self, ) -> Result<i32> {
+
+	pub fn GetCount(&self, ) -> Result<(i32)> {
 		let req = Request::new(2)
 			.args(())
 			;
 		let mut res : Response<i32> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
+
 }
 
 impl FromKObject for IDeliveryCacheDirectoryService {
