@@ -170,17 +170,17 @@ extern {
 
 // TODO: Should this be here? I need to clean up who is responsible for what.
 #[cfg(feature = "log")]
-pub struct LoaderLog(spin::Mutex<io::Cursor<&'static mut [u8]>>);
+pub struct LoaderLog(Option<io::Cursor<&'static mut [u8]>>);
 
 // TODO: Don't leave it uninitialized. Stick it in an Option<> or something.
 #[cfg(feature = "log")]
-pub static mut LOG : LoaderLog = unsafe { const_uninitialized!(LoaderLog) };
+pub static LOG : spin::Mutex<LoaderLog> = spin::Mutex::new(LoaderLog(None));
 
 #[cfg(feature = "log")]
 impl core::fmt::Write for LoaderLog {
     fn write_str(&mut self, s: &str) -> Result<(), core::fmt::Error> {
         use io::Write;
-        unsafe { LOG.0.lock().write(s.as_bytes()).unwrap(); }
+        self.0.as_mut().unwrap().write(s.as_bytes()).unwrap();
         Ok(())
     }
 }
@@ -213,7 +213,7 @@ unsafe extern fn megaton_start(mut config: *mut LoaderConfigEntry, _thread_handl
                 LoaderConfigTag::Log => {
                     #[cfg(feature = "log")]
                     {
-                        LOG = LoaderLog(spin::Mutex::new(io::Cursor::new(slice::from_raw_parts_mut((*config).data.0 as _, (*config).data.1 as _))));
+                        (*LOG.lock()).0 = Some(io::Cursor::new(slice::from_raw_parts_mut((*config).data.0 as _, (*config).data.1 as _)));
                     }
                 },
                 _ => {
@@ -232,7 +232,7 @@ unsafe extern fn megaton_start(mut config: *mut LoaderConfigEntry, _thread_handl
         // TODO: Seems totally safe. TOTALLY. SAFE.
         #[cfg(feature = "log")]
         {
-            LOG = LoaderLog(spin::Mutex::new(io::Cursor::new(slice::from_raw_parts_mut(ptr::null_mut(), 0))));
+            (*LOG.lock()).0 = Some(io::Cursor::new(slice::from_raw_parts_mut(ptr::null_mut(), 0)));
         }
     }
 

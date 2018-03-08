@@ -4,7 +4,5 @@ extern crate megaton_crt0;
 use core::fmt::Write;
 
 fn main() {
-    unsafe {
-        writeln!(megaton_crt0::LOG, "We are in the main!").unwrap();
-    };
+    writeln!(megaton_crt0::LOG.lock(), "We are rust, and we are in the main!").unwrap();
 }
