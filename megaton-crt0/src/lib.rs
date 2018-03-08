@@ -93,6 +93,7 @@ run:
     // TODO: Avoid relocations by getting _start address with asm...
     asm!("adrp $0, _start" : "=r"(start_addr));
     let ret = megaton_start(config, _thread_handle, start_addr);
+    writeln!(SvcLog, "Returning with value {}", ret);
     ret
 }
 
