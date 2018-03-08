@@ -8,6 +8,7 @@ PHDRS
   rodata PT_LOAD FLAGS(4);
   data PT_LOAD FLAGS(6);
   bss PT_LOAD FLAGS(6);
+  dyn PT_DYNAMIC;
 }
 
 SECTIONS
