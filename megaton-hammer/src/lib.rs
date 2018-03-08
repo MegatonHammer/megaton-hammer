@@ -50,11 +50,15 @@ pub mod kernel;
 mod utils;
 
 pub mod error {
-    #[derive(Debug, Fail)]
-    pub enum Error {
-        #[fail(display = "An unknown IPC error occured: {:x}", code)]
-        Unknown {
-            code: u64
+    use core::fmt;
+
+    #[derive(Clone, Copy, Debug, Fail)]
+    pub struct Error(pub u32);
+
+    impl fmt::Display for Error {
+        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+            // TODO: Actually print the module name, and description if we have it.
+            write!(f, "Error in module {}: {}", self.0 & (1 << 9) - 1, self.0 >> 9)
         }
     }
 

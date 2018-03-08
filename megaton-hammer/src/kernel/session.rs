@@ -17,7 +17,7 @@ impl Session {
         req.pack(&mut ipc_buf[..]);
         let err = unsafe { send_sync_request((self.0).0) };
         if err != 0 {
-            return Err(Error::Unknown { code: err as u64 });
+            return Err(Error(err));
         }
         Response::unpack(&mut ipc_buf[..])
     }
