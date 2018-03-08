@@ -30,14 +30,8 @@ pub struct memory_info_t {
     pub padding: u32,
 }
 
-#[cfg(feature = "emulation_test")]
-pub fn send_sync_request(_session: Session) -> Result {
-    0
-}
-
 // TODO: Documentation for all syscalls. Let's try to do better than switchbrew.
 // TODO: Rewrite the syscalls to wrap them in an idiomatic rust style.
-#[cfg(not(feature = "emulation_test"))]
 extern {
     /// Sets the size of the heap. Equivalent to a brk syscall on unix.
     ///
@@ -208,7 +202,7 @@ extern {
 
     /// Connect to a named port
     #[link_name = "svcConnectToNamedPort"]
-    pub fn connect_to_named_port(out: *mut Session, name: *mut cty::c_char) -> Result;
+    pub fn connect_to_named_port(out: *mut Session, name: *const cty::c_char) -> Result;
 
     /// Send sync request
     #[link_name = "svcSendSyncRequest"]
