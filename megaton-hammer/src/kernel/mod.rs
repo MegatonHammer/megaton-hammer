@@ -4,7 +4,17 @@ pub mod session;
 pub use self::session::*;
 
 #[derive(Debug)]
-pub struct KObject(pub(crate) u32);
+pub struct KObject(u32);
+
+impl KObject {
+    pub unsafe fn new(handle: u32) -> KObject {
+        KObject(handle)
+    }
+
+    pub fn as_raw_handle(&self) -> u32 {
+        self.0
+    }
+}
 
 impl Drop for KObject {
     fn drop(&mut self) {

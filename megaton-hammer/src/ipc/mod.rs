@@ -207,10 +207,10 @@ impl<'a, 'b, 'c, T: Clone> Request<'a, 'b, 'c, T> {
 
             // Write copy and move handles
             for hnd in self.copy_handles.unwrap_or(&[]) {
-                cursor.write_u32::<LE>((*hnd).0);
+                cursor.write_u32::<LE>((*hnd).as_raw_handle());
             }
             for hnd in self.move_handles.unwrap_or(&[]) {
-                cursor.write_u32::<LE>((*hnd).0);
+                cursor.write_u32::<LE>((*hnd).as_raw_handle());
             }
         }
 
@@ -321,10 +321,10 @@ impl<T: Clone> Response<T> {
                 let _pid = cursor.read_u64::<LE>();
             }
             for _ in 0..descriptor_hdr.get_num_copy_handles() {
-                this.handles.push(KObject(cursor.read_u32::<LE>()));
+                this.handles.push(unsafe { KObject::new(cursor.read_u32::<LE>()) });
             }
             for _ in 0..descriptor_hdr.get_num_move_handles() {
-                this.handles.push(KObject(cursor.read_u32::<LE>()));
+                this.handles.push(unsafe { KObject::new(cursor.read_u32::<LE>()) });
             }
         }
 
