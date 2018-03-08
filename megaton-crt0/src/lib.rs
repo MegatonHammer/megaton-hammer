@@ -142,11 +142,12 @@ mod LoaderConfigTag {
     pub const Argv: u32 = 5;
     pub const SyscallAvailableHint: u32 = 6;
     pub const AppletType: u32 = 7;
-    pub const StdioSockets: u32 = 8;
-    pub const ProcessHandle: u32 = 9;
-    pub const LastLoadResult: u32 = 10;
-    pub const AllocPages: u32 = 11;
-    pub const LockRegion: u32 = 12;
+    pub const AppletWorkaround: u32 = 8;
+    pub const StdioSockets: u32 = 9;
+    pub const ProcessHandle: u32 = 10;
+    pub const LastLoadResult: u32 = 11;
+    pub const AllocPages: u32 = 12;
+    pub const LockRegion: u32 = 13;
     pub const Log: u32 = 51;
 }
 
@@ -216,11 +217,15 @@ unsafe extern fn megaton_start(mut config: *mut LoaderConfigEntry, _thread_handl
                         (*LOG.lock()).0 = Some(io::Cursor::new(slice::from_raw_parts_mut((*config).data.0 as _, (*config).data.1 as _)));
                     }
                 },
-                _ => {
-                    if (*config).flags & 1 == 0 {
+                // TODO: Make MainThreadHandle not mandatory, because it *really* isn't.
+                LoaderConfigTag::MainThreadHandle => {},
+                LoaderConfigTag::OverrideHeap => {},
+                LoaderConfigTag::AppletWorkaround => {},
+                tag => {
+                    if (*config).flags & 1 == 1 {
                         // Flag is mandatory! If we don't know about it, we
                         // should commit suicide.
-                        return -2;
+                        return 346 | ((100 + tag) << 9) as i32;
                     }
                 }
             }
