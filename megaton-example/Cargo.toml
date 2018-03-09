@@ -5,3 +5,5 @@ authors = ["roblabla <unfiltered@roblab.la>"]
 
 [dependencies]
 megaton-crt0 = { path = "../megaton-crt0", features = ["log"] }
+megaton-hammer = { path = "../megaton-hammer" }
+megaton-ipc = { path = "../megaton-ipc" }
