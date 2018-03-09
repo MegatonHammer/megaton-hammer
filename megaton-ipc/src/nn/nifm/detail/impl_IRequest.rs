@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IRequest(Session);
 
+impl AsRef<Session> for IRequest {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IRequest {
 	pub fn GetRequestState(&self, ) -> Result<i32> {
 		let req = Request::new(0)
@@ -175,14 +181,7 @@ impl IRequest {
 	}
 
 	// fn GetAppletInfo(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn GetAdditionalInfo(&self, unk1: &mut Option<::nn::nifm::AdditionalInfo>) -> Result<u32> {
-		let req = Request::new(22)
-			.args(())
-			;
-		let mut res : Response<u32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
+	// fn GetAdditionalInfo(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn SetKeptInSleep(&self, unk0: bool) -> Result<()> {
 		let req = Request::new(23)
 			.args(unk0)

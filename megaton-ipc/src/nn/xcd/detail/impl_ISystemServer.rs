@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct ISystemServer(Session);
 
 impl ISystemServer {
@@ -20,6 +21,11 @@ impl ISystemServer {
 	}
 }
 
+impl AsRef<Session> for ISystemServer {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl ISystemServer {
 	pub fn Unknown0(&self, unk0: u64) -> Result<u8> {
 		let req = Request::new(0)

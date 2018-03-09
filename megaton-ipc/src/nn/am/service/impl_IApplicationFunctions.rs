@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IApplicationFunctions(Session);
 
+impl AsRef<Session> for IApplicationFunctions {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IApplicationFunctions {
 	pub fn PopLaunchParameter(&self, unk0: u32) -> Result<::nn::am::service::IStorage> {
 		let req = Request::new(1)
@@ -14,15 +20,16 @@ impl IApplicationFunctions {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn CreateApplicationAndPushAndRequestToStart(&self, unk0: ::nn::ncm::ApplicationId, unk1: ::nn::am::service::IStorage) -> Result<()> {
+	pub fn CreateApplicationAndPushAndRequestToStart(&self, unk0: ::nn::ncm::ApplicationId, unk1: &::nn::am::service::IStorage) -> Result<()> {
 		let req = Request::new(10)
 			.args(unk0)
+			.copy_handle(unk1.as_ref().as_ref())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
 
-	pub fn CreateApplicationAndPushAndRequestToStartForQuest(&self, unk0: u32, unk1: u32, unk2: ::nn::ncm::ApplicationId, unk3: ::nn::am::service::IStorage) -> Result<()> {
+	pub fn CreateApplicationAndPushAndRequestToStartForQuest(&self, unk0: u32, unk1: u32, unk2: ::nn::ncm::ApplicationId, unk3: &::nn::am::service::IStorage) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: u32,
@@ -35,6 +42,7 @@ impl IApplicationFunctions {
 				unk1,
 				unk2,
 			})
+			.copy_handle(unk3.as_ref().as_ref())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
@@ -188,9 +196,10 @@ impl IApplicationFunctions {
 		Ok(*res.get_raw())
 	}
 
-	pub fn InitializeGamePlayRecording(&self, unk0: u64, unk1: KObject) -> Result<()> {
+	pub fn InitializeGamePlayRecording(&self, unk0: u64, unk1: &KObject) -> Result<()> {
 		let req = Request::new(66)
 			.args(unk0)
+			.copy_handle(unk1)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())

@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct INotifyService(Session);
 
 impl INotifyService {
@@ -20,6 +21,11 @@ impl INotifyService {
 	}
 }
 
+impl AsRef<Session> for INotifyService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl INotifyService {
 	pub fn Unknown0(&self, unk0: u64, unk1: u64) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]

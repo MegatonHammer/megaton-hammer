@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IMonitorServiceCreator(Session);
 
 impl IMonitorServiceCreator {
@@ -20,6 +21,11 @@ impl IMonitorServiceCreator {
 	}
 }
 
+impl AsRef<Session> for IMonitorServiceCreator {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IMonitorServiceCreator {
 	pub fn GetMonitorService(&self, ) -> Result<Session> {
 		let req = Request::new(0)

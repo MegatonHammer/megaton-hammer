@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IApplicationCreator(Session);
 
+impl AsRef<Session> for IApplicationCreator {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IApplicationCreator {
 	pub fn CreateApplication(&self, unk0: ::nn::ncm::ApplicationId) -> Result<::nn::am::service::IApplicationAccessor> {
 		let req = Request::new(0)

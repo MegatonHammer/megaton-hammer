@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct ISystem(Session);
 
+impl AsRef<Session> for ISystem {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl ISystem {
 	// fn Unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn Unknown1(&self, ) -> Result<()> {
@@ -74,38 +80,10 @@ impl ISystem {
 		Ok(())
 	}
 
-	pub fn Unknown13(&self, unk0: u64, unk1: [u8; 0x58]) -> Result<()> {
-		let req = Request::new(13)
-			.args(unk0)
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn Unknown14(&self, unk0: u64, unk1: [u8; 0x100]) -> Result<()> {
-		let req = Request::new(14)
-			.args(unk0)
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn Unknown15(&self, unk0: u64, unk1: [u8; 0x40]) -> Result<()> {
-		let req = Request::new(15)
-			.args(unk0)
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn Unknown16(&self, unk0: u64, unk1: [u8; 0x40]) -> Result<()> {
-		let req = Request::new(16)
-			.args(unk0)
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn Unknown13(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn Unknown14(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn Unknown15(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn Unknown16(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn Unknown17(&self, unk0: u64) -> Result<KObject> {
 		let req = Request::new(17)
 			.args(unk0)
@@ -162,30 +140,9 @@ impl ISystem {
 		Ok(())
 	}
 
-	pub fn Unknown101(&self, unk0: u64, unk1: [u8; 0x40]) -> Result<()> {
-		let req = Request::new(101)
-			.args(unk0)
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn Unknown102(&self, unk0: u64, unk1: [u8; 0x100]) -> Result<()> {
-		let req = Request::new(102)
-			.args(unk0)
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn Unknown103(&self, unk0: u64, unk1: [u8; 0x100]) -> Result<()> {
-		let req = Request::new(103)
-			.args(unk0)
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn Unknown101(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn Unknown102(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn Unknown103(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn Unknown104(&self, unk0: u64) -> Result<()> {
 		let req = Request::new(104)
 			.args(unk0)

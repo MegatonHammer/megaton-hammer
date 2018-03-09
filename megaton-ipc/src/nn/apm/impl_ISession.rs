@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct ISession(Session);
 
+impl AsRef<Session> for ISession {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl ISession {
 	pub fn SetPerformanceConfiguration(&self, unk0: ::nn::apm::PerformanceMode, unk1: ::nn::apm::PerformanceConfiguration) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]

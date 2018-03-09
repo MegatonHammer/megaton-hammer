@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IWriter(Session);
 
 impl IWriter {
@@ -20,6 +21,11 @@ impl IWriter {
 	}
 }
 
+impl AsRef<Session> for IWriter {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IWriter {
 	pub fn GetIRegistrar(&self, ) -> Result<Session> {
 		let req = Request::new(0)

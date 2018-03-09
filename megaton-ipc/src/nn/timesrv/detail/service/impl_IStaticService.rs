@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IStaticService(Session);
 
 impl IStaticService {
@@ -32,6 +33,11 @@ impl IStaticService {
 	}
 }
 
+impl AsRef<Session> for IStaticService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IStaticService {
 	pub fn GetStandardUserSystemClock(&self, ) -> Result<::nn::timesrv::detail::service::ISystemClock> {
 		let req = Request::new(0)

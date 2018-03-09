@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IManagerPrivileged(Session);
 
 impl IManagerPrivileged {
@@ -20,6 +21,11 @@ impl IManagerPrivileged {
 	}
 }
 
+impl AsRef<Session> for IManagerPrivileged {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IManagerPrivileged {
 	pub fn OpenSession(&self, ) -> Result<::nn::apm::ISession> {
 		let req = Request::new(0)

@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IAuthorizationRequest(Session);
 
+impl AsRef<Session> for IAuthorizationRequest {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IAuthorizationRequest {
 	pub fn GetSessionId(&self, ) -> Result<::nn::account::detail::Uuid> {
 		let req = Request::new(0)
@@ -32,14 +38,7 @@ impl IAuthorizationRequest {
 
 	// fn GetAuthorizationCode(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn GetIdToken(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn GetState(&self, unk0: &mut Option<::nn::account::nas::State>) -> Result<()> {
-		let req = Request::new(22)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn GetState(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for IAuthorizationRequest {

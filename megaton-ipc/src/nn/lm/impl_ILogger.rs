@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct ILogger(Session);
 
+impl AsRef<Session> for ILogger {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl ILogger {
 	// fn Unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn Unknown1(&self, unk0: u32) -> Result<()> {

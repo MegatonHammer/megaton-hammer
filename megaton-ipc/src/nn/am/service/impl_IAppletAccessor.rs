@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IAppletAccessor(Session);
 
+impl AsRef<Session> for IAppletAccessor {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IAppletAccessor {
 	pub fn GetAppletStateChangedEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(0)

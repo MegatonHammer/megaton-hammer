@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct ISettingsServer(Session);
 
 impl ISettingsServer {
@@ -20,6 +21,11 @@ impl ISettingsServer {
 	}
 }
 
+impl AsRef<Session> for ISettingsServer {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl ISettingsServer {
 	pub fn GetLanguageCode(&self, ) -> Result<::nn::settings::LanguageCode> {
 		let req = Request::new(0)
@@ -29,14 +35,7 @@ impl ISettingsServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetAvailableLanguageCodes(&self, unk1: &mut [::nn::settings::LanguageCode]) -> Result<i32> {
-		let req = Request::new(1)
-			.args(())
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
+	// fn GetAvailableLanguageCodes(&self, UNKNOWN) -> Result<UNKNOWN>;
 	#[cfg(feature = "switch-4.0.0")]
 	pub fn MakeLanguageCode(&self, ) -> Result<()> {
 		let req = Request::new(2)

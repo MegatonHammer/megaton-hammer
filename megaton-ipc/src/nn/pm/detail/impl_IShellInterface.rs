@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IShellInterface(Session);
 
 impl IShellInterface {
@@ -20,6 +21,11 @@ impl IShellInterface {
 	}
 }
 
+impl AsRef<Session> for IShellInterface {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IShellInterface {
 	pub fn LaunchProcess(&self, ) -> Result<()> {
 		let req = Request::new(0)

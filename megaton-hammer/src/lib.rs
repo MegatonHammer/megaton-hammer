@@ -21,7 +21,7 @@
 //! in the long term. (reimplementing its C API, but using rust). This should
 //! allow porting libtransistor libraries to Megaton Hammer easily.
 // TODO: I shouldn't need either of those, in an ideal world.
-#![feature(asm, proc_macro)]
+#![feature(asm, proc_macro, universal_impl_trait, cfg_target_vendor)]
 
 // Let's keep this no_std. Why ? Because it'll be used in std, that's why.
 // Eventually, I might remove this.
@@ -52,8 +52,14 @@ mod utils;
 pub mod error {
     use core::fmt;
 
-    #[derive(Clone, Copy, Debug, Fail)]
+    #[derive(Clone, Copy, Fail)]
     pub struct Error(pub u32);
+
+    impl fmt::Debug for Error {
+        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+            write!(f, "Error {:x} in module {}: {}", self.0, self.0 & (1 << 9) - 1, self.0 >> 9)
+        }
+    }
 
     impl fmt::Display for Error {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {

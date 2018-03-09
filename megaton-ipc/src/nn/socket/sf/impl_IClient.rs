@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IClient(Session);
 
 impl IClient {
@@ -24,8 +25,13 @@ impl IClient {
 	}
 }
 
+impl AsRef<Session> for IClient {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IClient {
-	pub fn Initialize(&self, config: ::nn::socket::BsdBufferConfig, pid: u64, transferMemorySize: u64, unk3: KObject) -> Result<u32> {
+	pub fn Initialize(&self, config: ::nn::socket::BsdBufferConfig, pid: u64, transferMemorySize: u64, unk3: &KObject) -> Result<u32> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			config: ::nn::socket::BsdBufferConfig,
@@ -39,6 +45,7 @@ impl IClient {
 				transferMemorySize,
 			})
 			.send_pid()
+			.copy_handle(unk3)
 			;
 		let mut res : Response<u32> = self.0.send(req)?;
 		Ok(*res.get_raw())
@@ -98,172 +105,18 @@ impl IClient {
 	}
 
 	// fn Open(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn Select(&self, nfds: u32, timeout: ::nn::socket::timeout, readfds_in: &::nn::socket::fd_set, writefds_in: &::nn::socket::fd_set, errorfds_in: &::nn::socket::fd_set, readfds_out: &mut Option<::nn::socket::fd_set>, writefds_out: &mut Option<::nn::socket::fd_set>, errorfds_out: &mut Option<::nn::socket::fd_set>) -> Result<(i32, u32)> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			nfds: u32,
-			timeout: ::nn::socket::timeout,
-		}
-		let req = Request::new(5)
-			.args(InRaw {
-				nfds,
-				timeout,
-			})
-			;
-		#[repr(C)] #[derive(Clone)] struct OutRaw {
-			ret: i32,
-			bsd_errno: u32,
-		}
-		let mut res : Response<OutRaw> = self.0.send(req)?;
-		Ok((res.get_raw().ret.clone(),res.get_raw().bsd_errno.clone()))
-	}
-
+	// fn Select(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn Poll(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn Sysctl(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn Recv(&self, socket: u32, flags: u32, message: &mut Option<i8>) -> Result<(i32, u32)> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			socket: u32,
-			flags: u32,
-		}
-		let req = Request::new(8)
-			.args(InRaw {
-				socket,
-				flags,
-			})
-			;
-		#[repr(C)] #[derive(Clone)] struct OutRaw {
-			ret: i32,
-			bsd_errno: u32,
-		}
-		let mut res : Response<OutRaw> = self.0.send(req)?;
-		Ok((res.get_raw().ret.clone(),res.get_raw().bsd_errno.clone()))
-	}
-
-	pub fn RecvFrom(&self, sock: u32, flags: u32, message: &mut Option<i8>, unk6: &mut Option<::nn::socket::sockaddr>) -> Result<(i32, u32, u32)> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			sock: u32,
-			flags: u32,
-		}
-		let req = Request::new(9)
-			.args(InRaw {
-				sock,
-				flags,
-			})
-			;
-		#[repr(C)] #[derive(Clone)] struct OutRaw {
-			ret: i32,
-			bsd_errno: u32,
-			addrlen: u32,
-		}
-		let mut res : Response<OutRaw> = self.0.send(req)?;
-		Ok((res.get_raw().ret.clone(),res.get_raw().bsd_errno.clone(),res.get_raw().addrlen.clone()))
-	}
-
-	pub fn Send(&self, socket: u32, flags: u32, unk2: &i8) -> Result<(i32, u32)> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			socket: u32,
-			flags: u32,
-		}
-		let req = Request::new(10)
-			.args(InRaw {
-				socket,
-				flags,
-			})
-			;
-		#[repr(C)] #[derive(Clone)] struct OutRaw {
-			ret: i32,
-			bsd_errno: u32,
-		}
-		let mut res : Response<OutRaw> = self.0.send(req)?;
-		Ok((res.get_raw().ret.clone(),res.get_raw().bsd_errno.clone()))
-	}
-
-	pub fn SendTo(&self, socket: u32, flags: u32, unk2: &i8, unk3: &::nn::socket::sockaddr) -> Result<(i32, u32)> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			socket: u32,
-			flags: u32,
-		}
-		let req = Request::new(11)
-			.args(InRaw {
-				socket,
-				flags,
-			})
-			;
-		#[repr(C)] #[derive(Clone)] struct OutRaw {
-			ret: i32,
-			bsd_errno: u32,
-		}
-		let mut res : Response<OutRaw> = self.0.send(req)?;
-		Ok((res.get_raw().ret.clone(),res.get_raw().bsd_errno.clone()))
-	}
-
-	pub fn Accept(&self, socket: u32, addr: &mut Option<::nn::socket::sockaddr>) -> Result<(i32, u32, u32)> {
-		let req = Request::new(12)
-			.args(socket)
-			;
-		#[repr(C)] #[derive(Clone)] struct OutRaw {
-			ret: i32,
-			bsd_errno: u32,
-			addrlen: u32,
-		}
-		let mut res : Response<OutRaw> = self.0.send(req)?;
-		Ok((res.get_raw().ret.clone(),res.get_raw().bsd_errno.clone(),res.get_raw().addrlen.clone()))
-	}
-
-	pub fn Bind(&self, socket: u32, unk1: &::nn::socket::sockaddr) -> Result<(i32, u32)> {
-		let req = Request::new(13)
-			.args(socket)
-			;
-		#[repr(C)] #[derive(Clone)] struct OutRaw {
-			ret: i32,
-			bsd_errno: u32,
-		}
-		let mut res : Response<OutRaw> = self.0.send(req)?;
-		Ok((res.get_raw().ret.clone(),res.get_raw().bsd_errno.clone()))
-	}
-
-	pub fn Connect(&self, socket: u32, unk1: &::nn::socket::sockaddr) -> Result<(i32, u32)> {
-		let req = Request::new(14)
-			.args(socket)
-			;
-		#[repr(C)] #[derive(Clone)] struct OutRaw {
-			ret: i32,
-			bsd_errno: u32,
-		}
-		let mut res : Response<OutRaw> = self.0.send(req)?;
-		Ok((res.get_raw().ret.clone(),res.get_raw().bsd_errno.clone()))
-	}
-
-	pub fn GetPeerName(&self, socket: u32, addr: &mut Option<::nn::socket::sockaddr>) -> Result<(i32, u32, u32)> {
-		let req = Request::new(15)
-			.args(socket)
-			;
-		#[repr(C)] #[derive(Clone)] struct OutRaw {
-			ret: i32,
-			bsd_errno: u32,
-			addrlen: u32,
-		}
-		let mut res : Response<OutRaw> = self.0.send(req)?;
-		Ok((res.get_raw().ret.clone(),res.get_raw().bsd_errno.clone(),res.get_raw().addrlen.clone()))
-	}
-
-	pub fn GetSockName(&self, socket: u32, addr: &mut Option<::nn::socket::sockaddr>) -> Result<(i32, u32, u32)> {
-		let req = Request::new(16)
-			.args(socket)
-			;
-		#[repr(C)] #[derive(Clone)] struct OutRaw {
-			ret: i32,
-			bsd_errno: u32,
-			addrlen: u32,
-		}
-		let mut res : Response<OutRaw> = self.0.send(req)?;
-		Ok((res.get_raw().ret.clone(),res.get_raw().bsd_errno.clone(),res.get_raw().addrlen.clone()))
-	}
-
+	// fn Recv(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn RecvFrom(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn Send(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn SendTo(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn Accept(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn Bind(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn Connect(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetPeerName(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetSockName(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn GetSockOpt(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn Listen(&self, socket: u32, backlog: u32) -> Result<(i32, u32)> {
 		#[repr(C)] #[derive(Clone)]
@@ -341,30 +194,8 @@ impl IClient {
 		Ok((res.get_raw().ret.clone(),res.get_raw().bsd_errno.clone()))
 	}
 
-	pub fn Write(&self, socket: u32, message: &i8) -> Result<(i32, u32)> {
-		let req = Request::new(24)
-			.args(socket)
-			;
-		#[repr(C)] #[derive(Clone)] struct OutRaw {
-			ret: i32,
-			bsd_errno: u32,
-		}
-		let mut res : Response<OutRaw> = self.0.send(req)?;
-		Ok((res.get_raw().ret.clone(),res.get_raw().bsd_errno.clone()))
-	}
-
-	pub fn Read(&self, socket: u32, message: &mut Option<i8>) -> Result<(i32, u32)> {
-		let req = Request::new(25)
-			.args(socket)
-			;
-		#[repr(C)] #[derive(Clone)] struct OutRaw {
-			ret: i32,
-			bsd_errno: u32,
-		}
-		let mut res : Response<OutRaw> = self.0.send(req)?;
-		Ok((res.get_raw().ret.clone(),res.get_raw().bsd_errno.clone()))
-	}
-
+	// fn Write(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn Read(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn Close(&self, socket: u32) -> Result<(i32, u32)> {
 		let req = Request::new(26)
 			.args(socket)

@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IInformationInterface(Session);
 
 impl IInformationInterface {
@@ -20,6 +21,11 @@ impl IInformationInterface {
 	}
 }
 
+impl AsRef<Session> for IInformationInterface {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IInformationInterface {
 	pub fn GetTitleId(&self, unk0: u64) -> Result<u64> {
 		let req = Request::new(0)

@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct ITransferStorageAccessor(Session);
 
+impl AsRef<Session> for ITransferStorageAccessor {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl ITransferStorageAccessor {
 	pub fn GetSize(&self, ) -> Result<i64> {
 		let req = Request::new(0)

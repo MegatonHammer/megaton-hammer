@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IDeliveryCacheFileService(Session);
 
+impl AsRef<Session> for IDeliveryCacheFileService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IDeliveryCacheFileService {
 	pub fn Open(&self, unk0: ::nn::bcat::DirectoryName, unk1: ::nn::bcat::FileName) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]

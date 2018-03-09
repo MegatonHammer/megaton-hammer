@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IFileSystemProxy(Session);
 
 impl IFileSystemProxy {
@@ -20,24 +21,13 @@ impl IFileSystemProxy {
 	}
 }
 
-impl IFileSystemProxy {
-	#[cfg(not(feature = "switch-2.0.0"))]
-	pub fn MountContent(&self, tid: ::nn::ApplicationId, flag: u32, path: &i8) -> Result<::nn::fssrv::sf::IFileSystem> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			tid: ::nn::ApplicationId,
-			flag: u32,
-		}
-		let req = Request::new(0)
-			.args(InRaw {
-				tid,
-				flag,
-			})
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+impl AsRef<Session> for IFileSystemProxy {
+	fn as_ref(&self) -> &Session {
+		&self.0
 	}
-
+}
+impl IFileSystemProxy {
+	// fn MountContent(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn Initialize(&self, unk0: u64) -> Result<()> {
 		let req = Request::new(1)
 			.args(unk0)
@@ -72,23 +62,7 @@ impl IFileSystemProxy {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	#[cfg(feature = "switch-2.0.0")]
-	pub fn MountContent(&self, tid: ::nn::ApplicationId, flag: u32, path: &[u8; 0x301]) -> Result<::nn::fssrv::sf::IFileSystem> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			tid: ::nn::ApplicationId,
-			flag: u32,
-		}
-		let req = Request::new(8)
-			.args(InRaw {
-				tid,
-				flag,
-			})
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
-	}
-
+	// fn MountContent(&self, UNKNOWN) -> Result<UNKNOWN>;
 	#[cfg(feature = "switch-3.0.0")]
 	pub fn OpenDataFileSystemByApplicationId(&self, tid: ::nn::ApplicationId) -> Result<::nn::fssrv::sf::IFileSystem> {
 		let req = Request::new(9)
@@ -98,14 +72,7 @@ impl IFileSystemProxy {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn MountBis(&self, partitionID: ::nn::fssrv::sf::Partition, path: &[u8; 0x301]) -> Result<::nn::fssrv::sf::IFileSystem> {
-		let req = Request::new(11)
-			.args(partitionID)
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
-	}
-
+	// fn MountBis(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn OpenBisPartition(&self, partitionID: ::nn::fssrv::sf::Partition) -> Result<::nn::fssrv::sf::IStorage> {
 		let req = Request::new(12)
 			.args(partitionID)
@@ -122,14 +89,7 @@ impl IFileSystemProxy {
 		Ok(())
 	}
 
-	pub fn OpenHostFileSystemImpl(&self, path: &[u8; 0x301]) -> Result<::nn::fssrv::sf::IFileSystem> {
-		let req = Request::new(17)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
-	}
-
+	// fn OpenHostFileSystemImpl(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn MountSdCard(&self, ) -> Result<::nn::fssrv::sf::IFileSystem> {
 		let req = Request::new(18)
 			.args(())
@@ -521,28 +481,8 @@ impl IFileSystemProxy {
 		Ok(())
 	}
 
-	#[cfg(feature = "switch-2.0.0")]
-	pub fn GetRightsIdByPath(&self, path: &[u8; 0x301]) -> Result<u128> {
-		let req = Request::new(609)
-			.args(())
-			;
-		let mut res : Response<u128> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
-	#[cfg(feature = "switch-3.0.0")]
-	pub fn GetRightsIdByPath2(&self, path: &[u8; 0x301]) -> Result<(u128, u8)> {
-		let req = Request::new(610)
-			.args(())
-			;
-		#[repr(C)] #[derive(Clone)] struct OutRaw {
-			rights: u128,
-			unk2: u8,
-		}
-		let mut res : Response<OutRaw> = self.0.send(req)?;
-		Ok((res.get_raw().rights.clone(),res.get_raw().unk2.clone()))
-	}
-
+	// fn GetRightsIdByPath(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetRightsIdByPath2(&self, UNKNOWN) -> Result<UNKNOWN>;
 	#[cfg(feature = "switch-2.0.0")]
 	pub fn SetSdCardEncryptionSeed(&self, seedmaybe: u128) -> Result<()> {
 		let req = Request::new(620)
@@ -553,14 +493,7 @@ impl IFileSystemProxy {
 	}
 
 	// fn GetAndClearFileSystemProxyErrorInfo(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn SetBisRootForHost(&self, unk0: u32, path: &[u8; 0x301]) -> Result<()> {
-		let req = Request::new(1000)
-			.args(unk0)
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn SetBisRootForHost(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn SetSaveDataSize(&self, unk0: u64, unk1: u64) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -577,14 +510,7 @@ impl IFileSystemProxy {
 		Ok(())
 	}
 
-	pub fn SetSaveDataRootPath(&self, path: &[u8; 0x301]) -> Result<()> {
-		let req = Request::new(1002)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn SetSaveDataRootPath(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn DisableAutoSaveDataCreation(&self, ) -> Result<()> {
 		let req = Request::new(1003)
 			.args(())

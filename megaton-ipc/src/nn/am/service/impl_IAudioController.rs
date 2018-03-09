@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IAudioController(Session);
 
+impl AsRef<Session> for IAudioController {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IAudioController {
 	pub fn SetExpectedMasterVolume(&self, unk0: f32, unk1: f32) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]

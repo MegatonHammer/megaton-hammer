@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IFriendService(Session);
 
+impl AsRef<Session> for IFriendService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IFriendService {
 	pub fn GetCompletionEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(0)
@@ -22,110 +28,14 @@ impl IFriendService {
 		Ok(())
 	}
 
-	pub fn GetFriendListIds(&self, unk0: i32, unk1: ::nn::account::Uid, unk2: ::nn::friends::detail::ipc::SizedFriendFilter, unk3: u64, unk6: &mut [::nn::account::NetworkServiceAccountId]) -> Result<i32> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: i32,
-			unk1: ::nn::account::Uid,
-			unk2: ::nn::friends::detail::ipc::SizedFriendFilter,
-			unk3: u64,
-		}
-		let req = Request::new(10100)
-			.args(InRaw {
-				unk0,
-				unk1,
-				unk2,
-				unk3,
-			})
-			.send_pid()
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
-	pub fn GetFriendList(&self, unk0: i32, unk1: ::nn::account::Uid, unk2: ::nn::friends::detail::ipc::SizedFriendFilter, unk3: u64, unk6: &mut [::nn::friends::detail::FriendImpl]) -> Result<i32> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: i32,
-			unk1: ::nn::account::Uid,
-			unk2: ::nn::friends::detail::ipc::SizedFriendFilter,
-			unk3: u64,
-		}
-		let req = Request::new(10101)
-			.args(InRaw {
-				unk0,
-				unk1,
-				unk2,
-				unk3,
-			})
-			.send_pid()
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
-	pub fn UpdateFriendInfo(&self, unk0: ::nn::account::Uid, unk1: u64, unk3: &[::nn::account::NetworkServiceAccountId], unk4: &mut [::nn::friends::detail::FriendImpl]) -> Result<()> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: ::nn::account::Uid,
-			unk1: u64,
-		}
-		let req = Request::new(10102)
-			.args(InRaw {
-				unk0,
-				unk1,
-			})
-			.send_pid()
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn GetFriendListIds(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetFriendList(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn UpdateFriendInfo(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn GetFriendProfileImage(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn SendFriendRequestForApplication(&self, unk0: ::nn::account::Uid, unk1: ::nn::account::NetworkServiceAccountId, unk2: u64, unk4: &::nn::friends::InAppScreenName, unk5: &::nn::friends::InAppScreenName) -> Result<()> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: ::nn::account::Uid,
-			unk1: ::nn::account::NetworkServiceAccountId,
-			unk2: u64,
-		}
-		let req = Request::new(10200)
-			.args(InRaw {
-				unk0,
-				unk1,
-				unk2,
-			})
-			.send_pid()
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn SendFriendRequestForApplication(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn AddFacedFriendRequestForApplication(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn GetBlockedUserListIds(&self, unk0: i32, unk1: ::nn::account::Uid, unk3: &mut [::nn::account::NetworkServiceAccountId]) -> Result<i32> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: i32,
-			unk1: ::nn::account::Uid,
-		}
-		let req = Request::new(10400)
-			.args(InRaw {
-				unk0,
-				unk1,
-			})
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
-	pub fn GetProfileList(&self, unk0: ::nn::account::Uid, unk1: &[::nn::account::NetworkServiceAccountId], unk2: &mut [::nn::friends::detail::ProfileImpl]) -> Result<()> {
-		let req = Request::new(10500)
-			.args(unk0)
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn GetBlockedUserListIds(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetProfileList(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn DeclareOpenOnlinePlaySession(&self, unk0: ::nn::account::Uid) -> Result<()> {
 		let req = Request::new(10600)
 			.args(unk0)
@@ -142,72 +52,10 @@ impl IFriendService {
 		Ok(())
 	}
 
-	pub fn UpdateUserPresence(&self, unk0: ::nn::account::Uid, unk1: u64, unk3: &::nn::friends::detail::UserPresenceImpl) -> Result<()> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: ::nn::account::Uid,
-			unk1: u64,
-		}
-		let req = Request::new(10610)
-			.args(InRaw {
-				unk0,
-				unk1,
-			})
-			.send_pid()
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn GetPlayHistoryRegistrationKey(&self, unk0: bool, unk1: ::nn::account::Uid, unk2: &mut Option<::nn::friends::PlayHistoryRegistrationKey>) -> Result<()> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: bool,
-			unk1: ::nn::account::Uid,
-		}
-		let req = Request::new(10700)
-			.args(InRaw {
-				unk0,
-				unk1,
-			})
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn GetPlayHistoryRegistrationKeyWithNetworkServiceAccountId(&self, unk0: bool, unk1: ::nn::account::NetworkServiceAccountId, unk2: &mut Option<::nn::friends::PlayHistoryRegistrationKey>) -> Result<()> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: bool,
-			unk1: ::nn::account::NetworkServiceAccountId,
-		}
-		let req = Request::new(10701)
-			.args(InRaw {
-				unk0,
-				unk1,
-			})
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn AddPlayHistory(&self, unk0: ::nn::account::Uid, unk1: u64, unk3: &::nn::friends::PlayHistoryRegistrationKey, unk4: &::nn::friends::InAppScreenName, unk5: &::nn::friends::InAppScreenName) -> Result<()> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: ::nn::account::Uid,
-			unk1: u64,
-		}
-		let req = Request::new(10702)
-			.args(InRaw {
-				unk0,
-				unk1,
-			})
-			.send_pid()
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn UpdateUserPresence(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetPlayHistoryRegistrationKey(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetPlayHistoryRegistrationKeyWithNetworkServiceAccountId(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn AddPlayHistory(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn GetProfileImageUrl(&self, unk0: ::nn::friends::Url, unk1: i32) -> Result<::nn::friends::Url> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -251,22 +99,7 @@ impl IFriendService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetFriendDetailedInfo(&self, unk0: ::nn::account::Uid, unk1: ::nn::account::NetworkServiceAccountId, unk2: &mut Option<::nn::friends::detail::FriendDetailedInfoImpl>) -> Result<()> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: ::nn::account::Uid,
-			unk1: ::nn::account::NetworkServiceAccountId,
-		}
-		let req = Request::new(20102)
-			.args(InRaw {
-				unk0,
-				unk1,
-			})
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn GetFriendDetailedInfo(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn SyncFriendList(&self, unk0: ::nn::account::Uid) -> Result<()> {
 		let req = Request::new(20103)
 			.args(unk0)
@@ -283,22 +116,7 @@ impl IFriendService {
 		Ok(())
 	}
 
-	pub fn LoadFriendSetting(&self, unk0: ::nn::account::Uid, unk1: ::nn::account::NetworkServiceAccountId, unk2: &mut Option<::nn::friends::detail::FriendSettingImpl>) -> Result<()> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: ::nn::account::Uid,
-			unk1: ::nn::account::NetworkServiceAccountId,
-		}
-		let req = Request::new(20110)
-			.args(InRaw {
-				unk0,
-				unk1,
-			})
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn LoadFriendSetting(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn GetReceivedFriendRequestCount(&self, unk0: ::nn::account::Uid) -> Result<(i32, i32)> {
 		let req = Request::new(20200)
 			.args(unk0)
@@ -311,72 +129,10 @@ impl IFriendService {
 		Ok((res.get_raw().unk1.clone(),res.get_raw().unk2.clone()))
 	}
 
-	pub fn GetFriendRequestList(&self, unk0: i32, unk1: i32, unk2: ::nn::account::Uid, unk4: &mut [::nn::friends::detail::FriendRequestImpl]) -> Result<i32> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: i32,
-			unk1: i32,
-			unk2: ::nn::account::Uid,
-		}
-		let req = Request::new(20201)
-			.args(InRaw {
-				unk0,
-				unk1,
-				unk2,
-			})
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
-	pub fn GetFriendCandidateList(&self, unk0: i32, unk1: ::nn::account::Uid, unk3: &mut [::nn::friends::detail::FriendCandidateImpl]) -> Result<i32> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: i32,
-			unk1: ::nn::account::Uid,
-		}
-		let req = Request::new(20300)
-			.args(InRaw {
-				unk0,
-				unk1,
-			})
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
-	pub fn GetNintendoNetworkIdInfo(&self, unk0: i32, unk1: ::nn::account::Uid, unk3: &mut Option<::nn::friends::NintendoNetworkIdUserInfo>, unk4: &mut [::nn::friends::detail::NintendoNetworkIdFriendImpl]) -> Result<i32> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: i32,
-			unk1: ::nn::account::Uid,
-		}
-		let req = Request::new(20301)
-			.args(InRaw {
-				unk0,
-				unk1,
-			})
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
-	pub fn GetBlockedUserList(&self, unk0: i32, unk1: ::nn::account::Uid, unk3: &mut [::nn::friends::detail::BlockedUserImpl]) -> Result<i32> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: i32,
-			unk1: ::nn::account::Uid,
-		}
-		let req = Request::new(20400)
-			.args(InRaw {
-				unk0,
-				unk1,
-			})
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
+	// fn GetFriendRequestList(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetFriendCandidateList(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetNintendoNetworkIdInfo(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetBlockedUserList(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn SyncBlockedUserList(&self, unk0: ::nn::account::Uid) -> Result<()> {
 		let req = Request::new(20401)
 			.args(unk0)
@@ -385,14 +141,7 @@ impl IFriendService {
 		Ok(())
 	}
 
-	pub fn GetProfileExtraList(&self, unk0: ::nn::account::Uid, unk1: &[::nn::account::NetworkServiceAccountId], unk2: &mut [::nn::friends::detail::ProfileExtraImpl]) -> Result<()> {
-		let req = Request::new(20500)
-			.args(unk0)
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn GetProfileExtraList(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn GetRelationship(&self, unk0: ::nn::account::Uid, unk1: ::nn::account::NetworkServiceAccountId) -> Result<::nn::friends::Relationship> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -409,30 +158,8 @@ impl IFriendService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetUserPresenceView(&self, unk0: ::nn::account::Uid, unk1: &mut Option<::nn::friends::detail::UserPresenceViewImpl>) -> Result<()> {
-		let req = Request::new(20600)
-			.args(unk0)
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn GetPlayHistoryList(&self, unk0: i32, unk1: ::nn::account::Uid, unk3: &mut [::nn::friends::detail::PlayHistoryImpl]) -> Result<i32> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: i32,
-			unk1: ::nn::account::Uid,
-		}
-		let req = Request::new(20700)
-			.args(InRaw {
-				unk0,
-				unk1,
-			})
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
+	// fn GetUserPresenceView(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetPlayHistoryList(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn GetPlayHistoryStatistics(&self, unk0: ::nn::account::Uid) -> Result<::nn::friends::PlayHistoryStatistics> {
 		let req = Request::new(20701)
 			.args(unk0)
@@ -441,14 +168,7 @@ impl IFriendService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn LoadUserSetting(&self, unk0: ::nn::account::Uid, unk1: &mut Option<::nn::friends::detail::UserSettingImpl>) -> Result<()> {
-		let req = Request::new(20800)
-			.args(unk0)
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn LoadUserSetting(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn SyncUserSetting(&self, unk0: ::nn::account::Uid) -> Result<()> {
 		let req = Request::new(20801)
 			.args(unk0)
@@ -465,22 +185,7 @@ impl IFriendService {
 		Ok(())
 	}
 
-	pub fn GetExternalApplicationCatalog(&self, unk0: ::nn::settings::LanguageCode, unk1: ::nn::friends::ExternalApplicationCatalogId, unk2: &mut Option<::nn::friends::ExternalApplicationCatalog>) -> Result<()> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: ::nn::settings::LanguageCode,
-			unk1: ::nn::friends::ExternalApplicationCatalogId,
-		}
-		let req = Request::new(21000)
-			.args(InRaw {
-				unk0,
-				unk1,
-			})
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn GetExternalApplicationCatalog(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn DropFriendNewlyFlags(&self, unk0: ::nn::account::Uid) -> Result<()> {
 		let req = Request::new(30100)
 			.args(unk0)
@@ -575,26 +280,7 @@ impl IFriendService {
 		Ok(())
 	}
 
-	pub fn SendFriendRequestWithApplicationInfo(&self, unk0: i32, unk1: ::nn::account::Uid, unk2: ::nn::account::NetworkServiceAccountId, unk3: ::nn::friends::ApplicationInfo, unk4: &::nn::friends::InAppScreenName, unk5: &::nn::friends::InAppScreenName) -> Result<()> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: i32,
-			unk1: ::nn::account::Uid,
-			unk2: ::nn::account::NetworkServiceAccountId,
-			unk3: ::nn::friends::ApplicationInfo,
-		}
-		let req = Request::new(30201)
-			.args(InRaw {
-				unk0,
-				unk1,
-				unk2,
-				unk3,
-			})
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn SendFriendRequestWithApplicationInfo(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn CancelFriendRequest(&self, unk0: ::nn::account::Uid, unk1: ::nn::friends::RequestId) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -686,26 +372,7 @@ impl IFriendService {
 
 	// fn GetFacedFriendRequestProfileImage(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn GetFacedFriendRequestProfileImageFromPath(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn SendFriendRequestWithExternalApplicationCatalogId(&self, unk0: i32, unk1: ::nn::account::Uid, unk2: ::nn::account::NetworkServiceAccountId, unk3: ::nn::friends::ExternalApplicationCatalogId, unk4: &::nn::friends::InAppScreenName, unk5: &::nn::friends::InAppScreenName) -> Result<()> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: i32,
-			unk1: ::nn::account::Uid,
-			unk2: ::nn::account::NetworkServiceAccountId,
-			unk3: ::nn::friends::ExternalApplicationCatalogId,
-		}
-		let req = Request::new(30215)
-			.args(InRaw {
-				unk0,
-				unk1,
-				unk2,
-				unk3,
-			})
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn SendFriendRequestWithExternalApplicationCatalogId(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn ResendFacedFriendRequest(&self, unk0: ::nn::account::Uid, unk1: ::nn::account::NetworkServiceAccountId) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -766,26 +433,7 @@ impl IFriendService {
 		Ok(())
 	}
 
-	pub fn BlockUserWithApplicationInfo(&self, unk0: i32, unk1: ::nn::account::Uid, unk2: ::nn::account::NetworkServiceAccountId, unk3: ::nn::friends::ApplicationInfo, unk4: &::nn::friends::InAppScreenName) -> Result<()> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: i32,
-			unk1: ::nn::account::Uid,
-			unk2: ::nn::account::NetworkServiceAccountId,
-			unk3: ::nn::friends::ApplicationInfo,
-		}
-		let req = Request::new(30401)
-			.args(InRaw {
-				unk0,
-				unk1,
-				unk2,
-				unk3,
-			})
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn BlockUserWithApplicationInfo(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn UnblockUser(&self, unk0: ::nn::account::Uid, unk1: ::nn::account::NetworkServiceAccountId) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -802,22 +450,7 @@ impl IFriendService {
 		Ok(())
 	}
 
-	pub fn GetProfileExtraFromFriendCode(&self, unk0: ::nn::friends::FriendCode, unk1: ::nn::account::Uid, unk2: &mut Option<::nn::friends::detail::ProfileExtraImpl>) -> Result<()> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: ::nn::friends::FriendCode,
-			unk1: ::nn::account::Uid,
-		}
-		let req = Request::new(30500)
-			.args(InRaw {
-				unk0,
-				unk1,
-			})
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn GetProfileExtraFromFriendCode(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn DeletePlayHistory(&self, unk0: ::nn::account::Uid) -> Result<()> {
 		let req = Request::new(30700)
 			.args(unk0)

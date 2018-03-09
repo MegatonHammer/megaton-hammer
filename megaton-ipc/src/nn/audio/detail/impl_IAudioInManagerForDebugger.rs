@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IAudioInManagerForDebugger(Session);
 
 impl IAudioInManagerForDebugger {
@@ -20,6 +21,11 @@ impl IAudioInManagerForDebugger {
 	}
 }
 
+impl AsRef<Session> for IAudioInManagerForDebugger {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IAudioInManagerForDebugger {
 	pub fn ListAudioIns(&self, unk0: u64) -> Result<()> {
 		let req = Request::new(0)

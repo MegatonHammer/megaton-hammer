@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IDevelopInterface(Session);
 
 impl IDevelopInterface {
@@ -20,6 +21,11 @@ impl IDevelopInterface {
 	}
 }
 
+impl AsRef<Session> for IDevelopInterface {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IDevelopInterface {
 	pub fn LaunchTitle(&self, ) -> Result<()> {
 		let req = Request::new(0)

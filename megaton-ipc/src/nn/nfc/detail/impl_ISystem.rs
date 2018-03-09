@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct ISystem(Session);
 
+impl AsRef<Session> for ISystem {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl ISystem {
 	// fn Unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn Unknown1(&self, ) -> Result<()> {

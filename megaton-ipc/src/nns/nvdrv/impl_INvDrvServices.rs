@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct INvDrvServices(Session);
 
 impl INvDrvServices {
@@ -32,6 +33,11 @@ impl INvDrvServices {
 	}
 }
 
+impl AsRef<Session> for INvDrvServices {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl INvDrvServices {
 	pub fn Open(&self, ) -> Result<()> {
 		let req = Request::new(0)

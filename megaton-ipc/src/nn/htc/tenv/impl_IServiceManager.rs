@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IServiceManager(Session);
 
+impl AsRef<Session> for IServiceManager {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IServiceManager {
 	pub fn Unknown0(&self, unk0: u64) -> Result<Session> {
 		let req = Request::new(0)

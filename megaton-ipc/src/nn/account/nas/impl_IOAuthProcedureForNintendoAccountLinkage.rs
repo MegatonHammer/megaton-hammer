@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IOAuthProcedureForNintendoAccountLinkage(Session);
 
+impl AsRef<Session> for IOAuthProcedureForNintendoAccountLinkage {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IOAuthProcedureForNintendoAccountLinkage {
 	pub fn PrepareAsync(&self, ) -> Result<::nn::account::detail::IAsyncContext> {
 		let req = Request::new(0)
@@ -14,30 +20,9 @@ impl IOAuthProcedureForNintendoAccountLinkage {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetRequest(&self, unk0: &mut Option<::nn::account::RequestUrl>, unk1: &mut Option<::nn::account::CallbackUri>) -> Result<()> {
-		let req = Request::new(1)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn ApplyResponse(&self, unk0: &[i8]) -> Result<()> {
-		let req = Request::new(2)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn ApplyResponseAsync(&self, unk0: &[i8]) -> Result<::nn::account::detail::IAsyncContext> {
-		let req = Request::new(3)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
-	}
-
+	// fn GetRequest(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn ApplyResponse(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn ApplyResponseAsync(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn Suspend(&self, ) -> Result<::nn::account::detail::Uuid> {
 		let req = Request::new(10)
 			.args(())
@@ -46,14 +31,7 @@ impl IOAuthProcedureForNintendoAccountLinkage {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetRequestWithTheme(&self, unk0: i32, unk1: &mut Option<::nn::account::RequestUrl>, unk2: &mut Option<::nn::account::CallbackUri>) -> Result<()> {
-		let req = Request::new(100)
-			.args(unk0)
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn GetRequestWithTheme(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn IsNetworkServiceAccountReplaced(&self, ) -> Result<bool> {
 		let req = Request::new(101)
 			.args(())
@@ -62,14 +40,7 @@ impl IOAuthProcedureForNintendoAccountLinkage {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetUrlForIntroductionOfExtraMembership(&self, unk0: &mut Option<::nn::account::RequestUrl>) -> Result<()> {
-		let req = Request::new(199)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn GetUrlForIntroductionOfExtraMembership(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for IOAuthProcedureForNintendoAccountLinkage {

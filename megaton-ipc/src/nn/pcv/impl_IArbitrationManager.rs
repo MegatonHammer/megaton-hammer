@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IArbitrationManager(Session);
 
 impl IArbitrationManager {
@@ -20,6 +21,11 @@ impl IArbitrationManager {
 	}
 }
 
+impl AsRef<Session> for IArbitrationManager {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IArbitrationManager {
 	pub fn ReleaseControl(&self, unk0: i32) -> Result<()> {
 		let req = Request::new(0)

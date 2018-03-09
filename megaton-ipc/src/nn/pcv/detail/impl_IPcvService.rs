@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IPcvService(Session);
 
 impl IPcvService {
@@ -20,6 +21,11 @@ impl IPcvService {
 	}
 }
 
+impl AsRef<Session> for IPcvService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IPcvService {
 	pub fn SetPowerEnabled(&self, unk0: bool, unk1: i32) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
@@ -85,26 +91,7 @@ impl IPcvService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetPossibleClockRates(&self, unk0: i32, unk1: i32, unk4: &mut [u32]) -> Result<(i32, i32)> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: i32,
-			unk1: i32,
-		}
-		let req = Request::new(5)
-			.args(InRaw {
-				unk0,
-				unk1,
-			})
-			;
-		#[repr(C)] #[derive(Clone)] struct OutRaw {
-			unk2: i32,
-			unk3: i32,
-		}
-		let mut res : Response<OutRaw> = self.0.send(req)?;
-		Ok((res.get_raw().unk2.clone(),res.get_raw().unk3.clone()))
-	}
-
+	// fn GetPossibleClockRates(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn SetMinVClockRate(&self, unk0: i32, unk1: u32) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -198,14 +185,7 @@ impl IPcvService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetTemperatureThresholds(&self, unk0: i32, unk2: &mut [::nn::pcv::TemperatureThreshold]) -> Result<i32> {
-		let req = Request::new(13)
-			.args(unk0)
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
+	// fn GetTemperatureThresholds(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn SetTemperature(&self, unk0: i32) -> Result<()> {
 		let req = Request::new(14)
 			.args(unk0)
@@ -294,46 +274,10 @@ impl IPcvService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetDvfsTable(&self, unk0: i32, unk1: i32, unk3: &mut [u32], unk4: &mut [i32]) -> Result<i32> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: i32,
-			unk1: i32,
-		}
-		let req = Request::new(23)
-			.args(InRaw {
-				unk0,
-				unk1,
-			})
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
-	pub fn GetModuleStateTable(&self, unk0: i32, unk2: &mut [::nn::pcv::ModuleState]) -> Result<i32> {
-		let req = Request::new(24)
-			.args(unk0)
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
-	pub fn GetPowerDomainStateTable(&self, unk0: i32, unk2: &mut [::nn::pcv::PowerDomainState]) -> Result<i32> {
-		let req = Request::new(25)
-			.args(unk0)
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
-	pub fn GetFuseInfo(&self, unk0: i32, unk2: &mut [u32]) -> Result<i32> {
-		let req = Request::new(26)
-			.args(unk0)
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
+	// fn GetDvfsTable(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetModuleStateTable(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetPowerDomainStateTable(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetFuseInfo(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for IPcvService {

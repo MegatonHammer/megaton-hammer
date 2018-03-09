@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct INcmInterface4Unknown(Session);
 
+impl AsRef<Session> for INcmInterface4Unknown {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl INcmInterface4Unknown {
 	pub fn Unknown10(&self, ) -> Result<()> {
 		let req = Request::new(10)

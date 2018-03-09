@@ -3,17 +3,16 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IProfile(Session);
 
-impl IProfile {
-	pub fn Get(&self, unk1: &mut Option<::nn::account::profile::UserData>) -> Result<::nn::account::profile::ProfileBase> {
-		let req = Request::new(0)
-			.args(())
-			;
-		let mut res : Response<::nn::account::profile::ProfileBase> = self.0.send(req)?;
-		Ok(*res.get_raw())
+impl AsRef<Session> for IProfile {
+	fn as_ref(&self) -> &Session {
+		&self.0
 	}
-
+}
+impl IProfile {
+	// fn Get(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn GetBase(&self, ) -> Result<::nn::account::profile::ProfileBase> {
 		let req = Request::new(1)
 			.args(())

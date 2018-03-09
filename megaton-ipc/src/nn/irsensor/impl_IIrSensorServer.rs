@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IIrSensorServer(Session);
 
 impl IIrSensorServer {
@@ -20,6 +21,11 @@ impl IIrSensorServer {
 	}
 }
 
+impl AsRef<Session> for IIrSensorServer {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IIrSensorServer {
 	pub fn ActivateIrsensor(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		let req = Request::new(302)
@@ -103,7 +109,7 @@ impl IIrSensorServer {
 		Ok(())
 	}
 
-	pub fn RunImageTransferProcessor(&self, unk0: ::nn::irsensor::IrCameraHandle, unk1: ::nn::applet::AppletResourceUserId, unk2: ::nn::irsensor::PackedImageTransferProcessorConfig, unk3: u64, unk5: KObject) -> Result<()> {
+	pub fn RunImageTransferProcessor(&self, unk0: ::nn::irsensor::IrCameraHandle, unk1: ::nn::applet::AppletResourceUserId, unk2: ::nn::irsensor::PackedImageTransferProcessorConfig, unk3: u64, unk5: &KObject) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: ::nn::irsensor::IrCameraHandle,
@@ -119,6 +125,7 @@ impl IIrSensorServer {
 				unk3,
 			})
 			.send_pid()
+			.copy_handle(unk5)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())

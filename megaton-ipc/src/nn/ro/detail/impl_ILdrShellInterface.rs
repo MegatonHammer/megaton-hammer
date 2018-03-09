@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct ILdrShellInterface(Session);
 
 impl ILdrShellInterface {
@@ -20,23 +21,13 @@ impl ILdrShellInterface {
 	}
 }
 
-impl ILdrShellInterface {
-	pub fn AddProcessToLaunchQueue(&self, unk0: [u8; 0x200], size: u32, appID: ::nn::ncm::ApplicationId) -> Result<()> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			size: u32,
-			appID: ::nn::ncm::ApplicationId,
-		}
-		let req = Request::new(0)
-			.args(InRaw {
-				size,
-				appID,
-			})
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
+impl AsRef<Session> for ILdrShellInterface {
+	fn as_ref(&self) -> &Session {
+		&self.0
 	}
-
+}
+impl ILdrShellInterface {
+	// fn AddProcessToLaunchQueue(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn ClearLaunchQueue(&self, ) -> Result<()> {
 		let req = Request::new(1)
 			.args(())

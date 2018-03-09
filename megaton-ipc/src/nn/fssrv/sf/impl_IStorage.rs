@@ -3,41 +3,17 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IStorage(Session);
 
+impl AsRef<Session> for IStorage {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IStorage {
-	pub fn Read(&self, offset: u64, length: u64, buffer: &mut Option<i8>) -> Result<()> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			offset: u64,
-			length: u64,
-		}
-		let req = Request::new(0)
-			.args(InRaw {
-				offset,
-				length,
-			})
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn Write(&self, offset: u64, length: u64, data: &i8) -> Result<()> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			offset: u64,
-			length: u64,
-		}
-		let req = Request::new(1)
-			.args(InRaw {
-				offset,
-				length,
-			})
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn Read(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn Write(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn Flush(&self, ) -> Result<()> {
 		let req = Request::new(2)
 			.args(())

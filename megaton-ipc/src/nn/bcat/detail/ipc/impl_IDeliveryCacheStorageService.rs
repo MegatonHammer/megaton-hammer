@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IDeliveryCacheStorageService(Session);
 
+impl AsRef<Session> for IDeliveryCacheStorageService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IDeliveryCacheStorageService {
 	pub fn CreateFileService(&self, ) -> Result<::nn::bcat::detail::ipc::IDeliveryCacheFileService> {
 		let req = Request::new(0)
@@ -22,14 +28,7 @@ impl IDeliveryCacheStorageService {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn EnumerateDeliveryCacheDirectory(&self, unk1: &mut [::nn::bcat::DirectoryName]) -> Result<i32> {
-		let req = Request::new(10)
-			.args(())
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
+	// fn EnumerateDeliveryCacheDirectory(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for IDeliveryCacheStorageService {

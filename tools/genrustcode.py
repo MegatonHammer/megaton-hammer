@@ -79,11 +79,19 @@ def getType(output, ty):
 	elif ty[0] == 'object':
 		it = ty[1][0]
 		if it in ifaces:
-			return '::' + it
+			ret = '::' + it
 		else:
-			return "Session"
+			ret = "Session"
+		if output:
+			return ret
+		else:
+			return "&" + ret
 	elif ty[0] == 'KObject':
-		return "KObject"
+		if output:
+			return "KObject"
+		else:
+			# TODO: Add support for move object, that take a KObject by-value!
+			return "&KObject"
 	elif ty[0] == 'align':
 		raise UnsupportedStructException()
 		#return 'align<%s, %s>' % (emitInt(ty[1]), getType(output, ty[2]))
@@ -97,9 +105,11 @@ def getType(output, ty):
 	elif ty[0] in BUILTINS:
 		assert len(ty) == 1
 		return BUILTINS[ty[0]]['rtype']
+	elif ty[0] == 'unknown':
+		raise UnsupportedStructException('unknown')
 	else:
-		raise Exception("Unknown type")
-
+		raise Exception("Unknown type %s" % ty[0])
+ 
 def formatArgs(elems, is_output=False, is_arg=True):
 	from functools import partial
 
@@ -186,9 +196,20 @@ def is_buffer_argument(ty):
 def gen_ipc_method(cmd, f):
 	# Get args type
 	args_arr = []
+	objects_arr = []
 	for (idx, (name, ty)) in enumerate(cmd['inputs']):
 		if raw_input_type(ty) is not None:
 			args_arr.append((name, getType(False, ty)))
+		elif ty[0] == "KObject":
+			objects_arr.append(name)
+		elif ty[0] == "object" and ty[1][0] in ifaces:
+			objects_arr.append(name + ".as_ref().as_ref()")
+		elif ty[0] == "object":
+			objects_arr.append(name + ".as_ref()")
+		elif ty[0] == "pid":
+			pass
+		else:
+			raise UnsupportedStructException(ty[0])
 	if len(args_arr) == 1:
 		args = "%s" % args_arr[0][0]
 	elif len(args_arr) == 0:
@@ -211,6 +232,9 @@ def gen_ipc_method(cmd, f):
 	print("\t\t\t.args(%s)" % args, file=f)
 	if any(ty[0] == "pid" for (_, ty) in cmd['inputs']):
 		print("\t\t\t.send_pid()", file=f)
+	for obj in objects_arr:
+		print("\t\t\t.copy_handle(%s)" % obj, file=f)
+
 	# TODO: Buffers
 	print("\t\t\t;", file=f)
 
@@ -236,8 +260,6 @@ def gen_ipc_method(cmd, f):
 
 	raw_input_len = len(list(filter(lambda x: raw_input_type(x[1]) is not None, cmd['outputs'])))
 	for (name, ty) in cmd['outputs']:
-		if ty[0] in ['buffer', 'array']: # TODO: What about pid
-			continue
 		t = raw_input_type(ty)
 		if t is not None and raw_input_len == 1:
 			args_arr.append("*res.get_raw()")
@@ -311,6 +333,7 @@ for name, cmds in ifaces.items():
 		print("use megaton_hammer::error::Result;", file=f)
 		print("use megaton_hammer::ipc::{Request, Response};", file=f)
 		print("", file=f)
+		print("#[derive(Debug)]", file=f)
 		print("pub struct %s(Session);" % ifacename, file=f)
 		print("", file=f)
 		if name in services:
@@ -346,6 +369,12 @@ for name, cmds in ifaces.items():
 			print("}", file=f)
 			print("", file=f)
 
+		print("impl AsRef<Session> for %s {" % ifacename, file=f)
+		print("\tfn as_ref(&self) -> &Session {", file=f)
+		print("\t\t&self.0", file=f)
+		print("\t}", file=f)
+		print("}", file=f)
+
 		print("impl %s {" % ifacename, file=f)
 		for cmd in cmds['cmds']:
 			fn_io = StringIO()
@@ -375,6 +404,7 @@ for name, cmds in ifaces.items():
 				print("\t}", file=fn_io)
 				print(fn_io.getvalue(), file=f)
 			except UnsupportedStructException as e:
+				print("This failed", e)
 				print("\t// fn %s(&self, UNKNOWN) -> Result<UNKNOWN>;" % cmd['name'], file=f)
 		print("}", file=f)
 		print("", file=f)

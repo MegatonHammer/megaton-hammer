@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IAudioRendererManager(Session);
 
 impl IAudioRendererManager {
@@ -20,6 +21,11 @@ impl IAudioRendererManager {
 	}
 }
 
+impl AsRef<Session> for IAudioRendererManager {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IAudioRendererManager {
 	// fn OpenAudioRenderer(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn GetAudioRendererWorkBufferSize(&self, UNKNOWN) -> Result<UNKNOWN>;

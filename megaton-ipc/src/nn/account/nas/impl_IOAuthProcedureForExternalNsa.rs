@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IOAuthProcedureForExternalNsa(Session);
 
+impl AsRef<Session> for IOAuthProcedureForExternalNsa {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IOAuthProcedureForExternalNsa {
 	pub fn PrepareAsync(&self, ) -> Result<::nn::account::detail::IAsyncContext> {
 		let req = Request::new(0)
@@ -14,30 +20,9 @@ impl IOAuthProcedureForExternalNsa {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn GetRequest(&self, unk0: &mut Option<::nn::account::RequestUrl>, unk1: &mut Option<::nn::account::CallbackUri>) -> Result<()> {
-		let req = Request::new(1)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn ApplyResponse(&self, unk0: &[i8]) -> Result<()> {
-		let req = Request::new(2)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn ApplyResponseAsync(&self, unk0: &[i8]) -> Result<::nn::account::detail::IAsyncContext> {
-		let req = Request::new(3)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
-	}
-
+	// fn GetRequest(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn ApplyResponse(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn ApplyResponseAsync(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn Suspend(&self, ) -> Result<::nn::account::detail::Uuid> {
 		let req = Request::new(10)
 			.args(())
@@ -62,14 +47,7 @@ impl IOAuthProcedureForExternalNsa {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetNickname(&self, unk0: &mut [i8]) -> Result<()> {
-		let req = Request::new(102)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn GetNickname(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn GetProfileImage(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 

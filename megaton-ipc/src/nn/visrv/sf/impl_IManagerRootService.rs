@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IManagerRootService(Session);
 
 impl IManagerRootService {
@@ -20,6 +21,11 @@ impl IManagerRootService {
 	}
 }
 
+impl AsRef<Session> for IManagerRootService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IManagerRootService {
 	pub fn GetDisplayService(&self, unk0: u32) -> Result<::nn::visrv::sf::IApplicationDisplayService> {
 		let req = Request::new(2)

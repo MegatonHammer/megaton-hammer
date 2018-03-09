@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IDocumentInterface(Session);
 
+impl AsRef<Session> for IDocumentInterface {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IDocumentInterface {
 	pub fn Unknown21(&self, ) -> Result<()> {
 		let req = Request::new(21)

@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct ISystemUpdateInterface(Session);
 
 impl ISystemUpdateInterface {
@@ -20,6 +21,11 @@ impl ISystemUpdateInterface {
 	}
 }
 
+impl AsRef<Session> for ISystemUpdateInterface {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl ISystemUpdateInterface {
 	pub fn Unknown0(&self, ) -> Result<u8> {
 		let req = Request::new(0)

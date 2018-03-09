@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IFirmwareDebugSettingsServer(Session);
 
 impl IFirmwareDebugSettingsServer {
@@ -20,24 +21,15 @@ impl IFirmwareDebugSettingsServer {
 	}
 }
 
+impl AsRef<Session> for IFirmwareDebugSettingsServer {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IFirmwareDebugSettingsServer {
 	// fn SetSettingsItemValue(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn ResetSettingsItemValue(&self, unk0: &::nn::settings::SettingsName, unk1: &::nn::settings::SettingsItemKey) -> Result<()> {
-		let req = Request::new(3)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn CreateSettingsItemKeyIterator(&self, unk0: &::nn::settings::SettingsName) -> Result<::nn::settings::ISettingsItemKeyIterator> {
-		let req = Request::new(4)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
-	}
-
+	// fn ResetSettingsItemValue(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn CreateSettingsItemKeyIterator(&self, UNKNOWN) -> Result<UNKNOWN>;
 	#[cfg(feature = "switch-4.0.0")]
 	pub fn ReadSettings(&self, ) -> Result<()> {
 		let req = Request::new(10)

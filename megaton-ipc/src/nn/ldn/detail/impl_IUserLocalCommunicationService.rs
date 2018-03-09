@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IUserLocalCommunicationService(Session);
 
+impl AsRef<Session> for IUserLocalCommunicationService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IUserLocalCommunicationService {
 	pub fn Unknown0(&self, ) -> Result<u32> {
 		let req = Request::new(0)
@@ -14,14 +20,7 @@ impl IUserLocalCommunicationService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Unknown1(&self, unk0: [u8; 0x480]) -> Result<()> {
-		let req = Request::new(1)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn Unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn Unknown2(&self, ) -> Result<(u32, u32)> {
 		let req = Request::new(2)
 			.args(())

@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct ICodecController(Session);
 
 impl ICodecController {
@@ -20,6 +21,11 @@ impl ICodecController {
 	}
 }
 
+impl AsRef<Session> for ICodecController {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl ICodecController {
 	pub fn InitializeCodecController(&self, ) -> Result<()> {
 		let req = Request::new(0)

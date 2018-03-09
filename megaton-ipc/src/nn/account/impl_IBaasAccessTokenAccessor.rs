@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IBaasAccessTokenAccessor(Session);
 
 impl IBaasAccessTokenAccessor {
@@ -20,6 +21,11 @@ impl IBaasAccessTokenAccessor {
 	}
 }
 
+impl AsRef<Session> for IBaasAccessTokenAccessor {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IBaasAccessTokenAccessor {
 	pub fn EnsureCacheAsync(&self, unk0: ::nn::account::Uid) -> Result<::nn::account::detail::IAsyncContext> {
 		let req = Request::new(0)

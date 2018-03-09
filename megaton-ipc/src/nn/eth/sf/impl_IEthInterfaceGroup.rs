@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IEthInterfaceGroup(Session);
 
 impl IEthInterfaceGroup {
@@ -20,6 +21,11 @@ impl IEthInterfaceGroup {
 	}
 }
 
+impl AsRef<Session> for IEthInterfaceGroup {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IEthInterfaceGroup {
 	pub fn Unknown0(&self, ) -> Result<KObject> {
 		let req = Request::new(0)

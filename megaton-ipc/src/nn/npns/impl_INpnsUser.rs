@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct INpnsUser(Session);
 
 impl INpnsUser {
@@ -20,6 +21,11 @@ impl INpnsUser {
 	}
 }
 
+impl AsRef<Session> for INpnsUser {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl INpnsUser {
 	pub fn Unknown1(&self, ) -> Result<()> {
 		let req = Request::new(1)

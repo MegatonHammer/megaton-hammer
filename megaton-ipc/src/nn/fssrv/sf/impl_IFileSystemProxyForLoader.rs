@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IFileSystemProxyForLoader(Session);
 
 impl IFileSystemProxyForLoader {
@@ -20,15 +21,13 @@ impl IFileSystemProxyForLoader {
 	}
 }
 
-impl IFileSystemProxyForLoader {
-	pub fn MountCode(&self, TID: ::nn::ApplicationId, contentPath: &i8) -> Result<::nn::fssrv::sf::IFileSystem> {
-		let req = Request::new(0)
-			.args(TID)
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+impl AsRef<Session> for IFileSystemProxyForLoader {
+	fn as_ref(&self) -> &Session {
+		&self.0
 	}
-
+}
+impl IFileSystemProxyForLoader {
+	// fn MountCode(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn IsCodeMounted(&self, TID: ::nn::ApplicationId) -> Result<u8> {
 		let req = Request::new(1)
 			.args(TID)

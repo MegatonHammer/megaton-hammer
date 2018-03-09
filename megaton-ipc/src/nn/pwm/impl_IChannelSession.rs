@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IChannelSession(Session);
 
+impl AsRef<Session> for IChannelSession {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IChannelSession {
 	pub fn SetPeriod(&self, unk0: u64) -> Result<()> {
 		let req = Request::new(0)

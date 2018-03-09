@@ -3,45 +3,17 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IFile(Session);
 
+impl AsRef<Session> for IFile {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IFile {
-	pub fn Read(&self, unk0: u32, offset: u64, size: u64, out_buf: &mut Option<i8>) -> Result<u64> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: u32,
-			offset: u64,
-			size: u64,
-		}
-		let req = Request::new(0)
-			.args(InRaw {
-				unk0,
-				offset,
-				size,
-			})
-			;
-		let mut res : Response<u64> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
-	pub fn Write(&self, unk0: u32, offset: u64, size: u64, buf: &i8) -> Result<()> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: u32,
-			offset: u64,
-			size: u64,
-		}
-		let req = Request::new(1)
-			.args(InRaw {
-				unk0,
-				offset,
-				size,
-			})
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn Read(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn Write(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn Flush(&self, ) -> Result<()> {
 		let req = Request::new(2)
 			.args(())

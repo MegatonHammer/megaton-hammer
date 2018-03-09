@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct ISystemManager(Session);
 
 impl ISystemManager {
@@ -20,6 +21,11 @@ impl ISystemManager {
 	}
 }
 
+impl AsRef<Session> for ISystemManager {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl ISystemManager {
 	pub fn RequestPerformanceMode(&self, unk0: ::nn::apm::PerformanceMode) -> Result<()> {
 		let req = Request::new(0)

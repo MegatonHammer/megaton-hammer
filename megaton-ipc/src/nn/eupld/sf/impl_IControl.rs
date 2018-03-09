@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IControl(Session);
 
 impl IControl {
@@ -20,6 +21,11 @@ impl IControl {
 	}
 }
 
+impl AsRef<Session> for IControl {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IControl {
 	// fn Unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn Unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;

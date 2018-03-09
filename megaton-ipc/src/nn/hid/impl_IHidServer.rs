@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IHidServer(Session);
 
 impl IHidServer {
@@ -20,6 +21,11 @@ impl IHidServer {
 	}
 }
 
+impl AsRef<Session> for IHidServer {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IHidServer {
 	pub fn CreateAppletResource(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<::nn::hid::IAppletResource> {
 		let req = Request::new(0)
@@ -99,14 +105,7 @@ impl IHidServer {
 		Ok(())
 	}
 
-	pub fn GetXpadIds(&self, unk1: &mut [::nn::hid::BasicXpadId]) -> Result<i64> {
-		let req = Request::new(55)
-			.args(())
-			;
-		let mut res : Response<i64> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
+	// fn GetXpadIds(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn ActivateJoyXpad(&self, unk0: ::nn::hid::JoyXpadId) -> Result<()> {
 		let req = Request::new(56)
 			.args(unk0)
@@ -123,14 +122,7 @@ impl IHidServer {
 		Ok(res.pop_handle())
 	}
 
-	pub fn GetJoyXpadIds(&self, unk1: &mut [::nn::hid::JoyXpadId]) -> Result<i64> {
-		let req = Request::new(59)
-			.args(())
-			;
-		let mut res : Response<i64> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
+	// fn GetJoyXpadIds(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn ActivateSixAxisSensor(&self, unk0: ::nn::hid::BasicXpadId) -> Result<()> {
 		let req = Request::new(60)
 			.args(unk0)
@@ -533,15 +525,7 @@ impl IHidServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn SetSupportedNpadIdType(&self, unk0: ::nn::applet::AppletResourceUserId, unk2: &[u32]) -> Result<()> {
-		let req = Request::new(102)
-			.args(unk0)
-			.send_pid()
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn SetSupportedNpadIdType(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn ActivateNpad(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		let req = Request::new(103)
 			.args(unk0)
@@ -851,14 +835,7 @@ impl IHidServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn SendVibrationValues(&self, unk0: ::nn::applet::AppletResourceUserId, unk1: &[::nn::hid::VibrationDeviceHandle], unk2: &[::nn::hid::VibrationValue]) -> Result<()> {
-		let req = Request::new(206)
-			.args(unk0)
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn SendVibrationValues(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn ActivateConsoleSixAxisSensor(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		let req = Request::new(300)
 			.args(unk0)

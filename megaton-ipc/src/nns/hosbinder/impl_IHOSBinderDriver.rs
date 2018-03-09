@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IHOSBinderDriver(Session);
 
 impl IHOSBinderDriver {
@@ -20,6 +21,11 @@ impl IHOSBinderDriver {
 	}
 }
 
+impl AsRef<Session> for IHOSBinderDriver {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IHOSBinderDriver {
 	// fn TransactParcel(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn AdjustRefcount(&self, unk0: i32, unk1: i32, unk2: i32) -> Result<()> {

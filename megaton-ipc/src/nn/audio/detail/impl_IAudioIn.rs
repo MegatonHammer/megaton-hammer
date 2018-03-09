@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IAudioIn(Session);
 
+impl AsRef<Session> for IAudioIn {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IAudioIn {
 	pub fn GetAudioInState(&self, ) -> Result<u32> {
 		let req = Request::new(0)

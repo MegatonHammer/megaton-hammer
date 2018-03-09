@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IScreenShotApplicationService(Session);
 
 impl IScreenShotApplicationService {
@@ -20,6 +21,11 @@ impl IScreenShotApplicationService {
 	}
 }
 
+impl AsRef<Session> for IScreenShotApplicationService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IScreenShotApplicationService {
 	// fn SaveScreenShot(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn SaveScreenShotEx0(&self, UNKNOWN) -> Result<UNKNOWN>;

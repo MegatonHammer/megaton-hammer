@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IAccountServiceForSystemService(Session);
 
 impl IAccountServiceForSystemService {
@@ -20,6 +21,11 @@ impl IAccountServiceForSystemService {
 	}
 }
 
+impl AsRef<Session> for IAccountServiceForSystemService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IAccountServiceForSystemService {
 	pub fn GetUserCount(&self, ) -> Result<i32> {
 		let req = Request::new(0)
@@ -37,22 +43,8 @@ impl IAccountServiceForSystemService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn ListAllUsers(&self, unk0: &mut [::nn::account::Uid]) -> Result<()> {
-		let req = Request::new(2)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn ListOpenUsers(&self, unk0: &mut [::nn::account::Uid]) -> Result<()> {
-		let req = Request::new(3)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn ListAllUsers(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn ListOpenUsers(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn GetLastOpenedUser(&self, ) -> Result<::nn::account::Uid> {
 		let req = Request::new(4)
 			.args(())

@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IGuestLoginRequest(Session);
 
+impl AsRef<Session> for IGuestLoginRequest {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IGuestLoginRequest {
 	pub fn GetSessionId(&self, ) -> Result<::nn::account::detail::Uuid> {
 		let req = Request::new(0)
@@ -30,14 +36,7 @@ impl IGuestLoginRequest {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetNickname(&self, unk0: &mut [i8]) -> Result<()> {
-		let req = Request::new(14)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn GetNickname(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn GetProfileImage(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn LoadIdTokenCache(&self, UNKNOWN) -> Result<UNKNOWN>;
 }

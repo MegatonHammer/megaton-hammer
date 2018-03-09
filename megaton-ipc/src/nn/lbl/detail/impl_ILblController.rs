@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct ILblController(Session);
 
 impl ILblController {
@@ -20,6 +21,11 @@ impl ILblController {
 	}
 }
 
+impl AsRef<Session> for ILblController {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl ILblController {
 	pub fn Unknown0(&self, ) -> Result<()> {
 		let req = Request::new(0)

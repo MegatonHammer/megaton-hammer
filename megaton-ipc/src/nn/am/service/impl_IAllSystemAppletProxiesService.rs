@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IAllSystemAppletProxiesService(Session);
 
 impl IAllSystemAppletProxiesService {
@@ -20,49 +21,49 @@ impl IAllSystemAppletProxiesService {
 	}
 }
 
+impl AsRef<Session> for IAllSystemAppletProxiesService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IAllSystemAppletProxiesService {
-	pub fn OpenSystemAppletProxy(&self, unk0: u64, unk2: KObject) -> Result<::nn::am::service::ISystemAppletProxy> {
+	pub fn OpenSystemAppletProxy(&self, unk0: u64, unk2: &KObject) -> Result<::nn::am::service::ISystemAppletProxy> {
 		let req = Request::new(100)
 			.args(unk0)
 			.send_pid()
+			.copy_handle(unk2)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
 	#[cfg(feature = "switch-3.0.0")]
-	pub fn OpenLibraryAppletProxyOld(&self, unk0: u64, unk2: KObject) -> Result<::nn::am::service::ILibraryAppletProxy> {
+	pub fn OpenLibraryAppletProxyOld(&self, unk0: u64, unk2: &KObject) -> Result<::nn::am::service::ILibraryAppletProxy> {
 		let req = Request::new(200)
 			.args(unk0)
 			.send_pid()
+			.copy_handle(unk2)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	#[cfg(feature = "switch-3.0.0")]
-	pub fn OpenLibraryAppletProxy(&self, unk0: u64, unk2: KObject, unk3: &::nn::am::AppletAttribute) -> Result<::nn::am::service::ILibraryAppletProxy> {
-		let req = Request::new(201)
-			.args(unk0)
-			.send_pid()
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
-	}
-
-	pub fn OpenOverlayAppletProxy(&self, unk0: u64, unk2: KObject) -> Result<::nn::am::service::IOverlayAppletProxy> {
+	// fn OpenLibraryAppletProxy(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn OpenOverlayAppletProxy(&self, unk0: u64, unk2: &KObject) -> Result<::nn::am::service::IOverlayAppletProxy> {
 		let req = Request::new(300)
 			.args(unk0)
 			.send_pid()
+			.copy_handle(unk2)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn OpenSystemApplicationProxy(&self, unk0: u64, unk2: KObject) -> Result<::nn::am::service::IApplicationProxy> {
+	pub fn OpenSystemApplicationProxy(&self, unk0: u64, unk2: &KObject) -> Result<::nn::am::service::IApplicationProxy> {
 		let req = Request::new(350)
 			.args(unk0)
 			.send_pid()
+			.copy_handle(unk2)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })

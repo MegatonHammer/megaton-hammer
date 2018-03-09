@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct ILibraryAppletSelfAccessor(Session);
 
+impl AsRef<Session> for ILibraryAppletSelfAccessor {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl ILibraryAppletSelfAccessor {
 	pub fn PopInData(&self, ) -> Result<::nn::am::service::IStorage> {
 		let req = Request::new(0)
@@ -14,9 +20,10 @@ impl ILibraryAppletSelfAccessor {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn PushOutData(&self, unk0: ::nn::am::service::IStorage) -> Result<()> {
+	pub fn PushOutData(&self, unk0: &::nn::am::service::IStorage) -> Result<()> {
 		let req = Request::new(1)
 			.args(())
+			.copy_handle(unk0.as_ref().as_ref())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
@@ -30,9 +37,10 @@ impl ILibraryAppletSelfAccessor {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn PushInteractiveOutData(&self, unk0: ::nn::am::service::IStorage) -> Result<()> {
+	pub fn PushInteractiveOutData(&self, unk0: &::nn::am::service::IStorage) -> Result<()> {
 		let req = Request::new(3)
 			.args(())
+			.copy_handle(unk0.as_ref().as_ref())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
@@ -94,14 +102,7 @@ impl ILibraryAppletSelfAccessor {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetMainAppletApplicationControlProperty(&self, unk0: &mut Option<::nn::ns::ApplicationControlProperty>) -> Result<()> {
-		let req = Request::new(15)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn GetMainAppletApplicationControlProperty(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn GetMainAppletStorageId(&self, ) -> Result<::nn::ncm::StorageId> {
 		let req = Request::new(16)
 			.args(())
@@ -110,14 +111,7 @@ impl ILibraryAppletSelfAccessor {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetCallerAppletIdentityInfoStack(&self, unk1: &mut [::nn::am::service::AppletIdentityInfo]) -> Result<i32> {
-		let req = Request::new(17)
-			.args(())
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
+	// fn GetCallerAppletIdentityInfoStack(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn PopExtraStorage(&self, ) -> Result<::nn::am::service::IStorage> {
 		let req = Request::new(20)
 			.args(())
@@ -134,17 +128,19 @@ impl ILibraryAppletSelfAccessor {
 		Ok(res.pop_handle())
 	}
 
-	pub fn UnpopInData(&self, unk0: ::nn::am::service::IStorage) -> Result<()> {
+	pub fn UnpopInData(&self, unk0: &::nn::am::service::IStorage) -> Result<()> {
 		let req = Request::new(30)
 			.args(())
+			.copy_handle(unk0.as_ref().as_ref())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
 
-	pub fn UnpopExtraStorage(&self, unk0: ::nn::am::service::IStorage) -> Result<()> {
+	pub fn UnpopExtraStorage(&self, unk0: &::nn::am::service::IStorage) -> Result<()> {
 		let req = Request::new(31)
 			.args(())
+			.copy_handle(unk0.as_ref().as_ref())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())

@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IScreenShotControlService(Session);
 
 impl IScreenShotControlService {
@@ -20,6 +21,11 @@ impl IScreenShotControlService {
 	}
 }
 
+impl AsRef<Session> for IScreenShotControlService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IScreenShotControlService {
 	pub fn Unknown1(&self, ) -> Result<()> {
 		let req = Request::new(1)

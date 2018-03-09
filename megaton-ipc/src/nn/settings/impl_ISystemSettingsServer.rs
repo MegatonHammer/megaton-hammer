@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct ISystemSettingsServer(Session);
 
 impl ISystemSettingsServer {
@@ -20,6 +21,11 @@ impl ISystemSettingsServer {
 	}
 }
 
+impl AsRef<Session> for ISystemSettingsServer {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl ISystemSettingsServer {
 	pub fn SetLanguageCode(&self, unk0: ::nn::settings::LanguageCode) -> Result<()> {
 		let req = Request::new(0)
@@ -29,39 +35,10 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn SetNetworkSettings(&self, unk0: &[::nn::settings::system::NetworkSettings]) -> Result<()> {
-		let req = Request::new(1)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn GetNetworkSettings(&self, unk1: &mut [::nn::settings::system::NetworkSettings]) -> Result<i32> {
-		let req = Request::new(2)
-			.args(())
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
-	pub fn GetFirmwareVersion(&self, unk0: &mut Option<::nn::settings::system::FirmwareVersion>) -> Result<()> {
-		let req = Request::new(3)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-3.0.0")]
-	pub fn GetFirmwareVersion2(&self, unk0: &mut Option<::nn::settings::system::FirmwareVersion>) -> Result<()> {
-		let req = Request::new(4)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn SetNetworkSettings(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetNetworkSettings(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetFirmwareVersion(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetFirmwareVersion2(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn GetLockScreenFlag(&self, ) -> Result<bool> {
 		let req = Request::new(7)
 			.args(())
@@ -94,22 +71,8 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn SetBluetoothDevicesSettings(&self, unk0: &[::nn::settings::system::BluetoothDevicesSettings]) -> Result<()> {
-		let req = Request::new(11)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn GetBluetoothDevicesSettings(&self, unk1: &mut [::nn::settings::system::BluetoothDevicesSettings]) -> Result<i32> {
-		let req = Request::new(12)
-			.args(())
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
+	// fn SetBluetoothDevicesSettings(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetBluetoothDevicesSettings(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn GetExternalSteadyClockSourceId(&self, ) -> Result<::nn::util::Uuid> {
 		let req = Request::new(13)
 			.args(())
@@ -182,22 +145,8 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetEulaVersions(&self, unk1: &mut [::nn::settings::system::EulaVersion]) -> Result<i32> {
-		let req = Request::new(21)
-			.args(())
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
-	pub fn SetEulaVersions(&self, unk0: &[::nn::settings::system::EulaVersion]) -> Result<()> {
-		let req = Request::new(22)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn GetEulaVersions(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn SetEulaVersions(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn GetColorSetId(&self, ) -> Result<i32> {
 		let req = Request::new(23)
 			.args(())
@@ -262,22 +211,8 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetAccountNotificationSettings(&self, unk1: &mut [::nn::settings::system::AccountNotificationSettings]) -> Result<i32> {
-		let req = Request::new(31)
-			.args(())
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
-	pub fn SetAccountNotificationSettings(&self, unk0: &[::nn::settings::system::AccountNotificationSettings]) -> Result<()> {
-		let req = Request::new(32)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn GetAccountNotificationSettings(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn SetAccountNotificationSettings(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn GetVibrationMasterVolume(&self, ) -> Result<f32> {
 		let req = Request::new(35)
 			.args(())
@@ -294,14 +229,7 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetSettingsItemValueSize(&self, unk0: &::nn::settings::SettingsName, unk1: &::nn::settings::SettingsItemKey) -> Result<u64> {
-		let req = Request::new(37)
-			.args(())
-			;
-		let mut res : Response<u64> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
+	// fn GetSettingsItemValueSize(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn GetSettingsItemValue(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn GetTvSettings(&self, ) -> Result<::nn::settings::system::TvSettings> {
 		let req = Request::new(39)
@@ -319,22 +247,8 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetEdid(&self, unk0: &mut Option<::nn::settings::system::Edid>) -> Result<()> {
-		let req = Request::new(41)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn SetEdid(&self, unk0: &::nn::settings::system::Edid) -> Result<()> {
-		let req = Request::new(42)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn GetEdid(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn SetEdid(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn GetAudioOutputMode(&self, unk0: i32) -> Result<i32> {
 		let req = Request::new(43)
 			.args(unk0)
@@ -608,22 +522,8 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	pub fn GetDeviceNickName(&self, unk0: &mut Option<::nn::settings::system::DeviceNickName>) -> Result<()> {
-		let req = Request::new(77)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn SetDeviceNickName(&self, unk0: &::nn::settings::system::DeviceNickName) -> Result<()> {
-		let req = Request::new(78)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn GetDeviceNickName(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn SetDeviceNickName(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn GetProductModel(&self, ) -> Result<i32> {
 		let req = Request::new(79)
 			.args(())
@@ -770,24 +670,8 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	#[cfg(feature = "switch-2.0.0")]
-	pub fn GetNxControllerSettings(&self, unk1: &mut [::nn::settings::system::NxControllerSettings]) -> Result<i32> {
-		let req = Request::new(97)
-			.args(())
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
-	#[cfg(feature = "switch-2.0.0")]
-	pub fn SetNxControllerSettings(&self, unk0: &[::nn::settings::system::NxControllerSettings]) -> Result<()> {
-		let req = Request::new(98)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn GetNxControllerSettings(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn SetNxControllerSettings(&self, UNKNOWN) -> Result<UNKNOWN>;
 	#[cfg(feature = "switch-2.0.0")]
 	pub fn GetBatteryPercentageFlag(&self, ) -> Result<bool> {
 		let req = Request::new(99)

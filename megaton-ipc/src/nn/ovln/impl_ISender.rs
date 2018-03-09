@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct ISender(Session);
 
 impl ISender {
@@ -20,6 +21,11 @@ impl ISender {
 	}
 }
 
+impl AsRef<Session> for ISender {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl ISender {
 	pub fn Unknown0(&self, unk1: u64, unk2: u64, unk3: u64, unk4: u64, unk5: u64, unk6: u64, unk7: u64, unk8: u64, unk9: u64, unk10: u64, unk11: u64, unk12: u64, unk13: u64, unk14: u64, unk15: u64, unk16: u64, unk17: u64) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]

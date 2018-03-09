@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IDebugMonitorInterface(Session);
 
 impl IDebugMonitorInterface {
@@ -20,6 +21,11 @@ impl IDebugMonitorInterface {
 	}
 }
 
+impl AsRef<Session> for IDebugMonitorInterface {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IDebugMonitorInterface {
 	pub fn AddProcessToDebugLaunchQueue(&self, ) -> Result<()> {
 		let req = Request::new(0)

@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct ILocationResolver(Session);
 
+impl AsRef<Session> for ILocationResolver {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl ILocationResolver {
 	pub fn GetProgramNcaPath(&self, ) -> Result<()> {
 		let req = Request::new(0)

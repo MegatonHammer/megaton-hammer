@@ -3,17 +3,16 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct INetworkProfile(Session);
 
-impl INetworkProfile {
-	pub fn Update(&self, unk0: &::nn::nifm::detail::sf::NetworkProfileData) -> Result<::nn::util::Uuid> {
-		let req = Request::new(0)
-			.args(())
-			;
-		let mut res : Response<::nn::util::Uuid> = self.0.send(req)?;
-		Ok(*res.get_raw())
+impl AsRef<Session> for INetworkProfile {
+	fn as_ref(&self) -> &Session {
+		&self.0
 	}
-
+}
+impl INetworkProfile {
+	// fn Update(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn PersistOld(&self, unk0: ::nn::util::Uuid) -> Result<::nn::util::Uuid> {
 		let req = Request::new(1)
 			.args(unk0)

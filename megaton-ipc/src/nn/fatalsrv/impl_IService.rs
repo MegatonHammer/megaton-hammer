@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IService(Session);
 
 impl IService {
@@ -20,6 +21,11 @@ impl IService {
 	}
 }
 
+impl AsRef<Session> for IService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IService {
 	pub fn Unknown0(&self, unk0: u64, unk1: u64) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
@@ -55,23 +61,7 @@ impl IService {
 		Ok(())
 	}
 
-	pub fn TransitionToFatalError(&self, errorCode: u64, unk1: u64, errorBuf: [u8; 0x110]) -> Result<()> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			errorCode: u64,
-			unk1: u64,
-		}
-		let req = Request::new(2)
-			.args(InRaw {
-				errorCode,
-				unk1,
-			})
-			.send_pid()
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn TransitionToFatalError(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for IService {

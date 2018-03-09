@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IPdCradleManager(Session);
 
 impl IPdCradleManager {
@@ -20,6 +21,11 @@ impl IPdCradleManager {
 	}
 }
 
+impl AsRef<Session> for IPdCradleManager {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IPdCradleManager {
 	pub fn Unknown0(&self, ) -> Result<Session> {
 		let req = Request::new(0)

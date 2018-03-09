@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IImmediateManager(Session);
 
 impl IImmediateManager {
@@ -20,6 +21,11 @@ impl IImmediateManager {
 	}
 }
 
+impl AsRef<Session> for IImmediateManager {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IImmediateManager {
 	pub fn SetClockRate(&self, unk0: i32, unk1: u32) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]

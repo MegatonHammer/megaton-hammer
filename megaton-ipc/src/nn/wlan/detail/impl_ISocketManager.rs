@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct ISocketManager(Session);
 
 impl ISocketManager {
@@ -20,6 +21,11 @@ impl ISocketManager {
 	}
 }
 
+impl AsRef<Session> for ISocketManager {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl ISocketManager {
 	// fn Unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn Unknown1(&self, unk0: u32) -> Result<()> {

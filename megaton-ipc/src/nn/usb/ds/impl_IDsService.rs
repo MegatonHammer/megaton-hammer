@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IDsService(Session);
 
 impl IDsService {
@@ -20,6 +21,11 @@ impl IDsService {
 	}
 }
 
+impl AsRef<Session> for IDsService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IDsService {
 	pub fn BindDevice(&self, complexId: u32) -> Result<()> {
 		let req = Request::new(0)
@@ -29,9 +35,10 @@ impl IDsService {
 		Ok(())
 	}
 
-	pub fn BindClientProcess(&self, unk0: KObject) -> Result<()> {
+	pub fn BindClientProcess(&self, unk0: &KObject) -> Result<()> {
 		let req = Request::new(1)
 			.args(())
+			.copy_handle(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
@@ -54,15 +61,7 @@ impl IDsService {
 		Ok(*res.get_raw())
 	}
 
-	#[cfg(feature = "switch-2.0.0")]
-	pub fn SetVidPidBcd(&self, descriptor: &::nn::usb::usb_descriptor_data) -> Result<()> {
-		let req = Request::new(5)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn SetVidPidBcd(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for IDsService {

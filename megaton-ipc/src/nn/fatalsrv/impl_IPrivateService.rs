@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IPrivateService(Session);
 
 impl IPrivateService {
@@ -20,6 +21,11 @@ impl IPrivateService {
 	}
 }
 
+impl AsRef<Session> for IPrivateService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IPrivateService {
 	pub fn Unknown0(&self, ) -> Result<KObject> {
 		let req = Request::new(0)

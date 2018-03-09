@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IBootModeInterface(Session);
 
 impl IBootModeInterface {
@@ -20,6 +21,11 @@ impl IBootModeInterface {
 	}
 }
 
+impl AsRef<Session> for IBootModeInterface {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IBootModeInterface {
 	pub fn GetBootMode(&self, ) -> Result<u32> {
 		let req = Request::new(0)

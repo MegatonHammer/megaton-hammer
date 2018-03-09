@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IBoardPowerControlManager(Session);
 
 impl IBoardPowerControlManager {
@@ -20,6 +21,11 @@ impl IBoardPowerControlManager {
 	}
 }
 
+impl AsRef<Session> for IBoardPowerControlManager {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IBoardPowerControlManager {
 	pub fn ShutdownSystem(&self, ) -> Result<()> {
 		let req = Request::new(0)

@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IAddOnContentLocationResolver(Session);
 
+impl AsRef<Session> for IAddOnContentLocationResolver {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IAddOnContentLocationResolver {
 	pub fn GetAddOnContentNcaPath(&self, ) -> Result<()> {
 		let req = Request::new(0)

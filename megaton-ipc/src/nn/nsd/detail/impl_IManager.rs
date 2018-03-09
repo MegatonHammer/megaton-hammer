@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IManager(Session);
 
 impl IManager {
@@ -24,23 +25,14 @@ impl IManager {
 	}
 }
 
+impl AsRef<Session> for IManager {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IManager {
-	pub fn GetSettingName(&self, unk0: [u8; 0x100]) -> Result<()> {
-		let req = Request::new(10)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn GetEnvironmentIdentifier(&self, unk0: [u8; 8]) -> Result<()> {
-		let req = Request::new(11)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn GetSettingName(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetEnvironmentIdentifier(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn GetDeviceId(&self, ) -> Result<u128> {
 		let req = Request::new(12)
 			.args(())
@@ -58,94 +50,17 @@ impl IManager {
 	}
 
 	// fn ImportSettings(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn Resolve(&self, unk0: [u8; 0x100], unk1: [u8; 0x100]) -> Result<()> {
-		let req = Request::new(20)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn ResolveEx(&self, unk0: [u8; 0x100], unk2: [u8; 0x100]) -> Result<u32> {
-		let req = Request::new(21)
-			.args(())
-			;
-		let mut res : Response<u32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
-	pub fn GetNasServiceSetting(&self, unk0: [u8; 0x10], unk1: [u8; 0x108]) -> Result<()> {
-		let req = Request::new(30)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn GetNasServiceSettingEx(&self, unk0: [u8; 0x10], unk2: [u8; 0x108]) -> Result<u32> {
-		let req = Request::new(31)
-			.args(())
-			;
-		let mut res : Response<u32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
-	pub fn GetNasRequestFqdn(&self, unk0: [u8; 0x100]) -> Result<()> {
-		let req = Request::new(40)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn GetNasRequestFqdnEx(&self, unk1: [u8; 0x100]) -> Result<u32> {
-		let req = Request::new(41)
-			.args(())
-			;
-		let mut res : Response<u32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
-	pub fn GetNasApiFqdn(&self, unk0: [u8; 0x100]) -> Result<()> {
-		let req = Request::new(42)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn GetNasApiFqdnEx(&self, unk1: [u8; 0x100]) -> Result<u32> {
-		let req = Request::new(43)
-			.args(())
-			;
-		let mut res : Response<u32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
-	pub fn GetCurrentSetting(&self, unk0: [u8; 0x12bf0]) -> Result<()> {
-		let req = Request::new(50)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn ReadSaveDataFromFsForTest(&self, unk0: [u8; 0x12bf0]) -> Result<()> {
-		let req = Request::new(60)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn WriteSaveDataToFsForTest(&self, unk0: [u8; 0x12bf0]) -> Result<()> {
-		let req = Request::new(61)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn Resolve(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn ResolveEx(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetNasServiceSetting(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetNasServiceSettingEx(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetNasRequestFqdn(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetNasRequestFqdnEx(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetNasApiFqdn(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetNasApiFqdnEx(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetCurrentSetting(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn ReadSaveDataFromFsForTest(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn WriteSaveDataToFsForTest(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn DeleteSaveDataOfFsForTest(&self, ) -> Result<()> {
 		let req = Request::new(62)
 			.args(())

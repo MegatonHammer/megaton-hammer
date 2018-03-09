@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct ILocationResolverManager(Session);
 
 impl ILocationResolverManager {
@@ -20,6 +21,11 @@ impl ILocationResolverManager {
 	}
 }
 
+impl AsRef<Session> for ILocationResolverManager {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl ILocationResolverManager {
 	pub fn GetLocationResolver(&self, ) -> Result<()> {
 		let req = Request::new(0)

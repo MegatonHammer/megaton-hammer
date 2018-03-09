@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct ISystemDisplayService(Session);
 
+impl AsRef<Session> for ISystemDisplayService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl ISystemDisplayService {
 	pub fn GetZOrderCountMin(&self, unk0: u64) -> Result<i64> {
 		let req = Request::new(1200)
@@ -166,30 +172,9 @@ impl ISystemDisplayService {
 		Ok(())
 	}
 
-	pub fn ListDisplayModes(&self, unk0: u64, unk2: &mut [::nn::vi::DisplayModeInfo]) -> Result<i64> {
-		let req = Request::new(3000)
-			.args(unk0)
-			;
-		let mut res : Response<i64> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
-	pub fn ListDisplayRgbRanges(&self, unk0: u64, unk2: &mut [u32]) -> Result<i64> {
-		let req = Request::new(3001)
-			.args(unk0)
-			;
-		let mut res : Response<i64> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
-	pub fn ListDisplayContentTypes(&self, unk0: u64, unk2: &mut [u32]) -> Result<i64> {
-		let req = Request::new(3002)
-			.args(unk0)
-			;
-		let mut res : Response<i64> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
+	// fn ListDisplayModes(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn ListDisplayRgbRanges(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn ListDisplayContentTypes(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn GetDisplayMode(&self, unk0: u64) -> Result<::nn::vi::DisplayModeInfo> {
 		let req = Request::new(3200)
 			.args(unk0)

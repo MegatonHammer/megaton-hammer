@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IManagerInterface(Session);
 
 impl IManagerInterface {
@@ -20,6 +21,11 @@ impl IManagerInterface {
 	}
 }
 
+impl AsRef<Session> for IManagerInterface {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IManagerInterface {
 	// fn RegisterProcess(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn UnregisterProcess(&self, unk0: u64) -> Result<()> {

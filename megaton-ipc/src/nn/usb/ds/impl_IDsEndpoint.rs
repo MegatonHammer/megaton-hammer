@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IDsEndpoint(Session);
 
+impl AsRef<Session> for IDsEndpoint {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IDsEndpoint {
 	pub fn PostBufferAsync(&self, size: u32, buffer: u64) -> Result<u32> {
 		#[repr(C)] #[derive(Clone)]
@@ -38,14 +44,7 @@ impl IDsEndpoint {
 		Ok(res.pop_handle())
 	}
 
-	pub fn GetReportData(&self, entries: &mut [::nn::usb::usb_report_entry]) -> Result<u32> {
-		let req = Request::new(3)
-			.args(())
-			;
-		let mut res : Response<u32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
+	// fn GetReportData(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn Stall(&self, ) -> Result<()> {
 		let req = Request::new(4)
 			.args(())

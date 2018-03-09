@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IQueryService(Session);
 
 impl IQueryService {
@@ -20,6 +21,11 @@ impl IQueryService {
 	}
 }
 
+impl AsRef<Session> for IQueryService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IQueryService {
 	// fn Unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn Unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;

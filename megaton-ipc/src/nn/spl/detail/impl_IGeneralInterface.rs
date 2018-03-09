@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IGeneralInterface(Session);
 
 impl IGeneralInterface {
@@ -20,6 +21,11 @@ impl IGeneralInterface {
 	}
 }
 
+impl AsRef<Session> for IGeneralInterface {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IGeneralInterface {
 	pub fn GetConfig(&self, unk0: u32) -> Result<u64> {
 		let req = Request::new(0)

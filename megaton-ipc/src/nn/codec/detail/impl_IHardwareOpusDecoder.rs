@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IHardwareOpusDecoder(Session);
 
+impl AsRef<Session> for IHardwareOpusDecoder {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IHardwareOpusDecoder {
 	// fn Unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn Unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;

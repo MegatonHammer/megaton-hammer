@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IAddOnContentManager(Session);
 
 impl IAddOnContentManager {
@@ -20,6 +21,11 @@ impl IAddOnContentManager {
 	}
 }
 
+impl AsRef<Session> for IAddOnContentManager {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IAddOnContentManager {
 	pub fn CountAddOnContentByApplicationId(&self, unk0: ::nn::ncm::ApplicationId) -> Result<i32> {
 		let req = Request::new(0)
@@ -29,24 +35,7 @@ impl IAddOnContentManager {
 		Ok(*res.get_raw())
 	}
 
-	pub fn ListAddOnContentByApplicationId(&self, unk0: i32, unk1: i32, unk2: ::nn::ncm::ApplicationId, unk4: &mut [i32]) -> Result<i32> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: i32,
-			unk1: i32,
-			unk2: ::nn::ncm::ApplicationId,
-		}
-		let req = Request::new(1)
-			.args(InRaw {
-				unk0,
-				unk1,
-				unk2,
-			})
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
+	// fn ListAddOnContentByApplicationId(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn CountAddOnContent(&self, unk0: u64) -> Result<i32> {
 		let req = Request::new(2)
 			.args(unk0)
@@ -56,25 +45,7 @@ impl IAddOnContentManager {
 		Ok(*res.get_raw())
 	}
 
-	pub fn ListAddOnContent(&self, unk0: i32, unk1: i32, unk2: u64, unk5: &mut [i32]) -> Result<i32> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: i32,
-			unk1: i32,
-			unk2: u64,
-		}
-		let req = Request::new(3)
-			.args(InRaw {
-				unk0,
-				unk1,
-				unk2,
-			})
-			.send_pid()
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
+	// fn ListAddOnContent(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn GetAddOnContentBaseIdByApplicationId(&self, unk0: ::nn::ncm::ApplicationId) -> Result<u64> {
 		let req = Request::new(4)
 			.args(unk0)

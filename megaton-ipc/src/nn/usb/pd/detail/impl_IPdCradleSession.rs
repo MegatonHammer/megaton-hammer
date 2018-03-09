@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IPdCradleSession(Session);
 
+impl AsRef<Session> for IPdCradleSession {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IPdCradleSession {
 	pub fn Unknown0(&self, unk0: u32, unk1: u32) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]

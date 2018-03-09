@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IStateControlService(Session);
 
 impl IStateControlService {
@@ -20,6 +21,11 @@ impl IStateControlService {
 	}
 }
 
+impl AsRef<Session> for IStateControlService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IStateControlService {
 	pub fn Unknown1(&self, ) -> Result<u32> {
 		let req = Request::new(1)

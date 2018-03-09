@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IDeliveryCacheProgressService(Session);
 
+impl AsRef<Session> for IDeliveryCacheProgressService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IDeliveryCacheProgressService {
 	pub fn GetEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(0)
@@ -14,14 +20,7 @@ impl IDeliveryCacheProgressService {
 		Ok(res.pop_handle())
 	}
 
-	pub fn GetImpl(&self, unk0: &mut Option<::nn::bcat::detail::DeliveryCacheProgressImpl>) -> Result<()> {
-		let req = Request::new(1)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn GetImpl(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for IDeliveryCacheProgressService {

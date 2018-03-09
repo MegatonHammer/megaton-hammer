@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IPmService(Session);
 
 impl IPmService {
@@ -20,6 +21,11 @@ impl IPmService {
 	}
 }
 
+impl AsRef<Session> for IPmService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IPmService {
 	pub fn Unknown0(&self, ) -> Result<KObject> {
 		let req = Request::new(0)

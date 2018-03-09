@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct ILibraryAppletAccessor(Session);
 
+impl AsRef<Session> for ILibraryAppletAccessor {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl ILibraryAppletAccessor {
 	pub fn GetAppletStateChangedEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(0)
@@ -62,9 +68,10 @@ impl ILibraryAppletAccessor {
 		Ok(())
 	}
 
-	pub fn PushInData(&self, unk0: ::nn::am::service::IStorage) -> Result<()> {
+	pub fn PushInData(&self, unk0: &::nn::am::service::IStorage) -> Result<()> {
 		let req = Request::new(100)
 			.args(())
+			.copy_handle(unk0.as_ref().as_ref())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
@@ -78,17 +85,19 @@ impl ILibraryAppletAccessor {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn PushExtraStorage(&self, unk0: ::nn::am::service::IStorage) -> Result<()> {
+	pub fn PushExtraStorage(&self, unk0: &::nn::am::service::IStorage) -> Result<()> {
 		let req = Request::new(102)
 			.args(())
+			.copy_handle(unk0.as_ref().as_ref())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
 
-	pub fn PushInteractiveInData(&self, unk0: ::nn::am::service::IStorage) -> Result<()> {
+	pub fn PushInteractiveInData(&self, unk0: &::nn::am::service::IStorage) -> Result<()> {
 		let req = Request::new(103)
 			.args(())
+			.copy_handle(unk0.as_ref().as_ref())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())

@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IPadSession(Session);
 
+impl AsRef<Session> for IPadSession {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IPadSession {
 	pub fn SetDirection(&self, unk0: u32) -> Result<()> {
 		let req = Request::new(0)

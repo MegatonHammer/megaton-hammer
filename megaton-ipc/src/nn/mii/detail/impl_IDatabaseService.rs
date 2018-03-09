@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IDatabaseService(Session);
 
+impl AsRef<Session> for IDatabaseService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IDatabaseService {
 	pub fn IsUpdated(&self, unk0: i32) -> Result<bool> {
 		let req = Request::new(0)
@@ -30,22 +36,8 @@ impl IDatabaseService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Get(&self, unk0: i32, unk2: &mut [::nn::mii::CharInfoElement]) -> Result<i32> {
-		let req = Request::new(3)
-			.args(unk0)
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
-	pub fn Get1(&self, unk0: i32, unk2: &mut [::nn::mii::CharInfo]) -> Result<i32> {
-		let req = Request::new(4)
-			.args(unk0)
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
+	// fn Get(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn Get1(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn UpdateLatest(&self, unk0: ::nn::mii::CharInfo, unk1: i32) -> Result<::nn::mii::CharInfo> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -88,22 +80,8 @@ impl IDatabaseService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn Get2(&self, unk0: i32, unk2: &mut [::nn::mii::StoreDataElement]) -> Result<i32> {
-		let req = Request::new(8)
-			.args(unk0)
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
-	pub fn Get3(&self, unk0: i32, unk2: &mut [::nn::mii::StoreData]) -> Result<i32> {
-		let req = Request::new(9)
-			.args(unk0)
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
+	// fn Get2(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn Get3(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn UpdateLatest1(&self, unk0: ::nn::mii::StoreData, unk1: i32) -> Result<::nn::mii::StoreData> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {

@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct ILogService(Session);
 
 impl ILogService {
@@ -20,6 +21,11 @@ impl ILogService {
 	}
 }
 
+impl AsRef<Session> for ILogService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl ILogService {
 	pub fn Initialize(&self, unk0: u64) -> Result<::nn::lm::ILogger> {
 		let req = Request::new(0)

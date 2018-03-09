@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IManagerDisplayService(Session);
 
+impl AsRef<Session> for IManagerDisplayService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IManagerDisplayService {
 	pub fn GetDisplayResolution(&self, unk0: u64) -> Result<(i64, i64)> {
 		let req = Request::new(1102)

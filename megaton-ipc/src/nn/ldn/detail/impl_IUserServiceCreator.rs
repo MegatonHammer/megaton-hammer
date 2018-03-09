@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IUserServiceCreator(Session);
 
 impl IUserServiceCreator {
@@ -20,6 +21,11 @@ impl IUserServiceCreator {
 	}
 }
 
+impl AsRef<Session> for IUserServiceCreator {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IUserServiceCreator {
 	pub fn GetUserLocalCommunicationService(&self, ) -> Result<Session> {
 		let req = Request::new(0)

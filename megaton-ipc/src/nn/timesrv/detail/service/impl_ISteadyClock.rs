@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct ISteadyClock(Session);
 
+impl AsRef<Session> for ISteadyClock {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl ISteadyClock {
 	pub fn GetCurrentTimePoint(&self, ) -> Result<::nn::time::SteadyClockTimePoint> {
 		let req = Request::new(0)

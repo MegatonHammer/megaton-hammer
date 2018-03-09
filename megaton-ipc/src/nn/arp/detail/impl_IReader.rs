@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IReader(Session);
 
 impl IReader {
@@ -20,6 +21,11 @@ impl IReader {
 	}
 }
 
+impl AsRef<Session> for IReader {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IReader {
 	pub fn ReadHeader0(&self, ) -> Result<()> {
 		let req = Request::new(0)

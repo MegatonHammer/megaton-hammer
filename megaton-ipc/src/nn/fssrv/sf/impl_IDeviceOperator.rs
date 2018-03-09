@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IDeviceOperator(Session);
 
+impl AsRef<Session> for IDeviceOperator {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IDeviceOperator {
 	pub fn IsSdCardInserted(&self, ) -> Result<u8> {
 		let req = Request::new(0)

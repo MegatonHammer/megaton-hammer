@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IDebugFunctions(Session);
 
+impl AsRef<Session> for IDebugFunctions {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IDebugFunctions {
 	pub fn NotifyMessageToHomeMenuForDebug(&self, unk0: ::nn::am::AppletMessage) -> Result<()> {
 		let req = Request::new(0)

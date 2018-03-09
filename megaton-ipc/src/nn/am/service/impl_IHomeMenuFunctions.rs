@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IHomeMenuFunctions(Session);
 
+impl AsRef<Session> for IHomeMenuFunctions {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IHomeMenuFunctions {
 	pub fn RequestToGetForeground(&self, ) -> Result<()> {
 		let req = Request::new(10)

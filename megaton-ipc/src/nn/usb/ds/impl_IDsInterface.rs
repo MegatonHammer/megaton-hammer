@@ -3,17 +3,16 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IDsInterface(Session);
 
-impl IDsInterface {
-	pub fn GetDsEndpoint(&self, unk0: &::nn::usb::usb_endpoint_descriptor) -> Result<::nn::usb::ds::IDsEndpoint> {
-		let req = Request::new(0)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+impl AsRef<Session> for IDsInterface {
+	fn as_ref(&self) -> &Session {
+		&self.0
 	}
-
+}
+impl IDsInterface {
+	// fn GetDsEndpoint(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn GetSetupEvent(&self, ) -> Result<KObject> {
 		let req = Request::new(1)
 			.args(())

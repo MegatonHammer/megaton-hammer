@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IAdministrator(Session);
 
+impl AsRef<Session> for IAdministrator {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IAdministrator {
 	pub fn CheckAvailability(&self, ) -> Result<()> {
 		let req = Request::new(0)
@@ -31,15 +37,7 @@ impl IAdministrator {
 	}
 
 	// fn LoadIdTokenCache(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn SetSystemProgramIdentification(&self, unk0: u64, unk2: &::nn::account::SystemProgramIdentification) -> Result<()> {
-		let req = Request::new(100)
-			.args(unk0)
-			.send_pid()
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn SetSystemProgramIdentification(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn GetNintendoAccountId(&self, ) -> Result<::nn::account::NintendoAccountId> {
 		let req = Request::new(120)
 			.args(())
@@ -65,14 +63,7 @@ impl IAdministrator {
 		Ok((*res.get_raw(),unsafe { FromKObject::from_kobject(res.pop_handle()) }))
 	}
 
-	pub fn CreateAuthorizationRequest(&self, unk0: u32, unk1: KObject, unk2: &::nn::account::nas::NasClientInfo, unk3: &::nn::account::NintendoAccountAuthorizationRequestParameters) -> Result<::nn::account::nas::IAuthorizationRequest> {
-		let req = Request::new(150)
-			.args(unk0)
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
-	}
-
+	// fn CreateAuthorizationRequest(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn IsRegistered(&self, ) -> Result<bool> {
 		let req = Request::new(200)
 			.args(())

@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct ISession(Session);
 
 impl ISession {
@@ -28,6 +29,11 @@ impl ISession {
 	}
 }
 
+impl AsRef<Session> for ISession {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl ISession {
 	pub fn Initialize(&self, ) -> Result<::nn::fgm::sf::IRequest> {
 		let req = Request::new(0)

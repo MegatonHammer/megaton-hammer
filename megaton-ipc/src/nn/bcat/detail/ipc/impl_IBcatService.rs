@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IBcatService(Session);
 
+impl AsRef<Session> for IBcatService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IBcatService {
 	pub fn RequestSyncDeliveryCache(&self, ) -> Result<::nn::bcat::detail::ipc::IDeliveryCacheProgressService> {
 		let req = Request::new(10100)
@@ -30,14 +36,7 @@ impl IBcatService {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn SetPassphrase(&self, unk0: ::nn::ApplicationId, unk1: &[i8]) -> Result<()> {
-		let req = Request::new(30100)
-			.args(unk0)
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn SetPassphrase(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn RegisterBackgroundDeliveryTask(&self, unk0: u32, unk1: ::nn::ApplicationId) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
@@ -78,14 +77,7 @@ impl IBcatService {
 		Ok(())
 	}
 
-	pub fn EnumerateBackgroundDeliveryTask(&self, unk1: &mut [::nn::bcat::TaskInfo]) -> Result<i32> {
-		let req = Request::new(90100)
-			.args(())
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
+	// fn EnumerateBackgroundDeliveryTask(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn GetDeliveryList(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn ClearDeliveryCacheStorage(&self, unk0: ::nn::ApplicationId) -> Result<()> {
 		let req = Request::new(90201)
@@ -95,14 +87,7 @@ impl IBcatService {
 		Ok(())
 	}
 
-	pub fn GetPushNotificationLog(&self, unk1: &mut [::nn::bcat::PushNotificationLog]) -> Result<i32> {
-		let req = Request::new(90300)
-			.args(())
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
+	// fn GetPushNotificationLog(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for IBcatService {

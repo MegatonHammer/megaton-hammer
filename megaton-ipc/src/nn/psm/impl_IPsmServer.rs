@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IPsmServer(Session);
 
 impl IPsmServer {
@@ -20,6 +21,11 @@ impl IPsmServer {
 	}
 }
 
+impl AsRef<Session> for IPsmServer {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IPsmServer {
 	pub fn Unknown0(&self, ) -> Result<u32> {
 		let req = Request::new(0)

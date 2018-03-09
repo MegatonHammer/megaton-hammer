@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IWindowController(Session);
 
+impl AsRef<Session> for IWindowController {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IWindowController {
 	pub fn CreateWindow(&self, unk0: ::nn::am::service::WindowCreationOption) -> Result<::nn::am::service::IWindow> {
 		let req = Request::new(0)

@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct ILocalGetActionFrame(Session);
 
 impl ILocalGetActionFrame {
@@ -20,6 +21,11 @@ impl ILocalGetActionFrame {
 	}
 }
 
+impl AsRef<Session> for ILocalGetActionFrame {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl ILocalGetActionFrame {
 	pub fn Unknown0(&self, ) -> Result<()> {
 		let req = Request::new(0)

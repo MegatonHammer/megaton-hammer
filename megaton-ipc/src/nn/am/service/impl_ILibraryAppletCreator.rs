@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct ILibraryAppletCreator(Session);
 
+impl AsRef<Session> for ILibraryAppletCreator {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl ILibraryAppletCreator {
 	pub fn CreateLibraryApplet(&self, unk0: u32, unk1: u32) -> Result<::nn::am::service::ILibraryAppletAccessor> {
 		#[repr(C)] #[derive(Clone)]
@@ -46,7 +52,7 @@ impl ILibraryAppletCreator {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn CreateTransferMemoryStorage(&self, unk0: bool, unk1: i64, unk2: KObject) -> Result<::nn::am::service::IStorage> {
+	pub fn CreateTransferMemoryStorage(&self, unk0: bool, unk1: i64, unk2: &KObject) -> Result<::nn::am::service::IStorage> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: bool,
@@ -57,14 +63,16 @@ impl ILibraryAppletCreator {
 				unk0,
 				unk1,
 			})
+			.copy_handle(unk2)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn CreateHandleStorage(&self, unk0: i64, unk1: KObject) -> Result<::nn::am::service::IStorage> {
+	pub fn CreateHandleStorage(&self, unk0: i64, unk1: &KObject) -> Result<::nn::am::service::IStorage> {
 		let req = Request::new(12)
 			.args(unk0)
+			.copy_handle(unk1)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })

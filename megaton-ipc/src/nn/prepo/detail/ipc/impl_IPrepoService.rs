@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IPrepoService(Session);
 
 impl IPrepoService {
@@ -32,6 +33,11 @@ impl IPrepoService {
 	}
 }
 
+impl AsRef<Session> for IPrepoService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IPrepoService {
 	// fn SaveReport(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn SaveReportWithUser(&self, UNKNOWN) -> Result<UNKNOWN>;

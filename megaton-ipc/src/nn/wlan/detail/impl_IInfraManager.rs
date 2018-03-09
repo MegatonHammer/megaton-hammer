@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IInfraManager(Session);
 
 impl IInfraManager {
@@ -20,6 +21,11 @@ impl IInfraManager {
 	}
 }
 
+impl AsRef<Session> for IInfraManager {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IInfraManager {
 	pub fn Unknown0(&self, ) -> Result<()> {
 		let req = Request::new(0)

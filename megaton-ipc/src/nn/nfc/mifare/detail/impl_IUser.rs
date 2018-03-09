@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IUser(Session);
 
+impl AsRef<Session> for IUser {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IUser {
 	// fn Unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn Unknown1(&self, ) -> Result<()> {
@@ -34,14 +40,7 @@ impl IUser {
 
 	// fn Unknown5(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn Unknown6(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn Unknown7(&self, unk0: u64, unk1: [u8; 0x58]) -> Result<()> {
-		let req = Request::new(7)
-			.args(unk0)
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn Unknown7(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn Unknown8(&self, unk0: u64) -> Result<KObject> {
 		let req = Request::new(8)
 			.args(unk0)

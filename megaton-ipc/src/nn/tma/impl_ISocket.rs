@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct ISocket(Session);
 
+impl AsRef<Session> for ISocket {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl ISocket {
 	pub fn Unknown0(&self, ) -> Result<(u32, u32)> {
 		let req = Request::new(0)
@@ -93,7 +99,7 @@ impl ISocket {
 	}
 
 	// fn Unknown12(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn Unknown13(&self, unk0: u32, unk1: u32, unk2: u32, unk3: u64, unk4: KObject) -> Result<(u32, KObject)> {
+	pub fn Unknown13(&self, unk0: u32, unk1: u32, unk2: u32, unk3: u64, unk4: &KObject) -> Result<(u32, KObject)> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: u32,
@@ -108,6 +114,7 @@ impl ISocket {
 				unk2,
 				unk3,
 			})
+			.copy_handle(unk4)
 			;
 		let mut res : Response<u32> = self.0.send(req)?;
 		Ok((*res.get_raw(),res.pop_handle()))

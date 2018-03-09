@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IGlobalStateController(Session);
 
+impl AsRef<Session> for IGlobalStateController {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IGlobalStateController {
 	pub fn RequestToEnterSleep(&self, ) -> Result<()> {
 		let req = Request::new(0)

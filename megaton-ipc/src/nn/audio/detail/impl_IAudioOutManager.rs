@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IAudioOutManager(Session);
 
 impl IAudioOutManager {
@@ -20,6 +21,11 @@ impl IAudioOutManager {
 	}
 }
 
+impl AsRef<Session> for IAudioOutManager {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IAudioOutManager {
 	// fn ListAudioOuts(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn OpenAudioOut(&self, UNKNOWN) -> Result<UNKNOWN>;

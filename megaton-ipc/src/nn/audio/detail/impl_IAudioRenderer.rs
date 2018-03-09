@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IAudioRenderer(Session);
 
+impl AsRef<Session> for IAudioRenderer {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IAudioRenderer {
 	pub fn GetAudioRendererSampleRate(&self, ) -> Result<u32> {
 		let req = Request::new(0)

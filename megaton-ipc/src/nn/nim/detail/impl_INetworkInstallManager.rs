@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct INetworkInstallManager(Session);
 
 impl INetworkInstallManager {
@@ -20,6 +21,11 @@ impl INetworkInstallManager {
 	}
 }
 
+impl AsRef<Session> for INetworkInstallManager {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl INetworkInstallManager {
 	pub fn Unknown1(&self, unk0: u128) -> Result<()> {
 		let req = Request::new(1)

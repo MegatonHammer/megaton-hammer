@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IOverlayAppletProxy(Session);
 
+impl AsRef<Session> for IOverlayAppletProxy {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IOverlayAppletProxy {
 	pub fn GetCommonStateGetter(&self, ) -> Result<::nn::am::service::ICommonStateGetter> {
 		let req = Request::new(0)

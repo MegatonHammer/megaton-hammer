@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IFactorySettingsServer(Session);
 
 impl IFactorySettingsServer {
@@ -20,6 +21,11 @@ impl IFactorySettingsServer {
 	}
 }
 
+impl AsRef<Session> for IFactorySettingsServer {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IFactorySettingsServer {
 	pub fn GetBluetoothBdAddress(&self, ) -> Result<::nn::settings::factory::BdAddress> {
 		let req = Request::new(0)
@@ -85,14 +91,7 @@ impl IFactorySettingsServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetWirelessLanCountryCodes(&self, unk1: &mut [::nn::settings::factory::CountryCode]) -> Result<i32> {
-		let req = Request::new(8)
-			.args(())
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
+	// fn GetWirelessLanCountryCodes(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn GetSerialNumber(&self, ) -> Result<::nn::settings::factory::SerialNumber> {
 		let req = Request::new(9)
 			.args(())
@@ -125,54 +124,12 @@ impl IFactorySettingsServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetEciDeviceCertificate(&self, unk0: &mut Option<::nn::settings::factory::EccB233DeviceCertificate>) -> Result<()> {
-		let req = Request::new(14)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn GetEticketDeviceCertificate(&self, unk0: &mut Option<::nn::settings::factory::Rsa2048DeviceCertificate>) -> Result<()> {
-		let req = Request::new(15)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn GetSslKey(&self, unk0: &mut Option<::nn::settings::factory::SslKey>) -> Result<()> {
-		let req = Request::new(16)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn GetSslCertificate(&self, unk0: &mut Option<::nn::settings::factory::SslCertificate>) -> Result<()> {
-		let req = Request::new(17)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn GetGameCardKey(&self, unk0: &mut Option<::nn::settings::factory::GameCardKey>) -> Result<()> {
-		let req = Request::new(18)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn GetGameCardCertificate(&self, unk0: &mut Option<::nn::settings::factory::GameCardCertificate>) -> Result<()> {
-		let req = Request::new(19)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn GetEciDeviceCertificate(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetEticketDeviceCertificate(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetSslKey(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetSslCertificate(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetGameCardKey(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn GetGameCardCertificate(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn GetEciDeviceKey(&self, ) -> Result<::nn::settings::factory::EccB233DeviceKey> {
 		let req = Request::new(20)
 			.args(())
@@ -181,14 +138,7 @@ impl IFactorySettingsServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetEticketDeviceKey(&self, unk0: &mut Option<::nn::settings::factory::Rsa2048DeviceKey>) -> Result<()> {
-		let req = Request::new(21)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn GetEticketDeviceKey(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn GetSpeakerParameter(&self, ) -> Result<::nn::settings::factory::SpeakerParameter> {
 		let req = Request::new(22)
 			.args(())

@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IAudioOutManagerForDebugger(Session);
 
 impl IAudioOutManagerForDebugger {
@@ -20,6 +21,11 @@ impl IAudioOutManagerForDebugger {
 	}
 }
 
+impl AsRef<Session> for IAudioOutManagerForDebugger {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IAudioOutManagerForDebugger {
 	pub fn RequestSuspendForDebug(&self, unk0: u64) -> Result<()> {
 		let req = Request::new(0)

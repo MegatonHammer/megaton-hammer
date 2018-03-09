@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IHidDebugServer(Session);
 
 impl IHidDebugServer {
@@ -20,6 +21,11 @@ impl IHidDebugServer {
 	}
 }
 
+impl AsRef<Session> for IHidDebugServer {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IHidDebugServer {
 	pub fn DeactivateDebugPad(&self, ) -> Result<()> {
 		let req = Request::new(0)
@@ -53,14 +59,7 @@ impl IHidDebugServer {
 		Ok(())
 	}
 
-	pub fn SetTouchScreenAutoPilotState(&self, unk0: &[::nn::hid::TouchState]) -> Result<()> {
-		let req = Request::new(11)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn SetTouchScreenAutoPilotState(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn UnsetTouchScreenAutoPilotState(&self, ) -> Result<()> {
 		let req = Request::new(12)
 			.args(())

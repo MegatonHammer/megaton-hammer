@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct ISslService(Session);
 
 impl ISslService {
@@ -20,6 +21,11 @@ impl ISslService {
 	}
 }
 
+impl AsRef<Session> for ISslService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl ISslService {
 	pub fn CreateContext(&self, unk0: ::nn::ssl::sf::SslVersion, unk1: u64) -> Result<::nn::ssl::sf::ISslContext> {
 		#[repr(C)] #[derive(Clone)]

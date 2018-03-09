@@ -54,6 +54,8 @@ struct HandleDescriptorHeader {
     num_move_handles: u8,
 }
 
+assert_eq_size!(AssertHandleDescriptorHeader; u16, HandleDescriptorHeader);
+
 #[derive(Debug)]
 pub enum MessageType {
     Request,
@@ -99,12 +101,12 @@ impl<'a> IPCBuffer<'a> {
 //}
 
 #[derive(Debug)]
-pub struct Request<'a, 'b, 'c, RAW> {
+pub struct Request<'a, 'b, RAW> {
     ty: u16,
     send_pid: bool,
     buffers: Option<&'a [IPCBuffer<'a>]>, // Also has a max of 16 per type.
-    copy_handles: Option<&'b [KObject]>, // Max 16. Maybe this should just be a vec
-    move_handles: Option<&'c [KObject]>, // Max 16
+    copy_handles: ArrayVec<[&'b KObject; 16]>, // Max 16. Maybe this should just be a vec
+    move_handles: ArrayVec<[KObject; 16]>, // Max 16
 
     // The data section is built in !
     cmd_id: u64,
@@ -114,15 +116,15 @@ pub struct Request<'a, 'b, 'c, RAW> {
 
 // TODO: Figure out a way to avoid T: Clone ?
 // TODO: Maybe I should just store a *pointer* to T ?
-impl<'a, 'b, 'c, T: Clone> Request<'a, 'b, 'c, T> {
+impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
     pub fn new(id: u64) -> Self {
         Request {
             ty: 4,
             cmd_id: id,
             send_pid: false,
             buffers: None,
-            copy_handles: None,
-            move_handles: None,
+            copy_handles: ArrayVec::new(),
+            move_handles: ArrayVec::new(),
             args: None
         }
     }
@@ -139,6 +141,12 @@ impl<'a, 'b, 'c, T: Clone> Request<'a, 'b, 'c, T> {
         self
     }
 
+    // TODO: Take an AsKObject
+    pub fn copy_handle(mut self, hnd: &'b KObject) -> Self {
+        self.copy_handles.push(hnd);
+        self
+    }
+
     // TODO: Take ref to raw ?
     pub fn args(mut self, args: T) -> Self {
         self.args = Some(args);
@@ -146,7 +154,7 @@ impl<'a, 'b, 'c, T: Clone> Request<'a, 'b, 'c, T> {
     }
 
     // Write the data to an IPC buffer to be sent to the Switch OS.
-    pub fn pack(&self, data: &mut [u8]) {
+    pub fn pack(self, data: &mut [u8]) {
         // TODO: Memset data first
         let mut cursor = CursorWrite::new(data);
 
@@ -171,8 +179,8 @@ impl<'a, 'b, 'c, T: Clone> Request<'a, 'b, 'c, T> {
             hdr.set_c_descriptor_flags(0);
             // TODO: Domain, type 0xA. 0x10 = padding, 8 = sfci, 8 = cmdid.
             hdr.set_raw_section_size(((0x10 + 8 + 8 + core::mem::size_of::<T>()) / 4) as u16);
-            if self.copy_handles.map(|x| x.len()).unwrap_or(0) > 0 ||
-                self.move_handles.map(|x| x.len()).unwrap_or(0) > 0 || self.send_pid {
+            if self.copy_handles.len() > 0 ||
+                self.move_handles.len() > 0 || self.send_pid {
 
                 hdr.set_enable_handle_descriptor(true);
             }
@@ -184,8 +192,8 @@ impl<'a, 'b, 'c, T: Clone> Request<'a, 'b, 'c, T> {
         let mut _w_descriptors = 0;
 
         // First, write the handle descriptor
-        if self.copy_handles.map(|x| x.len()).unwrap_or(0) > 0 ||
-            self.move_handles.map(|x| x.len()).unwrap_or(0) > 0 || self.send_pid {
+        if self.copy_handles.len() > 0 ||
+            self.move_handles.len() > 0 || self.send_pid {
 
             // Handle Descriptor Header
             {
@@ -195,8 +203,8 @@ impl<'a, 'b, 'c, T: Clone> Request<'a, 'b, 'c, T> {
                 };
 
                 // Write the header
-                descriptor_hdr.set_num_copy_handles(self.copy_handles.map(|x| x.len()).unwrap_or(0) as u8);
-                descriptor_hdr.set_num_move_handles(self.move_handles.map(|x| x.len()).unwrap_or(0) as u8);
+                descriptor_hdr.set_num_copy_handles(self.copy_handles.len() as u8);
+                descriptor_hdr.set_num_move_handles(self.move_handles.len() as u8);
                 descriptor_hdr.set_send_pid(self.send_pid);
             }
 
@@ -206,11 +214,12 @@ impl<'a, 'b, 'c, T: Clone> Request<'a, 'b, 'c, T> {
             }
 
             // Write copy and move handles
-            for hnd in self.copy_handles.unwrap_or(&[]) {
-                cursor.write_u32::<LE>((*hnd).as_raw_handle());
+            for hnd in self.copy_handles {
+                cursor.write_u32::<LE>(hnd.as_raw_handle());
             }
-            for hnd in self.move_handles.unwrap_or(&[]) {
-                cursor.write_u32::<LE>((*hnd).as_raw_handle());
+            for hnd in self.move_handles {
+                cursor.write_u32::<LE>(hnd.as_raw_handle());
+                core::mem::forget(hnd);
             }
         }
 
@@ -306,8 +315,8 @@ impl<T: Clone> Response<T> {
 
         // TODO: What about control messages ?
         // TODO: What about buffers ??
-        assert_eq!(hdr.get_ty(), 4);
-        assert_eq!(hdr.get_raw_section_size() as usize, core::mem::size_of::<T>());
+        assert_eq!(hdr.get_ty(), 0);
+        assert_eq!(hdr.get_raw_section_size() as usize, (core::mem::size_of::<T>() + 8 + 8 + 0x10) / 4);
 
         // First, read the handle descriptor
         if hdr.get_enable_handle_descriptor() {
@@ -315,6 +324,7 @@ impl<T: Clone> Response<T> {
             let descriptor_hdr = unsafe {
                 (descriptor_hdr.as_ptr() as *const HandleDescriptorHeader).as_ref().unwrap()
             };
+            cursor.skip_read(2);
 
             if descriptor_hdr.get_send_pid() {
                 // TODO
@@ -355,6 +365,10 @@ impl<T: Clone> Response<T> {
 
         // Finally, read the raw section
         // TODO: Domain
+        // Align to 16-byte boundary
+        let before_pad = ((cursor.pos() + (16 - 1)) & !(16 - 1)) - cursor.pos();
+        cursor.skip_read(before_pad);
+        // Find SFCO
         cursor.assert(b"SFCO\0\0\0\0");
         this.error = cursor.read_u64::<LE>();
         let raw = cursor.skip_read(core::mem::size_of::<T>());
@@ -362,6 +376,11 @@ impl<T: Clone> Response<T> {
             (raw.as_ptr() as *const T).as_ref().unwrap()
         };
         this.ret = raw.clone();
+        // Total padding should be 0x10
+        cursor.skip_read(0x10 - before_pad);
+
+        // TODO: Read the end
+
         Ok(this)
     }
 

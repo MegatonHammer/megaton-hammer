@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IParentalControlServiceFactory(Session);
 
 impl IParentalControlServiceFactory {
@@ -32,6 +33,11 @@ impl IParentalControlServiceFactory {
 	}
 }
 
+impl AsRef<Session> for IParentalControlServiceFactory {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IParentalControlServiceFactory {
 	pub fn GetService(&self, unk0: u64) -> Result<::nn::pctl::detail::ipc::IParentalControlService> {
 		let req = Request::new(0)

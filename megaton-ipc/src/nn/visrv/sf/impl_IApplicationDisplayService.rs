@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IApplicationDisplayService(Session);
 
+impl AsRef<Session> for IApplicationDisplayService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IApplicationDisplayService {
 	pub fn GetRelayService(&self, ) -> Result<::nns::hosbinder::IHOSBinderDriver> {
 		let req = Request::new(100)
@@ -39,14 +45,7 @@ impl IApplicationDisplayService {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn ListDisplays(&self, unk1: &mut [::nn::vi::DisplayInfo]) -> Result<i64> {
-		let req = Request::new(1000)
-			.args(())
-			;
-		let mut res : Response<i64> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
+	// fn ListDisplays(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn OpenDisplay(&self, unk0: ::nn::vi::DisplayName) -> Result<u64> {
 		let req = Request::new(1010)
 			.args(unk0)

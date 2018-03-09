@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IHidTemporaryServer(Session);
 
 impl IHidTemporaryServer {
@@ -20,6 +21,11 @@ impl IHidTemporaryServer {
 	}
 }
 
+impl AsRef<Session> for IHidTemporaryServer {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IHidTemporaryServer {
 	pub fn GetConsoleSixAxisSensorCalibrationValues(&self, unk0: ::nn::hid::ConsoleSixAxisSensorHandle, unk1: ::nn::applet::AppletResourceUserId) -> Result<::nn::hid::tmp::ConsoleSixAxisSensorCalibrationValues> {
 		#[repr(C)] #[derive(Clone)]

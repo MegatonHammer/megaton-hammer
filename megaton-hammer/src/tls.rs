@@ -11,17 +11,18 @@ use core::fmt;
 
 /// The basic unsafe building block of this module, and a very thin wrapper
 /// around `mrs r0, tpidrro_el0`.
-#[cfg(target = "aarch64-roblabla-switch")]
+#[cfg(all(target_os = "switch", target_vendor = "roblabla", target_arch = "aarch64"))]
 unsafe fn get_tls_space() -> *mut TlsStruct {
     let addr: *mut TlsStruct;
     asm!("mrs $0, tpidrro_el0" : "=r" (addr));
     addr
 }
 
-#[cfg(not(target = "aarch64-roblabla-switch"))]
+/*#[cfg(not(all(target_os = "switch", target_vendor = "roblabla", target_arch = "aarch64")))]
 unsafe fn get_tls_space() -> *mut TlsStruct {
+    const_assert!(false);
     &mut TLS
-}
+}*/
 
 struct ThreadCtx;
 
@@ -87,14 +88,14 @@ impl TlsStruct {
 }
 
 // EWWWWWWW
-#[cfg(not(target = "aarch64-roblabla-switch"))]
+/*#[cfg(not(all(target_os = "switch", target_vendor = "roblabla", target_arch = "aarch64")))]
 unsafe impl Sync for TlsStruct {}
 
 // This is a terrible thing.
-#[cfg(not(target = "aarch64-roblabla-switch"))]
+#[cfg(not(all(target_os = "switch", target_vendor = "roblabla", target_arch = "aarch64")))]
 static mut TLS: TlsStruct = TlsStruct {
     ipc_buf: [0; 0x100],
     borrowed: false,
     unknown: [0; 0xF7],
     ctx: ::core::ptr::null_mut()
-};
+};*/

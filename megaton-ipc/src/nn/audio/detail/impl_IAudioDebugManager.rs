@@ -3,10 +3,16 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IAudioDebugManager(Session);
 
+impl AsRef<Session> for IAudioDebugManager {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IAudioDebugManager {
-	pub fn Unknown0(&self, unk0: u32, unk1: u64, unk2: KObject) -> Result<()> {
+	pub fn Unknown0(&self, unk0: u32, unk1: u64, unk2: &KObject) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: u32,
@@ -17,6 +23,7 @@ impl IAudioDebugManager {
 				unk0,
 				unk1,
 			})
+			.copy_handle(unk2)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())

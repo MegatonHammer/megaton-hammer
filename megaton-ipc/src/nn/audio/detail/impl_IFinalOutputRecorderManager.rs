@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IFinalOutputRecorderManager(Session);
 
 impl IFinalOutputRecorderManager {
@@ -20,8 +21,13 @@ impl IFinalOutputRecorderManager {
 	}
 }
 
+impl AsRef<Session> for IFinalOutputRecorderManager {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IFinalOutputRecorderManager {
-	pub fn OpenFinalOutputRecorder(&self, unk0: u64, unk1: u64, unk2: KObject) -> Result<(u128, Session)> {
+	pub fn OpenFinalOutputRecorder(&self, unk0: u64, unk1: u64, unk2: &KObject) -> Result<(u128, Session)> {
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			unk0: u64,
@@ -32,6 +38,7 @@ impl IFinalOutputRecorderManager {
 				unk0,
 				unk1,
 			})
+			.copy_handle(unk2)
 			;
 		let mut res : Response<u128> = self.0.send(req)?;
 		Ok((*res.get_raw(),unsafe { FromKObject::from_kobject(res.pop_handle()) }))

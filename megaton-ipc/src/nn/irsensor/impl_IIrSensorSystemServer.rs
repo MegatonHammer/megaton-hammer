@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IIrSensorSystemServer(Session);
 
 impl IIrSensorSystemServer {
@@ -20,6 +21,11 @@ impl IIrSensorSystemServer {
 	}
 }
 
+impl AsRef<Session> for IIrSensorSystemServer {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IIrSensorSystemServer {
 	pub fn SetAppletResourceUserId(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		let req = Request::new(500)

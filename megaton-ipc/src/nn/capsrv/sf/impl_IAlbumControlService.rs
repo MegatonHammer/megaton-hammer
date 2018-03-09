@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IAlbumControlService(Session);
 
 impl IAlbumControlService {
@@ -20,6 +21,11 @@ impl IAlbumControlService {
 	}
 }
 
+impl AsRef<Session> for IAlbumControlService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IAlbumControlService {
 	pub fn Unknown2001(&self, unk0: u8) -> Result<()> {
 		let req = Request::new(2001)

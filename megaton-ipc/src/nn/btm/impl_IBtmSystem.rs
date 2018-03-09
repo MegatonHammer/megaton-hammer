@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IBtmSystem(Session);
 
 impl IBtmSystem {
@@ -20,6 +21,11 @@ impl IBtmSystem {
 	}
 }
 
+impl AsRef<Session> for IBtmSystem {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IBtmSystem {
 	pub fn Unknown0(&self, ) -> Result<Session> {
 		let req = Request::new(0)

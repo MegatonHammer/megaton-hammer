@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IProcessWindingController(Session);
 
+impl AsRef<Session> for IProcessWindingController {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IProcessWindingController {
 	pub fn GetLaunchReason(&self, ) -> Result<::nn::am::service::AppletProcessLaunchReason> {
 		let req = Request::new(0)
@@ -22,9 +28,10 @@ impl IProcessWindingController {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn PushContext(&self, unk0: ::nn::am::service::IStorage) -> Result<()> {
+	pub fn PushContext(&self, unk0: &::nn::am::service::IStorage) -> Result<()> {
 		let req = Request::new(21)
 			.args(())
+			.copy_handle(unk0.as_ref().as_ref())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())
@@ -54,9 +61,10 @@ impl IProcessWindingController {
 		Ok(())
 	}
 
-	pub fn ReserveToStartAndWaitAndUnwindThis(&self, unk0: ::nn::am::service::ILibraryAppletAccessor) -> Result<()> {
+	pub fn ReserveToStartAndWaitAndUnwindThis(&self, unk0: &::nn::am::service::ILibraryAppletAccessor) -> Result<()> {
 		let req = Request::new(40)
 			.args(())
+			.copy_handle(unk0.as_ref().as_ref())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())

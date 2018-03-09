@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IETicketService(Session);
 
 impl IETicketService {
@@ -20,6 +21,11 @@ impl IETicketService {
 	}
 }
 
+impl AsRef<Session> for IETicketService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IETicketService {
 	pub fn Unknown1(&self, ) -> Result<()> {
 		let req = Request::new(1)

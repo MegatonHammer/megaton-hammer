@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IAudioRendererManagerForApplet(Session);
 
 impl IAudioRendererManagerForApplet {
@@ -20,6 +21,11 @@ impl IAudioRendererManagerForApplet {
 	}
 }
 
+impl AsRef<Session> for IAudioRendererManagerForApplet {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IAudioRendererManagerForApplet {
 	pub fn Unknown0(&self, unk0: u64, unk1: u64) -> Result<KObject> {
 		#[repr(C)] #[derive(Clone)]

@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IRegisteredLocationResolver(Session);
 
+impl AsRef<Session> for IRegisteredLocationResolver {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IRegisteredLocationResolver {
 	pub fn GetPatchType0NcaPath(&self, ) -> Result<()> {
 		let req = Request::new(0)

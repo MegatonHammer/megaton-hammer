@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IStaticService(Session);
 
 impl IStaticService {
@@ -24,6 +25,11 @@ impl IStaticService {
 	}
 }
 
+impl AsRef<Session> for IStaticService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IStaticService {
 	pub fn GetDatabaseServiceSharedPointer(&self, unk0: i32) -> Result<::nn::mii::detail::IDatabaseService> {
 		let req = Request::new(0)

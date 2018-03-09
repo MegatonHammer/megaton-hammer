@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IParentalControlService(Session);
 
+impl AsRef<Session> for IParentalControlService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IParentalControlService {
 	pub fn CheckFreeCommunicationPermission(&self, ) -> Result<()> {
 		let req = Request::new(1001)
@@ -14,38 +20,8 @@ impl IParentalControlService {
 		Ok(())
 	}
 
-	pub fn ConfirmLaunchApplicationPermission(&self, unk0: bool, unk1: ::nn::ncm::ApplicationId, unk2: &[i8]) -> Result<()> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: bool,
-			unk1: ::nn::ncm::ApplicationId,
-		}
-		let req = Request::new(1002)
-			.args(InRaw {
-				unk0,
-				unk1,
-			})
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn ConfirmResumeApplicationPermission(&self, unk0: bool, unk1: ::nn::ncm::ApplicationId, unk2: &[i8]) -> Result<()> {
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: bool,
-			unk1: ::nn::ncm::ApplicationId,
-		}
-		let req = Request::new(1003)
-			.args(InRaw {
-				unk0,
-				unk1,
-			})
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn ConfirmLaunchApplicationPermission(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn ConfirmResumeApplicationPermission(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn ConfirmSnsPostPermission(&self, ) -> Result<()> {
 		let req = Request::new(1004)
 			.args(())
@@ -206,22 +182,8 @@ impl IParentalControlService {
 		Ok(())
 	}
 
-	pub fn GetFreeCommunicationApplicationList(&self, unk0: i32, unk2: &mut [::nn::pctl::FreeCommunicationApplicationInfo]) -> Result<i32> {
-		let req = Request::new(1044)
-			.args(unk0)
-			;
-		let mut res : Response<i32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
-	pub fn UpdateFreeCommunicationApplicationList(&self, unk0: &[::nn::pctl::FreeCommunicationApplicationInfo]) -> Result<()> {
-		let req = Request::new(1045)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn GetFreeCommunicationApplicationList(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn UpdateFreeCommunicationApplicationList(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn DisableFeaturesForReset(&self, ) -> Result<()> {
 		let req = Request::new(1046)
 			.args(())
@@ -238,30 +200,9 @@ impl IParentalControlService {
 		Ok(())
 	}
 
-	pub fn UnlockRestrictionTemporarily(&self, unk0: &[i8]) -> Result<()> {
-		let req = Request::new(1201)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn UnlockSystemSettingsRestriction(&self, unk0: &[i8]) -> Result<()> {
-		let req = Request::new(1202)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn SetPinCode(&self, unk0: &[i8]) -> Result<()> {
-		let req = Request::new(1203)
-			.args(())
-			;
-		let mut res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn UnlockRestrictionTemporarily(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn UnlockSystemSettingsRestriction(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn SetPinCode(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn GenerateInquiryCode(&self, ) -> Result<::nn::pctl::InquiryCode> {
 		let req = Request::new(1204)
 			.args(())
@@ -270,14 +211,7 @@ impl IParentalControlService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn CheckMasterKey(&self, unk0: ::nn::pctl::InquiryCode, unk1: &[i8]) -> Result<bool> {
-		let req = Request::new(1205)
-			.args(unk0)
-			;
-		let mut res : Response<bool> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
+	// fn CheckMasterKey(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn GetPinCodeLength(&self, ) -> Result<i32> {
 		let req = Request::new(1206)
 			.args(())
@@ -318,14 +252,7 @@ impl IParentalControlService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn GetAccountNickname(&self, unk0: ::nn::pctl::detail::PairingAccountInfoBase, unk2: &mut [i8]) -> Result<u32> {
-		let req = Request::new(1421)
-			.args(unk0)
-			;
-		let mut res : Response<u32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
+	// fn GetAccountNickname(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn GetAccountState(&self, unk0: ::nn::pctl::detail::PairingAccountInfoBase) -> Result<i32> {
 		let req = Request::new(1424)
 			.args(unk0)
@@ -498,14 +425,7 @@ impl IParentalControlService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn RequestPairingAsync(&self, unk0: &[i8]) -> Result<(::nn::pctl::detail::AsyncData, KObject)> {
-		let req = Request::new(2001)
-			.args(())
-			;
-		let mut res : Response<::nn::pctl::detail::AsyncData> = self.0.send(req)?;
-		Ok((*res.get_raw(),res.pop_handle()))
-	}
-
+	// fn RequestPairingAsync(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn FinishRequestPairing(&self, unk0: ::nn::pctl::detail::AsyncData) -> Result<::nn::pctl::detail::PairingInfoBase> {
 		let req = Request::new(2002)
 			.args(unk0)
@@ -557,26 +477,8 @@ impl IParentalControlService {
 	// fn FinishUnlinkPairing(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn GetAccountMiiImageAsync(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn FinishGetAccountMiiImage(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn GetAccountMiiImageContentTypeAsync(&self, unk0: ::nn::pctl::detail::PairingAccountInfoBase, unk4: &mut [i8]) -> Result<(::nn::pctl::detail::AsyncData, u32, KObject)> {
-		let req = Request::new(2011)
-			.args(unk0)
-			;
-		#[repr(C)] #[derive(Clone)] struct OutRaw {
-			unk1: ::nn::pctl::detail::AsyncData,
-			unk2: u32,
-		}
-		let mut res : Response<OutRaw> = self.0.send(req)?;
-		Ok((res.get_raw().unk1.clone(),res.get_raw().unk2.clone(),res.pop_handle()))
-	}
-
-	pub fn FinishGetAccountMiiImageContentType(&self, unk0: ::nn::pctl::detail::AsyncData, unk2: &mut [i8]) -> Result<u32> {
-		let req = Request::new(2012)
-			.args(unk0)
-			;
-		let mut res : Response<u32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
+	// fn GetAccountMiiImageContentTypeAsync(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn FinishGetAccountMiiImageContentType(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn SynchronizeParentalControlSettingsAsync(&self, ) -> Result<(::nn::pctl::detail::AsyncData, KObject)> {
 		let req = Request::new(2013)
 			.args(())

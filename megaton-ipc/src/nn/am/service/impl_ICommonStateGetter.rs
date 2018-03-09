@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct ICommonStateGetter(Session);
 
+impl AsRef<Session> for ICommonStateGetter {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl ICommonStateGetter {
 	pub fn GetEventHandle(&self, ) -> Result<KObject> {
 		let req = Request::new(0)
@@ -118,9 +124,10 @@ impl ICommonStateGetter {
 		Ok(res.pop_handle())
 	}
 
-	pub fn PushToGeneralChannel(&self, unk0: ::nn::am::service::IStorage) -> Result<()> {
+	pub fn PushToGeneralChannel(&self, unk0: &::nn::am::service::IStorage) -> Result<()> {
 		let req = Request::new(20)
 			.args(())
+			.copy_handle(unk0.as_ref().as_ref())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())

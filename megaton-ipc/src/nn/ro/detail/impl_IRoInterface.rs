@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IRoInterface(Session);
 
 impl IRoInterface {
@@ -20,6 +21,11 @@ impl IRoInterface {
 	}
 }
 
+impl AsRef<Session> for IRoInterface {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IRoInterface {
 	pub fn Unknown0(&self, unk0: u64, unk1: u64, unk2: u64, unk3: u64, unk4: u64) -> Result<u64> {
 		#[repr(C)] #[derive(Clone)]
@@ -97,10 +103,11 @@ impl IRoInterface {
 		Ok(())
 	}
 
-	pub fn Unknown4(&self, unk0: u64, unk2: KObject) -> Result<()> {
+	pub fn Unknown4(&self, unk0: u64, unk2: &KObject) -> Result<()> {
 		let req = Request::new(4)
 			.args(unk0)
 			.send_pid()
+			.copy_handle(unk2)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(())

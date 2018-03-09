@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct INewsService(Session);
 
+impl AsRef<Session> for INewsService {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl INewsService {
 	// fn Unknown10100(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn Unknown20100(&self, UNKNOWN) -> Result<UNKNOWN>;

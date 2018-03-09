@@ -3,6 +3,7 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IRequest(Session);
 
 impl IRequest {
@@ -20,6 +21,11 @@ impl IRequest {
 	}
 }
 
+impl AsRef<Session> for IRequest {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IRequest {
 	pub fn Unknown0(&self, unk0: u32, unk1: u32, unk2: u32) -> Result<()> {
 		#[repr(C)] #[derive(Clone)]

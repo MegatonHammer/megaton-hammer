@@ -3,8 +3,14 @@ use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
 
+#[derive(Debug)]
 pub struct IRequest(Session);
 
+impl AsRef<Session> for IRequest {
+	fn as_ref(&self) -> &Session {
+		&self.0
+	}
+}
 impl IRequest {
 	pub fn Initialize(&self, unk0: ::nn::fgm::Module, unk1: u64) -> Result<KObject> {
 		#[repr(C)] #[derive(Clone)]
