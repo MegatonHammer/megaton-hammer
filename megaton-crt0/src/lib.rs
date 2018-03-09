@@ -274,6 +274,16 @@ T: Termination,
 }
 
 #[lang = "panic_fmt"]
-fn panic_fmt(_msg: core::fmt::Arguments, _file: &'static str, _line: u32) -> ! {
+fn panic_fmt(msg: core::fmt::Arguments, file: &'static str, line: u32, column: u32) -> ! {
+    // We panic'd, locks might already be taken. Let's avoid infinite looping there.
+    if let Some(mut lock) = LOG.try_lock() {
+        writeln!(lock, "PANIC: {} in {}:{}:{}", msg, file, line, column);
+    }
+    // Let's also send it to the debug svc
+    writeln!(SvcLog, "PANIC: {} in {}:{}:{}", msg, file, line, column);
+
+    // TODO: Exit the program. Turns out this is surprisingly difficult.
+    // NOTE: This will not unwind the stack. If you panic, we'll almost
+    // certainly leak resources.
     loop {}
 }
