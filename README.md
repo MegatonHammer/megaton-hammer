@@ -47,4 +47,10 @@ pip install --user lz4 pyelftools
 python target/aarch64-roblabla-switch/debug/megaton-example target/aarch64-roblabla-switch/debug/megaton-example.nro
 ```
 
+
+## Roadmap to Awesomeness
+
+You can find a [roadmap] in the github projects.
+
 [rustup]: https://rustup.rs
+[roadmap]: https://github.com/roblabla/megaton-hammer/projects/1
