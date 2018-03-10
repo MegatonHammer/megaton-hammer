@@ -14,13 +14,13 @@ you might get API docs at https://docs.roblab.la/megaton-hammer/megaton_hammer.
 
 ## Building
 
-The easiest way to get started is through [rustup], as you'll need a very recent
-nightly:
+The easiest way to get started is through [rustup], as you'll need a very
+specific nightly:
 
 ```
 curl https://sh.rustup.rs -sSf | sh
-rustup toolchain add nightly
-rustup default nightly
+rustup toolchain add nightly-2018-03-07
+rustup default nightly-2018-03-07
 ```
 
 You'll also want to use [xargo], a cargo wrapper that will automatically compile
