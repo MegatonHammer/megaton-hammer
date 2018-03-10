@@ -63,16 +63,18 @@ pub extern fn __svcLog(s: &str) -> usize {
 pub unsafe extern fn trampoline() -> ! {
     // TODO: Clobber
     asm!("
-    adrp x3, __svcExitProcess
-    add x3, x3, #:lo12:__svcExitProcess
+    adrp x2, __svcExitProcess
+    add x2, x2, #:lo12:__svcExitProcess
     cmp x30, xzr
-    csel x30, x3, x30, eq
+    csel x2, x2, x30, eq
     b start" : : : : "volatile");
     intrinsics::unreachable();
 }
 
+static mut EXIT: Option<extern fn(u64) -> !> = None;
+
 #[no_mangle]
-pub unsafe extern fn start(config: *mut LoaderConfigEntry, _thread_handle: u64) -> i32 {
+pub unsafe extern fn start(config: *mut LoaderConfigEntry, _thread_handle: u64, exit: extern fn(u64) -> !) -> ! {
     // Clean the BSS.
     // TODO: Avoid relocations by using asm!. This is **ugly**.
     asm!("
@@ -89,12 +91,14 @@ bssloop:
 run:
     " : : : "x5", "x6" : "volatile");
 
+    EXIT = Some(exit);
+
     let start_addr : *mut ();
     // TODO: Avoid relocations by getting _start address with asm...
     asm!("adrp $0, _start" : "=r"(start_addr));
     let ret = megaton_start(config, _thread_handle, start_addr);
     writeln!(SvcLog, "Returning with value {}", ret);
-    ret
+    exit(ret as u64);
 }
 
 // TODO: I should try to get rid of that one last bit of global asm.
@@ -285,5 +289,10 @@ fn panic_fmt(msg: core::fmt::Arguments, file: &'static str, line: u32, column: u
     // TODO: Exit the program. Turns out this is surprisingly difficult.
     // NOTE: This will not unwind the stack. If you panic, we'll almost
     // certainly leak resources.
-    loop {}
+    unsafe {
+        match EXIT {
+            Some(f) => f(1),
+            None => __svcExitProcess()
+        }
+    }
 }
