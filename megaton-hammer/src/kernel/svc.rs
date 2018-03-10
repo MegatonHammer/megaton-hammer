@@ -30,6 +30,8 @@ pub struct memory_info_t {
     pub padding: u32,
 }
 
+global_asm! { include_str!("svc.S") }
+
 // TODO: Documentation for all syscalls. Let's try to do better than switchbrew.
 // TODO: Rewrite the syscalls to wrap them in an idiomatic rust style.
 extern {
