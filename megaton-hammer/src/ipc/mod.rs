@@ -252,34 +252,42 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
         // TODO: Write c buffers
     }
 
-    #[cfg(feature = "core")]
-    pub fn show_packed(self) -> Self {
+    pub fn show_packed(self, f: &mut core::fmt::Write) -> Self {
+        // Let's make a copy. **WE NEED TO FORGET IT**
+        // TODO: Maybe there's a cleaner way to unsafely make a copy without
+        // transmuting ?
+        let other_self : Self = unsafe { core::mem::transmute_copy(&self) };
         let mut arr = [0; 0x100];
-        self.pack(&mut arr);
-        // Let's emulate what pegaswitch seems to be doing. They split the chunk
-        // in lines of 16 bytes
+        other_self.pack(&mut arr);
+
+        // Let's emulate what xxd is doing, so we can turn it back to binary
+        // with xxd -r
         for (i, chunk) in arr.chunks(16).enumerate() {
             // Print the current offset (do some padding if necessary so it all
             // aligns correctly).
-            print!("ipcm+{:#01$x} |", i * 16, f64::log2(arr.len() as f64).ceil() as usize - f64::log2(((i + 1) * 16) as f64).ceil() as usize);
+            let log2 = 64 - arr.len().leading_zeros();
+            let log2 = if log2 % 4 == 0 { log2 / 4 } else { (log2 / 4) + 1 };
+            write!(f, "{:01$x}:", i * 16, log2 as usize);
 
             // Print the bytes one by one. Put an extra space in the middle
             for (i, b) in chunk.iter().enumerate() {
-                if i == 8 {
-                    print!(" ");
+                if i % 2 == 0 {
+                    write!(f, " ");
                 }
-                print!(" {:02x}", b);
+                write!(f, "{:02x}", b);
             }
             // Fill missing with spaces.
-            print!("{}", "   ".repeat(16 - chunk.len()));
+            for i in 0..16 - chunk.len() {
+                write!(f, "{}", "   ");
+            }
 
             // And now show the ASCII representation. Replace unprintable
             // characters with  a '.'
-            print!(" | ");
+            write!(f, "  ");
             for b in chunk {
-                print!("{}", if (*b as char).is_ascii_graphic() { *b as char } else { '.' });
+                write!(f, "{}", if (*b as char).is_ascii_graphic() { *b as char } else { '.' });
             }
-            println!(" |");
+            writeln!(f, "");
         }
         self
     }

@@ -21,7 +21,7 @@
 //! in the long term. (reimplementing its C API, but using rust). This should
 //! allow porting libtransistor libraries to Megaton Hammer easily.
 // TODO: I shouldn't need either of those, in an ideal world.
-#![feature(asm, proc_macro, universal_impl_trait, cfg_target_vendor, global_asm)]
+#![feature(asm, proc_macro, universal_impl_trait, cfg_target_vendor, global_asm, unicode)]
 
 // Let's keep this no_std. Why ? Because it'll be used in std, that's why.
 // Eventually, I might remove this.
@@ -29,6 +29,9 @@
 
 #[cfg(feature = "std")]
 use std as core;
+
+// WTF why is this not in libcore ?
+extern crate std_unicode;
 
 extern crate byteorder;
 
