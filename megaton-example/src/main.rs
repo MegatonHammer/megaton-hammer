@@ -10,6 +10,20 @@ use megaton_hammer::kernel::{svc, KObject};
 
 static mut BSD_MEM: [u8; 0x234000] = [0; 0x234000];
 
+#[derive(Debug)]
+#[repr(C)]
+struct SockAddrIn {
+    sin_len: u8,
+    sin_family: u8,
+    sin_port: u16,
+    sin_addr: u32,
+    sin_zero: [u8; 8]
+}
+
+const AF_INET: u8 = 2;
+const AF_INET6: u8 = 17;
+const AF_ROUTE: u8 = 28;
+
 fn main() {
     writeln!(megaton_crt0::LOG.lock(), "We are rust, and we are in the main!").unwrap();
 
@@ -36,12 +50,40 @@ fn main() {
         return;
     }
     let mem_handle = unsafe { KObject::new(mem_handle) };
+    writeln!(megaton_crt0::LOG.lock(), "Initializing {:?} - {:?}", socket_ipc, mem_handle);
     socket_ipc.Initialize(bsd_config, 0, unsafe { core::mem::size_of_val(&BSD_MEM) as u64 }, &mem_handle).expect("Failed to initialize bsd");
-    let (socket, bsd_errno) = socket_ipc.Socket(2, 1, 6).expect("Failed to create Socket");
-    if bsd_errno != 0 {
+
+
+    let (socket, bsd_errno) = socket_ipc.Socket(AF_INET as u32, 1, 6).expect("Failed to create Socket");
+    if socket == -1 {
         writeln!(megaton_crt0::LOG.lock(), "Failed to create Socket: {}", bsd_errno);
+        writeln!(megaton_crt0::SvcLog, "Failed to create Socket: {}", bsd_errno);
         return;
     }
+
+    let sockaddrin = SockAddrIn {
+        sin_len: core::mem::size_of::<SockAddrIn>() as u8,
+        sin_family: AF_INET,
+        sin_port: 2991u16.to_be(),
+        sin_addr: (91 << 24 | 121 << 16 | 81 << 8 | 160u32).to_be(),
+        sin_zero: [0; 8]
+    };
+
+    let sockaddr = unsafe { core::mem::transmute(sockaddrin) };
+
+    let (ret, bsd_errno) = socket_ipc.Connect(socket as u32, &sockaddr).expect("Failed to connect");
+    if ret == -1 {
+        writeln!(megaton_crt0::LOG.lock(), "Failed to connect: {}", bsd_errno);
+        writeln!(megaton_crt0::SvcLog, "Failed to connect: {}", bsd_errno);
+        return;
+    }
+
+    // Transmute ? Really ?
+    let (ret, bsd_errno) = socket_ipc.Write(socket as u32, unsafe { core::mem::transmute("This is a simple socket test from rust".as_bytes()) } ).expect("Failed to write");
+    if ret == -1 {
+        writeln!(megaton_crt0::SvcLog, "Failed to write: {}", bsd_errno);
+    }
+    writeln!(megaton_crt0::LOG.lock(), "I'm done !");
 }
 
 /*fn bsd_Get_transfer_mem_size(config: &BsdBufferConfig) -> usize {
