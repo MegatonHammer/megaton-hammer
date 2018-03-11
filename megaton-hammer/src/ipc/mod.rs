@@ -66,7 +66,7 @@ pub enum MessageType {
 #[derive(Debug)]
 pub struct IPCBuffer<'a> {
     // Address to the value
-    val: *mut (),
+    addr: usize,
     // Size of the value
     size: usize,
     // Buffer type
@@ -78,10 +78,46 @@ pub struct IPCBuffer<'a> {
 }
 
 impl<'a> IPCBuffer<'a> {
-    fn from_ptr<T>(val: &'a T, ty: u64) -> IPCBuffer {
+    fn null() -> IPCBuffer<'static> {
         IPCBuffer {
-            val: val as *const _ as *mut _,
+            addr: 0,
+            size: 0,
+            ty: 0,
+            phantom: PhantomData
+        }
+    }
+    pub fn from_mut_ref<T>(val: &'a mut T, ty: u64) -> IPCBuffer {
+        // TODO: Verify type and val mutability
+        IPCBuffer {
+            addr: val as *mut T as usize,
             size: core::mem::size_of::<T>(),
+            ty,
+            phantom: PhantomData
+        }
+    }
+    pub fn from_ref<T>(val: &'a T, ty: u64) -> IPCBuffer {
+        // TODO: Verify type and val mutability
+        IPCBuffer {
+            addr: val as *const T as usize,
+            size: core::mem::size_of::<T>(),
+            ty,
+            phantom: PhantomData
+        }
+    }
+    pub fn from_slice<T>(val: &'a [T], ty: u64) -> IPCBuffer {
+        // TODO: Verify type and val mutability
+        IPCBuffer {
+            addr: val.as_ptr() as usize,
+            size: core::mem::size_of::<T>() * val.len(),
+            ty,
+            phantom: PhantomData
+        }
+    }
+    pub fn from_mut_slice<T>(val: &'a mut [T], ty: u64) -> IPCBuffer {
+        // TODO: Verify type and val mutability
+        IPCBuffer {
+            addr: val.as_ptr() as usize,
+            size: core::mem::size_of::<T>() * val.len(),
             ty,
             phantom: PhantomData
         }
@@ -104,9 +140,12 @@ impl<'a> IPCBuffer<'a> {
 pub struct Request<'a, 'b, RAW> {
     ty: u16,
     send_pid: bool,
-    buffers: Option<&'a [IPCBuffer<'a>]>, // Also has a max of 16 per type.
-    copy_handles: ArrayVec<[&'b KObject; 16]>, // Max 16. Maybe this should just be a vec
-    move_handles: ArrayVec<[KObject; 16]>, // Max 16
+    x_descriptors: ArrayVec<[IPCBuffer<'a>; 16]>,
+    a_descriptors: ArrayVec<[IPCBuffer<'a>; 16]>,
+    b_descriptors: ArrayVec<[IPCBuffer<'a>; 16]>,
+    c_descriptors: ArrayVec<[IPCBuffer<'a>; 16]>,
+    copy_handles: ArrayVec<[&'b KObject; 16]>,
+    move_handles: ArrayVec<[KObject; 16]>,
 
     // The data section is built in !
     cmd_id: u64,
@@ -122,7 +161,10 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
             ty: 4,
             cmd_id: id,
             send_pid: false,
-            buffers: None,
+            x_descriptors: ArrayVec::new(),
+            a_descriptors: ArrayVec::new(),
+            b_descriptors: ArrayVec::new(),
+            c_descriptors: ArrayVec::new(),
             copy_handles: ArrayVec::new(),
             move_handles: ArrayVec::new(),
             args: None
@@ -136,8 +178,41 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
         };
         self
     }
+
     pub fn send_pid(mut self) -> Self {
         self.send_pid = true;
+        self
+    }
+
+    pub fn descriptor(mut self, buf: IPCBuffer<'a>) -> Self {
+        enum Direction { In, Out }
+        enum Family { AB, XC }
+
+        if buf.ty & 0x20 == 0 {
+            unimplemented!();
+            /*let direction = if buf.ty & 0b0001 != 0 { Direction::In }
+            else if buf.ty & 0b0010 != 0 { Direction::Out }
+            else { panic!("Invalid buffer type {}", buf.ty); }
+
+            let family = if buf.ty & 0b0100 != 0 { Family::AB }
+            else if buf.ty & 0b1000 != 0 { Family::XC }
+            else { panic!("Invalid buffer type {}", buf.ty); }
+
+            match (direction, family) {
+                (Direction::In, Family::AB) => self.a_descriptors.push(buf),
+                (Direction::Out, Family::AB) => self.b_descriptors.push(buf),
+                (Direction::In, Family::XC) => self.x_descriptors.push(buf),
+                (Direction::Out, Family::XC) => ()
+            }*/
+        } else if buf.ty == 0x21 {
+            self.a_descriptors.push(buf);
+            self.x_descriptors.push(IPCBuffer::null());
+        } else if buf.ty == 0x22 {
+            self.b_descriptors.push(buf);
+            self.c_descriptors.push(IPCBuffer::null());
+        } else {
+            panic!("Invalid descriptor type: {}", buf.ty);
+        }
         self
     }
 
@@ -154,6 +229,7 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
     }
 
     // Write the data to an IPC buffer to be sent to the Switch OS.
+    // TODO: If this is not sent, it can leak move handles!
     pub fn pack(self, data: &mut [u8]) {
         // TODO: Memset data first
         let mut cursor = CursorWrite::new(data);
@@ -172,11 +248,18 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
             };
 
             hdr.set_ty(self.ty);
-            hdr.set_num_x_descriptors(0);
-            hdr.set_num_a_descriptors(0);
-            hdr.set_num_b_descriptors(0);
+            hdr.set_num_x_descriptors(self.x_descriptors.len() as u8);
+            hdr.set_num_a_descriptors(self.a_descriptors.len() as u8);
+            hdr.set_num_b_descriptors(self.b_descriptors.len() as u8);
             hdr.set_num_w_descriptors(0);
-            hdr.set_c_descriptor_flags(0);
+            if self.c_descriptors.len() == 0 {
+                hdr.set_c_descriptor_flags(0);
+            } else if self.c_descriptors.len() == 1 {
+                hdr.set_c_descriptor_flags(2);
+            } else {
+                hdr.set_c_descriptor_flags(2 + self.c_descriptors.len() as u8);
+            }
+
             // TODO: Domain, type 0xA. 0x10 = padding, 8 = sfci, 8 = cmdid.
             hdr.set_raw_section_size(((0x10 + 8 + 8 + core::mem::size_of::<T>()) / 4) as u16);
             if self.copy_handles.len() > 0 ||
@@ -185,11 +268,6 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
                 hdr.set_enable_handle_descriptor(true);
             }
         }
-
-        let mut _x_descriptors = 0;
-        let mut _a_descriptors = 0;
-        let mut _b_descriptors = 0;
-        let mut _w_descriptors = 0;
 
         // First, write the handle descriptor
         if self.copy_handles.len() > 0 ||
@@ -223,10 +301,33 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
             }
         }
 
-        // TODO: Write buffers
-        //for buf in 
-        // Write raw data section. Save current position to find out the size of
-        // the raw section later.
+        for (i, buf) in self.x_descriptors.iter().enumerate() {
+            assert!(buf.addr >> 39 == 0, "Invalid buffer address");
+            assert!(buf.size >> 16 == 0, "Invalid buffer size");
+            let num = i & 0b111000111111
+                | ((buf.addr >> 36) & 0b111) << 6
+                | ((buf.addr >> 32) & 0b1111) << 12
+                | buf.size << 16;
+            cursor.write_u32::<LE>(num as u32);
+            cursor.write_u32::<LE>((buf.addr & 0xFFFFFFFF) as u32)
+        }
+
+        for buf in self.a_descriptors.iter().chain(self.b_descriptors.iter()) {
+            assert!(buf.addr >> 39 == 0, "Invalid buffer address");
+            assert!(buf.size >> 35 == 0, "Invalid buffer size");
+            assert!(buf.ty >> 8 == 0, "Invalid descriptor permission");
+
+            cursor.write_u32::<LE>((buf.size & 0xFFFFFFFF) as u32);
+            cursor.write_u32::<LE>((buf.addr & 0xFFFFFFFF) as u32);
+
+            let num = buf.ty as usize >> 6 // flags
+                | ((buf.addr >> 36) & 0b111) << 2
+                | ((buf.size >> 32) & 0b1111) << 24
+                | ((buf.addr >> 32) & 0b1111) << 28;
+            cursor.write_u32::<LE>(num as u32);
+        }
+
+        // TODO: W descriptors would go there.
 
         // Align to 16-byte boundary
         let before_pad = ((cursor.pos() + (16 - 1)) & !(16 - 1)) - cursor.pos();
