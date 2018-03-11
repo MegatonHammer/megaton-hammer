@@ -28,6 +28,7 @@ libcore for esoteric targets.
 
 ```
 cargo install xargo
+rustup component add rust-src
 ```
 
 Cloning this repo and building megaton-example will yield a binary:
