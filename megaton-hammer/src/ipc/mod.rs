@@ -286,6 +286,9 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
                 descriptor_hdr.set_send_pid(self.send_pid);
             }
 
+            // Descriptor_hdr is 2 bytes, but everything is encoded on 4-bytes...
+            cursor.skip_write(2);
+
             // Seek 8 if we have to send pid. We don't actually write the pid.
             if self.send_pid {
                 cursor.skip_write(8);
