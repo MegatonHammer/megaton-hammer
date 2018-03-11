@@ -7,7 +7,7 @@ use arrayvec::ArrayVec;
 struct LoaderConfig {
     main_thread: u32,
     override_heap: Option<(*mut (), usize)>,
-    override_services: ArrayVec<[(&'static str, u32); 32]>,
+    _override_services: ArrayVec<[(&'static str, u32); 32]>,
 }
 
 // TODO: Fuck.
@@ -46,22 +46,26 @@ pub struct LoaderConfigEntry {
     flags: u32,
     data: (u64, u64)
 }
-mod LoaderConfigTag {
-    pub const EndOfList: u32 = 0;
-    pub const MainThreadHandle: u32 = 1;
-    pub const NextLoadPath: u32 = 2;
-    pub const OverrideHeap: u32 = 3;
-    pub const OverrideService: u32 = 4;
-    pub const Argv: u32 = 5;
-    pub const SyscallAvailableHint: u32 = 6;
-    pub const AppletType: u32 = 7;
-    pub const AppletWorkaround: u32 = 8;
-    pub const StdioSockets: u32 = 9;
-    pub const ProcessHandle: u32 = 10;
-    pub const LastLoadResult: u32 = 11;
-    pub const AllocPages: u32 = 12;
-    pub const LockRegion: u32 = 13;
-    pub const Log: u32 = 51;
+
+struct LoaderConfigTag;
+
+#[allow(dead_code)]
+impl LoaderConfigTag {
+    pub const END_OF_LIST: u32 = 0;
+    pub const MAIN_THREAD_HANDLE: u32 = 1;
+    pub const NEXT_LOAD_PATH: u32 = 2;
+    pub const OVERRIDE_HEAP: u32 = 3;
+    pub const OVERRIDE_SERVICE: u32 = 4;
+    pub const ARGV: u32 = 5;
+    pub const SYSCALL_AVAILABLE_HINT: u32 = 6;
+    pub const APPLET_TYPE: u32 = 7;
+    pub const APPLET_WORKAROUND: u32 = 8;
+    pub const STDIO_SOCKET: u32 = 9;
+    pub const PROCESS_HANDLE: u32 = 10;
+    pub const LAST_LOAD_RESULT: u32 = 11;
+    pub const ALLOC_PAGES: u32 = 12;
+    pub const LOCK_REGION: u32 = 13;
+    pub const LOG: u32 = 51;
 }
 
 /// ⚠  FOR INTERNAL USE ONLY. YOU SHOULD NOT HAVE TO CALL THIS.
@@ -71,20 +75,20 @@ pub unsafe fn init_loader(mut entry: *mut LoaderConfigEntry) -> Result<(), i32> 
     let mut config = LoaderConfig {
         main_thread: 0,
         override_heap: None,
-        override_services: ArrayVec::new()
+        _override_services: ArrayVec::new()
     };
 
     if !entry.is_null() {
         loop {
             match (*entry).tag {
-                LoaderConfigTag::EndOfList => break,
-                LoaderConfigTag::Log => {
+                LoaderConfigTag::END_OF_LIST => break,
+                LoaderConfigTag::LOG => {
                     // TODO: Reenable log
                 },
-                LoaderConfigTag::MainThreadHandle => config.main_thread = (*entry).data.0 as u32,
-                LoaderConfigTag::OverrideHeap =>
+                LoaderConfigTag::MAIN_THREAD_HANDLE => config.main_thread = (*entry).data.0 as u32,
+                LoaderConfigTag::OVERRIDE_HEAP =>
                     config.override_heap = Some(((*entry).data.0 as _, (*entry).data.1 as usize)),
-                LoaderConfigTag::AppletWorkaround => {},
+                LoaderConfigTag::APPLET_WORKAROUND => {},
                 tag => {
                     if (*entry).flags & 1 == 1 {
                         // Flag is mandatory! If we don't know about it, we

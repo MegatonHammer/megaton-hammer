@@ -27,19 +27,10 @@ pub unsafe extern fn _start() -> ! {
 
 #[naked]
 #[no_mangle]
-pub unsafe extern fn __svcExitProcess() -> ! {
+pub unsafe extern fn __svc_exit_process() -> ! {
     // TODO: Clobbers
     asm!("svc 0x07" : : : : "volatile");
     intrinsics::unreachable();
-}
-
-pub extern fn __svcLog(s: &str) -> usize {
-    let str_bytes = s.as_ptr();
-    let str_len = s.len();
-    let out;
-    // TODO: Clobbers
-    unsafe { asm!("svc 0x27" : "={x0}"(out) : "{x0}"(str_bytes), "{x1}"(str_len) : : "volatile"); }
-    out
 }
 
 // Make sure x30 is set to something.
@@ -48,8 +39,8 @@ pub extern fn __svcLog(s: &str) -> usize {
 pub unsafe extern fn trampoline() -> ! {
     // TODO: Clobber
     asm!("
-    adrp x2, __svcExitProcess
-    add x2, x2, #:lo12:__svcExitProcess
+    adrp x2, __svc_exit_process
+    add x2, x2, #:lo12:__svc_exit_process
     cmp x30, xzr
     csel x2, x2, x30, eq
     b start" : : : : "volatile");
@@ -103,7 +94,6 @@ IS_NRO:
 
 mod relocation;
 
-#[no_mangle]
 unsafe extern fn megaton_start(config: *mut LoaderConfigEntry, _thread_handle: u64, aslr_base: *mut ()) -> i32 {
     let mut dyn_info = relocation::DynInfo {
         init_array: None,
@@ -116,7 +106,10 @@ unsafe extern fn megaton_start(config: *mut LoaderConfigEntry, _thread_handle: u
     }
 
     use loader;
-    loader::init_loader(config);
+    if let Err(err) = loader::init_loader(config) {
+        return err;
+    }
+
 
     // TODO: Might want to run init_array 👀
 
@@ -166,7 +159,7 @@ fn panic_fmt(_msg: core::fmt::Arguments, _file: &'static str, _line: u32, _colum
     unsafe {
         match EXIT {
             Some(f) => f(1),
-            None => __svcExitProcess()
+            None => __svc_exit_process()
         }
     }
 }

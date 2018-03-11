@@ -46,6 +46,16 @@ def camelToSnake(s):
 	subbed = _underscorer1.sub(r'\1_\2', s)
 	return _underscorer2.sub(r'\1_\2', subbed).lower().replace("__", "_")
 
+def to_camel_case(snake_str):
+	"""
+	Let's follow the convention: Since this function convets to camel case,
+	its name shall be in snake case.
+	"""
+	components = snake_str.split('_')
+	# We capitalize the first letter of each component except the first one
+	# with the 'title' method and join them together.
+	return ''.join(x[0].upper() + x[1:] for x in components)
+
 def ninty_to_c(s):
 	return s.replace("-", "_").replace("::", "_").replace(":", "_")
 
@@ -103,7 +113,7 @@ def getType(output, ty):
 		# TODO: maybe I need it in some situations ?
 		raise Exception("pid is not a valid type")
 	elif ty[0] in types:
-		return '::' + ty[0]
+		return "::".join([""] + ty[0].split("::")[:-1] + [to_camel_case(ty[0].split("::")[-1])])
 	elif ty[0] in BUILTINS:
 		assert len(ty) == 1
 		return BUILTINS[ty[0]]['rtype']
@@ -265,8 +275,6 @@ def gen_ipc_method(cmd, f):
 		print("\t\t\t.copy_handle(%s)" % obj, file=f)
 	for buf in buffers:
 		print("\t\t\t.descriptor(%s)" % buf, file=f)
-	#for 
-	# TODO: Buffers
 	print("\t\t\t;", file=f)
 
 	args_arr = []
@@ -475,13 +483,13 @@ for name, val in types.items():
 		if val[0] == 'struct':
 			print("#[repr(C)]", file=f)
 			print("#[derive(Debug, Clone)]", file=f)
-			print("pub struct %s {" % ifacename, file=f)
+			print("pub struct %s {" % to_camel_case(ifacename), file=f)
 			for structField in val[1]:
 				for line in structField[2]:
 					print("\t/// %s" % line, file=f)
 				print("\tpub %s: %s," % (camelToSnake(structField[0]), getType(False, structField[1])), file=f)
 			print("}", file=f)
 		elif val[0] == 'unknown': # This... kinda sucks.
-			print("pub type %s = ();" % ifacename, file=f)
+			print("pub type %s = ();" % to_camel_case(ifacename), file=f)
 		else:
-			print("pub type %s = %s;" % (ifacename, getType(False, val)), file=f)
+			print("pub type %s = %s;" % (to_camel_case(ifacename), getType(False, val)), file=f)

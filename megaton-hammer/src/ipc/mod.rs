@@ -185,8 +185,8 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
     }
 
     pub fn descriptor(mut self, buf: IPCBuffer<'a>) -> Self {
-        enum Direction { In, Out }
-        enum Family { AB, XC }
+        /*enum Direction { In, Out }
+        enum Family { AB, XC }*/
 
         if buf.ty & 0x20 == 0 {
             unimplemented!();
@@ -371,27 +371,27 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
             // aligns correctly).
             let log2 = 64 - arr.len().leading_zeros();
             let log2 = if log2 % 4 == 0 { log2 / 4 } else { (log2 / 4) + 1 };
-            write!(f, "{:01$x}:", i * 16, log2 as usize);
+            let _ = write!(f, "{:01$x}:", i * 16, log2 as usize);
 
             // Print the bytes one by one. Put an extra space in the middle
             for (i, b) in chunk.iter().enumerate() {
                 if i % 2 == 0 {
-                    write!(f, " ");
+                    let _ = write!(f, " ");
                 }
-                write!(f, "{:02x}", b);
+                let _ = write!(f, "{:02x}", b);
             }
             // Fill missing with spaces.
-            for i in 0..16 - chunk.len() {
-                write!(f, "{}", "   ");
+            for _ in 0..16 - chunk.len() {
+                let _ = write!(f, "{}", "   ");
             }
 
             // And now show the ASCII representation. Replace unprintable
             // characters with  a '.'
-            write!(f, "  ");
+            let _ = write!(f, "  ");
             for b in chunk {
-                write!(f, "{}", if (*b as char).is_ascii_graphic() { *b as char } else { '.' });
+                let _ = write!(f, "{}", if (*b as char).is_ascii_graphic() { *b as char } else { '.' });
             }
-            writeln!(f, "");
+            let _ = writeln!(f, "");
         }
         self
     }

@@ -110,14 +110,14 @@ impl IClient {
 	}
 
 	// fn open(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn select(&self, nfds: u32, timeout: ::nn::socket::timeout, readfds_in: &[::nn::socket::fd_set], writefds_in: &[::nn::socket::fd_set], errorfds_in: &[::nn::socket::fd_set], readfds_out: &mut [::nn::socket::fd_set], writefds_out: &mut [::nn::socket::fd_set], errorfds_out: &mut [::nn::socket::fd_set]) -> Result<(i32, u32)> {
+	pub fn select(&self, nfds: u32, timeout: ::nn::socket::Timeout, readfds_in: &[::nn::socket::FdSet], writefds_in: &[::nn::socket::FdSet], errorfds_in: &[::nn::socket::FdSet], readfds_out: &mut [::nn::socket::FdSet], writefds_out: &mut [::nn::socket::FdSet], errorfds_out: &mut [::nn::socket::FdSet]) -> Result<(i32, u32)> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
 			nfds: u32,
-			timeout: ::nn::socket::timeout,
+			timeout: ::nn::socket::Timeout,
 		}
 		let req = Request::new(5)
 			.args(InRaw {
@@ -142,7 +142,7 @@ impl IClient {
 	// fn poll(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn sysctl(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn recv(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn recv_from(&self, sock: u32, flags: u32, message: &mut [i8], unk6: &mut ::nn::socket::sockaddr) -> Result<(i32, u32, u32)> {
+	pub fn recv_from(&self, sock: u32, flags: u32, message: &mut [i8], unk6: &mut ::nn::socket::Sockaddr) -> Result<(i32, u32, u32)> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -192,7 +192,7 @@ impl IClient {
 		Ok((res.get_raw().ret.clone(),res.get_raw().bsd_errno.clone()))
 	}
 
-	pub fn send_to(&self, socket: u32, flags: u32, unk2: &[i8], unk3: &::nn::socket::sockaddr) -> Result<(i32, u32)> {
+	pub fn send_to(&self, socket: u32, flags: u32, unk2: &[i8], unk3: &::nn::socket::Sockaddr) -> Result<(i32, u32)> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -217,7 +217,7 @@ impl IClient {
 		Ok((res.get_raw().ret.clone(),res.get_raw().bsd_errno.clone()))
 	}
 
-	pub fn accept(&self, socket: u32, addr: &mut ::nn::socket::sockaddr) -> Result<(i32, u32, u32)> {
+	pub fn accept(&self, socket: u32, addr: &mut ::nn::socket::Sockaddr) -> Result<(i32, u32, u32)> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -234,7 +234,7 @@ impl IClient {
 		Ok((res.get_raw().ret.clone(),res.get_raw().bsd_errno.clone(),res.get_raw().addrlen.clone()))
 	}
 
-	pub fn bind(&self, socket: u32, unk1: &::nn::socket::sockaddr) -> Result<(i32, u32)> {
+	pub fn bind(&self, socket: u32, unk1: &::nn::socket::Sockaddr) -> Result<(i32, u32)> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -250,7 +250,7 @@ impl IClient {
 		Ok((res.get_raw().ret.clone(),res.get_raw().bsd_errno.clone()))
 	}
 
-	pub fn connect(&self, socket: u32, unk1: &::nn::socket::sockaddr) -> Result<(i32, u32)> {
+	pub fn connect(&self, socket: u32, unk1: &::nn::socket::Sockaddr) -> Result<(i32, u32)> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -266,7 +266,7 @@ impl IClient {
 		Ok((res.get_raw().ret.clone(),res.get_raw().bsd_errno.clone()))
 	}
 
-	pub fn get_peer_name(&self, socket: u32, addr: &mut ::nn::socket::sockaddr) -> Result<(i32, u32, u32)> {
+	pub fn get_peer_name(&self, socket: u32, addr: &mut ::nn::socket::Sockaddr) -> Result<(i32, u32, u32)> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -283,7 +283,7 @@ impl IClient {
 		Ok((res.get_raw().ret.clone(),res.get_raw().bsd_errno.clone(),res.get_raw().addrlen.clone()))
 	}
 
-	pub fn get_sock_name(&self, socket: u32, addr: &mut ::nn::socket::sockaddr) -> Result<(i32, u32, u32)> {
+	pub fn get_sock_name(&self, socket: u32, addr: &mut ::nn::socket::Sockaddr) -> Result<(i32, u32, u32)> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 

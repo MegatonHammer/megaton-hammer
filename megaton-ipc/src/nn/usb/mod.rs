@@ -4,7 +4,7 @@ pub mod ds;
 pub mod pm;
 #[repr(C)]
 #[derive(Debug, Clone)]
-pub struct usb_endpoint_descriptor {
+pub struct UsbEndpointDescriptor {
 	pub b_length: u8,
 	pub b_descriptor_type: u8,
 	pub b_endpoint_address: u8,
@@ -14,7 +14,7 @@ pub struct usb_endpoint_descriptor {
 }
 #[repr(C)]
 #[derive(Debug, Clone)]
-pub struct usb_report_entry {
+pub struct UsbReportEntry {
 	pub urb_id: u32,
 	pub requested_size: u32,
 	pub transferred_size: u32,
@@ -22,7 +22,7 @@ pub struct usb_report_entry {
 }
 #[repr(C)]
 #[derive(Debug, Clone)]
-pub struct usb_descriptor_data {
+pub struct UsbDescriptorData {
 	pub id_vendor: u16,
 	pub id_product: u16,
 	pub bcd_device: u16,
@@ -32,7 +32,7 @@ pub struct usb_descriptor_data {
 }
 #[repr(C)]
 #[derive(Debug, Clone)]
-pub struct usb_interface_descriptor {
+pub struct UsbInterfaceDescriptor {
 	pub b_length: u8,
 	pub b_descriptor_type: u8,
 	pub b_interface_number: u8,
