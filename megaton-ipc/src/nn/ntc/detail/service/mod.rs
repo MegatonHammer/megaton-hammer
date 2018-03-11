@@ -1,4 +1,4 @@
-mod impl_IStaticService;
-pub use self::impl_IStaticService::*;
-mod impl_IEnsureNetworkClockAvailabilityService;
-pub use self::impl_IEnsureNetworkClockAvailabilityService::*;
+mod impl_i_static_service;
+pub use self::impl_i_static_service::*;
+mod impl_i_ensure_network_clock_availability_service;
+pub use self::impl_i_ensure_network_clock_availability_service::*;

@@ -1,7 +1,7 @@
-mod impl_IArbitrationManager;
-pub use self::impl_IArbitrationManager::*;
-mod impl_IImmediateManager;
-pub use self::impl_IImmediateManager::*;
+mod impl_i_arbitration_manager;
+pub use self::impl_i_arbitration_manager::*;
+mod impl_i_immediate_manager;
+pub use self::impl_i_immediate_manager::*;
 pub mod detail;
 pub type ModuleState = [u8; 0xc];
 pub type PowerControlTarget = u32;

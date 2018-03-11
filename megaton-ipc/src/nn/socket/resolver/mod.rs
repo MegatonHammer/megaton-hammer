@@ -1,2 +1,2 @@
-mod impl_IResolver;
-pub use self::impl_IResolver::*;
+mod impl_i_resolver;
+pub use self::impl_i_resolver::*;

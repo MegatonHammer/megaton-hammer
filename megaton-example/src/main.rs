@@ -26,7 +26,7 @@ const AF_ROUTE: u8 = 28;
 fn main() {
     //writeln!(megaton_crt0::LOG.lock(), "We are rust, and we are in the main!").unwrap();
 
-    let socket_ipc = megaton_ipc::nn::socket::sf::IClient::get_service().expect("Failed to get bsd service");
+    let socket_ipc = megaton_ipc::nn::socket::sf::IClient::new().expect("Failed to get bsd service");
 
     //writeln!(megaton_crt0::SvcLog, "The socket is {:?}", socket_ipc).unwrap();
 
@@ -50,10 +50,10 @@ fn main() {
     }
     let mem_handle = unsafe { KObject::new(mem_handle) };
     //writeln!(megaton_crt0::LOG.lock(), "Initializing {:?} - {:?}", socket_ipc, mem_handle);
-    socket_ipc.Initialize(bsd_config, 0, unsafe { core::mem::size_of_val(&BSD_MEM) as u64 }, &mem_handle).expect("Failed to initialize bsd");
+    socket_ipc.initialize(bsd_config, 0, unsafe { core::mem::size_of_val(&BSD_MEM) as u64 }, &mem_handle).expect("Failed to initialize bsd");
 
 
-    let (socket, bsd_errno) = socket_ipc.Socket(AF_INET as u32, 1, 6).expect("Failed to create Socket");
+    let (socket, bsd_errno) = socket_ipc.socket(AF_INET as u32, 1, 6).expect("Failed to create Socket");
     if socket == -1 {
         //writeln!(megaton_crt0::LOG.lock(), "Failed to create Socket: {}", bsd_errno);
         //writeln!(megaton_crt0::SvcLog, "Failed to create Socket: {}", bsd_errno);
@@ -70,7 +70,7 @@ fn main() {
 
     let sockaddr = unsafe { core::mem::transmute(sockaddrin) };
 
-    let (ret, bsd_errno) = socket_ipc.Connect(socket as u32, &sockaddr).expect("Failed to connect");
+    let (ret, bsd_errno) = socket_ipc.connect(socket as u32, &sockaddr).expect("Failed to connect");
     if ret == -1 {
         //writeln!(megaton_crt0::LOG.lock(), "Failed to connect: {}", bsd_errno);
         //writeln!(megaton_crt0::SvcLog, "Failed to connect: {}", bsd_errno);
@@ -78,7 +78,7 @@ fn main() {
     }
 
     // Transmute ? Really ?
-    let (ret, bsd_errno) = socket_ipc.Write(socket as u32, unsafe { core::mem::transmute("This is a simple socket test from rust".as_bytes()) } ).expect("Failed to write");
+    let (ret, bsd_errno) = socket_ipc.write(socket as u32, unsafe { core::mem::transmute("This is a simple socket test from rust".as_bytes()) } ).expect("Failed to write");
     if ret == -1 {
         //writeln!(megaton_crt0::SvcLog, "Failed to write: {}", bsd_errno);
     }

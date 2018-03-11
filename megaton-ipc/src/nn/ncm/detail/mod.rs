@@ -1,8 +1,8 @@
-mod impl_INcmInterface4Unknown;
-pub use self::impl_INcmInterface4Unknown::*;
-mod impl_INcmInterface5Unknown;
-pub use self::impl_INcmInterface5Unknown::*;
-mod impl_LocationResolverInterface;
-pub use self::impl_LocationResolverInterface::*;
-mod impl_INcmInterface;
-pub use self::impl_INcmInterface::*;
+mod impl_i_ncm_interface4_unknown;
+pub use self::impl_i_ncm_interface4_unknown::*;
+mod impl_i_ncm_interface5_unknown;
+pub use self::impl_i_ncm_interface5_unknown::*;
+mod impl_location_resolver_interface;
+pub use self::impl_location_resolver_interface::*;
+mod impl_i_ncm_interface;
+pub use self::impl_i_ncm_interface::*;

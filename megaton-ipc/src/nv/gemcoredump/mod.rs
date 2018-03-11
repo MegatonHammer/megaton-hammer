@@ -1,2 +1,2 @@
-mod impl_INvGemCoreDump;
-pub use self::impl_INvGemCoreDump::*;
+mod impl_i_nv_gem_core_dump;
+pub use self::impl_i_nv_gem_core_dump::*;

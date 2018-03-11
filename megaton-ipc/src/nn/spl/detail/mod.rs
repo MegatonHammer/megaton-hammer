@@ -1,4 +1,4 @@
-mod impl_IGeneralInterface;
-pub use self::impl_IGeneralInterface::*;
-mod impl_IRandomInterface;
-pub use self::impl_IRandomInterface::*;
+mod impl_i_general_interface;
+pub use self::impl_i_general_interface::*;
+mod impl_i_random_interface;
+pub use self::impl_i_random_interface::*;

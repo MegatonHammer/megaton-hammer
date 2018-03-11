@@ -1,4 +1,4 @@
-mod impl_IHardwareOpusDecoderManager;
-pub use self::impl_IHardwareOpusDecoderManager::*;
-mod impl_IHardwareOpusDecoder;
-pub use self::impl_IHardwareOpusDecoder::*;
+mod impl_i_hardware_opus_decoder_manager;
+pub use self::impl_i_hardware_opus_decoder_manager::*;
+mod impl_i_hardware_opus_decoder;
+pub use self::impl_i_hardware_opus_decoder::*;

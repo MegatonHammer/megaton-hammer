@@ -5,41 +5,41 @@ pub mod pm;
 #[repr(C)]
 #[derive(Debug, Clone)]
 pub struct usb_endpoint_descriptor {
-	pub bLength: u8,
-	pub bDescriptorType: u8,
-	pub bEndpointAddress: u8,
-	pub bmAttributes: u8,
-	pub wMaxPacketSize: u16,
-	pub bInterval: u8,
+	pub b_length: u8,
+	pub b_descriptor_type: u8,
+	pub b_endpoint_address: u8,
+	pub bm_attributes: u8,
+	pub w_max_packet_size: u16,
+	pub b_interval: u8,
 }
 #[repr(C)]
 #[derive(Debug, Clone)]
 pub struct usb_report_entry {
-	pub urbId: u32,
-	pub requestedSize: u32,
-	pub transferredSize: u32,
-	pub urbStatus: u32,
+	pub urb_id: u32,
+	pub requested_size: u32,
+	pub transferred_size: u32,
+	pub urb_status: u32,
 }
 #[repr(C)]
 #[derive(Debug, Clone)]
 pub struct usb_descriptor_data {
-	pub idVendor: u16,
-	pub idProduct: u16,
-	pub bcdDevice: u16,
+	pub id_vendor: u16,
+	pub id_product: u16,
+	pub bcd_device: u16,
 	pub manufacturer: [u8; 0x20],
 	pub product: [u8; 0x20],
-	pub serialNumber: [u8; 0x20],
+	pub serial_number: [u8; 0x20],
 }
 #[repr(C)]
 #[derive(Debug, Clone)]
 pub struct usb_interface_descriptor {
-	pub bLength: u8,
-	pub bDescriptorType: u8,
-	pub bInterfaceNumber: u8,
-	pub bAlternateSetting: u8,
-	pub bNumEndpoints: u8,
-	pub bInterfaceClass: u8,
-	pub bInterfaceSubClass: u8,
-	pub bInterfaceProtocol: u8,
-	pub iInterface: u8,
+	pub b_length: u8,
+	pub b_descriptor_type: u8,
+	pub b_interface_number: u8,
+	pub b_alternate_setting: u8,
+	pub b_num_endpoints: u8,
+	pub b_interface_class: u8,
+	pub b_interface_sub_class: u8,
+	pub b_interface_protocol: u8,
+	pub i_interface: u8,
 }

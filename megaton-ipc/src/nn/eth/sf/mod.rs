@@ -1,4 +1,4 @@
-mod impl_IEthInterfaceGroup;
-pub use self::impl_IEthInterfaceGroup::*;
-mod impl_IEthInterface;
-pub use self::impl_IEthInterface::*;
+mod impl_i_eth_interface_group;
+pub use self::impl_i_eth_interface_group::*;
+mod impl_i_eth_interface;
+pub use self::impl_i_eth_interface::*;

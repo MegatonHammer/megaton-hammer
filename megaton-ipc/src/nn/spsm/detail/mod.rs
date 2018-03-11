@@ -1,2 +1,2 @@
-mod impl_IPowerStateInterface;
-pub use self::impl_IPowerStateInterface::*;
+mod impl_i_power_state_interface;
+pub use self::impl_i_power_state_interface::*;

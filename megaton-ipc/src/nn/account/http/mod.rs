@@ -1,2 +1,2 @@
-mod impl_IOAuthProcedure;
-pub use self::impl_IOAuthProcedure::*;
+mod impl_io_auth_procedure;
+pub use self::impl_io_auth_procedure::*;

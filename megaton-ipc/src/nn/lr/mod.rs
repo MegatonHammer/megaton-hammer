@@ -1,8 +1,8 @@
-mod impl_ILocationResolver;
-pub use self::impl_ILocationResolver::*;
-mod impl_IRegisteredLocationResolver;
-pub use self::impl_IRegisteredLocationResolver::*;
-mod impl_IAddOnContentLocationResolver;
-pub use self::impl_IAddOnContentLocationResolver::*;
-mod impl_ILocationResolverManager;
-pub use self::impl_ILocationResolverManager::*;
+mod impl_i_location_resolver;
+pub use self::impl_i_location_resolver::*;
+mod impl_i_registered_location_resolver;
+pub use self::impl_i_registered_location_resolver::*;
+mod impl_i_add_on_content_location_resolver;
+pub use self::impl_i_add_on_content_location_resolver::*;
+mod impl_i_location_resolver_manager;
+pub use self::impl_i_location_resolver_manager::*;

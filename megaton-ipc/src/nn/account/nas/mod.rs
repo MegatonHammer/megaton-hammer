@@ -1,9 +1,9 @@
-mod impl_IOAuthProcedureForNintendoAccountLinkage;
-pub use self::impl_IOAuthProcedureForNintendoAccountLinkage::*;
-mod impl_IAuthorizationRequest;
-pub use self::impl_IAuthorizationRequest::*;
-mod impl_IOAuthProcedureForExternalNsa;
-pub use self::impl_IOAuthProcedureForExternalNsa::*;
+mod impl_io_auth_procedure_for_nintendo_account_linkage;
+pub use self::impl_io_auth_procedure_for_nintendo_account_linkage::*;
+mod impl_i_authorization_request;
+pub use self::impl_i_authorization_request::*;
+mod impl_io_auth_procedure_for_external_nsa;
+pub use self::impl_io_auth_procedure_for_external_nsa::*;
 pub type NasUserBase = ();
 pub type NasUserBaseForApplication = ();
 pub type State = ();

@@ -1,6 +1,6 @@
-mod impl_IPmControl;
-pub use self::impl_IPmControl::*;
-mod impl_IPmModule;
-pub use self::impl_IPmModule::*;
-mod impl_IPmService;
-pub use self::impl_IPmService::*;
+mod impl_i_pm_control;
+pub use self::impl_i_pm_control::*;
+mod impl_i_pm_module;
+pub use self::impl_i_pm_module::*;
+mod impl_i_pm_service;
+pub use self::impl_i_pm_service::*;

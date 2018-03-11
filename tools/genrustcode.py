@@ -44,7 +44,7 @@ def camelToSnake(s):
 	_underscorer1 = re.compile(r'(.)([A-Z][a-z]+)')
 	_underscorer2 = re.compile('([a-z0-9])([A-Z])')
 	subbed = _underscorer1.sub(r'\1_\2', s)
-	return _underscorer2.sub(r'\1_\2', subbed).lower()
+	return _underscorer2.sub(r'\1_\2', subbed).lower().replace("__", "_")
 
 def ninty_to_c(s):
 	return s.replace("-", "_").replace("::", "_").replace(":", "_")
@@ -71,7 +71,7 @@ def getType(output, ty):
 			raise UnsupportedStructException()
 		# Treat as an opaque byte array
 		elif ty[1][0] == "unknown":
-			return '[u8; %s]' % emitInt(ty[3])
+			return '%s[u8; %s]' % ("&mut " if output else "&", emitInt(ty[3]))
 		elif ty[3] != 0:
 			# Depending on type of buffer, this will be a const or
 			# a mutable reference...
@@ -196,6 +196,15 @@ def is_buffer_argument(ty):
         return ty[0] in ['buffer', 'array']
 
 def gen_ipc_method(cmd, f):
+
+	input_buf = any(map(lambda (name, ty): ty[0] in ["buffer", "array"], cmd['inputs']))
+	output_buf = any(map(lambda (name, ty): ty[0] in ["buffer", "array"], cmd['outputs']))
+
+	if input_buf or output_buf:
+		print("\t\tuse megaton_hammer::ipc::IPCBuffer;", file=f)
+	print("\t\tuse megaton_hammer::ipc::{Request, Response};", file=f)
+	print("", file=f)
+
 	# Get args type
 	args_arr = []
 	objects_arr = []
@@ -296,7 +305,10 @@ def gen_ipc_method(cmd, f):
 		else:
 			raise UnsupportedStructException(ty[0])
 
-	print("\t\tlet mut res : Response<%s> = self.0.send(req)?;" % response_args, file=f)
+	is_mut = any(map(lambda (name, ty): ty[0] in ["object", "KObject"], cmd['outputs']))
+	is_used = len(list(filter(lambda (name, ty): ty[0] not in ["buffer", "array"], cmd['outputs']))) != 0
+
+	print("\t\tlet %sres : Response<%s> = self.0.send(req)?;" % ("mut " if is_mut else "_" if not is_used else "", response_args), file=f)
 	if len(args_arr) != 1:
 		ret = "(%s)" % (",".join(args_arr))
 		print("\t\tOk(%s)" % ret, file=f)
@@ -342,11 +354,11 @@ for name, cmds in ifaces.items():
 				if i != len(elmts) - 1:
 					print("pub mod %s;" % elmts[i], file=f)
 				else:
-					print("mod impl_%s;" % elmts[i], file=f)
-					print("pub use self::impl_%s::*;" % elmts[i], file=f)
+					print("mod impl_%s;" % camelToSnake(elmts[i]), file=f)
+					print("pub use self::impl_%s::*;" % camelToSnake(elmts[i]), file=f)
 
 	# Open the interface and generate the struct
-	filename = elmts[:-1] + ["impl_" + elmts[-1] + ".rs"]
+	filename = elmts[:-1] + ["impl_" + camelToSnake(elmts[-1]) + ".rs"]
 	ifacename = elmts[-1]
 	print(name)
 	with open(os.path.join(prog_args.path, "src", *filename), "w") as f:
@@ -355,12 +367,7 @@ for name, cmds in ifaces.items():
 		# Use statements
 		print("use megaton_hammer::kernel::{FromKObject, KObject, Session};", file=f)
 		print("use megaton_hammer::error::Result;", file=f)
-		print("use megaton_hammer::ipc::{Request, Response};", file=f)
 		# Check if we'll need to send/receive a buffer
-		input_buf = any(map(lambda cmd: any(map(lambda (name, ty): ty[0] in ["buffer", "array"], cmd['inputs'])), cmds['cmds']))
-		output_buf = any(map(lambda cmd: any(map(lambda (name, ty): ty[0] in ["buffer", "array"], cmd['outputs'])), cmds['cmds']))
-		if input_buf or output_buf:
-			print("use megaton_hammer::ipc::IPCBuffer;", file=f)
 
 		print("", file=f)
 		print("#[derive(Debug)]", file=f)
@@ -368,7 +375,7 @@ for name, cmds in ifaces.items():
 		print("", file=f)
 		if name in services:
 			print("impl %s {" % ifacename, file=f)
-			print("\tpub fn get_service() -> Result<%s> {" % ifacename, file=f)
+			print("\tpub fn new() -> Result<%s> {" % ifacename, file=f)
 			# sm: has a different way to get acquired.
 			if name == "nn::sm::detail::IUserInterface":
 				# TODO: Call Initialize
@@ -384,13 +391,11 @@ for name, cmds in ifaces.items():
 				print("\t\t}", file=f)
 			elif name in services:
 				print("\t\tuse nn::sm::detail::IUserInterface;", file=f)
-				print("\t\tuse megaton_hammer::kernel::svc;", file=f);
-				print("\t\tuse megaton_hammer::error::Error;", file=f);
 				print("", file=f)
-				print("\t\tlet sm = IUserInterface::get_service()?;", file=f)
+				print("\t\tlet sm = IUserInterface::new()?;", file=f)
 				for s in services[name]:
 					s_name = s + ("\\0" * (8 - len(s)))
-					print("\t\tlet r = sm.GetService(*b\"%s\").map(|s| unsafe { %s::from_kobject(s) });" % (s_name, ifacename), file=f)
+					print("\t\tlet r = sm.get_service(*b\"%s\").map(|s| unsafe { %s::from_kobject(s) });" % (s_name, ifacename), file=f)
 					print("\t\tif let Ok(service) = r {", file=f)
 					print("\t\t\treturn Ok(service);", file=f)
 					print("\t\t}", file=f)
@@ -413,6 +418,7 @@ for name, cmds in ifaces.items():
 			for idx, elem in enumerate(cmd['inputs'] + cmd['outputs']):
 				if elem[0] is None:
 					elem[0] = 'unk%s' % idx
+				elem[0] = camelToSnake(elem[0])
 			try:
 				inputs = formatArgs(cmd['inputs'])
 				# Handle out buffers
@@ -429,13 +435,16 @@ for name, cmds in ifaces.items():
 				elif cmd['versionAdded'] != '1.0.0' and cmd['lastVersion'] is not None:
 					versionRemoved = idparser.versionInfo[idparser.versionInfo.index(cmd['lastVersion']) + 1]
 					print("\t#[cfg(all(feature = \"switch-%s\", not(feature = \"switch-%s\")))]" % (cmd['versionAdded'], versionRemoved), file=fn_io)
-				print("\tpub fn %s(&self, %s) -> Result<%s> {" % (cmd['name'], args, outputs), file=fn_io)
+				name = camelToSnake(cmd['name'])
+				if name == "move": # move is a keyword in rust
+					name = "_move"
+				print("\tpub fn %s(&self, %s) -> Result<%s> {" % (name, args, outputs), file=fn_io)
 				gen_ipc_method(cmd, fn_io)
 				print("\t}", file=fn_io)
 				print(fn_io.getvalue(), file=f)
 			except UnsupportedStructException as e:
 				print("This failed", e)
-				print("\t// fn %s(&self, UNKNOWN) -> Result<UNKNOWN>;" % cmd['name'], file=f)
+				print("\t// fn %s(&self, UNKNOWN) -> Result<UNKNOWN>;" % camelToSnake(cmd['name']), file=f)
 		print("}", file=f)
 		print("", file=f)
 		print("impl FromKObject for %s {" % ifacename, file=f)
@@ -470,7 +479,7 @@ for name, val in types.items():
 			for structField in val[1]:
 				for line in structField[2]:
 					print("\t/// %s" % line, file=f)
-				print("\tpub %s: %s," % (structField[0], getType(False, structField[1])), file=f)
+				print("\tpub %s: %s," % (camelToSnake(structField[0]), getType(False, structField[1])), file=f)
 			print("}", file=f)
 		elif val[0] == 'unknown': # This... kinda sucks.
 			print("pub type %s = ();" % ifacename, file=f)

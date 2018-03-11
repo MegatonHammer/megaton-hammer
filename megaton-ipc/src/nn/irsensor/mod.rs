@@ -1,7 +1,7 @@
-mod impl_IIrSensorServer;
-pub use self::impl_IIrSensorServer::*;
-mod impl_IIrSensorSystemServer;
-pub use self::impl_IIrSensorSystemServer::*;
+mod impl_i_ir_sensor_server;
+pub use self::impl_i_ir_sensor_server::*;
+mod impl_i_ir_sensor_system_server;
+pub use self::impl_i_ir_sensor_system_server::*;
 pub type PackedMcuVersion = u32;
 pub type ImageTransferProcessorState = u128;
 pub type IrCameraHandle = u32;

@@ -1,6 +1,6 @@
-mod impl_IProfile;
-pub use self::impl_IProfile::*;
-mod impl_IProfileEditor;
-pub use self::impl_IProfileEditor::*;
+mod impl_i_profile;
+pub use self::impl_i_profile::*;
+mod impl_i_profile_editor;
+pub use self::impl_i_profile_editor::*;
 pub type UserData = ();
 pub type ProfileBase = [u8; 0x38];

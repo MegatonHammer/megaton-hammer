@@ -1,4 +1,4 @@
-mod impl_IManager;
-pub use self::impl_IManager::*;
-mod impl_IPadSession;
-pub use self::impl_IPadSession::*;
+mod impl_i_manager;
+pub use self::impl_i_manager::*;
+mod impl_i_pad_session;
+pub use self::impl_i_pad_session::*;

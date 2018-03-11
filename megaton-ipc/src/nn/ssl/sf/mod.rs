@@ -1,9 +1,9 @@
-mod impl_ISslConnection;
-pub use self::impl_ISslConnection::*;
-mod impl_ISslService;
-pub use self::impl_ISslService::*;
-mod impl_ISslContext;
-pub use self::impl_ISslContext::*;
+mod impl_i_ssl_connection;
+pub use self::impl_i_ssl_connection::*;
+mod impl_i_ssl_service;
+pub use self::impl_i_ssl_service::*;
+mod impl_i_ssl_context;
+pub use self::impl_i_ssl_context::*;
 pub type InternalPki = u32;
 pub type SessionCacheMode = u32;
 pub type VerifyOption = u32;

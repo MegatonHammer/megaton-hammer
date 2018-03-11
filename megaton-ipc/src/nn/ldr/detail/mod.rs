@@ -1,8 +1,8 @@
-mod impl_IProcessManagerInterface;
-pub use self::impl_IProcessManagerInterface::*;
-mod impl_IRoInterface;
-pub use self::impl_IRoInterface::*;
-mod impl_IDebugMonitorInterface;
-pub use self::impl_IDebugMonitorInterface::*;
-mod impl_IShellInterface;
-pub use self::impl_IShellInterface::*;
+mod impl_i_process_manager_interface;
+pub use self::impl_i_process_manager_interface::*;
+mod impl_i_ro_interface;
+pub use self::impl_i_ro_interface::*;
+mod impl_i_debug_monitor_interface;
+pub use self::impl_i_debug_monitor_interface::*;
+mod impl_i_shell_interface;
+pub use self::impl_i_shell_interface::*;

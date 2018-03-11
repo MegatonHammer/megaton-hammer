@@ -1,4 +1,4 @@
-mod impl_IBoardPowerControlManager;
-pub use self::impl_IBoardPowerControlManager::*;
-mod impl_IRtcManager;
-pub use self::impl_IRtcManager::*;
+mod impl_i_board_power_control_manager;
+pub use self::impl_i_board_power_control_manager::*;
+mod impl_i_rtc_manager;
+pub use self::impl_i_rtc_manager::*;

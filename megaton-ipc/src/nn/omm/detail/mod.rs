@@ -1,2 +1,2 @@
-mod impl_IOperationModeManager;
-pub use self::impl_IOperationModeManager::*;
+mod impl_i_operation_mode_manager;
+pub use self::impl_i_operation_mode_manager::*;

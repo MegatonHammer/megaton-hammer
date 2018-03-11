@@ -1,6 +1,6 @@
-mod impl_IHtcManager;
-pub use self::impl_IHtcManager::*;
-mod impl_IHtcsManager;
-pub use self::impl_IHtcsManager::*;
-mod impl_ISocket;
-pub use self::impl_ISocket::*;
+mod impl_i_htc_manager;
+pub use self::impl_i_htc_manager::*;
+mod impl_i_htcs_manager;
+pub use self::impl_i_htcs_manager::*;
+mod impl_i_socket;
+pub use self::impl_i_socket::*;

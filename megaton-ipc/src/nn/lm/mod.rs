@@ -1,4 +1,4 @@
-mod impl_ILogService;
-pub use self::impl_ILogService::*;
-mod impl_ILogger;
-pub use self::impl_ILogger::*;
+mod impl_i_log_service;
+pub use self::impl_i_log_service::*;
+mod impl_i_logger;
+pub use self::impl_i_logger::*;

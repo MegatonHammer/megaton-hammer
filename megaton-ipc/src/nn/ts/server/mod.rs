@@ -1,2 +1,2 @@
-mod impl_IMeasurementServer;
-pub use self::impl_IMeasurementServer::*;
+mod impl_i_measurement_server;
+pub use self::impl_i_measurement_server::*;

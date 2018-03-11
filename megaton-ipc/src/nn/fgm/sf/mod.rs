@@ -1,6 +1,6 @@
-mod impl_IRequest;
-pub use self::impl_IRequest::*;
-mod impl_ISession;
-pub use self::impl_ISession::*;
-mod impl_IDebugger;
-pub use self::impl_IDebugger::*;
+mod impl_i_request;
+pub use self::impl_i_request::*;
+mod impl_i_session;
+pub use self::impl_i_session::*;
+mod impl_i_debugger;
+pub use self::impl_i_debugger::*;

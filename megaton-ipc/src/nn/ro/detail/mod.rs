@@ -1,6 +1,6 @@
-mod impl_IRoInterface;
-pub use self::impl_IRoInterface::*;
-mod impl_ILdrShellInterface;
-pub use self::impl_ILdrShellInterface::*;
-mod impl_IDebugMonitorInterface;
-pub use self::impl_IDebugMonitorInterface::*;
+mod impl_i_ro_interface;
+pub use self::impl_i_ro_interface::*;
+mod impl_i_ldr_shell_interface;
+pub use self::impl_i_ldr_shell_interface::*;
+mod impl_i_debug_monitor_interface;
+pub use self::impl_i_debug_monitor_interface::*;

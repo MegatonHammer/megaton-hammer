@@ -1,6 +1,6 @@
-mod impl_IRegistrar;
-pub use self::impl_IRegistrar::*;
-mod impl_IWriter;
-pub use self::impl_IWriter::*;
-mod impl_IReader;
-pub use self::impl_IReader::*;
+mod impl_i_registrar;
+pub use self::impl_i_registrar::*;
+mod impl_i_writer;
+pub use self::impl_i_writer::*;
+mod impl_i_reader;
+pub use self::impl_i_reader::*;
