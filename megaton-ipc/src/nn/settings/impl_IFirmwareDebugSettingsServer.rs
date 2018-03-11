@@ -2,7 +2,7 @@
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
 use megaton_hammer::ipc::{Request, Response};
-use megaton_hamer::ipc::IPCBuffer
+use megaton_hammer::ipc::IPCBuffer;
 
 #[derive(Debug)]
 pub struct IFirmwareDebugSettingsServer(Session);

@@ -360,7 +360,7 @@ for name, cmds in ifaces.items():
 		input_buf = any(map(lambda cmd: any(map(lambda (name, ty): ty[0] in ["buffer", "array"], cmd['inputs'])), cmds['cmds']))
 		output_buf = any(map(lambda cmd: any(map(lambda (name, ty): ty[0] in ["buffer", "array"], cmd['outputs'])), cmds['cmds']))
 		if input_buf or output_buf:
-			print("use megaton_hamer::ipc::IPCBuffer", file=f)
+			print("use megaton_hammer::ipc::IPCBuffer;", file=f)
 
 		print("", file=f)
 		print("#[derive(Debug)]", file=f)
