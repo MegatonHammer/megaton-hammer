@@ -6,6 +6,9 @@ version = "0.1.0"
 [dependencies]
 cty = "0.1.5"
 static_assertions = "0.2.5"
+compiler_builtins = { git = "https://github.com/rust-lang-nursery/compiler-builtins", features = ["mem"], optional = true }
+core_io = { version = "0.1.20180307", optional = true }
+spin = { version = "0.4.6", optional = true }
 
 [dependencies.arrayvec]
 version = "0.4.7"
@@ -30,5 +33,4 @@ default-features = false
 version = "0.1.1"
 
 [features]
-emulation_test = ["std"]
-std = []
+crt0 = ["spin", "compiler_builtins", "core_io"]

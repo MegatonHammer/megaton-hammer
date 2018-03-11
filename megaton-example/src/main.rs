@@ -2,7 +2,6 @@
 
 extern crate megaton_hammer;
 extern crate megaton_ipc;
-extern crate megaton_crt0;
 
 use core::fmt::Write;
 use megaton_ipc::nn::socket::BsdBufferConfig;
@@ -25,11 +24,11 @@ const AF_INET6: u8 = 17;
 const AF_ROUTE: u8 = 28;
 
 fn main() {
-    writeln!(megaton_crt0::LOG.lock(), "We are rust, and we are in the main!").unwrap();
+    //writeln!(megaton_crt0::LOG.lock(), "We are rust, and we are in the main!").unwrap();
 
     let socket_ipc = megaton_ipc::nn::socket::sf::IClient::get_service().expect("Failed to get bsd service");
 
-    writeln!(megaton_crt0::SvcLog, "The socket is {:?}", socket_ipc).unwrap();
+    //writeln!(megaton_crt0::SvcLog, "The socket is {:?}", socket_ipc).unwrap();
 
     let bsd_config = BsdBufferConfig {
         version: 1,
@@ -46,18 +45,18 @@ fn main() {
     let r = unsafe { svc::create_transfer_memory(&mut mem_handle, BSD_MEM.as_mut_ptr() as _, core::mem::size_of_val(&BSD_MEM) as u64, 0) };
     // TODO: Really need to turn the SVCs into a proper API...
     if r != 0 {
-        writeln!(megaton_crt0::LOG.lock(), "Failed to create transfer memory: {}", r);
+        //writeln!(megaton_crt0::LOG.lock(), "Failed to create transfer memory: {}", r);
         return;
     }
     let mem_handle = unsafe { KObject::new(mem_handle) };
-    writeln!(megaton_crt0::LOG.lock(), "Initializing {:?} - {:?}", socket_ipc, mem_handle);
+    //writeln!(megaton_crt0::LOG.lock(), "Initializing {:?} - {:?}", socket_ipc, mem_handle);
     socket_ipc.Initialize(bsd_config, 0, unsafe { core::mem::size_of_val(&BSD_MEM) as u64 }, &mem_handle).expect("Failed to initialize bsd");
 
 
     let (socket, bsd_errno) = socket_ipc.Socket(AF_INET as u32, 1, 6).expect("Failed to create Socket");
     if socket == -1 {
-        writeln!(megaton_crt0::LOG.lock(), "Failed to create Socket: {}", bsd_errno);
-        writeln!(megaton_crt0::SvcLog, "Failed to create Socket: {}", bsd_errno);
+        //writeln!(megaton_crt0::LOG.lock(), "Failed to create Socket: {}", bsd_errno);
+        //writeln!(megaton_crt0::SvcLog, "Failed to create Socket: {}", bsd_errno);
         return;
     }
 
@@ -73,17 +72,17 @@ fn main() {
 
     let (ret, bsd_errno) = socket_ipc.Connect(socket as u32, &sockaddr).expect("Failed to connect");
     if ret == -1 {
-        writeln!(megaton_crt0::LOG.lock(), "Failed to connect: {}", bsd_errno);
-        writeln!(megaton_crt0::SvcLog, "Failed to connect: {}", bsd_errno);
+        //writeln!(megaton_crt0::LOG.lock(), "Failed to connect: {}", bsd_errno);
+        //writeln!(megaton_crt0::SvcLog, "Failed to connect: {}", bsd_errno);
         return;
     }
 
     // Transmute ? Really ?
     let (ret, bsd_errno) = socket_ipc.Write(socket as u32, unsafe { core::mem::transmute("This is a simple socket test from rust".as_bytes()) } ).expect("Failed to write");
     if ret == -1 {
-        writeln!(megaton_crt0::SvcLog, "Failed to write: {}", bsd_errno);
+        //writeln!(megaton_crt0::SvcLog, "Failed to write: {}", bsd_errno);
     }
-    writeln!(megaton_crt0::LOG.lock(), "I'm done !");
+    //writeln!(megaton_crt0::LOG.lock(), "I'm done !");
 }
 
 /*fn bsd_Get_transfer_mem_size(config: &BsdBufferConfig) -> usize {

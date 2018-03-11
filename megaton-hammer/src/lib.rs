@@ -16,25 +16,14 @@
 //! Rust. My first attempt at writing a rust toolchain reused libtransistor -
 //! however, that proved to be more of a hassle than simply reimplementing
 //! everything myself.
-//!
-//! Note that I plan on providing some form of compat layer with libtransistor
-//! in the long term. (reimplementing its C API, but using rust). This should
-//! allow porting libtransistor libraries to Megaton Hammer easily.
 // TODO: I shouldn't need either of those, in an ideal world.
 #![feature(asm, proc_macro, universal_impl_trait, cfg_target_vendor, global_asm, unicode)]
+#![cfg_attr(feature = "crt0", feature(lang_items, naked_functions, core_intrinsics, compiler_builtins_lib))]
+#![no_std]
 
-// Let's keep this no_std. Why ? Because it'll be used in std, that's why.
-// Eventually, I might remove this.
-#![cfg_attr(not(feature = "std"), no_std)]
-
-#[cfg(feature = "std")]
-use std as core;
-
-// WTF why is this not in libcore ?
+extern crate spin;
 extern crate std_unicode;
-
 extern crate byteorder;
-
 extern crate failure;
 #[macro_use]
 extern crate failure_derive;
@@ -51,6 +40,8 @@ pub mod ipc;
 pub mod tls;
 pub mod kernel;
 mod utils;
+
+pub mod loader;
 
 pub mod error {
     use core::fmt;
