@@ -5,7 +5,7 @@ version = "0.1.0"
 
 [dependencies]
 compiler_builtins = { git = "https://github.com/rust-lang-nursery/compiler-builtins", features = ["mem"] }
-core_io = { git = "https://github.com/roblabla/rust-core_io", branch = "meh", optional = true }
+core_io = { version = "0.1.20180307", optional = true }
 rlibc = "1.0.0"
 spin = { version = "0.4.6", optional = true }
 
