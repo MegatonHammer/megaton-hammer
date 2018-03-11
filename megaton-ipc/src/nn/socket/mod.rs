@@ -1,6 +1,12 @@
 pub mod sf;
 pub mod resolver;
-pub type sockaddr = ();
+#[repr(C)]
+#[derive(Debug, Clone)]
+pub struct sockaddr {
+	pub sa_len: u8,
+	pub sa_family: u8,
+	pub sa_data: [u8; 0xe],
+}
 pub type fd_set = u128;
 #[repr(C)]
 #[derive(Debug, Clone)]

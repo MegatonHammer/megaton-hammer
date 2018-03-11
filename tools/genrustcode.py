@@ -72,10 +72,12 @@ def getType(output, ty):
 		# Treat as an opaque byte array
 		elif ty[1][0] == "unknown":
 			return '[u8; %s]' % emitInt(ty[3])
-		else:
+		elif ty[3] != 0:
 			# Depending on type of buffer, this will be a const or
 			# a mutable reference...
-			return ("&mut Option<%s>" if output else "&%s") % getType(output, ty[1])
+			return ("&mut %s" if output else "&%s") % getType(output, ty[1])
+		else:
+			return ("&mut [%s]" if output else "&[%s]") % getType(output, ty[1])
 	elif ty[0] == 'object':
 		it = ty[1][0]
 		if it in ifaces:
@@ -197,6 +199,7 @@ def gen_ipc_method(cmd, f):
 	# Get args type
 	args_arr = []
 	objects_arr = []
+	buffers = []
 	for (idx, (name, ty)) in enumerate(cmd['inputs']):
 		if raw_input_type(ty) is not None:
 			args_arr.append((name, getType(False, ty)))
@@ -206,10 +209,27 @@ def gen_ipc_method(cmd, f):
 			objects_arr.append(name + ".as_ref().as_ref()")
 		elif ty[0] == "object":
 			objects_arr.append(name + ".as_ref()")
+		elif ty[0] == "buffer" and (ty[2] == 0x21 or ty[2] == 0x22):
+			if ty[3] == 0:
+				buffers.append("IPCBuffer::from_slice(%s, %s)" % (name, emitInt(ty[2])))
+			else:
+				buffers.append("IPCBuffer::from_ref(%s, %s)" % (name, emitInt(ty[2])))
 		elif ty[0] == "pid":
 			pass
 		else:
-			raise UnsupportedStructException(ty[0])
+			raise UnsupportedStructException("MEH" + ty[0])
+
+	# Grab output buffers to
+	for (name, ty) in cmd['outputs']:
+		if ty[0] == "buffer" and (ty[2] == 0x21 or ty[2] == 0x22):
+			if ty[3] == 0:
+				buffers.append("IPCBuffer::from_mut_slice(%s, %s)" % (name, emitInt(ty[2])))
+			else:
+				buffers.append("IPCBuffer::from_mut_ref(%s, %s)" % (name, emitInt(ty[2])))
+		elif ty[0] == "buffer" or ty[0] == "array":
+			raise UnsupportedStructException('array')
+
+
 	if len(args_arr) == 1:
 		args = "%s" % args_arr[0][0]
 	elif len(args_arr) == 0:
@@ -234,7 +254,9 @@ def gen_ipc_method(cmd, f):
 		print("\t\t\t.send_pid()", file=f)
 	for obj in objects_arr:
 		print("\t\t\t.copy_handle(%s)" % obj, file=f)
-
+	for buf in buffers:
+		print("\t\t\t.descriptor(%s)" % buf, file=f)
+	#for 
 	# TODO: Buffers
 	print("\t\t\t;", file=f)
 
@@ -269,6 +291,8 @@ def gen_ipc_method(cmd, f):
 			args_arr.append("unsafe { FromKObject::from_kobject(res.pop_handle()) }")
 		elif ty[0] == "KObject":
 			args_arr.append("res.pop_handle()")
+		elif ty[0] == "buffer" or ty[0] == "array":
+			pass
 		else:
 			raise UnsupportedStructException(ty[0])
 
@@ -332,6 +356,12 @@ for name, cmds in ifaces.items():
 		print("use megaton_hammer::kernel::{FromKObject, KObject, Session};", file=f)
 		print("use megaton_hammer::error::Result;", file=f)
 		print("use megaton_hammer::ipc::{Request, Response};", file=f)
+		# Check if we'll need to send/receive a buffer
+		input_buf = any(map(lambda cmd: any(map(lambda (name, ty): ty[0] in ["buffer", "array"], cmd['inputs'])), cmds['cmds']))
+		output_buf = any(map(lambda cmd: any(map(lambda (name, ty): ty[0] in ["buffer", "array"], cmd['outputs'])), cmds['cmds']))
+		if input_buf or output_buf:
+			print("use megaton_hamer::ipc::IPCBuffer", file=f)
+
 		print("", file=f)
 		print("#[derive(Debug)]", file=f)
 		print("pub struct %s(Session);" % ifacename, file=f)
