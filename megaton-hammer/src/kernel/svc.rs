@@ -229,7 +229,7 @@ extern {
 
     /// Output a debug string
     #[link_name = "svcOutputDebugString"]
-    pub fn output_debug_string(str: *mut cty::c_char, size: u64);
+    pub fn output_debug_string(str: *const cty::c_char, size: usize);
 
     /// Return from exception
     #[link_name = "svcReturnFromException"]
