@@ -1,32 +1,58 @@
+//! Homebrew ABI Loader handling
+//!
+//! According to the Homebrew ABI, the loader is supposed to pass a
+//! configuration structure to the entrypoint, with information such as how to
+//! allocate heap, and other core information.
+//!
+//! This module contains all the loader-related logic. The crt0 should call
+//! `init_loader` with the LoaderConfigEntry pointer. Libraries and homebrew can
+//! then use the provided getters to access the various configuration options.
+
 #[cfg(feature = "crt0")]
 #[doc(hidden)]
 pub mod crt0;
 
+extern crate core_io as io;
+
 use arrayvec::ArrayVec;
+use spin::Mutex;
+use core::ptr::Unique;
 
 struct LoaderConfig {
     main_thread: u32,
-    override_heap: Option<(*mut (), usize)>,
-    _override_services: ArrayVec<[(&'static str, u32); 32]>,
+    override_heap: Mutex<Option<HeapStrategy>>,
+    override_services: ArrayVec<[(&'static str, u32); 32]>,
+    log: Option<Mutex<io::Cursor<&'static mut [u8]>>>
 }
 
-// TODO: Fuck.
-unsafe impl Send for LoaderConfig {}
-unsafe impl Sync for LoaderConfig {}
-
-
 pub enum HeapStrategy{
-    OverrideHeap(*mut (), usize),
+    OverrideHeap(Unique<[u8]>),
     SetHeapSize,
 }
 
-pub fn get_heap_method() -> HeapStrategy {
-    match LOADER.try().and_then(|ldr_cfg| ldr_cfg.override_heap) {
-        Some((addr, size)) => HeapStrategy::OverrideHeap(addr, size),
-        None => HeapStrategy::SetHeapSize
+/// The allocator should use this to figure out where to get its heap from.
+pub fn acquire_heap_strategy() -> Option<HeapStrategy> {
+    match LOADER.try() {
+        Some(x) => x.override_heap.lock().take(),
+        None => None /* TODO: Panic. TBH.*/
     }
 }
 
+pub struct Logger;
+
+impl ::core::fmt::Write for Logger {
+    fn write_str(&mut self, s: &str) -> Result<(), ::core::fmt::Error> {
+        use kernel::svc;
+        use loader::io::Write;
+
+        if let Some(cursor) = LOADER.try().and_then(|ldr_cfg| (&ldr_cfg.log).as_ref()) {
+            cursor.lock().write(s.as_bytes());
+        } else {
+            unsafe { svc::output_debug_string(s.as_ptr(), s.len()) };
+        }
+        Ok(())
+    }
+}
 
 // TODO: Reenable logger.
 // This should probably write in as many places as possible (bsd log if
@@ -41,6 +67,7 @@ use spin::Once;
 static LOADER: Once<LoaderConfig> = Once::new();
 
 #[repr(C)]
+#[doc(hidden)]
 pub struct LoaderConfigEntry {
     tag: u32,
     flags: u32,
@@ -72,10 +99,13 @@ impl LoaderConfigTag {
 ///
 /// The pointer should point to a *valid* linked list of LoaderConfigEntry.
 pub unsafe fn init_loader(mut entry: *mut LoaderConfigEntry) -> Result<(), i32> {
+    use core::slice;
+
     let mut config = LoaderConfig {
         main_thread: 0,
-        override_heap: None,
-        _override_services: ArrayVec::new()
+        override_heap: Mutex::new(Some(HeapStrategy::SetHeapSize)),
+        override_services: ArrayVec::new(),
+        log: None
     };
 
     if !entry.is_null() {
@@ -83,11 +113,11 @@ pub unsafe fn init_loader(mut entry: *mut LoaderConfigEntry) -> Result<(), i32> 
             match (*entry).tag {
                 LoaderConfigTag::END_OF_LIST => break,
                 LoaderConfigTag::LOG => {
-                    // TODO: Reenable log
+                    config.log = Some(Mutex::new(io::Cursor::new(slice::from_raw_parts_mut((*entry).data.0 as _, (*entry).data.1 as _))));
                 },
                 LoaderConfigTag::MAIN_THREAD_HANDLE => config.main_thread = (*entry).data.0 as u32,
                 LoaderConfigTag::OVERRIDE_HEAP =>
-                    config.override_heap = Some(((*entry).data.0 as _, (*entry).data.1 as usize)),
+                    *config.override_heap.lock() = Some(HeapStrategy::OverrideHeap(Unique::new(slice::from_raw_parts_mut((*entry).data.0 as _, (*entry).data.1 as usize)).unwrap())),
                 LoaderConfigTag::APPLET_WORKAROUND => {},
                 tag => {
                     if (*entry).flags & 1 == 1 {
