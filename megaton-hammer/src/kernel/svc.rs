@@ -30,6 +30,7 @@ pub struct memory_info_t {
     pub padding: u32,
 }
 
+#[cfg(target_os = "switch")]
 global_asm! { include_str!("svc.S") }
 
 // TODO: Documentation for all syscalls. Let's try to do better than switchbrew.
@@ -229,7 +230,7 @@ extern {
 
     /// Output a debug string
     #[link_name = "svcOutputDebugString"]
-    pub fn output_debug_string(str: *const cty::c_char, size: usize);
+    pub fn output_debug_string(str: *const u8, size: usize);
 
     /// Return from exception
     #[link_name = "svcReturnFromException"]

@@ -18,11 +18,23 @@ unsafe fn get_tls_space() -> *mut TlsStruct {
     addr
 }
 
-/*#[cfg(not(all(target_os = "switch", target_vendor = "roblabla", target_arch = "aarch64")))]
+#[cfg(not(all(target_os = "switch", target_vendor = "roblabla", target_arch = "aarch64")))]
 unsafe fn get_tls_space() -> *mut TlsStruct {
-    const_assert!(false);
     &mut TLS
-}*/
+}
+
+// EWWWWWWW
+#[cfg(not(all(target_os = "switch", target_vendor = "roblabla", target_arch = "aarch64")))]
+unsafe impl Sync for TlsStruct {}
+
+// This is a terrible thing.
+#[cfg(not(all(target_os = "switch", target_vendor = "roblabla", target_arch = "aarch64")))]
+static mut TLS: TlsStruct = TlsStruct {
+    ipc_buf: [0; 0x100],
+    borrowed: false,
+    unknown: [0; 0xF7],
+    ctx: ::core::ptr::null_mut()
+};
 
 struct ThreadCtx;
 
@@ -86,16 +98,3 @@ impl TlsStruct {
         }
     }
 }
-
-// EWWWWWWW
-/*#[cfg(not(all(target_os = "switch", target_vendor = "roblabla", target_arch = "aarch64")))]
-unsafe impl Sync for TlsStruct {}
-
-// This is a terrible thing.
-#[cfg(not(all(target_os = "switch", target_vendor = "roblabla", target_arch = "aarch64")))]
-static mut TLS: TlsStruct = TlsStruct {
-    ipc_buf: [0; 0x100],
-    borrowed: false,
-    unknown: [0; 0xF7],
-    ctx: ::core::ptr::null_mut()
-};*/
