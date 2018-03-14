@@ -17,8 +17,8 @@ type WEvent = Handle;
 type Event = Handle;
 type ThreadEntry = ::core::option::Option<unsafe extern "C" fn(arg1: *mut cty::c_void)>;
 
-pub const CURRENT_PROCESS: u64 = 0xFFFF8001;
-pub const CURRENT_THREAD: u64 = 0xFFFF8000;
+pub const CURRENT_PROCESS: u32 = 0xFFFF8001;
+pub const CURRENT_THREAD: u32 = 0xFFFF8000;
 
 #[repr(C, packed)]
 #[derive(Debug, Copy, Clone)]
