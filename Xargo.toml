@@ -1,3 +1,15 @@
-[dependencies]
-std_unicode = {}
-alloc = {}
+[dependencies.core]
+stage = 0
+path = "../rust/src/libcore"
+
+[dependencies.std_unicode]
+stage = 1
+path = "../rust/src/libstd_unicode"
+
+[dependencies.alloc]
+stage = 2
+path = "../rust/src/liballoc"
+
+[dependencies.std]
+stage = 3
+path = "../rust/src/libstd"
