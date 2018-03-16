@@ -10,9 +10,9 @@ use core;
 use core::mem;
 use core::marker::PhantomData;
 use arrayvec::ArrayVec;
-use bitfield_register_macro::register;
 use byteorder::{LE};
 use kernel::KObject;
+use bit_field::BitField;
 
 use utils::{CursorWrite, CursorRead};
 use error::*;
@@ -22,36 +22,106 @@ use error::*;
 /// Represents the header of a packed IPC message, to be sent to the kernel for
 /// processing. This is usually written in the first 0x100 byes of TLS, but
 /// any memory locaction may be used, if used with `svcSendSyncRequestWithUserBuffer`.
-#[register()]
-struct MsgPackedHdr {
-    #[bitfield(from=0, to=15)]
-    ty: u16,
-    #[bitfield(from=16, to=19)]
-    num_x_descriptors: u8,
-    #[bitfield(from=20, to=23)]
-    num_a_descriptors: u8,
-    #[bitfield(from=24, to=27)]
-    num_b_descriptors: u8,
-    #[bitfield(from=28, to=31)]
-    num_w_descriptors: u8,
-    #[bitfield(from=32, to=41)]
-    raw_section_size: u16,
-    #[bitfield(from=42, to=45)]
-    c_descriptor_flags: u8,
-    #[bitfield(from=52, to=62)]
-    unknown: u16,
-    #[bitfield(at=63)]
-    enable_handle_descriptor: bool
+#[repr(transparent)]
+struct MsgPackedHdr(u64);
+
+impl MsgPackedHdr {
+    pub fn get_ty(&self) -> u16 {
+        self.0.get_bits(0..16) as u16
+    }
+
+    pub fn set_ty(&mut self, n: u16) {
+        self.0 = *self.0.set_bits(0..16, n as u64)
+    }
+
+    pub fn get_num_x_descriptors(&self) -> u8 {
+        self.0.get_bits(16..20) as u8
+    }
+
+    pub fn set_num_x_descriptors(&mut self, n: u8) {
+        self.0 = *self.0.set_bits(16..20, n as u64)
+    }
+
+    pub fn get_num_a_descriptors(&self) -> u8 {
+        self.0.get_bits(20..24) as u8
+    }
+
+    pub fn set_num_a_descriptors(&mut self, n: u8) {
+        self.0 = *self.0.set_bits(20..24, n as u64)
+    }
+
+    pub fn get_num_b_descriptors(&self) -> u8 {
+        self.0.get_bits(24..28) as u8
+    }
+
+    pub fn set_num_b_descriptors(&mut self, n: u8) {
+        self.0 = *self.0.set_bits(24..28, n as u64)
+    }
+
+    pub fn get_num_w_descriptors(&self) -> u8 {
+        self.0.get_bits(28..32) as u8
+    }
+
+    pub fn set_num_w_descriptors(&mut self, n: u8) {
+        self.0 = *self.0.set_bits(28..32, n as u64)
+    }
+
+    pub fn get_raw_section_size(&self) -> u16 {
+        self.0.get_bits(32..42) as u16
+    }
+
+    pub fn set_raw_section_size(&mut self, n: u16) {
+        self.0 = *self.0.set_bits(32..42, n as u64)
+    }
+
+    pub fn get_c_descriptor_flags(&self) -> u8 {
+        self.0.get_bits(42..46) as u8
+    }
+
+    pub fn set_c_descriptor_flags(&mut self, n: u8) {
+        self.0 = *self.0.set_bits(42..46, n as u64)
+    }
+
+    //pub fn get_unknown(&self) -> u16 {
+    //    self.0.get_bits(52..63) as u16
+    //}
+
+    pub fn get_enable_handle_descriptor(&self) -> bool {
+        self.0.get_bit(63)
+    }
+
+    pub fn set_enable_handle_descriptor(&mut self, n: bool) {
+        self.0 = *self.0.set_bit(63, n)
+    }
 }
 
-#[register()]
-struct HandleDescriptorHeader {
-    #[bitfield(at = 0)]
-    send_pid: bool,
-    #[bitfield(from=1, to=4)]
-    num_copy_handles: u8,
-    #[bitfield(from=5, to=8)]
-    num_move_handles: u8,
+#[repr(transparent)]
+struct HandleDescriptorHeader(u16);
+
+impl HandleDescriptorHeader {
+    pub fn get_send_pid(&self) -> bool {
+        self.0.get_bit(0)
+    }
+
+    pub fn set_send_pid(&mut self, n: bool) {
+        self.0 = *self.0.set_bit(0, n)
+    }
+
+    pub fn get_num_copy_handles(&self) -> u8 {
+        self.0.get_bits(1..5) as u8
+    }
+
+    pub fn set_num_copy_handles(&mut self, n: u8) {
+        self.0 = *self.0.set_bits(1..5, n as u16)
+    }
+
+    pub fn get_num_move_handles(&self) -> u8 {
+        self.0.get_bits(5..9) as u8
+    }
+
+    pub fn set_num_move_handles(&mut self, n: u8) {
+        self.0 = *self.0.set_bits(5..9, n as u16)
+    }
 }
 
 assert_eq_size!(AssertHandleDescriptorHeader; u16, HandleDescriptorHeader);
