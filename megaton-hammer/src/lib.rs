@@ -25,8 +25,8 @@ extern crate spin;
 extern crate std_unicode;
 extern crate byteorder;
 extern crate failure;
-#[macro_use]
-extern crate failure_derive;
+//#[macro_use]
+//extern crate failure_derive;
 
 extern crate bitfield_register;
 extern crate bitfield_register_macro;
@@ -45,9 +45,12 @@ pub mod loader;
 
 pub mod error {
     use core::fmt;
+    use failure;
 
-    #[derive(Clone, Copy, Fail)]
+    #[derive(Clone, Copy)]
     pub struct Error(pub u32);
+
+    impl failure::Fail for Error { }
 
     impl fmt::Debug for Error {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
