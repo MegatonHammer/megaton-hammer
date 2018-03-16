@@ -8,7 +8,6 @@
 //! `init_loader` with the LoaderConfigEntry pointer. Libraries and homebrew can
 //! then use the provided getters to access the various configuration options.
 
-#[cfg(feature = "crt0")]
 #[doc(hidden)]
 pub mod crt0;
 

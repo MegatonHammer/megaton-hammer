@@ -7,7 +7,6 @@
 //! Note that this module is only required if you wish to not use libstd (which
 //! naturally includes its own runtime).
 
-extern crate compiler_builtins;
 extern crate core_io as io;
 use core;
 
@@ -124,42 +123,49 @@ unsafe extern fn megaton_start(config: *mut LoaderConfigEntry, _thread_handle: u
     _ret
 }
 
-#[lang = "termination"]
-pub trait Termination {
-    fn report(self) -> i32;
-}
 
-impl Termination for () {
-    fn report(self) -> i32 {
+#[cfg(feature = "crt0")]
+mod langitems {
+    extern crate compiler_builtins;
+    use core;
+
+    #[lang = "termination"]
+    pub trait Termination {
+        fn report(self) -> i32;
+    }
+    
+    impl Termination for () {
+        fn report(self) -> i32 {
+            0
+        }
+    }
+    
+    #[lang = "start"]
+    extern "C" fn rust_start<T>(main: fn() -> T, _argc: isize, _argv: *const *const u8) -> isize 
+    where
+    T: Termination,
+    {
+        main();
         0
     }
-}
-
-#[lang = "start"]
-extern "C" fn rust_start<T>(main: fn() -> T, _argc: isize, _argv: *const *const u8) -> isize 
-where
-T: Termination,
-{
-    main();
-    0
-}
-
-#[lang = "panic_fmt"]
-fn panic_fmt(_msg: core::fmt::Arguments, _file: &'static str, _line: u32, _column: u32) -> ! {
-    // We panic'd, locks might already be taken. Let's avoid infinite looping there.
-    /*if let Some(mut lock) = LOG.try_lock() {
-        writeln!(lock, "PANIC: {} in {}:{}:{}", msg, file, line, column);
-    }
-    // Let's also send it to the debug svc
-    writeln!(SvcLog, "PANIC: {} in {}:{}:{}", msg, file, line, column);*/
-
-    // TODO: Exit the program. Turns out this is surprisingly difficult.
-    // NOTE: This will not unwind the stack. If you panic, we'll almost
-    // certainly leak resources.
-    unsafe {
-        match EXIT {
-            Some(f) => f(1),
-            None => __svc_exit_process()
+    
+    #[lang = "panic_fmt"]
+    fn panic_fmt(_msg: core::fmt::Arguments, _file: &'static str, _line: u32, _column: u32) -> ! {
+        // We panic'd, locks might already be taken. Let's avoid infinite looping there.
+        /*if let Some(mut lock) = LOG.try_lock() {
+            writeln!(lock, "PANIC: {} in {}:{}:{}", msg, file, line, column);
+        }
+        // Let's also send it to the debug svc
+        writeln!(SvcLog, "PANIC: {} in {}:{}:{}", msg, file, line, column);*/
+    
+        // TODO: Exit the program. Turns out this is surprisingly difficult.
+        // NOTE: This will not unwind the stack. If you panic, we'll almost
+        // certainly leak resources.
+        unsafe {
+            match super::EXIT {
+                Some(f) => f(1),
+                None => super::__svc_exit_process()
+            }
         }
     }
 }
