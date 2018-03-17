@@ -7,9 +7,8 @@
 //!
 
 use core::ops::{Deref, DerefMut};
-use core::cell::{UnsafeCell, RefCell};
+use core::cell::UnsafeCell;
 use core::fmt;
-use core::sync::atomic::{AtomicBool, Ordering};
 use alloc::BTreeMap;
 use alloc::boxed::Box;
 
@@ -42,12 +41,12 @@ static mut TLS: TlsStruct = TlsStruct {
     ipc_buf: ::core::cell::UnsafeCell::new([0; 0x100]),
     ipc_borrowed: false,
     unknown: [0; 0xF7],
-    ctx: Box::new(ThreadCtx { locals: RefCell::new(BTreeMap::new()) })
+    ctx: Box::new(ThreadCtx { locals: BTreeMap::new() })
 };
 
 #[derive(Debug)]
 pub struct ThreadCtx {
-    pub locals: RefCell<BTreeMap<usize, *mut u8>>
+    pub locals: BTreeMap<usize, *mut u8>
 }
 
 /// The TLS buffer can be accessed through the tpidrro_el0 ARM system register.
@@ -103,7 +102,7 @@ impl TlsStruct {
     pub unsafe fn init() {
         use core::{mem, ptr};
         let tls = get_tls_space();
-        let new_ctx = Box::new(ThreadCtx { locals: RefCell::new(BTreeMap::new()) });
+        let new_ctx = Box::new(ThreadCtx { locals: BTreeMap::new() });
         let old_ctx = &mut (*tls).ctx;
 
         // Copy the newly allocated box in the old one without dropping what was
