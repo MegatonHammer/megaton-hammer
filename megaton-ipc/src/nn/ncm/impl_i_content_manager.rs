@@ -24,7 +24,7 @@ impl AsRef<Session> for IContentManager {
 	}
 }
 impl IContentManager {
-	pub fn unknown0(&self, unk0: u8) -> Result<()> {
+	pub fn create_placeholder_and_registered_directories_for_media_id(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(0)
@@ -34,7 +34,7 @@ impl IContentManager {
 		Ok(())
 	}
 
-	pub fn unknown1(&self, unk0: u8) -> Result<()> {
+	pub fn create_save_data_directory_for_media_id(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(1)
@@ -44,7 +44,7 @@ impl IContentManager {
 		Ok(())
 	}
 
-	pub fn unknown2(&self, unk0: u8) -> Result<()> {
+	pub fn get_exists_placeholder_and_registered_directories_for_media_id(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(2)
@@ -54,7 +54,7 @@ impl IContentManager {
 		Ok(())
 	}
 
-	pub fn unknown3(&self, unk0: u8) -> Result<()> {
+	pub fn get_exists_save_data_directory_for_media_id(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(3)
@@ -84,7 +84,29 @@ impl IContentManager {
 		Ok(())
 	}
 
-	pub fn unknown8(&self, unk0: u8) -> Result<()> {
+	#[cfg(not(feature = "switch-2.0.0"))]
+	pub fn close_and_lock_i_content_storage(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(6)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(not(feature = "switch-2.0.0"))]
+	pub fn close_and_lock_i_content_meta_database(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(7)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn delete_save_data_for_media_id(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(8)
@@ -94,7 +116,8 @@ impl IContentManager {
 		Ok(())
 	}
 
-	pub fn initialize_storage_for_media_id(&self, unk0: u8) -> Result<()> {
+	#[cfg(feature = "switch-2.0.0")]
+	pub fn open_i_content_storage(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(9)
@@ -104,7 +127,8 @@ impl IContentManager {
 		Ok(())
 	}
 
-	pub fn uninitialize_storage_for_media_id(&self, unk0: u8) -> Result<()> {
+	#[cfg(feature = "switch-2.0.0")]
+	pub fn close_i_content_storage(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(10)
@@ -114,7 +138,8 @@ impl IContentManager {
 		Ok(())
 	}
 
-	pub fn initialize_database_for_media_id(&self, unk0: u8) -> Result<()> {
+	#[cfg(feature = "switch-2.0.0")]
+	pub fn open_i_content_meta_database(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(11)
@@ -124,7 +149,8 @@ impl IContentManager {
 		Ok(())
 	}
 
-	pub fn uninitialize_database_for_media_id(&self, unk0: u8) -> Result<()> {
+	#[cfg(feature = "switch-2.0.0")]
+	pub fn close_i_content_meta_database(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(12)

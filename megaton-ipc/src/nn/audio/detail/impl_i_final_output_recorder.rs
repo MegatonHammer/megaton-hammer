@@ -63,6 +63,18 @@ impl IFinalOutputRecorder {
 		Ok(*res.get_raw())
 	}
 
+	pub fn unknown7(&self, unk0: u64) -> Result<u64> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(7)
+			.args(unk0)
+			;
+		let res : Response<u64> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	// fn append_final_output_recorder_buffer_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_released_final_output_recorder_buffer_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for IFinalOutputRecorder {

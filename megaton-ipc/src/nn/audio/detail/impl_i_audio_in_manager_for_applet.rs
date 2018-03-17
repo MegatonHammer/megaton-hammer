@@ -24,7 +24,7 @@ impl AsRef<Session> for IAudioInManagerForApplet {
 	}
 }
 impl IAudioInManagerForApplet {
-	pub fn unknown0(&self, unk0: u64, unk1: u64) -> Result<KObject> {
+	pub fn request_suspend_audio_ins(&self, unk0: u64, unk1: u64) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -42,7 +42,7 @@ impl IAudioInManagerForApplet {
 		Ok(res.pop_handle())
 	}
 
-	pub fn unknown1(&self, unk0: u64, unk1: u64) -> Result<KObject> {
+	pub fn request_resume_audio_ins(&self, unk0: u64, unk1: u64) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -60,7 +60,7 @@ impl IAudioInManagerForApplet {
 		Ok(res.pop_handle())
 	}
 
-	pub fn unknown2(&self, unk0: u64) -> Result<u32> {
+	pub fn get_audio_ins_process_master_volume(&self, unk0: u64) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(2)
@@ -70,7 +70,7 @@ impl IAudioInManagerForApplet {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown3(&self, unk0: u32, unk1: u64, unk2: u64) -> Result<()> {
+	pub fn set_audio_ins_process_master_volume(&self, unk0: u32, unk1: u64, unk2: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]

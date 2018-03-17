@@ -24,7 +24,7 @@ impl AsRef<Session> for ISystemServiceCreator {
 	}
 }
 impl ISystemServiceCreator {
-	pub fn get_system_local_communication_service(&self, ) -> Result<Session> {
+	pub fn create_system_local_communication_service(&self, ) -> Result<Session> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(0)

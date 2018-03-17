@@ -5,6 +5,19 @@ use megaton_hammer::error::Result;
 #[derive(Debug)]
 pub struct IHtcsManager(Session);
 
+impl IHtcsManager {
+	pub fn new() -> Result<IHtcsManager> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
+		let r = sm.get_service(*b"htcs\0\0\0\0").map(|s| unsafe { IHtcsManager::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
 impl AsRef<Session> for IHtcsManager {
 	fn as_ref(&self) -> &Session {
 		&self.0
@@ -112,8 +125,8 @@ impl IHtcsManager {
 		Ok((res.get_raw().unk3.clone(),res.get_raw().unk4.clone()))
 	}
 
-	// fn unknown10(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown11(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_peer_name_any(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_default_host_name(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown12(&self, ) -> Result<(u32, Session)> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -124,7 +137,7 @@ impl IHtcsManager {
 		Ok((*res.get_raw(),unsafe { FromKObject::from_kobject(res.pop_handle()) }))
 	}
 
-	pub fn unknown13(&self, unk0: u8) -> Result<(u32, Session)> {
+	pub fn create_socket(&self, unk0: u8) -> Result<(u32, Session)> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(13)
@@ -134,7 +147,7 @@ impl IHtcsManager {
 		Ok((*res.get_raw(),unsafe { FromKObject::from_kobject(res.pop_handle()) }))
 	}
 
-	pub fn unknown100(&self, unk0: u64) -> Result<()> {
+	pub fn register_process_id(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(100)
@@ -145,7 +158,7 @@ impl IHtcsManager {
 		Ok(())
 	}
 
-	pub fn unknown101(&self, unk0: u64) -> Result<()> {
+	pub fn monitor_manager(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(101)

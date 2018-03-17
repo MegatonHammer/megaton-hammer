@@ -11,7 +11,7 @@ impl AsRef<Session> for IAccountProxyInterface {
 	}
 }
 impl IAccountProxyInterface {
-	pub fn unknown0(&self, ) -> Result<()> {
+	pub fn create_user_account(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(0)

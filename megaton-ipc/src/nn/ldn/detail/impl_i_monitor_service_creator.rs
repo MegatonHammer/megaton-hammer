@@ -24,7 +24,7 @@ impl AsRef<Session> for IMonitorServiceCreator {
 	}
 }
 impl IMonitorServiceCreator {
-	pub fn get_monitor_service(&self, ) -> Result<Session> {
+	pub fn create_monitor_service(&self, ) -> Result<Session> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(0)

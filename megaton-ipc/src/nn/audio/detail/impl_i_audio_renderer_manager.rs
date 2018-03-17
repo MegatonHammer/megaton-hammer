@@ -37,6 +37,17 @@ impl IAudioRendererManager {
 	}
 
 	// fn set_audio_renderers_process_master_volume(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn unknown4(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(4)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 }
 
 impl FromKObject for IAudioRendererManager {

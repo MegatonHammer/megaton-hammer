@@ -40,7 +40,27 @@ impl AsRef<Session> for IServiceGetterInterface {
 	}
 }
 impl IServiceGetterInterface {
-	pub fn unknown7994(&self, ) -> Result<Session> {
+	pub fn get_e_commerce_interface(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(7992)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn get_application_version_interface(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(7993)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn get_factory_reset_interface(&self, ) -> Result<Session> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(7994)
@@ -50,7 +70,7 @@ impl IServiceGetterInterface {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn unknown7995(&self, ) -> Result<Session> {
+	pub fn get_account_proxy_interface(&self, ) -> Result<Session> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(7995)
@@ -60,7 +80,7 @@ impl IServiceGetterInterface {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn unknown7996(&self, ) -> Result<Session> {
+	pub fn get_application_manager_interface(&self, ) -> Result<Session> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(7996)
@@ -70,7 +90,7 @@ impl IServiceGetterInterface {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn unknown7997(&self, ) -> Result<Session> {
+	pub fn get_download_task_interface(&self, ) -> Result<Session> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(7997)
@@ -80,7 +100,7 @@ impl IServiceGetterInterface {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn unknown7998(&self, ) -> Result<Session> {
+	pub fn get_content_management_interface(&self, ) -> Result<Session> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(7998)
@@ -90,7 +110,7 @@ impl IServiceGetterInterface {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn unknown7999(&self, ) -> Result<Session> {
+	pub fn get_document_interface(&self, ) -> Result<Session> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(7999)

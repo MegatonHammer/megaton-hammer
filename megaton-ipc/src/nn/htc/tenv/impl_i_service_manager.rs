@@ -5,13 +5,26 @@ use megaton_hammer::error::Result;
 #[derive(Debug)]
 pub struct IServiceManager(Session);
 
+impl IServiceManager {
+	pub fn new() -> Result<IServiceManager> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
+		let r = sm.get_service(*b"htc:tenv").map(|s| unsafe { IServiceManager::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
 impl AsRef<Session> for IServiceManager {
 	fn as_ref(&self) -> &Session {
 		&self.0
 	}
 }
 impl IServiceManager {
-	pub fn unknown0(&self, unk0: u64) -> Result<Session> {
+	pub fn open_service(&self, unk0: u64) -> Result<Session> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(0)

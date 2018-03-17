@@ -11,7 +11,7 @@ impl AsRef<Session> for IPdCradleSession {
 	}
 }
 impl IPdCradleSession {
-	pub fn unknown0(&self, unk0: u32, unk1: u32) -> Result<()> {
+	pub fn vdm_user_write(&self, unk0: u32, unk1: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -29,7 +29,7 @@ impl IPdCradleSession {
 		Ok(())
 	}
 
-	pub fn unknown1(&self, unk0: u32) -> Result<u32> {
+	pub fn vdm_user_read(&self, unk0: u32) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(1)
@@ -39,7 +39,7 @@ impl IPdCradleSession {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown2(&self, ) -> Result<()> {
+	pub fn vdm20_init(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(2)
@@ -49,7 +49,7 @@ impl IPdCradleSession {
 		Ok(())
 	}
 
-	pub fn unknown3(&self, ) -> Result<()> {
+	pub fn get_fw_type(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(3)
@@ -59,7 +59,7 @@ impl IPdCradleSession {
 		Ok(())
 	}
 
-	pub fn unknown4(&self, ) -> Result<()> {
+	pub fn get_fw_revision(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(4)
@@ -69,7 +69,7 @@ impl IPdCradleSession {
 		Ok(())
 	}
 
-	pub fn unknown5(&self, ) -> Result<()> {
+	pub fn get_manufacturer_id(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(5)
@@ -79,7 +79,7 @@ impl IPdCradleSession {
 		Ok(())
 	}
 
-	pub fn unknown6(&self, ) -> Result<()> {
+	pub fn get_device_id(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(6)

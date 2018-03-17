@@ -44,6 +44,39 @@ impl IAudioInManagerForDebugger {
 		Ok(())
 	}
 
+	#[cfg(feature = "switch-3.0.0")]
+	pub fn list_audio_ins_ex(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(2)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-3.0.0")]
+	pub fn open_audio_in_ex(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(3)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-3.0.0")]
+	pub fn list_audio_ins_ex_and_probe(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(4)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 }
 
 impl FromKObject for IAudioInManagerForDebugger {

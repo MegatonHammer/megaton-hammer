@@ -226,6 +226,7 @@ impl IAudioController {
 		Ok(())
 	}
 
+	#[cfg(feature = "switch-3.0.0")]
 	pub fn unknown17(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -236,6 +237,7 @@ impl IAudioController {
 		Ok(())
 	}
 
+	#[cfg(feature = "switch-3.0.0")]
 	pub fn unknown18(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -246,6 +248,7 @@ impl IAudioController {
 		Ok(*res.get_raw())
 	}
 
+	#[cfg(feature = "switch-3.0.0")]
 	pub fn unknown19(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -256,6 +259,7 @@ impl IAudioController {
 		Ok(res.pop_handle())
 	}
 
+	#[cfg(feature = "switch-3.0.0")]
 	pub fn unknown20(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -266,6 +270,7 @@ impl IAudioController {
 		Ok(res.pop_handle())
 	}
 
+	#[cfg(feature = "switch-3.0.0")]
 	pub fn unknown21(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -276,10 +281,55 @@ impl IAudioController {
 		Ok(*res.get_raw())
 	}
 
+	#[cfg(feature = "switch-3.0.0")]
 	pub fn unknown22(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(22)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn unknown23(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(23)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn unknown24(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(24)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn unknown25(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(25)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn unknown26(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(26)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;

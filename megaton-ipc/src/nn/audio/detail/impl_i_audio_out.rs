@@ -63,8 +63,41 @@ impl IAudioOut {
 		Ok(*res.get_raw())
 	}
 
-	// fn append_audio_out_buffer(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_released_audio_out_buffer(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn append_audio_out_buffer_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_released_audio_out_buffer_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn unknown9(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(9)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn unknown10(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(10)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn unknown11(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(11)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 }
 
 impl FromKObject for IAudioOut {

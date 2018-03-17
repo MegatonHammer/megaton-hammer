@@ -11,7 +11,7 @@ impl AsRef<Session> for IContentMetaDatabase {
 	}
 }
 impl IContentMetaDatabase {
-	pub fn insert_content_entry(&self, ) -> Result<()> {
+	pub fn insert_entry_content_records(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(0)
@@ -21,7 +21,7 @@ impl IContentMetaDatabase {
 		Ok(())
 	}
 
-	pub fn unknown1(&self, ) -> Result<()> {
+	pub fn read_entry_content_records(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(1)
@@ -31,7 +31,7 @@ impl IContentMetaDatabase {
 		Ok(())
 	}
 
-	pub fn unknown2(&self, ) -> Result<()> {
+	pub fn remove_entry_content_records(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(2)
@@ -41,7 +41,7 @@ impl IContentMetaDatabase {
 		Ok(())
 	}
 
-	pub fn update_content_entry(&self, ) -> Result<()> {
+	pub fn get_entry_content_nca_id(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(3)
@@ -51,7 +51,7 @@ impl IContentMetaDatabase {
 		Ok(())
 	}
 
-	pub fn unknown4(&self, ) -> Result<()> {
+	pub fn read_entry_content_record_entries(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(4)
@@ -61,7 +61,7 @@ impl IContentMetaDatabase {
 		Ok(())
 	}
 
-	pub fn iterate(&self, ) -> Result<()> {
+	pub fn list(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(5)
@@ -71,7 +71,7 @@ impl IContentMetaDatabase {
 		Ok(())
 	}
 
-	pub fn get_title_id_info(&self, ) -> Result<()> {
+	pub fn get_meta_record(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(6)
@@ -81,7 +81,7 @@ impl IContentMetaDatabase {
 		Ok(())
 	}
 
-	pub fn get_title_list(&self, ) -> Result<()> {
+	pub fn list_application(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(7)
@@ -91,7 +91,7 @@ impl IContentMetaDatabase {
 		Ok(())
 	}
 
-	pub fn unknown8(&self, ) -> Result<()> {
+	pub fn is_entry_present(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(8)
@@ -101,7 +101,7 @@ impl IContentMetaDatabase {
 		Ok(())
 	}
 
-	pub fn unknown9(&self, ) -> Result<()> {
+	pub fn are_entries_present(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(9)
@@ -111,7 +111,7 @@ impl IContentMetaDatabase {
 		Ok(())
 	}
 
-	pub fn unknown10(&self, ) -> Result<()> {
+	pub fn get_entry_content_records_size(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(10)
@@ -121,7 +121,7 @@ impl IContentMetaDatabase {
 		Ok(())
 	}
 
-	pub fn unknown11(&self, ) -> Result<()> {
+	pub fn get_entry_unknown_record_size(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(11)
@@ -131,7 +131,7 @@ impl IContentMetaDatabase {
 		Ok(())
 	}
 
-	pub fn unknown12(&self, ) -> Result<()> {
+	pub fn get_entry_update_title_id(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(12)
@@ -141,7 +141,7 @@ impl IContentMetaDatabase {
 		Ok(())
 	}
 
-	pub fn unknown13(&self, ) -> Result<()> {
+	pub fn close_meta_database(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(13)
@@ -151,7 +151,7 @@ impl IContentMetaDatabase {
 		Ok(())
 	}
 
-	pub fn unknown14(&self, ) -> Result<()> {
+	pub fn check_nca_i_ds_present(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(14)
@@ -161,7 +161,7 @@ impl IContentMetaDatabase {
 		Ok(())
 	}
 
-	pub fn end_iteration(&self, ) -> Result<()> {
+	pub fn save_meta_database(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(15)
@@ -171,7 +171,7 @@ impl IContentMetaDatabase {
 		Ok(())
 	}
 
-	pub fn unknown16(&self, ) -> Result<()> {
+	pub fn check_entry_has_nca_id(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(16)
@@ -181,7 +181,7 @@ impl IContentMetaDatabase {
 		Ok(())
 	}
 
-	pub fn get_update_title_list(&self, ) -> Result<()> {
+	pub fn read_entry_meta_records(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(17)
@@ -191,7 +191,7 @@ impl IContentMetaDatabase {
 		Ok(())
 	}
 
-	pub fn unknown18(&self, ) -> Result<()> {
+	pub fn get_entry_unknown6(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(18)
@@ -201,7 +201,7 @@ impl IContentMetaDatabase {
 		Ok(())
 	}
 
-	pub fn unknown19(&self, ) -> Result<()> {
+	pub fn get_add_on_content_entry_unknown_record_size(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(19)

@@ -11,7 +11,7 @@ impl AsRef<Session> for IDocumentInterface {
 	}
 }
 impl IDocumentInterface {
-	pub fn unknown21(&self, ) -> Result<()> {
+	pub fn get_application_content_path(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(21)
@@ -21,7 +21,7 @@ impl IDocumentInterface {
 		Ok(())
 	}
 
-	pub fn unknown23(&self, unk0: u8, unk1: u64) -> Result<()> {
+	pub fn resolve_application_content_path(&self, unk0: u8, unk1: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]

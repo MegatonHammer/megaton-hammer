@@ -11,10 +11,32 @@ impl AsRef<Session> for IHardwareOpusDecoder {
 	}
 }
 impl IHardwareOpusDecoder {
-	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn decode_interleaved(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_context(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn decode_interleaved_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_context_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn unknown4(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(4)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn unknown5(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(5)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 }
 
 impl FromKObject for IHardwareOpusDecoder {

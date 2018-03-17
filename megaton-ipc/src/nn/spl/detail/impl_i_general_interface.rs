@@ -94,7 +94,7 @@ impl IGeneralInterface {
 		Ok(())
 	}
 
-	pub fn decrypt_import_privk_for_rsa_oaep(&self, ) -> Result<()> {
+	pub fn load_secure_exp_mod_key(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(9)
@@ -104,7 +104,7 @@ impl IGeneralInterface {
 		Ok(())
 	}
 
-	pub fn decrypt_rsa_oaep(&self, ) -> Result<()> {
+	pub fn secure_exp_mod(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(10)
@@ -174,7 +174,7 @@ impl IGeneralInterface {
 		Ok(())
 	}
 
-	pub fn decrypt_import_privk_for_exp_mod1(&self, ) -> Result<()> {
+	pub fn load_rsa_oaep_key(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(17)
@@ -184,7 +184,7 @@ impl IGeneralInterface {
 		Ok(())
 	}
 
-	pub fn unwrap_rsa_wrapped_title_key(&self, ) -> Result<()> {
+	pub fn unwrap_rsa_oaep_wrapped_title_key(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(18)
@@ -246,6 +246,28 @@ impl IGeneralInterface {
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(res.pop_handle())
+	}
+
+	#[cfg(feature = "switch-3.0.0")]
+	pub fn set_shared_data(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(24)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-3.0.0")]
+	pub fn get_shared_data(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(25)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
 	}
 
 }

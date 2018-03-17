@@ -11,7 +11,7 @@ impl AsRef<Session> for IDownloadTaskInterface {
 	}
 }
 impl IDownloadTaskInterface {
-	pub fn unknown701(&self, ) -> Result<()> {
+	pub fn clear_task_status_list(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(701)
@@ -21,7 +21,7 @@ impl IDownloadTaskInterface {
 		Ok(())
 	}
 
-	pub fn unknown702(&self, ) -> Result<()> {
+	pub fn request_download_task_list(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(702)
@@ -31,7 +31,7 @@ impl IDownloadTaskInterface {
 		Ok(())
 	}
 
-	pub fn unknown703(&self, ) -> Result<()> {
+	pub fn request_ensure_download_task(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(703)
@@ -41,11 +41,51 @@ impl IDownloadTaskInterface {
 		Ok(())
 	}
 
-	// fn unknown704(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown705(&self, ) -> Result<()> {
+	// fn list_download_task_status(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn request_download_task_list_data(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(705)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn try_commit_current_application_download_task(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(706)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn enable_auto_commit(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(707)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn disable_auto_commit(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(708)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn trigger_dynamic_commit_event(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(709)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;

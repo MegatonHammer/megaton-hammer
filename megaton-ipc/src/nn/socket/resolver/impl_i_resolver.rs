@@ -24,8 +24,8 @@ impl AsRef<Session> for IResolver {
 	}
 }
 impl IResolver {
-	// fn set_dns_addresses_private(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_dns_address_private(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_host_by_name(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_host_by_addr(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_host_string_error(&self, UNKNOWN) -> Result<UNKNOWN>;
@@ -72,7 +72,7 @@ impl IResolver {
 		Ok(())
 	}
 
-	pub fn unknown11(&self, ) -> Result<()> {
+	pub fn clear_dns_ip_server_address_array(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(11)

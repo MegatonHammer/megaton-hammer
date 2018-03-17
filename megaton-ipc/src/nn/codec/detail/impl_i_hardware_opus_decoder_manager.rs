@@ -24,7 +24,7 @@ impl AsRef<Session> for IHardwareOpusDecoderManager {
 	}
 }
 impl IHardwareOpusDecoderManager {
-	pub fn unknown0(&self, unk0: u64, unk1: u32, unk2: &KObject) -> Result<Session> {
+	pub fn initialize(&self, unk0: u64, unk1: u32, unk2: &KObject) -> Result<Session> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -43,7 +43,7 @@ impl IHardwareOpusDecoderManager {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn unknown1(&self, unk0: u64) -> Result<u32> {
+	pub fn get_work_buffer_size(&self, unk0: u64) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(1)
@@ -53,8 +53,8 @@ impl IHardwareOpusDecoderManager {
 		Ok(*res.get_raw())
 	}
 
-	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn initialize_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_work_buffer_size_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for IHardwareOpusDecoderManager {

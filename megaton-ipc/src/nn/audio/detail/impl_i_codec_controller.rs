@@ -104,7 +104,7 @@ impl ICodecController {
 		Ok(())
 	}
 
-	pub fn unknown(&self, ) -> Result<()> {
+	pub fn get_codec_active_target(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(8)

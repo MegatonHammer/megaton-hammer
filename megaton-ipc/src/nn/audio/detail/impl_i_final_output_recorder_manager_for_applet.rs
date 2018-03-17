@@ -24,7 +24,7 @@ impl AsRef<Session> for IFinalOutputRecorderManagerForApplet {
 	}
 }
 impl IFinalOutputRecorderManagerForApplet {
-	pub fn unknown0(&self, unk0: u64, unk1: u64) -> Result<KObject> {
+	pub fn request_suspend_final_output_recorders(&self, unk0: u64, unk1: u64) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -42,7 +42,7 @@ impl IFinalOutputRecorderManagerForApplet {
 		Ok(res.pop_handle())
 	}
 
-	pub fn unknown1(&self, unk0: u64, unk1: u64) -> Result<KObject> {
+	pub fn request_resume_final_output_recorders(&self, unk0: u64, unk1: u64) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]

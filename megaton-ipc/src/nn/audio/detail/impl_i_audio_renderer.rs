@@ -102,6 +102,18 @@ impl IAudioRenderer {
 		Ok(*res.get_raw())
 	}
 
+	// fn request_update_audio_renderer_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(feature = "switch-3.0.0")]
+	pub fn unknown11(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(11)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 }
 
 impl FromKObject for IAudioRenderer {

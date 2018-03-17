@@ -11,7 +11,7 @@ impl AsRef<Session> for IPortSession {
 	}
 }
 impl IPortSession {
-	pub fn unknown0(&self, ) -> Result<()> {
+	pub fn open_session(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(0)
@@ -21,7 +21,7 @@ impl IPortSession {
 		Ok(())
 	}
 
-	pub fn unknown1(&self, ) -> Result<()> {
+	pub fn open_session_for_test(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(1)

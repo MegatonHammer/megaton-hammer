@@ -5,6 +5,19 @@ use megaton_hammer::error::Result;
 #[derive(Debug)]
 pub struct IAudioDebugManager(Session);
 
+impl IAudioDebugManager {
+	pub fn new() -> Result<IAudioDebugManager> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
+		let r = sm.get_service(*b"auddebug").map(|s| unsafe { IAudioDebugManager::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
 impl AsRef<Session> for IAudioDebugManager {
 	fn as_ref(&self) -> &Session {
 		&self.0

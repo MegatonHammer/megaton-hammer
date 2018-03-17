@@ -11,7 +11,7 @@ impl AsRef<Session> for IContentManagementInterface {
 	}
 }
 impl IContentManagementInterface {
-	pub fn unknown11(&self, ) -> Result<()> {
+	pub fn calculate_application_occupied_size(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(11)
@@ -21,7 +21,7 @@ impl IContentManagementInterface {
 		Ok(())
 	}
 
-	pub fn unknown43(&self, ) -> Result<()> {
+	pub fn check_sd_card_mount_status(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(43)
@@ -31,7 +31,7 @@ impl IContentManagementInterface {
 		Ok(())
 	}
 
-	pub fn unknown47(&self, ) -> Result<()> {
+	pub fn get_total_space_size(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(47)
@@ -41,7 +41,7 @@ impl IContentManagementInterface {
 		Ok(())
 	}
 
-	pub fn unknown48(&self, ) -> Result<()> {
+	pub fn get_free_space_size(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(48)
@@ -51,7 +51,7 @@ impl IContentManagementInterface {
 		Ok(())
 	}
 
-	pub fn unknown600(&self, unk0: u64) -> Result<u32> {
+	pub fn count_application_content_meta(&self, unk0: u64) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(600)
@@ -61,7 +61,7 @@ impl IContentManagementInterface {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown601(&self, ) -> Result<()> {
+	pub fn list_application_content_meta_status(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(601)
@@ -71,7 +71,7 @@ impl IContentManagementInterface {
 		Ok(())
 	}
 
-	pub fn unknown605(&self, ) -> Result<()> {
+	pub fn list_application_content_meta_status_with_rights_check(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(605)
@@ -81,7 +81,7 @@ impl IContentManagementInterface {
 		Ok(())
 	}
 
-	pub fn unknown607(&self, ) -> Result<u8> {
+	pub fn is_any_application_running(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(607)

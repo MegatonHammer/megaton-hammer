@@ -26,6 +26,8 @@ impl AsRef<Session> for IAudioOutManager {
 impl IAudioOutManager {
 	// fn list_audio_outs(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn open_audio_out(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn list_audio_outs_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn open_audio_out_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for IAudioOutManager {

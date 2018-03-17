@@ -63,6 +63,43 @@ impl IAudioIn {
 		Ok(*res.get_raw())
 	}
 
+	// fn append_audio_in_buffer_with_user_event(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn append_audio_in_buffer_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_released_audio_in_buffer_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn append_audio_in_buffer_with_user_event_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn unknown11(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(11)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn unknown12(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(12)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn unknown13(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(13)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 }
 
 impl FromKObject for IAudioIn {

@@ -11,7 +11,7 @@ impl AsRef<Session> for IMonitorService {
 	}
 }
 impl IMonitorService {
-	pub fn get_nifm_status(&self, ) -> Result<u32> {
+	pub fn get_state_for_monitor(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(0)
@@ -21,8 +21,8 @@ impl IMonitorService {
 		Ok(*res.get_raw())
 	}
 
-	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown2(&self, ) -> Result<(u32, u32)> {
+	// fn get_network_info_for_monitor(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_ipv4_address_for_monitor(&self, ) -> Result<(u32, u32)> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(2)
@@ -36,7 +36,7 @@ impl IMonitorService {
 		Ok((res.get_raw().unk0.clone(),res.get_raw().unk1.clone()))
 	}
 
-	pub fn unknown3(&self, ) -> Result<u16> {
+	pub fn get_disconnect_reason_for_monitor(&self, ) -> Result<u16> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(3)
@@ -46,9 +46,9 @@ impl IMonitorService {
 		Ok(*res.get_raw())
 	}
 
-	// fn unknown4(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown5(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn start_monitor(&self, ) -> Result<()> {
+	// fn get_security_parameter_for_monitor(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_network_config_for_monitor(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn initialize_monitor(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(100)
@@ -58,7 +58,7 @@ impl IMonitorService {
 		Ok(())
 	}
 
-	pub fn stop_monitor(&self, ) -> Result<()> {
+	pub fn finalize_monitor(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(101)

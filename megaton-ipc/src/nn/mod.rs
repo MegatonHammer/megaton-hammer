@@ -76,6 +76,7 @@ pub mod nsd;
 pub mod bsdsocket;
 pub mod psm;
 pub mod pl;
+pub mod grcsrv;
 pub mod aocsrv;
 pub mod time;
 pub type TimeSpan = u64;

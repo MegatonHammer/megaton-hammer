@@ -24,7 +24,7 @@ impl AsRef<Session> for IUserServiceCreator {
 	}
 }
 impl IUserServiceCreator {
-	pub fn get_user_local_communication_service(&self, ) -> Result<Session> {
+	pub fn create_user_local_communication_service(&self, ) -> Result<Session> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(0)

@@ -11,7 +11,7 @@ impl AsRef<Session> for IUserLocalCommunicationService {
 	}
 }
 impl IUserLocalCommunicationService {
-	pub fn unknown0(&self, ) -> Result<u32> {
+	pub fn get_state(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(0)
@@ -21,8 +21,8 @@ impl IUserLocalCommunicationService {
 		Ok(*res.get_raw())
 	}
 
-	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown2(&self, ) -> Result<(u32, u32)> {
+	// fn get_network_info(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_ipv4_address(&self, ) -> Result<(u32, u32)> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(2)
@@ -36,7 +36,7 @@ impl IUserLocalCommunicationService {
 		Ok((res.get_raw().unk0.clone(),res.get_raw().unk1.clone()))
 	}
 
-	pub fn unknown3(&self, ) -> Result<u16> {
+	pub fn get_disconnect_reason(&self, ) -> Result<u16> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(3)
@@ -46,9 +46,9 @@ impl IUserLocalCommunicationService {
 		Ok(*res.get_raw())
 	}
 
-	// fn unknown4(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown5(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown100(&self, ) -> Result<KObject> {
+	// fn get_security_parameter(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_network_config(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn attach_state_change_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(100)
@@ -58,10 +58,10 @@ impl IUserLocalCommunicationService {
 		Ok(res.pop_handle())
 	}
 
-	// fn unknown101(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown102(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown103(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown200(&self, ) -> Result<()> {
+	// fn get_network_info_latest_update(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn scan(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn scan_private(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn open_access_point(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(200)
@@ -71,7 +71,7 @@ impl IUserLocalCommunicationService {
 		Ok(())
 	}
 
-	pub fn unknown201(&self, ) -> Result<()> {
+	pub fn close_access_point(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(201)
@@ -81,9 +81,9 @@ impl IUserLocalCommunicationService {
 		Ok(())
 	}
 
-	// fn unknown202(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown203(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown204(&self, ) -> Result<()> {
+	// fn create_network(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn create_network_private(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn destroy_network(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(204)
@@ -93,7 +93,7 @@ impl IUserLocalCommunicationService {
 		Ok(())
 	}
 
-	pub fn unknown205(&self, unk0: u32) -> Result<()> {
+	pub fn reject(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(205)
@@ -103,8 +103,8 @@ impl IUserLocalCommunicationService {
 		Ok(())
 	}
 
-	// fn unknown206(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown207(&self, unk0: u8) -> Result<()> {
+	// fn set_advertise_data(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn set_station_accept_policy(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(207)
@@ -114,8 +114,8 @@ impl IUserLocalCommunicationService {
 		Ok(())
 	}
 
-	// fn unknown208(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown209(&self, ) -> Result<()> {
+	// fn add_accept_filter_entry(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn clear_accept_filter(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(209)
@@ -125,7 +125,7 @@ impl IUserLocalCommunicationService {
 		Ok(())
 	}
 
-	pub fn unknown300(&self, ) -> Result<()> {
+	pub fn open_station(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(300)
@@ -135,7 +135,7 @@ impl IUserLocalCommunicationService {
 		Ok(())
 	}
 
-	pub fn unknown301(&self, ) -> Result<()> {
+	pub fn close_station(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(301)
@@ -145,9 +145,9 @@ impl IUserLocalCommunicationService {
 		Ok(())
 	}
 
-	// fn unknown302(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown303(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown304(&self, ) -> Result<()> {
+	// fn connect(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn connect_private(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn disconnect(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(304)
@@ -157,7 +157,7 @@ impl IUserLocalCommunicationService {
 		Ok(())
 	}
 
-	pub fn unknown400(&self, unk0: u64) -> Result<()> {
+	pub fn initialize(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(400)
@@ -168,7 +168,7 @@ impl IUserLocalCommunicationService {
 		Ok(())
 	}
 
-	pub fn unknown401(&self, ) -> Result<()> {
+	pub fn finalize(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(401)

@@ -5,15 +5,28 @@ use megaton_hammer::error::Result;
 #[derive(Debug)]
 pub struct IHtcManager(Session);
 
+impl IHtcManager {
+	pub fn new() -> Result<IHtcManager> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
+		let r = sm.get_service(*b"htc\0\0\0\0\0").map(|s| unsafe { IHtcManager::from_kobject(s) });
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+}
+
 impl AsRef<Session> for IHtcManager {
 	fn as_ref(&self) -> &Session {
 		&self.0
 	}
 }
 impl IHtcManager {
-	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown2(&self, ) -> Result<KObject> {
+	// fn get_environment_variable(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_environment_variable_length(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn bind_host_connection_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(2)
@@ -23,7 +36,7 @@ impl IHtcManager {
 		Ok(res.pop_handle())
 	}
 
-	pub fn unknown3(&self, ) -> Result<KObject> {
+	pub fn bind_host_disconnection_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(3)
@@ -33,7 +46,7 @@ impl IHtcManager {
 		Ok(res.pop_handle())
 	}
 
-	pub fn unknown4(&self, ) -> Result<KObject> {
+	pub fn bind_host_connection_event_for_system(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(4)
@@ -43,7 +56,7 @@ impl IHtcManager {
 		Ok(res.pop_handle())
 	}
 
-	pub fn unknown5(&self, ) -> Result<KObject> {
+	pub fn bind_host_disconnection_event_for_system(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(5)
@@ -51,18 +64,6 @@ impl IHtcManager {
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(res.pop_handle())
-	}
-
-	// fn unknown6(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown7(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown8(&self, unk0: u8) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(8)
-			.args(unk0)
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
 	}
 
 }

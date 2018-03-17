@@ -11,7 +11,7 @@ impl AsRef<Session> for IFactoryResetInterface {
 	}
 }
 impl IFactoryResetInterface {
-	pub fn unknown100(&self, ) -> Result<()> {
+	pub fn reset_to_factory_settings(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(100)
@@ -21,7 +21,7 @@ impl IFactoryResetInterface {
 		Ok(())
 	}
 
-	pub fn unknown101(&self, ) -> Result<()> {
+	pub fn reset_to_factory_settings_without_user_save_data(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(101)
@@ -31,7 +31,7 @@ impl IFactoryResetInterface {
 		Ok(())
 	}
 
-	pub fn unknown102(&self, ) -> Result<()> {
+	pub fn reset_to_factory_settings_for_refurbishment(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(102)

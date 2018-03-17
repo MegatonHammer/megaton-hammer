@@ -24,7 +24,7 @@ impl AsRef<Session> for ISystemUpdateInterface {
 	}
 }
 impl ISystemUpdateInterface {
-	pub fn unknown0(&self, ) -> Result<u8> {
+	pub fn get_background_network_update_state(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(0)
@@ -34,7 +34,7 @@ impl ISystemUpdateInterface {
 		Ok(*res.get_raw())
 	}
 
-	pub fn get_i_system_update_control(&self, ) -> Result<Session> {
+	pub fn open_system_update_control(&self, ) -> Result<Session> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(1)
@@ -44,7 +44,7 @@ impl ISystemUpdateInterface {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn unknown2(&self, ) -> Result<()> {
+	pub fn notify_ex_fat_driver_required(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(2)
@@ -54,7 +54,7 @@ impl ISystemUpdateInterface {
 		Ok(())
 	}
 
-	pub fn unknown3(&self, ) -> Result<()> {
+	pub fn clear_ex_fat_driver_status_for_debug(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(3)
@@ -64,7 +64,7 @@ impl ISystemUpdateInterface {
 		Ok(())
 	}
 
-	pub fn unknown4(&self, ) -> Result<()> {
+	pub fn request_background_network_update(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(4)
@@ -74,7 +74,7 @@ impl ISystemUpdateInterface {
 		Ok(())
 	}
 
-	pub fn unknown5(&self, ) -> Result<()> {
+	pub fn notify_background_network_update(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(5)
@@ -84,7 +84,7 @@ impl ISystemUpdateInterface {
 		Ok(())
 	}
 
-	pub fn unknown6(&self, ) -> Result<()> {
+	pub fn notify_ex_fat_driver_downloaded_for_debug(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(6)
@@ -94,7 +94,7 @@ impl ISystemUpdateInterface {
 		Ok(())
 	}
 
-	pub fn get_ns_su_wait_event(&self, ) -> Result<KObject> {
+	pub fn get_system_update_notification_event_for_content_delivery(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(9)
@@ -104,10 +104,50 @@ impl ISystemUpdateInterface {
 		Ok(res.pop_handle())
 	}
 
-	pub fn unknown10(&self, ) -> Result<()> {
+	pub fn notify_system_update_for_content_delivery(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(10)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn prepare_shutdown(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(11)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn destroy_system_update_task(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(16)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn request_send_system_update(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(17)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn get_send_system_update_progress(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(18)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
