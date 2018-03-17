@@ -17,7 +17,7 @@
 //! however, that proved to be more of a hassle than simply reimplementing
 //! everything myself.
 // TODO: I shouldn't need either of those, in an ideal world.
-#![feature(asm, proc_macro, universal_impl_trait, cfg_target_vendor, global_asm, unicode, ptr_internals, repr_transparent, naked_functions, core_intrinsics)]
+#![feature(asm, proc_macro, universal_impl_trait, cfg_target_vendor, global_asm, unicode, ptr_internals, repr_transparent, naked_functions, alloc, core_intrinsics)]
 #![cfg_attr(feature = "crt0", feature(lang_items, compiler_builtins_lib))]
 #![no_std]
 
@@ -32,6 +32,7 @@ extern crate failure;
 //extern crate bitfield_register_macro;
 
 extern crate bit_field;
+extern crate alloc;
 
 #[macro_use]
 extern crate static_assertions;

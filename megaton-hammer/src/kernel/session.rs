@@ -13,9 +13,8 @@ impl Session {
     }
     // TODO: This is basically CMIF, instead of being a true low-level session.
     pub fn send<T: Clone, Y: Clone>(&self, req: Request<T>) -> Result<Response<Y>> {
-        let mut tls = TlsStruct::borrow_mut();
-        let ipc_buf = &mut tls.ipc_buf;
-        req.pack(ipc_buf);
+        let mut ipc_buf = TlsStruct::borrow_ipc_mut();
+        req.pack(&mut *ipc_buf);
         let err = unsafe { send_sync_request((self.0).0) };
         if err != 0 {
             return Err(Error(err));

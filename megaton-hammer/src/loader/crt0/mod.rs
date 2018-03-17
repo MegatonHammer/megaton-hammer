@@ -109,8 +109,11 @@ unsafe extern fn megaton_start(config: *mut LoaderConfigEntry, _thread_handle: u
         return err;
     }
 
-
     // TODO: Might want to run init_array 👀
+
+    // Initialize the main thread's context.
+    use tls;
+    tls::TlsStruct::init();
 
     extern {
         fn main(argc: isize, argv: *const *const u8) -> i32;

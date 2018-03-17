@@ -31,9 +31,10 @@ pub enum HeapStrategy{
 
 /// The allocator should use this to figure out where to get its heap from.
 pub fn acquire_heap_strategy() -> Option<HeapStrategy> {
+    // Avoid panicking here as much as possible. We're called with locks held.
     match LOADER.try() {
         Some(x) => x.override_heap.lock().take(),
-        None => None /* TODO: Panic. TBH.*/
+        None => None
     }
 }
 
