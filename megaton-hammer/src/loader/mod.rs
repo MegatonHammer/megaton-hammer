@@ -22,7 +22,8 @@ use arrayvec::ArrayVec;
 use spin::Mutex;
 use core::ptr::Unique;
 
-struct LoaderConfig {
+#[doc(hidden)]
+pub struct LoaderConfig {
     main_thread: u32,
     override_heap: Mutex<Option<HeapStrategy>>,
     override_services: ArrayVec<[(&'static str, u32); 32]>,
