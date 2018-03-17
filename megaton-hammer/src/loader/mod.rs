@@ -8,6 +8,10 @@
 //! `init_loader` with the LoaderConfigEntry pointer. Libraries and homebrew can
 //! then use the provided getters to access the various configuration options.
 
+// I am a terrible human being. But I *swear* it's safe. The only extern static
+// should be LOADER.
+#![allow(safe_extern_statics)]
+
 #[doc(hidden)]
 pub mod crt0;
 
@@ -64,7 +68,14 @@ impl ::core::fmt::Write for Logger {
 use spin::Once;
 
 // TODO: For fuck's sake I just want interior mutability.
+#[cfg(feature = "std")]
+#[no_mangle]
 static LOADER: Once<LoaderConfig> = Once::new();
+
+#[cfg(not(feature = "std"))]
+extern "C" {
+    static LOADER: Once<LoaderConfig>;
+}
 
 #[repr(C)]
 #[doc(hidden)]
