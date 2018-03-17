@@ -47,7 +47,7 @@ static mut TLS: TlsStruct = TlsStruct {
 
 #[derive(Debug)]
 pub struct ThreadCtx {
-    locals: RefCell<BTreeMap<usize, *mut u8>>
+    pub locals: RefCell<BTreeMap<usize, *mut u8>>
 }
 
 /// The TLS buffer can be accessed through the tpidrro_el0 ARM system register.
