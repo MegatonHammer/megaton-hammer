@@ -1,9 +1,10 @@
-#![no_std]
+//#![no_std]
 
 extern crate megaton_hammer;
 extern crate megaton_ipc;
 
-use core::fmt::Write;
+use std as core;
+use std::fmt::Write;
 use megaton_ipc::nn::socket::BsdBufferConfig;
 use megaton_hammer::kernel::{svc, KObject};
 

@@ -4,5 +4,5 @@ version = "0.1.0"
 authors = ["roblabla <unfiltered@roblab.la>"]
 
 [dependencies]
-megaton-hammer = { path = "../megaton-hammer", features = ["crt0"] }
+megaton-hammer = { path = "../megaton-hammer"  }
 megaton-ipc = { path = "../megaton-ipc" }
