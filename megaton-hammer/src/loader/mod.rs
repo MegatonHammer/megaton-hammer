@@ -12,6 +12,7 @@
 // should be LOADER.
 #![allow(safe_extern_statics)]
 
+#[cfg(any(feature = "crt0", feature = "std"))]
 #[doc(hidden)]
 pub mod crt0;
 
