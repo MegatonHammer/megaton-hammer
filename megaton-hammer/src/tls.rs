@@ -118,7 +118,7 @@ impl TlsStruct {
     pub fn borrow_ipc_mut() -> IpcBufferRefMut {
         unsafe {
             let tls = get_tls_space();
-            if (*tls).ipc_borrowed == false {
+            if (*tls).ipc_borrowed {
                 panic!("Already mutably borrowed");
             } else {
                 (*tls).ipc_borrowed = true;
