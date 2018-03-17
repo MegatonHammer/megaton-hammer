@@ -70,8 +70,9 @@ use spin::Once;
 
 // TODO: For fuck's sake I just want interior mutability.
 #[cfg(feature = "std")]
+#[doc(hidden)]
 #[no_mangle]
-static LOADER: Once<LoaderConfig> = Once::new();
+pub static LOADER: Once<LoaderConfig> = Once::new();
 
 #[cfg(not(feature = "std"))]
 extern "C" {
