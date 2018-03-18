@@ -21,12 +21,14 @@ extern crate core_io as io;
 use arrayvec::ArrayVec;
 use spin::Mutex;
 use core::ptr::Unique;
+use core::mem::ManuallyDrop;
+use kernel::{FromKObject, Session, KObject};
 
 #[doc(hidden)]
 pub struct LoaderConfig {
     main_thread: u32,
     override_heap: Mutex<Option<HeapStrategy>>,
-    override_services: ArrayVec<[(&'static str, u32); 32]>,
+    override_services: ArrayVec<[(u64, u32); 32]>,
     log: Option<Mutex<io::Cursor<&'static mut [u8]>>>
 }
 
@@ -42,6 +44,22 @@ pub fn acquire_heap_strategy() -> Option<HeapStrategy> {
         Some(x) => x.override_heap.lock().take(),
         None => None
     }
+}
+
+pub fn get_override_service(service_name: [u8; 8]) -> Option<ManuallyDrop<Session>> {
+    let loader = match LOADER.try() {
+        Some(loader) => loader,
+        None => return None
+    };
+    let service_name : u64 = unsafe { ::core::mem::transmute(service_name) };
+    for &(cur_service_name, service) in loader.override_services.iter() {
+        if cur_service_name == service_name {
+            unsafe {
+                return Some(ManuallyDrop::new(Session::from_kobject(KObject::new(service))));
+            }
+        }
+    }
+    None
 }
 
 pub struct Logger;
@@ -128,6 +146,9 @@ pub unsafe fn init_loader(mut entry: *mut LoaderConfigEntry) -> Result<(), i32> 
                 LoaderConfigTag::END_OF_LIST => break,
                 LoaderConfigTag::LOG => {
                     config.log = Some(Mutex::new(io::Cursor::new(slice::from_raw_parts_mut((*entry).data.0 as _, (*entry).data.1 as _))));
+                },
+                LoaderConfigTag::OVERRIDE_SERVICE => {
+                    config.override_services.push(((*entry).data.0, (*entry).data.1 as u32));
                 },
                 LoaderConfigTag::MAIN_THREAD_HANDLE => config.main_thread = (*entry).data.0 as u32,
                 LoaderConfigTag::OVERRIDE_HEAP =>
