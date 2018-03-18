@@ -1,17 +1,28 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
+use alloc::arc::Arc;
 
 #[derive(Debug)]
 pub struct IHtcsManager(Session);
 
 impl IHtcsManager {
-	pub fn new() -> Result<IHtcsManager> {
+	pub fn new() -> Result<Arc<IHtcsManager>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IHtcsManager>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
 		use nn::sm::detail::IUserInterface;
 
 		let sm = IUserInterface::new()?;
-		let r = sm.get_service(*b"htcs\0\0\0\0").map(|s| unsafe { IHtcsManager::from_kobject(s) });
+
+		let r = sm.get_service(*b"htcs\0\0\0\0").map(|s| Arc::new(unsafe { IHtcsManager::from_kobject(s) }));
 		if let Ok(service) = r {
+			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r

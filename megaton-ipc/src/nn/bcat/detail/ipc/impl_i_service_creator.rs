@@ -1,29 +1,46 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
+use alloc::arc::Arc;
 
 #[derive(Debug)]
 pub struct IServiceCreator(Session);
 
 impl IServiceCreator {
-	pub fn new() -> Result<IServiceCreator> {
+	pub fn new() -> Result<Arc<IServiceCreator>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IServiceCreator>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
 		use nn::sm::detail::IUserInterface;
 
 		let sm = IUserInterface::new()?;
-		let r = sm.get_service(*b"bcat:a\0\0").map(|s| unsafe { IServiceCreator::from_kobject(s) });
+
+		let r = sm.get_service(*b"bcat:a\0\0").map(|s| Arc::new(unsafe { IServiceCreator::from_kobject(s) }));
 		if let Ok(service) = r {
+			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
-		let r = sm.get_service(*b"bcat:m\0\0").map(|s| unsafe { IServiceCreator::from_kobject(s) });
+
+		let r = sm.get_service(*b"bcat:m\0\0").map(|s| Arc::new(unsafe { IServiceCreator::from_kobject(s) }));
 		if let Ok(service) = r {
+			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
-		let r = sm.get_service(*b"bcat:u\0\0").map(|s| unsafe { IServiceCreator::from_kobject(s) });
+
+		let r = sm.get_service(*b"bcat:u\0\0").map(|s| Arc::new(unsafe { IServiceCreator::from_kobject(s) }));
 		if let Ok(service) = r {
+			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
-		let r = sm.get_service(*b"bcat:s\0\0").map(|s| unsafe { IServiceCreator::from_kobject(s) });
+
+		let r = sm.get_service(*b"bcat:s\0\0").map(|s| Arc::new(unsafe { IServiceCreator::from_kobject(s) }));
 		if let Ok(service) = r {
+			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r

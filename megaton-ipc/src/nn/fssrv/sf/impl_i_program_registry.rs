@@ -1,17 +1,28 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
+use alloc::arc::Arc;
 
 #[derive(Debug)]
 pub struct IProgramRegistry(Session);
 
 impl IProgramRegistry {
-	pub fn new() -> Result<IProgramRegistry> {
+	pub fn new() -> Result<Arc<IProgramRegistry>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IProgramRegistry>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
 		use nn::sm::detail::IUserInterface;
 
 		let sm = IUserInterface::new()?;
-		let r = sm.get_service(*b"fsp-pr\0\0").map(|s| unsafe { IProgramRegistry::from_kobject(s) });
+
+		let r = sm.get_service(*b"fsp-pr\0\0").map(|s| Arc::new(unsafe { IProgramRegistry::from_kobject(s) }));
 		if let Ok(service) = r {
+			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r

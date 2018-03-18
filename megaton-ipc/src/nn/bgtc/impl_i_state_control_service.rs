@@ -1,17 +1,28 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
+use alloc::arc::Arc;
 
 #[derive(Debug)]
 pub struct IStateControlService(Session);
 
 impl IStateControlService {
-	pub fn new() -> Result<IStateControlService> {
+	pub fn new() -> Result<Arc<IStateControlService>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IStateControlService>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
 		use nn::sm::detail::IUserInterface;
 
 		let sm = IUserInterface::new()?;
-		let r = sm.get_service(*b"bgtc:sc\0").map(|s| unsafe { IStateControlService::from_kobject(s) });
+
+		let r = sm.get_service(*b"bgtc:sc\0").map(|s| Arc::new(unsafe { IStateControlService::from_kobject(s) }));
 		if let Ok(service) = r {
+			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r

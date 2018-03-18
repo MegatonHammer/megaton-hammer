@@ -1,17 +1,28 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
+use alloc::arc::Arc;
 
 #[derive(Debug)]
 pub struct ISocketManager(Session);
 
 impl ISocketManager {
-	pub fn new() -> Result<ISocketManager> {
+	pub fn new() -> Result<Arc<ISocketManager>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<ISocketManager>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
 		use nn::sm::detail::IUserInterface;
 
 		let sm = IUserInterface::new()?;
-		let r = sm.get_service(*b"wlan:soc").map(|s| unsafe { ISocketManager::from_kobject(s) });
+
+		let r = sm.get_service(*b"wlan:soc").map(|s| Arc::new(unsafe { ISocketManager::from_kobject(s) }));
 		if let Ok(service) = r {
+			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r

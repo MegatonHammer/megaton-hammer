@@ -1,17 +1,28 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
+use alloc::arc::Arc;
 
 #[derive(Debug)]
 pub struct IPdManager(Session);
 
 impl IPdManager {
-	pub fn new() -> Result<IPdManager> {
+	pub fn new() -> Result<Arc<IPdManager>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IPdManager>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
 		use nn::sm::detail::IUserInterface;
 
 		let sm = IUserInterface::new()?;
-		let r = sm.get_service(*b"usb:pd\0\0").map(|s| unsafe { IPdManager::from_kobject(s) });
+
+		let r = sm.get_service(*b"usb:pd\0\0").map(|s| Arc::new(unsafe { IPdManager::from_kobject(s) }));
 		if let Ok(service) = r {
+			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r

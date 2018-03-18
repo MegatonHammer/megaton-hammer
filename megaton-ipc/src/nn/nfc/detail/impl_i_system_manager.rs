@@ -1,17 +1,28 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
+use alloc::arc::Arc;
 
 #[derive(Debug)]
 pub struct ISystemManager(Session);
 
 impl ISystemManager {
-	pub fn new() -> Result<ISystemManager> {
+	pub fn new() -> Result<Arc<ISystemManager>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<ISystemManager>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
 		use nn::sm::detail::IUserInterface;
 
 		let sm = IUserInterface::new()?;
-		let r = sm.get_service(*b"nfc:sys\0").map(|s| unsafe { ISystemManager::from_kobject(s) });
+
+		let r = sm.get_service(*b"nfc:sys\0").map(|s| Arc::new(unsafe { ISystemManager::from_kobject(s) }));
 		if let Ok(service) = r {
+			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r

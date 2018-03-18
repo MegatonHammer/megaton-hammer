@@ -1,21 +1,34 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
+use alloc::arc::Arc;
 
 #[derive(Debug)]
 pub struct IClient(Session);
 
 impl IClient {
-	pub fn new() -> Result<IClient> {
+	pub fn new() -> Result<Arc<IClient>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IClient>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
 		use nn::sm::detail::IUserInterface;
 
 		let sm = IUserInterface::new()?;
-		let r = sm.get_service(*b"bsd:u\0\0\0").map(|s| unsafe { IClient::from_kobject(s) });
+
+		let r = sm.get_service(*b"bsd:u\0\0\0").map(|s| Arc::new(unsafe { IClient::from_kobject(s) }));
 		if let Ok(service) = r {
+			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
-		let r = sm.get_service(*b"bsd:s\0\0\0").map(|s| unsafe { IClient::from_kobject(s) });
+
+		let r = sm.get_service(*b"bsd:s\0\0\0").map(|s| Arc::new(unsafe { IClient::from_kobject(s) }));
 		if let Ok(service) = r {
+			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r

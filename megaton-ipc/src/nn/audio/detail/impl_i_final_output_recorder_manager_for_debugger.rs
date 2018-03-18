@@ -1,17 +1,28 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
+use alloc::arc::Arc;
 
 #[derive(Debug)]
 pub struct IFinalOutputRecorderManagerForDebugger(Session);
 
 impl IFinalOutputRecorderManagerForDebugger {
-	pub fn new() -> Result<IFinalOutputRecorderManagerForDebugger> {
+	pub fn new() -> Result<Arc<IFinalOutputRecorderManagerForDebugger>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IFinalOutputRecorderManagerForDebugger>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
 		use nn::sm::detail::IUserInterface;
 
 		let sm = IUserInterface::new()?;
-		let r = sm.get_service(*b"audrec:d").map(|s| unsafe { IFinalOutputRecorderManagerForDebugger::from_kobject(s) });
+
+		let r = sm.get_service(*b"audrec:d").map(|s| Arc::new(unsafe { IFinalOutputRecorderManagerForDebugger::from_kobject(s) }));
 		if let Ok(service) = r {
+			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r

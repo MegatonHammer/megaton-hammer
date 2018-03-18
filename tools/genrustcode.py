@@ -339,9 +339,13 @@ if os.path.exists(os.path.join(prog_args.path, "src")):
 
 mkdir_p(os.path.join(prog_args.path, "src"))
 with open(os.path.join(prog_args.path, "src", "lib.rs"), 'a') as f:
-	print("#![feature(i128_type)]", file=f)
+	print("#![feature(alloc, i128_type)]", file=f)
 	print("#![no_std]", file=f)
 	print("extern crate megaton_hammer;", file=f)
+	print("extern crate spin;", file=f)
+	print("extern crate alloc;", file=f)
+	print("#[macro_use]", file=f)
+	print("extern crate lazy_static;", file=f)
 	print("", file=f)
 
 try:
@@ -375,6 +379,8 @@ for name, cmds in ifaces.items():
 		# Use statements
 		print("use megaton_hammer::kernel::{FromKObject, KObject, Session};", file=f)
 		print("use megaton_hammer::error::Result;", file=f)
+		if name in services:
+			print("use alloc::arc::Arc;", file=f)
 		# Check if we'll need to send/receive a buffer
 
 		print("", file=f)
@@ -383,28 +389,44 @@ for name, cmds in ifaces.items():
 		print("", file=f)
 		if name in services:
 			print("impl %s {" % ifacename, file=f)
-			print("\tpub fn new() -> Result<%s> {" % ifacename, file=f)
+			print("\tpub fn new() -> Result<Arc<%s>> {" % ifacename, file=f)
+			print("\t\tuse alloc::arc::Weak;", file=f)
+			print("\t\tuse spin::Mutex;", file=f)
+			print("\t\tlazy_static! {", file=f)
+			print("\t\t\tstatic ref HANDLE : Mutex<Weak<%s>> = Mutex::new(Weak::new());" % ifacename, file=f)
+			print("\t\t}", file=f)
+			print("\t\tif let Some(hnd) = HANDLE.lock().upgrade() {", file=f)
+			print("\t\t\treturn Ok(hnd)", file=f)
+			print("\t\t}", file=f)
+
 			# sm: has a different way to get acquired.
 			if name == "nn::sm::detail::IUserInterface":
 				# TODO: Call Initialize
-				print("\t\tuse megaton_hammer::kernel::svc;", file=f);
-				print("\t\tuse megaton_hammer::error::Error;", file=f);
+				print("\t\tuse megaton_hammer::kernel::svc;", file=f)
+				print("\t\tuse megaton_hammer::error::Error;", file=f)
 				print("", file=f)
 				print("\t\tlet mut session = 0;", file=f)
 				print("\t\tlet r = unsafe { svc::connect_to_named_port(&mut session, \"sm:\".as_ptr()) };", file=f)
 				print("\t\tif r != 0 {", file=f)
 				print("\t\t\treturn Err(Error(r))", file=f)
 				print("\t\t} else {", file=f)
-				print("\t\t\treturn Ok(unsafe { %s::from_kobject(KObject::new(session)) });" % ifacename, file=f)
+				print("\t\t\tlet ret = Arc::new(unsafe { %s::from_kobject(KObject::new(session)) });" % ifacename, file=f)
+				print("\t\t\t*HANDLE.lock() = Arc::downgrade(&ret);", file=f)
+				print("\t\t\treturn Ok(ret);", file=f)
 				print("\t\t}", file=f)
-			elif name in services:
+			else:
 				print("\t\tuse nn::sm::detail::IUserInterface;", file=f)
 				print("", file=f)
 				print("\t\tlet sm = IUserInterface::new()?;", file=f)
 				for s in services[name]:
 					s_name = s + ("\\0" * (8 - len(s)))
-					print("\t\tlet r = sm.get_service(*b\"%s\").map(|s| unsafe { %s::from_kobject(s) });" % (s_name, ifacename), file=f)
+					#print("\t\tif let Some(hnd) = megaton_hammer::loader::get_override_service(*b\"%s\") {" % s_name, file=f)
+					#print("\t\t\treturn Ok(", file=f)
+					#print("\t\t}", file=f)
+					print("", file=f)
+					print("\t\tlet r = sm.get_service(*b\"%s\").map(|s| Arc::new(unsafe { %s::from_kobject(s) }));" % (s_name, ifacename), file=f)
 					print("\t\tif let Ok(service) = r {", file=f)
+					print("\t\t\t*HANDLE.lock() = Arc::downgrade(&service);", file=f)
 					print("\t\t\treturn Ok(service);", file=f)
 					print("\t\t}", file=f)
 				print("\t\tr", file=f)

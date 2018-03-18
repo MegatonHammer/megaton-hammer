@@ -1,25 +1,40 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
+use alloc::arc::Arc;
 
 #[derive(Debug)]
 pub struct IStaticService(Session);
 
 impl IStaticService {
-	pub fn new() -> Result<IStaticService> {
+	pub fn new() -> Result<Arc<IStaticService>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IStaticService>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
 		use nn::sm::detail::IUserInterface;
 
 		let sm = IUserInterface::new()?;
-		let r = sm.get_service(*b"nifm:a\0\0").map(|s| unsafe { IStaticService::from_kobject(s) });
+
+		let r = sm.get_service(*b"nifm:a\0\0").map(|s| Arc::new(unsafe { IStaticService::from_kobject(s) }));
 		if let Ok(service) = r {
+			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
-		let r = sm.get_service(*b"nifm:s\0\0").map(|s| unsafe { IStaticService::from_kobject(s) });
+
+		let r = sm.get_service(*b"nifm:s\0\0").map(|s| Arc::new(unsafe { IStaticService::from_kobject(s) }));
 		if let Ok(service) = r {
+			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
-		let r = sm.get_service(*b"nifm:u\0\0").map(|s| unsafe { IStaticService::from_kobject(s) });
+
+		let r = sm.get_service(*b"nifm:u\0\0").map(|s| Arc::new(unsafe { IStaticService::from_kobject(s) }));
 		if let Ok(service) = r {
+			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r

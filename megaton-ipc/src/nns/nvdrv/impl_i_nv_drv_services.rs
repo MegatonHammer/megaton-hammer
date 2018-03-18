@@ -1,29 +1,46 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
+use alloc::arc::Arc;
 
 #[derive(Debug)]
 pub struct INvDrvServices(Session);
 
 impl INvDrvServices {
-	pub fn new() -> Result<INvDrvServices> {
+	pub fn new() -> Result<Arc<INvDrvServices>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<INvDrvServices>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
 		use nn::sm::detail::IUserInterface;
 
 		let sm = IUserInterface::new()?;
-		let r = sm.get_service(*b"nvdrv:s\0").map(|s| unsafe { INvDrvServices::from_kobject(s) });
+
+		let r = sm.get_service(*b"nvdrv:s\0").map(|s| Arc::new(unsafe { INvDrvServices::from_kobject(s) }));
 		if let Ok(service) = r {
+			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
-		let r = sm.get_service(*b"nvdrv:t\0").map(|s| unsafe { INvDrvServices::from_kobject(s) });
+
+		let r = sm.get_service(*b"nvdrv:t\0").map(|s| Arc::new(unsafe { INvDrvServices::from_kobject(s) }));
 		if let Ok(service) = r {
+			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
-		let r = sm.get_service(*b"nvdrv:a\0").map(|s| unsafe { INvDrvServices::from_kobject(s) });
+
+		let r = sm.get_service(*b"nvdrv:a\0").map(|s| Arc::new(unsafe { INvDrvServices::from_kobject(s) }));
 		if let Ok(service) = r {
+			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
-		let r = sm.get_service(*b"nvdrv\0\0\0").map(|s| unsafe { INvDrvServices::from_kobject(s) });
+
+		let r = sm.get_service(*b"nvdrv\0\0\0").map(|s| Arc::new(unsafe { INvDrvServices::from_kobject(s) }));
 		if let Ok(service) = r {
+			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r

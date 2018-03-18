@@ -1,17 +1,28 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
+use alloc::arc::Arc;
 
 #[derive(Debug)]
 pub struct IAudioOutManager(Session);
 
 impl IAudioOutManager {
-	pub fn new() -> Result<IAudioOutManager> {
+	pub fn new() -> Result<Arc<IAudioOutManager>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IAudioOutManager>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
 		use nn::sm::detail::IUserInterface;
 
 		let sm = IUserInterface::new()?;
-		let r = sm.get_service(*b"audout:u").map(|s| unsafe { IAudioOutManager::from_kobject(s) });
+
+		let r = sm.get_service(*b"audout:u").map(|s| Arc::new(unsafe { IAudioOutManager::from_kobject(s) }));
 		if let Ok(service) = r {
+			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r

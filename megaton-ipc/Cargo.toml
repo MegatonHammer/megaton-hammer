@@ -5,6 +5,8 @@ authors = ["roblabla <unfiltered@roblab.la>"]
 
 [dependencies]
 megaton-hammer = { path = "../megaton-hammer" }
+lazy_static = "1.0.0"
+spin = "0.4.7"
 
 [features]
 "switch-1.0.0" = []

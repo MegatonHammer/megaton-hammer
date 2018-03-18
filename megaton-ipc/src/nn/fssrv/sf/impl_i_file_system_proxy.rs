@@ -1,17 +1,28 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
+use alloc::arc::Arc;
 
 #[derive(Debug)]
 pub struct IFileSystemProxy(Session);
 
 impl IFileSystemProxy {
-	pub fn new() -> Result<IFileSystemProxy> {
+	pub fn new() -> Result<Arc<IFileSystemProxy>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IFileSystemProxy>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
 		use nn::sm::detail::IUserInterface;
 
 		let sm = IUserInterface::new()?;
-		let r = sm.get_service(*b"fsp-srv\0").map(|s| unsafe { IFileSystemProxy::from_kobject(s) });
+
+		let r = sm.get_service(*b"fsp-srv\0").map(|s| Arc::new(unsafe { IFileSystemProxy::from_kobject(s) }));
 		if let Ok(service) = r {
+			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r

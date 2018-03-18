@@ -1,12 +1,21 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
+use alloc::arc::Arc;
 
 #[derive(Debug)]
 pub struct IUserInterface(Session);
 
 impl IUserInterface {
-	pub fn new() -> Result<IUserInterface> {
+	pub fn new() -> Result<Arc<IUserInterface>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IUserInterface>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
 		use megaton_hammer::kernel::svc;
 		use megaton_hammer::error::Error;
 
@@ -15,7 +24,9 @@ impl IUserInterface {
 		if r != 0 {
 			return Err(Error(r))
 		} else {
-			return Ok(unsafe { IUserInterface::from_kobject(KObject::new(session)) });
+			let ret = Arc::new(unsafe { IUserInterface::from_kobject(KObject::new(session)) });
+			*HANDLE.lock() = Arc::downgrade(&ret);
+			return Ok(ret);
 		}
 	}
 }

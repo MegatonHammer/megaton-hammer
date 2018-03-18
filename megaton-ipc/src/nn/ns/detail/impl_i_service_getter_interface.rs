@@ -1,33 +1,52 @@
 
 use megaton_hammer::kernel::{FromKObject, KObject, Session};
 use megaton_hammer::error::Result;
+use alloc::arc::Arc;
 
 #[derive(Debug)]
 pub struct IServiceGetterInterface(Session);
 
 impl IServiceGetterInterface {
-	pub fn new() -> Result<IServiceGetterInterface> {
+	pub fn new() -> Result<Arc<IServiceGetterInterface>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IServiceGetterInterface>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
 		use nn::sm::detail::IUserInterface;
 
 		let sm = IUserInterface::new()?;
-		let r = sm.get_service(*b"ns:rid\0\0").map(|s| unsafe { IServiceGetterInterface::from_kobject(s) });
+
+		let r = sm.get_service(*b"ns:rid\0\0").map(|s| Arc::new(unsafe { IServiceGetterInterface::from_kobject(s) }));
 		if let Ok(service) = r {
+			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
-		let r = sm.get_service(*b"ns:web\0\0").map(|s| unsafe { IServiceGetterInterface::from_kobject(s) });
+
+		let r = sm.get_service(*b"ns:web\0\0").map(|s| Arc::new(unsafe { IServiceGetterInterface::from_kobject(s) }));
 		if let Ok(service) = r {
+			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
-		let r = sm.get_service(*b"ns:ec\0\0\0").map(|s| unsafe { IServiceGetterInterface::from_kobject(s) });
+
+		let r = sm.get_service(*b"ns:ec\0\0\0").map(|s| Arc::new(unsafe { IServiceGetterInterface::from_kobject(s) }));
 		if let Ok(service) = r {
+			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
-		let r = sm.get_service(*b"ns:am2\0\0").map(|s| unsafe { IServiceGetterInterface::from_kobject(s) });
+
+		let r = sm.get_service(*b"ns:am2\0\0").map(|s| Arc::new(unsafe { IServiceGetterInterface::from_kobject(s) }));
 		if let Ok(service) = r {
+			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
-		let r = sm.get_service(*b"ns:rt\0\0\0").map(|s| unsafe { IServiceGetterInterface::from_kobject(s) });
+
+		let r = sm.get_service(*b"ns:rt\0\0\0").map(|s| Arc::new(unsafe { IServiceGetterInterface::from_kobject(s) }));
 		if let Ok(service) = r {
+			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
