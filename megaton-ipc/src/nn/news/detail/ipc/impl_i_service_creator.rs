@@ -10,20 +10,36 @@ impl IServiceCreator {
 	pub fn new() -> Result<Arc<IServiceCreator>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
+		use core::mem::ManuallyDrop;
 		lazy_static! {
 			static ref HANDLE : Mutex<Weak<IServiceCreator>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
 		}
+
 		use nn::sm::detail::IUserInterface;
 
 		let sm = IUserInterface::new()?;
+
+		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"news:a\0\0") {
+			let ret = Arc::new(IServiceCreator(ManuallyDrop::into_inner(hnd)));
+			::core::mem::forget(ret.clone());
+			*HANDLE.lock() = Arc::downgrade(&ret);
+			return Ok(ret);
+		}
 
 		let r = sm.get_service(*b"news:a\0\0").map(|s| Arc::new(unsafe { IServiceCreator::from_kobject(s) }));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
+		}
+
+		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"news:c\0\0") {
+			let ret = Arc::new(IServiceCreator(ManuallyDrop::into_inner(hnd)));
+			::core::mem::forget(ret.clone());
+			*HANDLE.lock() = Arc::downgrade(&ret);
+			return Ok(ret);
 		}
 
 		let r = sm.get_service(*b"news:c\0\0").map(|s| Arc::new(unsafe { IServiceCreator::from_kobject(s) }));
@@ -32,16 +48,37 @@ impl IServiceCreator {
 			return Ok(service);
 		}
 
+		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"news:m\0\0") {
+			let ret = Arc::new(IServiceCreator(ManuallyDrop::into_inner(hnd)));
+			::core::mem::forget(ret.clone());
+			*HANDLE.lock() = Arc::downgrade(&ret);
+			return Ok(ret);
+		}
+
 		let r = sm.get_service(*b"news:m\0\0").map(|s| Arc::new(unsafe { IServiceCreator::from_kobject(s) }));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 
+		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"news:p\0\0") {
+			let ret = Arc::new(IServiceCreator(ManuallyDrop::into_inner(hnd)));
+			::core::mem::forget(ret.clone());
+			*HANDLE.lock() = Arc::downgrade(&ret);
+			return Ok(ret);
+		}
+
 		let r = sm.get_service(*b"news:p\0\0").map(|s| Arc::new(unsafe { IServiceCreator::from_kobject(s) }));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
+		}
+
+		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"news:v\0\0") {
+			let ret = Arc::new(IServiceCreator(ManuallyDrop::into_inner(hnd)));
+			::core::mem::forget(ret.clone());
+			*HANDLE.lock() = Arc::downgrade(&ret);
+			return Ok(ret);
 		}
 
 		let r = sm.get_service(*b"news:v\0\0").map(|s| Arc::new(unsafe { IServiceCreator::from_kobject(s) }));

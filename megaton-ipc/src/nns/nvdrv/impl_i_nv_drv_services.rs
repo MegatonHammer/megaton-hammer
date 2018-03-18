@@ -10,20 +10,36 @@ impl INvDrvServices {
 	pub fn new() -> Result<Arc<INvDrvServices>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
+		use core::mem::ManuallyDrop;
 		lazy_static! {
 			static ref HANDLE : Mutex<Weak<INvDrvServices>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
 		}
+
 		use nn::sm::detail::IUserInterface;
 
 		let sm = IUserInterface::new()?;
+
+		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"nvdrv:s\0") {
+			let ret = Arc::new(INvDrvServices(ManuallyDrop::into_inner(hnd)));
+			::core::mem::forget(ret.clone());
+			*HANDLE.lock() = Arc::downgrade(&ret);
+			return Ok(ret);
+		}
 
 		let r = sm.get_service(*b"nvdrv:s\0").map(|s| Arc::new(unsafe { INvDrvServices::from_kobject(s) }));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
+		}
+
+		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"nvdrv:t\0") {
+			let ret = Arc::new(INvDrvServices(ManuallyDrop::into_inner(hnd)));
+			::core::mem::forget(ret.clone());
+			*HANDLE.lock() = Arc::downgrade(&ret);
+			return Ok(ret);
 		}
 
 		let r = sm.get_service(*b"nvdrv:t\0").map(|s| Arc::new(unsafe { INvDrvServices::from_kobject(s) }));
@@ -32,10 +48,24 @@ impl INvDrvServices {
 			return Ok(service);
 		}
 
+		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"nvdrv:a\0") {
+			let ret = Arc::new(INvDrvServices(ManuallyDrop::into_inner(hnd)));
+			::core::mem::forget(ret.clone());
+			*HANDLE.lock() = Arc::downgrade(&ret);
+			return Ok(ret);
+		}
+
 		let r = sm.get_service(*b"nvdrv:a\0").map(|s| Arc::new(unsafe { INvDrvServices::from_kobject(s) }));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
+		}
+
+		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"nvdrv\0\0\0") {
+			let ret = Arc::new(INvDrvServices(ManuallyDrop::into_inner(hnd)));
+			::core::mem::forget(ret.clone());
+			*HANDLE.lock() = Arc::downgrade(&ret);
+			return Ok(ret);
 		}
 
 		let r = sm.get_service(*b"nvdrv\0\0\0").map(|s| Arc::new(unsafe { INvDrvServices::from_kobject(s) }));

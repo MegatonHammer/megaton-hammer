@@ -10,14 +10,23 @@ impl IUserInterface {
 	pub fn new() -> Result<Arc<IUserInterface>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
+		use core::mem::ManuallyDrop;
 		lazy_static! {
 			static ref HANDLE : Mutex<Weak<IUserInterface>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
 		}
+
 		use megaton_hammer::kernel::svc;
 		use megaton_hammer::error::Error;
+
+		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"audren:u") {
+			let ret = Arc::new(IUserInterface(ManuallyDrop::into_inner(hnd)));
+			::core::mem::forget(ret.clone());
+			*HANDLE.lock() = Arc::downgrade(&ret);
+			return Ok(ret);
+		}
 
 		let mut session = 0;
 		let r = unsafe { svc::connect_to_named_port(&mut session, "sm:".as_ptr()) };

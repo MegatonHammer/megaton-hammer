@@ -10,15 +10,24 @@ impl IMonitorServiceCreator {
 	pub fn new() -> Result<Arc<IMonitorServiceCreator>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
+		use core::mem::ManuallyDrop;
 		lazy_static! {
 			static ref HANDLE : Mutex<Weak<IMonitorServiceCreator>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
 		}
+
 		use nn::sm::detail::IUserInterface;
 
 		let sm = IUserInterface::new()?;
+
+		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"ldn:m\0\0\0") {
+			let ret = Arc::new(IMonitorServiceCreator(ManuallyDrop::into_inner(hnd)));
+			::core::mem::forget(ret.clone());
+			*HANDLE.lock() = Arc::downgrade(&ret);
+			return Ok(ret);
+		}
 
 		let r = sm.get_service(*b"ldn:m\0\0\0").map(|s| Arc::new(unsafe { IMonitorServiceCreator::from_kobject(s) }));
 		if let Ok(service) = r {

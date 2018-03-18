@@ -10,15 +10,24 @@ impl IPdCradleManager {
 	pub fn new() -> Result<Arc<IPdCradleManager>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
+		use core::mem::ManuallyDrop;
 		lazy_static! {
 			static ref HANDLE : Mutex<Weak<IPdCradleManager>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
 		}
+
 		use nn::sm::detail::IUserInterface;
 
 		let sm = IUserInterface::new()?;
+
+		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"usb:pd:c") {
+			let ret = Arc::new(IPdCradleManager(ManuallyDrop::into_inner(hnd)));
+			::core::mem::forget(ret.clone());
+			*HANDLE.lock() = Arc::downgrade(&ret);
+			return Ok(ret);
+		}
 
 		let r = sm.get_service(*b"usb:pd:c").map(|s| Arc::new(unsafe { IPdCradleManager::from_kobject(s) }));
 		if let Ok(service) = r {

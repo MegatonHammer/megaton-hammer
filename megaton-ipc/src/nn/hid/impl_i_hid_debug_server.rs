@@ -10,15 +10,24 @@ impl IHidDebugServer {
 	pub fn new() -> Result<Arc<IHidDebugServer>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
+		use core::mem::ManuallyDrop;
 		lazy_static! {
 			static ref HANDLE : Mutex<Weak<IHidDebugServer>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
 		}
+
 		use nn::sm::detail::IUserInterface;
 
 		let sm = IUserInterface::new()?;
+
+		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"hid:dbg\0") {
+			let ret = Arc::new(IHidDebugServer(ManuallyDrop::into_inner(hnd)));
+			::core::mem::forget(ret.clone());
+			*HANDLE.lock() = Arc::downgrade(&ret);
+			return Ok(ret);
+		}
 
 		let r = sm.get_service(*b"hid:dbg\0").map(|s| Arc::new(unsafe { IHidDebugServer::from_kobject(s) }));
 		if let Ok(service) = r {

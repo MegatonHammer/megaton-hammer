@@ -10,15 +10,24 @@ impl ISharedFontManager {
 	pub fn new() -> Result<Arc<ISharedFontManager>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
+		use core::mem::ManuallyDrop;
 		lazy_static! {
 			static ref HANDLE : Mutex<Weak<ISharedFontManager>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
 		}
+
 		use nn::sm::detail::IUserInterface;
 
 		let sm = IUserInterface::new()?;
+
+		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"pl:u\0\0\0\0") {
+			let ret = Arc::new(ISharedFontManager(ManuallyDrop::into_inner(hnd)));
+			::core::mem::forget(ret.clone());
+			*HANDLE.lock() = Arc::downgrade(&ret);
+			return Ok(ret);
+		}
 
 		let r = sm.get_service(*b"pl:u\0\0\0\0").map(|s| Arc::new(unsafe { ISharedFontManager::from_kobject(s) }));
 		if let Ok(service) = r {
