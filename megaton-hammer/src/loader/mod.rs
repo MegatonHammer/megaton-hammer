@@ -29,6 +29,7 @@ pub struct LoaderConfig {
     main_thread: u32,
     override_heap: Mutex<Option<HeapStrategy>>,
     override_services: ArrayVec<[(u64, u32); 32]>,
+    stdio_sockets: Option<(u32, u32, u32)>,
     log: Option<Mutex<io::Cursor<&'static mut [u8]>>>
 }
 
@@ -62,18 +63,41 @@ pub fn get_override_service(service_name: [u8; 8]) -> Option<ManuallyDrop<Sessio
     None
 }
 
+pub fn get_stdin_socket() -> Option<u32> {
+    LOADER.try()
+        .and_then(|ldr_cfg| (&ldr_cfg.stdio_sockets).as_ref())
+        .map(|&(stdin, _, _)| stdin)
+}
+
+pub fn get_stdout_socket() -> Option<u32> {
+    LOADER.try()
+        .and_then(|ldr_cfg| (&ldr_cfg.stdio_sockets).as_ref())
+        .map(|&(_, stdout, _)| stdout)
+}
+
+pub fn get_stderr_socket() -> Option<u32> {
+    LOADER.try()
+        .and_then(|ldr_cfg| (&ldr_cfg.stdio_sockets).as_ref())
+        .map(|&(_, _, stderr)| stderr)
+}
+
 pub struct Logger;
 
-impl ::core::fmt::Write for Logger {
-    fn write_str(&mut self, s: &str) -> Result<(), ::core::fmt::Error> {
+impl Logger {
+    pub fn write(&self, data: &[u8]) {
         use kernel::svc;
         use loader::io::Write;
 
         if let Some(cursor) = LOADER.try().and_then(|ldr_cfg| (&ldr_cfg.log).as_ref()) {
-            cursor.lock().write(s.as_bytes());
-        } else {
-            unsafe { svc::output_debug_string(s.as_ptr(), s.len()) };
+            cursor.lock().write(data);
         }
+        unsafe { svc::output_debug_string(data.as_ptr(), data.len()) };
+    }
+}
+
+impl ::core::fmt::Write for Logger {
+    fn write_str(&mut self, s: &str) -> Result<(), ::core::fmt::Error> {
+        self.write(s.as_bytes());
         Ok(())
     }
 }
@@ -137,7 +161,8 @@ pub unsafe fn init_loader(mut entry: *mut LoaderConfigEntry) -> Result<(), i32> 
         main_thread: 0,
         override_heap: Mutex::new(Some(HeapStrategy::SetHeapSize)),
         override_services: ArrayVec::new(),
-        log: None
+        log: None,
+        stdio_sockets: None
     };
 
     if !entry.is_null() {
