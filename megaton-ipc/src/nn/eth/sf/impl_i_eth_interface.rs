@@ -44,16 +44,7 @@ impl AsRef<Session> for IEthInterface {
 	}
 }
 impl IEthInterface {
-	pub fn unknown0(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(0)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown1(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -74,16 +65,7 @@ impl IEthInterface {
 		Ok(())
 	}
 
-	pub fn unknown3(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(3)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown4(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -94,16 +76,7 @@ impl IEthInterface {
 		Ok(())
 	}
 
-	pub fn unknown5(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(5)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown5(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for IEthInterface {

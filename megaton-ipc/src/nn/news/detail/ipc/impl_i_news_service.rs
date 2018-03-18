@@ -13,16 +13,7 @@ impl AsRef<Session> for INewsService {
 impl INewsService {
 	// fn unknown10100(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown20100(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown30100(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(30100)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown30100(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown30101(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown30200(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
@@ -35,26 +26,8 @@ impl INewsService {
 	}
 
 	// fn unknown30300(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown30400(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(30400)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown40100(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(40100)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown30400(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown40100(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown40101(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 

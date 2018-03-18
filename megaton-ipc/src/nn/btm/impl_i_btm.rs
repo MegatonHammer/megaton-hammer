@@ -54,56 +54,11 @@ impl IBtm {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown1(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(1)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown2(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(2)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown3(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(3)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown4(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(4)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown5(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(5)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown4(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown5(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown6(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -124,36 +79,9 @@ impl IBtm {
 		Ok(())
 	}
 
-	pub fn unknown8(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(8)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown9(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(9)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown10(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(10)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown8(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown9(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown10(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown11(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown12(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown13(&self, UNKNOWN) -> Result<UNKNOWN>;
@@ -178,26 +106,8 @@ impl IBtm {
 	}
 
 	// fn unknown16(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown17(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(17)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown18(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(18)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown17(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown18(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for IBtm {

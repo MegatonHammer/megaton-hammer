@@ -55,16 +55,7 @@ impl ISocketManager {
 		Ok(())
 	}
 
-	pub fn unknown2(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(2)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown3(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -75,36 +66,9 @@ impl ISocketManager {
 		Ok(())
 	}
 
-	pub fn unknown4(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(4)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown5(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(5)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown6(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(6)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown4(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown5(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown6(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown7(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -125,16 +89,7 @@ impl ISocketManager {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown9(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(9)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown9(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown10(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 

@@ -21,26 +21,8 @@ impl ISystemUpdateControl {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown1(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(1)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown2(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(2)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown3(&self, ) -> Result<u128> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -61,16 +43,7 @@ impl ISystemUpdateControl {
 		Ok(())
 	}
 
-	pub fn unknown5(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(5)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown5(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown6(&self, ) -> Result<u128> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -101,56 +74,11 @@ impl ISystemUpdateControl {
 		Ok(())
 	}
 
-	pub fn unknown9(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(9)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown10(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(10)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown11(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(11)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown12(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(12)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown13(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(13)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown9(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown10(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown11(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown12(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown13(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for ISystemUpdateControl {

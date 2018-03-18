@@ -64,26 +64,8 @@ impl INpnsUser {
 		Ok(())
 	}
 
-	pub fn unknown3(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(3)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown4(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(4)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown4(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown5(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -104,36 +86,9 @@ impl INpnsUser {
 		Ok(res.pop_handle())
 	}
 
-	pub fn unknown21(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(21)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown23(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(23)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown25(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(25)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown21(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown23(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown25(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown101(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -165,16 +120,7 @@ impl INpnsUser {
 	}
 
 	// fn unknown104(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown111(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(111)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown111(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for INpnsUser {

@@ -11,16 +11,7 @@ impl AsRef<Session> for IManager {
 	}
 }
 impl IManager {
-	pub fn unknown0(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(0)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown1(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 

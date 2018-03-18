@@ -44,36 +44,9 @@ impl AsRef<Session> for IContext {
 	}
 }
 impl IContext {
-	pub fn unknown0(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(0)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown1(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(1)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown2(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(2)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown3(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 

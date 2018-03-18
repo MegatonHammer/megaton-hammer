@@ -51,36 +51,9 @@ impl IClientEpSession {
 		Ok(())
 	}
 
-	pub fn unknown4(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(4)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown5(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(5)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown6(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(6)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown4(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown5(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown6(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for IClientEpSession {

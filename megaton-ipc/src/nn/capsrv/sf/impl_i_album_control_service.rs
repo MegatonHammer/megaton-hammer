@@ -120,46 +120,10 @@ impl IAlbumControlService {
 		Ok(())
 	}
 
-	pub fn unknown2101(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(2101)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown2102(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(2102)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown2201(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(2201)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown2301(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(2301)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown2101(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown2102(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown2201(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown2301(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for IAlbumControlService {

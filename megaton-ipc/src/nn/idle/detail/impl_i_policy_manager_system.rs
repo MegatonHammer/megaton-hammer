@@ -74,16 +74,7 @@ impl IPolicyManagerSystem {
 		Ok(())
 	}
 
-	pub fn unknown3(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(3)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown4(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 

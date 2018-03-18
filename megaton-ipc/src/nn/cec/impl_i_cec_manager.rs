@@ -44,16 +44,7 @@ impl AsRef<Session> for ICecManager {
 	}
 }
 impl ICecManager {
-	pub fn unknown0(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(0)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown1(&self, unk0: u32) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -74,46 +65,10 @@ impl ICecManager {
 		Ok(())
 	}
 
-	pub fn unknown3(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(3)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown4(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(4)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown5(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(5)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown6(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(6)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown4(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown5(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown6(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for ICecManager {

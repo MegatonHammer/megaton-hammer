@@ -81,26 +81,8 @@ impl IBtmSystemCore {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown7(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(7)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown8(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(8)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown7(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown8(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown9(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 

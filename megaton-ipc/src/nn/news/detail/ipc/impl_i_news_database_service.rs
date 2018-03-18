@@ -11,66 +11,12 @@ impl AsRef<Session> for INewsDatabaseService {
 	}
 }
 impl INewsDatabaseService {
-	pub fn unknown0(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(0)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown1(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(1)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown2(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(2)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown3(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(3)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown4(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(4)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown5(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(5)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown4(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown5(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for INewsDatabaseService {

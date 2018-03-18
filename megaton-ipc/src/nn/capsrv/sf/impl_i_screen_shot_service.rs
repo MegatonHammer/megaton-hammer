@@ -44,46 +44,10 @@ impl AsRef<Session> for IScreenShotService {
 	}
 }
 impl IScreenShotService {
-	pub fn unknown201(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(201)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown202(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(202)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown203(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(203)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown204(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(204)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown201(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown202(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown203(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown204(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for IScreenShotService {

@@ -54,16 +54,7 @@ impl IPmService {
 		Ok(res.pop_handle())
 	}
 
-	pub fn unknown1(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(1)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown2(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -102,16 +93,7 @@ impl IPmService {
 		Ok(())
 	}
 
-	pub fn unknown5(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(5)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown5(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for IPmService {

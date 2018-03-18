@@ -44,26 +44,8 @@ impl AsRef<Session> for IScreenShotControlService {
 	}
 }
 impl IScreenShotControlService {
-	pub fn unknown1(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(1)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown2(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(2)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown1001(&self, unk0: u64, unk1: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -102,16 +84,7 @@ impl IScreenShotControlService {
 		Ok(())
 	}
 
-	pub fn unknown1003(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(1003)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown1003(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown1011(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -132,16 +105,7 @@ impl IScreenShotControlService {
 		Ok(())
 	}
 
-	pub fn unknown1201(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(1201)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown1201(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown1202(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 

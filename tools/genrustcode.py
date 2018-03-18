@@ -463,6 +463,10 @@ for name, cmds in ifaces.items():
 					elem[0] = 'unk%s' % idx
 				elem[0] = camelToSnake(elem[0])
 			try:
+				if cmd['undocumented'] == True:
+					# huge hack. i'm tired.
+					raise UnsupportedStructException("")
+
 				inputs = formatArgs(cmd['inputs'])
 				# Handle out buffers
 				out_args = formatArgs(filter(lambda x: is_buffer_argument(x[1]), cmd['outputs']), is_output=True)

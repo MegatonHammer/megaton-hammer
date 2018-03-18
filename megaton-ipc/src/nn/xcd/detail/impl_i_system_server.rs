@@ -54,16 +54,7 @@ impl ISystemServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown1(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(1)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown2(&self, unk0: u64) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -74,26 +65,8 @@ impl ISystemServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown3(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(3)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown4(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(4)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown4(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown5(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -104,36 +77,9 @@ impl ISystemServer {
 		Ok(())
 	}
 
-	pub fn unknown10(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(10)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown11(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(11)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown12(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(12)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown10(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown11(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown12(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown13(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -144,76 +90,13 @@ impl ISystemServer {
 		Ok(())
 	}
 
-	pub fn unknown14(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(14)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown15(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(15)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown16(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(16)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown17(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(17)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown18(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(18)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown19(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(19)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown20(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(20)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown14(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown15(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown16(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown17(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown18(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown19(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown20(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown101(&self, ) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 

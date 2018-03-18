@@ -44,16 +44,7 @@ impl AsRef<Session> for IETicketService {
 	}
 }
 impl IETicketService {
-	pub fn unknown1(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(1)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown4(&self, unk0: u32) -> Result<()> {
@@ -87,16 +78,7 @@ impl IETicketService {
 	}
 
 	// fn unknown7(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown8(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(8)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown8(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown9(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -119,96 +101,15 @@ impl IETicketService {
 
 	// fn unknown11(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown12(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown13(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(13)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown14(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(14)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown15(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(15)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown16(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(16)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown17(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(17)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown18(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(18)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown19(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(19)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown20(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(20)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown21(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(21)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown13(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown14(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown15(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown16(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown17(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown18(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown19(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown20(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown21(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for IETicketService {

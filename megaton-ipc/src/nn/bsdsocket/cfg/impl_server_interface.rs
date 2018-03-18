@@ -44,49 +44,13 @@ impl AsRef<Session> for ServerInterface {
 	}
 }
 impl ServerInterface {
-	pub fn unknown0(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(0)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown1(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(1)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown4(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(4)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown4(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown5(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown6(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(6)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown6(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown7(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -97,26 +61,8 @@ impl ServerInterface {
 		Ok(())
 	}
 
-	pub fn unknown8(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(8)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown9(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(9)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown8(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown9(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown10(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 

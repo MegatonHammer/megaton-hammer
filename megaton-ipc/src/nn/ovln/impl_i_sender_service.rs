@@ -44,16 +44,7 @@ impl AsRef<Session> for ISenderService {
 	}
 }
 impl ISenderService {
-	pub fn unknown0(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(0)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for ISenderService {

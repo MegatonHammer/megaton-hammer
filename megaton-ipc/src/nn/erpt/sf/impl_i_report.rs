@@ -11,16 +11,7 @@ impl AsRef<Session> for IReport {
 	}
 }
 impl IReport {
-	pub fn unknown0(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(0)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown2(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};

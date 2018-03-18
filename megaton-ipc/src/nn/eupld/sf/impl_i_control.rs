@@ -46,26 +46,8 @@ impl AsRef<Session> for IControl {
 impl IControl {
 	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown2(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(2)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown3(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(3)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for IControl {

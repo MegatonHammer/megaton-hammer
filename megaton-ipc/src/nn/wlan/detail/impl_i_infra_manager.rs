@@ -64,26 +64,8 @@ impl IInfraManager {
 		Ok(())
 	}
 
-	pub fn unknown2(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(2)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown3(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(3)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown4(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -94,16 +76,7 @@ impl IInfraManager {
 		Ok(())
 	}
 
-	pub fn unknown5(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(5)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown5(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown6(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -124,26 +97,8 @@ impl IInfraManager {
 		Ok(())
 	}
 
-	pub fn unknown8(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(8)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown9(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(9)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown8(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown9(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown10(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -154,16 +109,7 @@ impl IInfraManager {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown11(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(11)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown11(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown12(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -184,16 +130,7 @@ impl IInfraManager {
 		Ok(())
 	}
 
-	pub fn unknown14(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(14)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown14(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown15(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -214,16 +151,7 @@ impl IInfraManager {
 		Ok(())
 	}
 
-	pub fn unknown17(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(17)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown17(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown18(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -234,16 +162,7 @@ impl IInfraManager {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown19(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(19)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown19(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown20(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -284,26 +203,8 @@ impl IInfraManager {
 		Ok(())
 	}
 
-	pub fn unknown24(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(24)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown25(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(25)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown24(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown25(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for IInfraManager {
