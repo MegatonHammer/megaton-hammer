@@ -29,7 +29,7 @@ pub struct LoaderConfig {
     main_thread: u32,
     override_heap: Mutex<Option<HeapStrategy>>,
     override_services: ArrayVec<[(u64, u32); 32]>,
-    stdio_sockets: Option<(u32, u32, u32)>,
+    stdio_sockets: Option<(u32, u32, u32, SocketKind)>,
     log: Option<Mutex<io::Cursor<&'static mut [u8]>>>
 }
 
@@ -63,22 +63,28 @@ pub fn get_override_service(service_name: [u8; 8]) -> Option<ManuallyDrop<Sessio
     None
 }
 
-pub fn get_stdin_socket() -> Option<u32> {
-    LOADER.try()
-        .and_then(|ldr_cfg| (&ldr_cfg.stdio_sockets).as_ref())
-        .map(|&(stdin, _, _)| stdin)
+#[derive(Debug, Clone, Copy)]
+pub enum SocketKind {
+    BsdU,
+    BsdS
 }
 
-pub fn get_stdout_socket() -> Option<u32> {
+pub fn get_stdin_socket() -> Option<(SocketKind, u32)> {
     LOADER.try()
         .and_then(|ldr_cfg| (&ldr_cfg.stdio_sockets).as_ref())
-        .map(|&(_, stdout, _)| stdout)
+        .map(|&(stdin, _, _, kind)| (kind, stdin))
 }
 
-pub fn get_stderr_socket() -> Option<u32> {
+pub fn get_stdout_socket() -> Option<(SocketKind, u32)> {
     LOADER.try()
         .and_then(|ldr_cfg| (&ldr_cfg.stdio_sockets).as_ref())
-        .map(|&(_, _, stderr)| stderr)
+        .map(|&(_, stdout, _, kind)| (kind, stdout))
+}
+
+pub fn get_stderr_socket() -> Option<(SocketKind, u32)> {
+    LOADER.try()
+        .and_then(|ldr_cfg| (&ldr_cfg.stdio_sockets).as_ref())
+        .map(|&(_, _, stderr, kind)| (kind, stderr))
 }
 
 pub struct Logger;
@@ -171,6 +177,21 @@ pub unsafe fn init_loader(mut entry: *mut LoaderConfigEntry) -> Result<(), i32> 
                 LoaderConfigTag::END_OF_LIST => break,
                 LoaderConfigTag::LOG => {
                     config.log = Some(Mutex::new(io::Cursor::new(slice::from_raw_parts_mut((*entry).data.0 as _, (*entry).data.1 as _))));
+                },
+                LoaderConfigTag::STDIO_SOCKET => {
+                    let stdin = (*entry).data.0 & 0xFFFFFF;
+                    let stdout = ((*entry).data.0 >> 32) & 0xFFFFFF;
+                    let stderr = (*entry).data.0 & 0xFFFFFF;
+                    let kind = ((*entry).data.0 >> 32) & 0xFFFFFF;
+                    let kind = if kind == 0 {
+                        SocketKind::BsdU
+                    } else if kind == 1 {
+                        SocketKind::BsdS
+                    } else {
+                        // Skip this value, we don't know it. Maybe error out?
+                        continue;
+                    };
+                    config.stdio_sockets = Some((stdin as u32, stdout as u32, stderr as u32, kind));
                 },
                 LoaderConfigTag::OVERRIDE_SERVICE => {
                     config.override_services.push(((*entry).data.0, (*entry).data.1 as u32));
