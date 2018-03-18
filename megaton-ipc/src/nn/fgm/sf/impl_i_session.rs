@@ -7,7 +7,7 @@ use alloc::arc::Arc;
 pub struct ISession(Session);
 
 impl ISession {
-	pub fn new() -> Result<Arc<ISession>> {
+	pub fn new_fgm_0() -> Result<Arc<ISession>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
@@ -34,6 +34,22 @@ impl ISession {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
+		r
+	}
+	pub fn new_fgm() -> Result<Arc<ISession>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		use core::mem::ManuallyDrop;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<ISession>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
+
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
 
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"fgm\0\0\0\0\0") {
 			let ret = Arc::new(ISession(ManuallyDrop::into_inner(hnd)));
@@ -47,6 +63,22 @@ impl ISession {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
+		r
+	}
+	pub fn new_fgm_9() -> Result<Arc<ISession>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		use core::mem::ManuallyDrop;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<ISession>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
+
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
 
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"fgm:9\0\0\0") {
 			let ret = Arc::new(ISession(ManuallyDrop::into_inner(hnd)));

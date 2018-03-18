@@ -7,7 +7,7 @@ use alloc::arc::Arc;
 pub struct IPrepoService(Session);
 
 impl IPrepoService {
-	pub fn new() -> Result<Arc<IPrepoService>> {
+	pub fn new_prepo_a() -> Result<Arc<IPrepoService>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
@@ -34,6 +34,22 @@ impl IPrepoService {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
+		r
+	}
+	pub fn new_prepo_m() -> Result<Arc<IPrepoService>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		use core::mem::ManuallyDrop;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IPrepoService>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
+
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
 
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"prepo:m\0") {
 			let ret = Arc::new(IPrepoService(ManuallyDrop::into_inner(hnd)));
@@ -47,6 +63,22 @@ impl IPrepoService {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
+		r
+	}
+	pub fn new_prepo_u() -> Result<Arc<IPrepoService>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		use core::mem::ManuallyDrop;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IPrepoService>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
+
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
 
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"prepo:u\0") {
 			let ret = Arc::new(IPrepoService(ManuallyDrop::into_inner(hnd)));
@@ -60,6 +92,22 @@ impl IPrepoService {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
+		r
+	}
+	pub fn new_prepo_s() -> Result<Arc<IPrepoService>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		use core::mem::ManuallyDrop;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IPrepoService>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
+
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
 
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"prepo:s\0") {
 			let ret = Arc::new(IPrepoService(ManuallyDrop::into_inner(hnd)));

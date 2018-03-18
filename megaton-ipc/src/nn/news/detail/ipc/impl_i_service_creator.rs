@@ -7,7 +7,7 @@ use alloc::arc::Arc;
 pub struct IServiceCreator(Session);
 
 impl IServiceCreator {
-	pub fn new() -> Result<Arc<IServiceCreator>> {
+	pub fn new_news_a() -> Result<Arc<IServiceCreator>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
@@ -34,6 +34,22 @@ impl IServiceCreator {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
+		r
+	}
+	pub fn new_news_c() -> Result<Arc<IServiceCreator>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		use core::mem::ManuallyDrop;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IServiceCreator>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
+
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
 
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"news:c\0\0") {
 			let ret = Arc::new(IServiceCreator(ManuallyDrop::into_inner(hnd)));
@@ -47,6 +63,22 @@ impl IServiceCreator {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
+		r
+	}
+	pub fn new_news_m() -> Result<Arc<IServiceCreator>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		use core::mem::ManuallyDrop;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IServiceCreator>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
+
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
 
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"news:m\0\0") {
 			let ret = Arc::new(IServiceCreator(ManuallyDrop::into_inner(hnd)));
@@ -60,6 +92,22 @@ impl IServiceCreator {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
+		r
+	}
+	pub fn new_news_p() -> Result<Arc<IServiceCreator>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		use core::mem::ManuallyDrop;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IServiceCreator>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
+
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
 
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"news:p\0\0") {
 			let ret = Arc::new(IServiceCreator(ManuallyDrop::into_inner(hnd)));
@@ -73,6 +121,22 @@ impl IServiceCreator {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
+		r
+	}
+	pub fn new_news_v() -> Result<Arc<IServiceCreator>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		use core::mem::ManuallyDrop;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IServiceCreator>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
+
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
 
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"news:v\0\0") {
 			let ret = Arc::new(IServiceCreator(ManuallyDrop::into_inner(hnd)));

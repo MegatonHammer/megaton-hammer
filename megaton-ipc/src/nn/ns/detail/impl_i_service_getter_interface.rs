@@ -7,7 +7,7 @@ use alloc::arc::Arc;
 pub struct IServiceGetterInterface(Session);
 
 impl IServiceGetterInterface {
-	pub fn new() -> Result<Arc<IServiceGetterInterface>> {
+	pub fn new_ns_rid() -> Result<Arc<IServiceGetterInterface>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
@@ -34,6 +34,22 @@ impl IServiceGetterInterface {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
+		r
+	}
+	pub fn new_ns_web() -> Result<Arc<IServiceGetterInterface>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		use core::mem::ManuallyDrop;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IServiceGetterInterface>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
+
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
 
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"ns:web\0\0") {
 			let ret = Arc::new(IServiceGetterInterface(ManuallyDrop::into_inner(hnd)));
@@ -47,6 +63,22 @@ impl IServiceGetterInterface {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
+		r
+	}
+	pub fn new_ns_ec() -> Result<Arc<IServiceGetterInterface>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		use core::mem::ManuallyDrop;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IServiceGetterInterface>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
+
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
 
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"ns:ec\0\0\0") {
 			let ret = Arc::new(IServiceGetterInterface(ManuallyDrop::into_inner(hnd)));
@@ -60,6 +92,22 @@ impl IServiceGetterInterface {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
+		r
+	}
+	pub fn new_ns_am2() -> Result<Arc<IServiceGetterInterface>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		use core::mem::ManuallyDrop;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IServiceGetterInterface>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
+
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
 
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"ns:am2\0\0") {
 			let ret = Arc::new(IServiceGetterInterface(ManuallyDrop::into_inner(hnd)));
@@ -73,6 +121,22 @@ impl IServiceGetterInterface {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
+		r
+	}
+	pub fn new_ns_rt() -> Result<Arc<IServiceGetterInterface>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		use core::mem::ManuallyDrop;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IServiceGetterInterface>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
+
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
 
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"ns:rt\0\0\0") {
 			let ret = Arc::new(IServiceGetterInterface(ManuallyDrop::into_inner(hnd)));

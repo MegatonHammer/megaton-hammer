@@ -7,7 +7,7 @@ use alloc::arc::Arc;
 pub struct IManager(Session);
 
 impl IManager {
-	pub fn new() -> Result<Arc<IManager>> {
+	pub fn new_nsd_a() -> Result<Arc<IManager>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
@@ -34,6 +34,22 @@ impl IManager {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
+		r
+	}
+	pub fn new_nsd_u() -> Result<Arc<IManager>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		use core::mem::ManuallyDrop;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IManager>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
+
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
 
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"nsd:u\0\0\0") {
 			let ret = Arc::new(IManager(ManuallyDrop::into_inner(hnd)));

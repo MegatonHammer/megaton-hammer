@@ -21,7 +21,7 @@ impl IUserInterface {
 		use megaton_hammer::kernel::svc;
 		use megaton_hammer::error::Error;
 
-		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"audren:u") {
+		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"sm:\0\0\0\0\0") {
 			let ret = Arc::new(IUserInterface(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
 			*HANDLE.lock() = Arc::downgrade(&ret);

@@ -7,7 +7,7 @@ use alloc::arc::Arc;
 pub struct IClient(Session);
 
 impl IClient {
-	pub fn new() -> Result<Arc<IClient>> {
+	pub fn new_bsd_u() -> Result<Arc<IClient>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
@@ -34,6 +34,22 @@ impl IClient {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
+		r
+	}
+	pub fn new_bsd_s() -> Result<Arc<IClient>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		use core::mem::ManuallyDrop;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IClient>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
+
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
 
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"bsd:s\0\0\0") {
 			let ret = Arc::new(IClient(ManuallyDrop::into_inner(hnd)));

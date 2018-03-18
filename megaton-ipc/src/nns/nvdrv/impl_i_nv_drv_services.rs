@@ -7,7 +7,7 @@ use alloc::arc::Arc;
 pub struct INvDrvServices(Session);
 
 impl INvDrvServices {
-	pub fn new() -> Result<Arc<INvDrvServices>> {
+	pub fn new_nvdrv_s() -> Result<Arc<INvDrvServices>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
@@ -34,6 +34,22 @@ impl INvDrvServices {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
+		r
+	}
+	pub fn new_nvdrv_t() -> Result<Arc<INvDrvServices>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		use core::mem::ManuallyDrop;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<INvDrvServices>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
+
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
 
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"nvdrv:t\0") {
 			let ret = Arc::new(INvDrvServices(ManuallyDrop::into_inner(hnd)));
@@ -47,6 +63,22 @@ impl INvDrvServices {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
+		r
+	}
+	pub fn new_nvdrv_a() -> Result<Arc<INvDrvServices>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		use core::mem::ManuallyDrop;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<INvDrvServices>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
+
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
 
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"nvdrv:a\0") {
 			let ret = Arc::new(INvDrvServices(ManuallyDrop::into_inner(hnd)));
@@ -60,6 +92,22 @@ impl INvDrvServices {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
+		r
+	}
+	pub fn new_nvdrv() -> Result<Arc<INvDrvServices>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		use core::mem::ManuallyDrop;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<INvDrvServices>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
+
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
 
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"nvdrv\0\0\0") {
 			let ret = Arc::new(INvDrvServices(ManuallyDrop::into_inner(hnd)));

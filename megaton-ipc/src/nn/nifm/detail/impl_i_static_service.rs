@@ -7,7 +7,7 @@ use alloc::arc::Arc;
 pub struct IStaticService(Session);
 
 impl IStaticService {
-	pub fn new() -> Result<Arc<IStaticService>> {
+	pub fn new_nifm_a() -> Result<Arc<IStaticService>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
@@ -34,6 +34,22 @@ impl IStaticService {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
+		r
+	}
+	pub fn new_nifm_s() -> Result<Arc<IStaticService>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		use core::mem::ManuallyDrop;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IStaticService>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
+
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
 
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"nifm:s\0\0") {
 			let ret = Arc::new(IStaticService(ManuallyDrop::into_inner(hnd)));
@@ -47,6 +63,22 @@ impl IStaticService {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
+		r
+	}
+	pub fn new_nifm_u() -> Result<Arc<IStaticService>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		use core::mem::ManuallyDrop;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IStaticService>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
+
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
 
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"nifm:u\0\0") {
 			let ret = Arc::new(IStaticService(ManuallyDrop::into_inner(hnd)));

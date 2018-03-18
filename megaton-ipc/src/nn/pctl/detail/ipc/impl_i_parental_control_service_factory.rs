@@ -7,7 +7,7 @@ use alloc::arc::Arc;
 pub struct IParentalControlServiceFactory(Session);
 
 impl IParentalControlServiceFactory {
-	pub fn new() -> Result<Arc<IParentalControlServiceFactory>> {
+	pub fn new_pctl_s() -> Result<Arc<IParentalControlServiceFactory>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
@@ -34,6 +34,22 @@ impl IParentalControlServiceFactory {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
+		r
+	}
+	pub fn new_pctl_r() -> Result<Arc<IParentalControlServiceFactory>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		use core::mem::ManuallyDrop;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IParentalControlServiceFactory>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
+
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
 
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"pctl:r\0\0") {
 			let ret = Arc::new(IParentalControlServiceFactory(ManuallyDrop::into_inner(hnd)));
@@ -47,6 +63,22 @@ impl IParentalControlServiceFactory {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
+		r
+	}
+	pub fn new_pctl_a() -> Result<Arc<IParentalControlServiceFactory>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		use core::mem::ManuallyDrop;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IParentalControlServiceFactory>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
+
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
 
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"pctl:a\0\0") {
 			let ret = Arc::new(IParentalControlServiceFactory(ManuallyDrop::into_inner(hnd)));
@@ -60,6 +92,22 @@ impl IParentalControlServiceFactory {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
+		r
+	}
+	pub fn new_pctl() -> Result<Arc<IParentalControlServiceFactory>> {
+		use alloc::arc::Weak;
+		use spin::Mutex;
+		use core::mem::ManuallyDrop;
+		lazy_static! {
+			static ref HANDLE : Mutex<Weak<IParentalControlServiceFactory>> = Mutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
+
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
 
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"pctl\0\0\0\0") {
 			let ret = Arc::new(IParentalControlServiceFactory(ManuallyDrop::into_inner(hnd)));
