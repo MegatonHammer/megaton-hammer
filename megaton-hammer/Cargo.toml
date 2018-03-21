@@ -10,6 +10,7 @@ compiler_builtins = { git = "https://github.com/rust-lang-nursery/compiler-built
 core_io = { version = "0.1.20180307" }
 spin = { version = "0.4.6" }
 bit_field = "0.9.0"
+lazy_static = { version = "1.0.0", features = ["spin_no_std"] }
 
 [dependencies.arrayvec]
 version = "0.4.7"

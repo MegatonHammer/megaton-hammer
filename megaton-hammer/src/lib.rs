@@ -25,6 +25,9 @@ extern crate spin;
 extern crate std_unicode;
 extern crate byteorder;
 extern crate failure;
+#[macro_use]
+extern crate lazy_static;
+
 //#[macro_use]
 //extern crate failure_derive;
 

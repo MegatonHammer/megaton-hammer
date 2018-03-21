@@ -89,15 +89,36 @@ pub fn get_stderr_socket() -> Option<(SocketKind, u32)> {
 
 pub struct Logger;
 
+// TODO: Provide some space in TLS for this
+lazy_static! {
+    static ref SVC_LOG_SPACE: Mutex<ArrayVec<[u8; 4096]>> = Mutex::new(ArrayVec::new());
+}
+
 impl Logger {
     pub fn write(&self, data: &[u8]) {
         use kernel::svc;
         use loader::io::Write;
 
+        {
+            let mut svc_log_space = SVC_LOG_SPACE.lock();
+            let available_capacity = svc_log_space.capacity() - svc_log_space.len();
+            if data.len() > available_capacity {
+                // Worse-case. Just print it all out and start fresh.
+                return;
+                unsafe { svc::output_debug_string(svc_log_space.as_ptr(), svc_log_space.len()); }
+                unsafe { svc::output_debug_string(data.as_ptr(), data.len()); }
+                let _ = svc_log_space.drain(..);
+            } else {
+                svc_log_space.extend(data.iter().cloned());
+                if let Some(pos) = svc_log_space.iter().cloned().rposition(|i| i == b'\n') {
+                    unsafe { svc::output_debug_string(svc_log_space.as_ptr(), pos); }
+                    svc_log_space.drain(..pos + 1);
+                }
+            }
+        }
         if let Some(cursor) = LOADER.try().and_then(|ldr_cfg| (&ldr_cfg.log).as_ref()) {
             cursor.lock().write(data);
         }
-        unsafe { svc::output_debug_string(data.as_ptr(), data.len()) };
     }
 }
 
@@ -124,9 +145,7 @@ use spin::Once;
 pub static LOADER: Once<LoaderConfig> = Once::new();
 
 #[cfg(not(feature = "std"))]
-extern "C" {
-    static LOADER: Once<LoaderConfig>;
-}
+extern "Rust" { static LOADER: Once<LoaderConfig>; }
 
 #[repr(C)]
 #[doc(hidden)]
