@@ -132,9 +132,50 @@ impl AsRef<Session> for INvDrvServices {
 }
 impl INvDrvServices {
 	// fn open(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn ioctl(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn close(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn initialize(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn ioctl(&self, fd: u32, rq_id: u32, unk2: u32, unk3: u32) -> Result<u32> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			fd: u32,
+			rq_id: u32,
+			unk2: u32,
+			unk3: u32,
+		}
+		let req = Request::new(1)
+			.args(InRaw {
+				fd,
+				rq_id,
+				unk2,
+				unk3,
+			})
+			;
+		let res : Response<u32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	pub fn close(&self, fd: u32) -> Result<u32> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(2)
+			.args(fd)
+			;
+		let res : Response<u32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	pub fn initialize(&self, transfer_memory_size: u32, current_process: &KObject, transfer_memory: &KObject) -> Result<u32> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(3)
+			.args(transfer_memory_size)
+			.copy_handle(current_process)
+			.copy_handle(transfer_memory)
+			;
+		let res : Response<u32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	// fn query_event(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn map_shared_mem(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_status(&self, UNKNOWN) -> Result<UNKNOWN>;
