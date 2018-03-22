@@ -73,8 +73,30 @@ impl AsRef<Session> for IManager {
 	}
 }
 impl IManager {
-	// fn get_setting_name(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_environment_identifier(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_setting_name(&self, unk0: &mut [u8; 0x100]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(10)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x16))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn get_environment_identifier(&self, unk0: &mut [u8; 8]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(11)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x16))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn get_device_id(&self, ) -> Result<u128> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -96,17 +118,142 @@ impl IManager {
 	}
 
 	// fn import_settings(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn resolve(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn resolve_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_nas_service_setting(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_nas_service_setting_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_nas_request_fqdn(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_nas_request_fqdn_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_nas_api_fqdn(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_nas_api_fqdn_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_current_setting(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn read_save_data_from_fs_for_test(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn write_save_data_to_fs_for_test(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn resolve(&self, unk0: &[u8; 0x100], unk1: &mut [u8; 0x100]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(20)
+			.args(())
+			.descriptor(IPCBuffer::from_ref(unk0, 0x15))
+			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x16))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn resolve_ex(&self, unk0: &[u8; 0x100], unk2: &mut [u8; 0x100]) -> Result<u32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(21)
+			.args(())
+			.descriptor(IPCBuffer::from_ref(unk0, 0x15))
+			.descriptor(IPCBuffer::from_mut_ref(unk2, 0x16))
+			;
+		let res : Response<u32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	pub fn get_nas_service_setting(&self, unk0: &[u8; 0x10], unk1: &mut [u8; 0x108]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(30)
+			.args(())
+			.descriptor(IPCBuffer::from_ref(unk0, 0x15))
+			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x16))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn get_nas_service_setting_ex(&self, unk0: &[u8; 0x10], unk2: &mut [u8; 0x108]) -> Result<u32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(31)
+			.args(())
+			.descriptor(IPCBuffer::from_ref(unk0, 0x15))
+			.descriptor(IPCBuffer::from_mut_ref(unk2, 0x16))
+			;
+		let res : Response<u32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	pub fn get_nas_request_fqdn(&self, unk0: &mut [u8; 0x100]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(40)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x16))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn get_nas_request_fqdn_ex(&self, unk1: &mut [u8; 0x100]) -> Result<u32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(41)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x16))
+			;
+		let res : Response<u32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	pub fn get_nas_api_fqdn(&self, unk0: &mut [u8; 0x100]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(42)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x16))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn get_nas_api_fqdn_ex(&self, unk1: &mut [u8; 0x100]) -> Result<u32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(43)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x16))
+			;
+		let res : Response<u32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	pub fn get_current_setting(&self, unk0: &mut [u8; 0x12bf0]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(50)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x16))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn read_save_data_from_fs_for_test(&self, unk0: &mut [u8; 0x12bf0]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(60)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x16))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn write_save_data_to_fs_for_test(&self, unk0: &[u8; 0x12bf0]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(61)
+			.args(())
+			.descriptor(IPCBuffer::from_ref(unk0, 0x15))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn delete_save_data_of_fs_for_test(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 

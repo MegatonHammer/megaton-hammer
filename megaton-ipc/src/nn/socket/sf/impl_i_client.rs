@@ -186,7 +186,30 @@ impl IClient {
 
 	// fn poll(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn sysctl(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn recv(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn recv(&self, socket: u32, flags: u32, message: &mut [i8]) -> Result<(i32, u32)> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			socket: u32,
+			flags: u32,
+		}
+		let req = Request::new(8)
+			.args(InRaw {
+				socket,
+				flags,
+			})
+			.descriptor(IPCBuffer::from_mut_slice(message, 0x22))
+			;
+		#[repr(C)] #[derive(Clone)] struct OutRaw {
+			ret: i32,
+			bsd_errno: u32,
+		}
+		let res : Response<OutRaw> = self.0.send(req)?;
+		Ok((res.get_raw().ret.clone(),res.get_raw().bsd_errno.clone()))
+	}
+
 	pub fn recv_from(&self, sock: u32, flags: u32, message: &mut [i8], unk6: &mut ::nn::socket::Sockaddr) -> Result<(i32, u32, u32)> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};

@@ -54,10 +54,55 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	// fn set_network_settings(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_network_settings(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_firmware_version(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_firmware_version2(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn set_network_settings(&self, unk0: &[::nn::settings::system::NetworkSettings]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(1)
+			.args(())
+			.descriptor(IPCBuffer::from_slice(unk0, 5))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn get_network_settings(&self, unk1: &mut [::nn::settings::system::NetworkSettings]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(2)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_slice(unk1, 6))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	pub fn get_firmware_version(&self, unk0: &mut ::nn::settings::system::FirmwareVersion) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(3)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x1a))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-3.0.0")]
+	pub fn get_firmware_version2(&self, unk0: &mut ::nn::settings::system::FirmwareVersion) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(4)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x1a))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn get_lock_screen_flag(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -98,8 +143,30 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	// fn set_bluetooth_devices_settings(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_bluetooth_devices_settings(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn set_bluetooth_devices_settings(&self, unk0: &[::nn::settings::system::BluetoothDevicesSettings]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(11)
+			.args(())
+			.descriptor(IPCBuffer::from_slice(unk0, 5))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn get_bluetooth_devices_settings(&self, unk1: &mut [::nn::settings::system::BluetoothDevicesSettings]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(12)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_slice(unk1, 6))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn get_external_steady_clock_source_id(&self, ) -> Result<::nn::util::Uuid> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -188,8 +255,30 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	// fn get_eula_versions(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn set_eula_versions(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_eula_versions(&self, unk1: &mut [::nn::settings::system::EulaVersion]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(21)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_slice(unk1, 6))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	pub fn set_eula_versions(&self, unk0: &[::nn::settings::system::EulaVersion]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(22)
+			.args(())
+			.descriptor(IPCBuffer::from_slice(unk0, 5))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn get_color_set_id(&self, ) -> Result<i32> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -270,8 +359,30 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	// fn get_account_notification_settings(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn set_account_notification_settings(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_account_notification_settings(&self, unk1: &mut [::nn::settings::system::AccountNotificationSettings]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(31)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_slice(unk1, 6))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	pub fn set_account_notification_settings(&self, unk0: &[::nn::settings::system::AccountNotificationSettings]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(32)
+			.args(())
+			.descriptor(IPCBuffer::from_slice(unk0, 5))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn get_vibration_master_volume(&self, ) -> Result<f32> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -292,7 +403,19 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	// fn get_settings_item_value_size(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_settings_item_value_size(&self, unk0: &::nn::settings::SettingsName, unk1: &::nn::settings::SettingsItemKey) -> Result<u64> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(37)
+			.args(())
+			.descriptor(IPCBuffer::from_ref(unk0, 0x19))
+			.descriptor(IPCBuffer::from_ref(unk1, 0x19))
+			;
+		let res : Response<u64> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	// fn get_settings_item_value(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn get_tv_settings(&self, ) -> Result<::nn::settings::system::TvSettings> {
 		use megaton_hammer::ipc::{Request, Response};
@@ -314,8 +437,30 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	// fn get_edid(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn set_edid(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_edid(&self, unk0: &mut ::nn::settings::system::Edid) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(41)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x1a))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn set_edid(&self, unk0: &::nn::settings::system::Edid) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(42)
+			.args(())
+			.descriptor(IPCBuffer::from_ref(unk0, 0x19))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn get_audio_output_mode(&self, unk0: i32) -> Result<i32> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -655,8 +800,30 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	// fn get_device_nick_name(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn set_device_nick_name(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_device_nick_name(&self, unk0: &mut ::nn::settings::system::DeviceNickName) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(77)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x16))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn set_device_nick_name(&self, unk0: &::nn::settings::system::DeviceNickName) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(78)
+			.args(())
+			.descriptor(IPCBuffer::from_ref(unk0, 0x15))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn get_product_model(&self, ) -> Result<i32> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -839,8 +1006,32 @@ impl ISystemSettingsServer {
 		Ok(())
 	}
 
-	// fn get_nx_controller_settings(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn set_nx_controller_settings(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(feature = "switch-2.0.0")]
+	pub fn get_nx_controller_settings(&self, unk1: &mut [::nn::settings::system::NxControllerSettings]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(97)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_slice(unk1, 6))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	#[cfg(feature = "switch-2.0.0")]
+	pub fn set_nx_controller_settings(&self, unk0: &[::nn::settings::system::NxControllerSettings]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(98)
+			.args(())
+			.descriptor(IPCBuffer::from_slice(unk0, 5))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	#[cfg(feature = "switch-2.0.0")]
 	pub fn get_battery_percentage_flag(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};

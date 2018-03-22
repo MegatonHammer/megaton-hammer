@@ -118,7 +118,30 @@ impl IPcvService {
 		Ok(*res.get_raw())
 	}
 
-	// fn get_possible_clock_rates(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_possible_clock_rates(&self, unk0: i32, unk1: i32, unk4: &mut [u32]) -> Result<(i32, i32)> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: i32,
+			unk1: i32,
+		}
+		let req = Request::new(5)
+			.args(InRaw {
+				unk0,
+				unk1,
+			})
+			.descriptor(IPCBuffer::from_mut_slice(unk4, 0xa))
+			;
+		#[repr(C)] #[derive(Clone)] struct OutRaw {
+			unk2: i32,
+			unk3: i32,
+		}
+		let res : Response<OutRaw> = self.0.send(req)?;
+		Ok((res.get_raw().unk2.clone(),res.get_raw().unk3.clone()))
+	}
+
 	pub fn set_min_v_clock_rate(&self, unk0: i32, unk1: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -226,7 +249,18 @@ impl IPcvService {
 		Ok(*res.get_raw())
 	}
 
-	// fn get_temperature_thresholds(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_temperature_thresholds(&self, unk0: i32, unk2: &mut [::nn::pcv::TemperatureThreshold]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(13)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_mut_slice(unk2, 0xa))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn set_temperature(&self, unk0: i32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -333,10 +367,63 @@ impl IPcvService {
 		Ok(*res.get_raw())
 	}
 
-	// fn get_dvfs_table(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_module_state_table(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_power_domain_state_table(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_fuse_info(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_dvfs_table(&self, unk0: i32, unk1: i32, unk3: &mut [u32], unk4: &mut [i32]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: i32,
+			unk1: i32,
+		}
+		let req = Request::new(23)
+			.args(InRaw {
+				unk0,
+				unk1,
+			})
+			.descriptor(IPCBuffer::from_mut_slice(unk3, 0xa))
+			.descriptor(IPCBuffer::from_mut_slice(unk4, 0xa))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	pub fn get_module_state_table(&self, unk0: i32, unk2: &mut [::nn::pcv::ModuleState]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(24)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_mut_slice(unk2, 0xa))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	pub fn get_power_domain_state_table(&self, unk0: i32, unk2: &mut [::nn::pcv::PowerDomainState]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(25)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_mut_slice(unk2, 0xa))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	pub fn get_fuse_info(&self, unk0: i32, unk2: &mut [u32]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(26)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_mut_slice(unk2, 0xa))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 }
 
 impl FromKObject for IPcvService {

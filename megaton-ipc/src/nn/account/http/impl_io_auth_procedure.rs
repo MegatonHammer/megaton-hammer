@@ -21,9 +21,43 @@ impl IOAuthProcedure {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	// fn get_request(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn apply_response(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn apply_response_async(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_request(&self, unk0: &mut ::nn::account::RequestUrl, unk1: &mut ::nn::account::CallbackUri) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(1)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x1a))
+			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x1a))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn apply_response(&self, unk0: &[i8]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(2)
+			.args(())
+			.descriptor(IPCBuffer::from_slice(unk0, 9))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn apply_response_async(&self, unk0: &[i8]) -> Result<::nn::account::detail::IAsyncContext> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(3)
+			.args(())
+			.descriptor(IPCBuffer::from_slice(unk0, 9))
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+	}
+
 	pub fn suspend(&self, ) -> Result<::nn::account::detail::Uuid> {
 		use megaton_hammer::ipc::{Request, Response};
 

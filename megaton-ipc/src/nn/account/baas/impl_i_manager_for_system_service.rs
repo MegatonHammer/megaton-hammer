@@ -42,7 +42,19 @@ impl IManagerForSystemService {
 	}
 
 	// fn load_id_token_cache(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn set_system_program_identification(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn set_system_program_identification(&self, unk0: u64, unk2: &::nn::account::SystemProgramIdentification) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(100)
+			.args(unk0)
+			.send_pid()
+			.descriptor(IPCBuffer::from_ref(unk2, 0x19))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn get_nintendo_account_id(&self, ) -> Result<::nn::account::NintendoAccountId> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -74,7 +86,20 @@ impl IManagerForSystemService {
 		Ok((*res.get_raw(),unsafe { FromKObject::from_kobject(res.pop_handle()) }))
 	}
 
-	// fn create_authorization_request(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn create_authorization_request(&self, unk0: u32, unk1: &KObject, unk2: &::nn::account::nas::NasClientInfo, unk3: &::nn::account::NintendoAccountAuthorizationRequestParameters) -> Result<::nn::account::nas::IAuthorizationRequest> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(150)
+			.args(unk0)
+			.copy_handle(unk1)
+			.descriptor(IPCBuffer::from_ref(unk2, 0x19))
+			.descriptor(IPCBuffer::from_ref(unk3, 0x19))
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+	}
+
 }
 
 impl FromKObject for IManagerForSystemService {

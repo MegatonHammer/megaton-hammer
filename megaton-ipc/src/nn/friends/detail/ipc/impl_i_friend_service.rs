@@ -31,14 +31,137 @@ impl IFriendService {
 		Ok(())
 	}
 
-	// fn get_friend_list_ids(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_friend_list(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn update_friend_info(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_friend_list_ids(&self, unk0: i32, unk1: ::nn::account::Uid, unk2: ::nn::friends::detail::ipc::SizedFriendFilter, unk3: u64, unk6: &mut [::nn::account::NetworkServiceAccountId]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: i32,
+			unk1: ::nn::account::Uid,
+			unk2: ::nn::friends::detail::ipc::SizedFriendFilter,
+			unk3: u64,
+		}
+		let req = Request::new(10100)
+			.args(InRaw {
+				unk0,
+				unk1,
+				unk2,
+				unk3,
+			})
+			.send_pid()
+			.descriptor(IPCBuffer::from_mut_slice(unk6, 0xa))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	pub fn get_friend_list(&self, unk0: i32, unk1: ::nn::account::Uid, unk2: ::nn::friends::detail::ipc::SizedFriendFilter, unk3: u64, unk6: &mut [::nn::friends::detail::FriendImpl]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: i32,
+			unk1: ::nn::account::Uid,
+			unk2: ::nn::friends::detail::ipc::SizedFriendFilter,
+			unk3: u64,
+		}
+		let req = Request::new(10101)
+			.args(InRaw {
+				unk0,
+				unk1,
+				unk2,
+				unk3,
+			})
+			.send_pid()
+			.descriptor(IPCBuffer::from_mut_slice(unk6, 6))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	pub fn update_friend_info(&self, unk0: ::nn::account::Uid, unk1: u64, unk3: &[::nn::account::NetworkServiceAccountId], unk4: &mut [::nn::friends::detail::FriendImpl]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: ::nn::account::Uid,
+			unk1: u64,
+		}
+		let req = Request::new(10102)
+			.args(InRaw {
+				unk0,
+				unk1,
+			})
+			.send_pid()
+			.descriptor(IPCBuffer::from_slice(unk3, 9))
+			.descriptor(IPCBuffer::from_mut_slice(unk4, 6))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	// fn get_friend_profile_image(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn send_friend_request_for_application(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn send_friend_request_for_application(&self, unk0: ::nn::account::Uid, unk1: ::nn::account::NetworkServiceAccountId, unk2: u64, unk4: &::nn::friends::InAppScreenName, unk5: &::nn::friends::InAppScreenName) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: ::nn::account::Uid,
+			unk1: ::nn::account::NetworkServiceAccountId,
+			unk2: u64,
+		}
+		let req = Request::new(10200)
+			.args(InRaw {
+				unk0,
+				unk1,
+				unk2,
+			})
+			.send_pid()
+			.descriptor(IPCBuffer::from_ref(unk4, 0x19))
+			.descriptor(IPCBuffer::from_ref(unk5, 0x19))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	// fn add_faced_friend_request_for_application(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_blocked_user_list_ids(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_profile_list(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_blocked_user_list_ids(&self, unk0: i32, unk1: ::nn::account::Uid, unk3: &mut [::nn::account::NetworkServiceAccountId]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: i32,
+			unk1: ::nn::account::Uid,
+		}
+		let req = Request::new(10400)
+			.args(InRaw {
+				unk0,
+				unk1,
+			})
+			.descriptor(IPCBuffer::from_mut_slice(unk3, 0xa))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	pub fn get_profile_list(&self, unk0: ::nn::account::Uid, unk1: &[::nn::account::NetworkServiceAccountId], unk2: &mut [::nn::friends::detail::ProfileImpl]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(10500)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_slice(unk1, 9))
+			.descriptor(IPCBuffer::from_mut_slice(unk2, 6))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn declare_open_online_play_session(&self, unk0: ::nn::account::Uid) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -59,10 +182,90 @@ impl IFriendService {
 		Ok(())
 	}
 
-	// fn update_user_presence(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_play_history_registration_key(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_play_history_registration_key_with_network_service_account_id(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn add_play_history(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn update_user_presence(&self, unk0: ::nn::account::Uid, unk1: u64, unk3: &::nn::friends::detail::UserPresenceImpl) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: ::nn::account::Uid,
+			unk1: u64,
+		}
+		let req = Request::new(10610)
+			.args(InRaw {
+				unk0,
+				unk1,
+			})
+			.send_pid()
+			.descriptor(IPCBuffer::from_ref(unk3, 0x19))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn get_play_history_registration_key(&self, unk0: bool, unk1: ::nn::account::Uid, unk2: &mut ::nn::friends::PlayHistoryRegistrationKey) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: bool,
+			unk1: ::nn::account::Uid,
+		}
+		let req = Request::new(10700)
+			.args(InRaw {
+				unk0,
+				unk1,
+			})
+			.descriptor(IPCBuffer::from_mut_ref(unk2, 0x1a))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn get_play_history_registration_key_with_network_service_account_id(&self, unk0: bool, unk1: ::nn::account::NetworkServiceAccountId, unk2: &mut ::nn::friends::PlayHistoryRegistrationKey) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: bool,
+			unk1: ::nn::account::NetworkServiceAccountId,
+		}
+		let req = Request::new(10701)
+			.args(InRaw {
+				unk0,
+				unk1,
+			})
+			.descriptor(IPCBuffer::from_mut_ref(unk2, 0x1a))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn add_play_history(&self, unk0: ::nn::account::Uid, unk1: u64, unk3: &::nn::friends::PlayHistoryRegistrationKey, unk4: &::nn::friends::InAppScreenName, unk5: &::nn::friends::InAppScreenName) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: ::nn::account::Uid,
+			unk1: u64,
+		}
+		let req = Request::new(10702)
+			.args(InRaw {
+				unk0,
+				unk1,
+			})
+			.send_pid()
+			.descriptor(IPCBuffer::from_ref(unk3, 0x19))
+			.descriptor(IPCBuffer::from_ref(unk4, 0x19))
+			.descriptor(IPCBuffer::from_ref(unk5, 0x19))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn get_profile_image_url(&self, unk0: ::nn::friends::Url, unk1: i32) -> Result<::nn::friends::Url> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -112,7 +315,26 @@ impl IFriendService {
 		Ok(*res.get_raw())
 	}
 
-	// fn get_friend_detailed_info(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_friend_detailed_info(&self, unk0: ::nn::account::Uid, unk1: ::nn::account::NetworkServiceAccountId, unk2: &mut ::nn::friends::detail::FriendDetailedInfoImpl) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: ::nn::account::Uid,
+			unk1: ::nn::account::NetworkServiceAccountId,
+		}
+		let req = Request::new(20102)
+			.args(InRaw {
+				unk0,
+				unk1,
+			})
+			.descriptor(IPCBuffer::from_mut_ref(unk2, 0x1a))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn sync_friend_list(&self, unk0: ::nn::account::Uid) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -133,7 +355,26 @@ impl IFriendService {
 		Ok(())
 	}
 
-	// fn load_friend_setting(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn load_friend_setting(&self, unk0: ::nn::account::Uid, unk1: ::nn::account::NetworkServiceAccountId, unk2: &mut ::nn::friends::detail::FriendSettingImpl) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: ::nn::account::Uid,
+			unk1: ::nn::account::NetworkServiceAccountId,
+		}
+		let req = Request::new(20110)
+			.args(InRaw {
+				unk0,
+				unk1,
+			})
+			.descriptor(IPCBuffer::from_mut_ref(unk2, 0x1a))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn get_received_friend_request_count(&self, unk0: ::nn::account::Uid) -> Result<(i32, i32)> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -148,10 +389,89 @@ impl IFriendService {
 		Ok((res.get_raw().unk1.clone(),res.get_raw().unk2.clone()))
 	}
 
-	// fn get_friend_request_list(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_friend_candidate_list(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_nintendo_network_id_info(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_blocked_user_list(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_friend_request_list(&self, unk0: i32, unk1: i32, unk2: ::nn::account::Uid, unk4: &mut [::nn::friends::detail::FriendRequestImpl]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: i32,
+			unk1: i32,
+			unk2: ::nn::account::Uid,
+		}
+		let req = Request::new(20201)
+			.args(InRaw {
+				unk0,
+				unk1,
+				unk2,
+			})
+			.descriptor(IPCBuffer::from_mut_slice(unk4, 6))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	pub fn get_friend_candidate_list(&self, unk0: i32, unk1: ::nn::account::Uid, unk3: &mut [::nn::friends::detail::FriendCandidateImpl]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: i32,
+			unk1: ::nn::account::Uid,
+		}
+		let req = Request::new(20300)
+			.args(InRaw {
+				unk0,
+				unk1,
+			})
+			.descriptor(IPCBuffer::from_mut_slice(unk3, 6))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	pub fn get_nintendo_network_id_info(&self, unk0: i32, unk1: ::nn::account::Uid, unk3: &mut ::nn::friends::NintendoNetworkIdUserInfo, unk4: &mut [::nn::friends::detail::NintendoNetworkIdFriendImpl]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: i32,
+			unk1: ::nn::account::Uid,
+		}
+		let req = Request::new(20301)
+			.args(InRaw {
+				unk0,
+				unk1,
+			})
+			.descriptor(IPCBuffer::from_mut_ref(unk3, 0x1a))
+			.descriptor(IPCBuffer::from_mut_slice(unk4, 6))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	pub fn get_blocked_user_list(&self, unk0: i32, unk1: ::nn::account::Uid, unk3: &mut [::nn::friends::detail::BlockedUserImpl]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: i32,
+			unk1: ::nn::account::Uid,
+		}
+		let req = Request::new(20400)
+			.args(InRaw {
+				unk0,
+				unk1,
+			})
+			.descriptor(IPCBuffer::from_mut_slice(unk3, 6))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn sync_blocked_user_list(&self, unk0: ::nn::account::Uid) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -162,7 +482,19 @@ impl IFriendService {
 		Ok(())
 	}
 
-	// fn get_profile_extra_list(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_profile_extra_list(&self, unk0: ::nn::account::Uid, unk1: &[::nn::account::NetworkServiceAccountId], unk2: &mut [::nn::friends::detail::ProfileExtraImpl]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(20500)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_slice(unk1, 9))
+			.descriptor(IPCBuffer::from_mut_slice(unk2, 6))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn get_relationship(&self, unk0: ::nn::account::Uid, unk1: ::nn::account::NetworkServiceAccountId) -> Result<::nn::friends::Relationship> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -181,8 +513,38 @@ impl IFriendService {
 		Ok(*res.get_raw())
 	}
 
-	// fn get_user_presence_view(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_play_history_list(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_user_presence_view(&self, unk0: ::nn::account::Uid, unk1: &mut ::nn::friends::detail::UserPresenceViewImpl) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(20600)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x1a))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn get_play_history_list(&self, unk0: i32, unk1: ::nn::account::Uid, unk3: &mut [::nn::friends::detail::PlayHistoryImpl]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: i32,
+			unk1: ::nn::account::Uid,
+		}
+		let req = Request::new(20700)
+			.args(InRaw {
+				unk0,
+				unk1,
+			})
+			.descriptor(IPCBuffer::from_mut_slice(unk3, 6))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn get_play_history_statistics(&self, unk0: ::nn::account::Uid) -> Result<::nn::friends::PlayHistoryStatistics> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -193,7 +555,18 @@ impl IFriendService {
 		Ok(*res.get_raw())
 	}
 
-	// fn load_user_setting(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn load_user_setting(&self, unk0: ::nn::account::Uid, unk1: &mut ::nn::friends::detail::UserSettingImpl) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(20800)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x1a))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn sync_user_setting(&self, unk0: ::nn::account::Uid) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -214,7 +587,26 @@ impl IFriendService {
 		Ok(())
 	}
 
-	// fn get_external_application_catalog(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_external_application_catalog(&self, unk0: ::nn::settings::LanguageCode, unk1: ::nn::friends::ExternalApplicationCatalogId, unk2: &mut ::nn::friends::ExternalApplicationCatalog) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: ::nn::settings::LanguageCode,
+			unk1: ::nn::friends::ExternalApplicationCatalogId,
+		}
+		let req = Request::new(21000)
+			.args(InRaw {
+				unk0,
+				unk1,
+			})
+			.descriptor(IPCBuffer::from_mut_ref(unk2, 0x1a))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn drop_friend_newly_flags(&self, unk0: ::nn::account::Uid) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -321,7 +713,31 @@ impl IFriendService {
 		Ok(())
 	}
 
-	// fn send_friend_request_with_application_info(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn send_friend_request_with_application_info(&self, unk0: i32, unk1: ::nn::account::Uid, unk2: ::nn::account::NetworkServiceAccountId, unk3: ::nn::friends::ApplicationInfo, unk4: &::nn::friends::InAppScreenName, unk5: &::nn::friends::InAppScreenName) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: i32,
+			unk1: ::nn::account::Uid,
+			unk2: ::nn::account::NetworkServiceAccountId,
+			unk3: ::nn::friends::ApplicationInfo,
+		}
+		let req = Request::new(30201)
+			.args(InRaw {
+				unk0,
+				unk1,
+				unk2,
+				unk3,
+			})
+			.descriptor(IPCBuffer::from_ref(unk4, 0x19))
+			.descriptor(IPCBuffer::from_ref(unk5, 0x19))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn cancel_friend_request(&self, unk0: ::nn::account::Uid, unk1: ::nn::friends::RequestId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -425,7 +841,31 @@ impl IFriendService {
 
 	// fn get_faced_friend_request_profile_image(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_faced_friend_request_profile_image_from_path(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn send_friend_request_with_external_application_catalog_id(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn send_friend_request_with_external_application_catalog_id(&self, unk0: i32, unk1: ::nn::account::Uid, unk2: ::nn::account::NetworkServiceAccountId, unk3: ::nn::friends::ExternalApplicationCatalogId, unk4: &::nn::friends::InAppScreenName, unk5: &::nn::friends::InAppScreenName) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: i32,
+			unk1: ::nn::account::Uid,
+			unk2: ::nn::account::NetworkServiceAccountId,
+			unk3: ::nn::friends::ExternalApplicationCatalogId,
+		}
+		let req = Request::new(30215)
+			.args(InRaw {
+				unk0,
+				unk1,
+				unk2,
+				unk3,
+			})
+			.descriptor(IPCBuffer::from_ref(unk4, 0x19))
+			.descriptor(IPCBuffer::from_ref(unk5, 0x19))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn resend_faced_friend_request(&self, unk0: ::nn::account::Uid, unk1: ::nn::account::NetworkServiceAccountId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -492,7 +932,30 @@ impl IFriendService {
 		Ok(())
 	}
 
-	// fn block_user_with_application_info(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn block_user_with_application_info(&self, unk0: i32, unk1: ::nn::account::Uid, unk2: ::nn::account::NetworkServiceAccountId, unk3: ::nn::friends::ApplicationInfo, unk4: &::nn::friends::InAppScreenName) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: i32,
+			unk1: ::nn::account::Uid,
+			unk2: ::nn::account::NetworkServiceAccountId,
+			unk3: ::nn::friends::ApplicationInfo,
+		}
+		let req = Request::new(30401)
+			.args(InRaw {
+				unk0,
+				unk1,
+				unk2,
+				unk3,
+			})
+			.descriptor(IPCBuffer::from_ref(unk4, 0x19))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn unblock_user(&self, unk0: ::nn::account::Uid, unk1: ::nn::account::NetworkServiceAccountId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -511,7 +974,26 @@ impl IFriendService {
 		Ok(())
 	}
 
-	// fn get_profile_extra_from_friend_code(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_profile_extra_from_friend_code(&self, unk0: ::nn::friends::FriendCode, unk1: ::nn::account::Uid, unk2: &mut ::nn::friends::detail::ProfileExtraImpl) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: ::nn::friends::FriendCode,
+			unk1: ::nn::account::Uid,
+		}
+		let req = Request::new(30500)
+			.args(InRaw {
+				unk0,
+				unk1,
+			})
+			.descriptor(IPCBuffer::from_mut_ref(unk2, 0x1a))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn delete_play_history(&self, unk0: ::nn::account::Uid) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 

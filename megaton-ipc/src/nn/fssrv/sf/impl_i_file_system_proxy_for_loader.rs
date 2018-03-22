@@ -44,7 +44,18 @@ impl AsRef<Session> for IFileSystemProxyForLoader {
 	}
 }
 impl IFileSystemProxyForLoader {
-	// fn mount_code(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn mount_code(&self, tid: ::nn::ApplicationId, content_path: &i8) -> Result<::nn::fssrv::sf::IFileSystem> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(0)
+			.args(tid)
+			.descriptor(IPCBuffer::from_ref(content_path, 0x19))
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+	}
+
 	pub fn is_code_mounted(&self, tid: ::nn::ApplicationId) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 

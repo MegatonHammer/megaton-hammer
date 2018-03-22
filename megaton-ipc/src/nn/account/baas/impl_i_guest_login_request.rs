@@ -41,7 +41,18 @@ impl IGuestLoginRequest {
 		Ok(*res.get_raw())
 	}
 
-	// fn get_nickname(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_nickname(&self, unk0: &mut [i8]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(14)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_slice(unk0, 0xa))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	// fn get_profile_image(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn load_id_token_cache(&self, UNKNOWN) -> Result<UNKNOWN>;
 }

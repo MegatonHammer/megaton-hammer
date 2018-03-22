@@ -195,9 +195,42 @@ impl ISystemDisplayService {
 		Ok(())
 	}
 
-	// fn list_display_modes(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn list_display_rgb_ranges(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn list_display_content_types(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn list_display_modes(&self, unk0: u64, unk2: &mut [::nn::vi::DisplayModeInfo]) -> Result<i64> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(3000)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_mut_slice(unk2, 6))
+			;
+		let res : Response<i64> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	pub fn list_display_rgb_ranges(&self, unk0: u64, unk2: &mut [u32]) -> Result<i64> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(3001)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_mut_slice(unk2, 6))
+			;
+		let res : Response<i64> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	pub fn list_display_content_types(&self, unk0: u64, unk2: &mut [u32]) -> Result<i64> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(3002)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_mut_slice(unk2, 6))
+			;
+		let res : Response<i64> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn get_display_mode(&self, unk0: u64) -> Result<::nn::vi::DisplayModeInfo> {
 		use megaton_hammer::ipc::{Request, Response};
 

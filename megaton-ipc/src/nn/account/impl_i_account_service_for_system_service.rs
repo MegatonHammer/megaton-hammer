@@ -64,8 +64,30 @@ impl IAccountServiceForSystemService {
 		Ok(*res.get_raw())
 	}
 
-	// fn list_all_users(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn list_open_users(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn list_all_users(&self, unk0: &mut [::nn::account::Uid]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(2)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_slice(unk0, 0xa))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn list_open_users(&self, unk0: &mut [::nn::account::Uid]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(3)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_slice(unk0, 0xa))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn get_last_opened_user(&self, ) -> Result<::nn::account::Uid> {
 		use megaton_hammer::ipc::{Request, Response};
 

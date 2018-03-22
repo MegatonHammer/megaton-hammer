@@ -39,7 +39,18 @@ impl IBcatService {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	// fn set_passphrase(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn set_passphrase(&self, unk0: ::nn::ApplicationId, unk1: &[i8]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(30100)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_slice(unk1, 9))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn register_background_delivery_task(&self, unk0: u32, unk1: ::nn::ApplicationId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -88,7 +99,18 @@ impl IBcatService {
 		Ok(())
 	}
 
-	// fn enumerate_background_delivery_task(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn enumerate_background_delivery_task(&self, unk1: &mut [::nn::bcat::TaskInfo]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(90100)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_slice(unk1, 6))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	// fn get_delivery_list(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn clear_delivery_cache_storage(&self, unk0: ::nn::ApplicationId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
@@ -100,7 +122,18 @@ impl IBcatService {
 		Ok(())
 	}
 
-	// fn get_push_notification_log(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_push_notification_log(&self, unk1: &mut [::nn::bcat::PushNotificationLog]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(90300)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_slice(unk1, 6))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 }
 
 impl FromKObject for IBcatService {

@@ -31,7 +31,18 @@ impl IDeliveryCacheStorageService {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	// fn enumerate_delivery_cache_directory(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn enumerate_delivery_cache_directory(&self, unk1: &mut [::nn::bcat::DirectoryName]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(10)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_slice(unk1, 6))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 }
 
 impl FromKObject for IDeliveryCacheStorageService {

@@ -41,8 +41,30 @@ impl IDatabaseService {
 		Ok(*res.get_raw())
 	}
 
-	// fn get(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get1(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get(&self, unk0: i32, unk2: &mut [::nn::mii::CharInfoElement]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(3)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_mut_slice(unk2, 6))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	pub fn get1(&self, unk0: i32, unk2: &mut [::nn::mii::CharInfo]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(4)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_mut_slice(unk2, 6))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn update_latest(&self, unk0: ::nn::mii::CharInfo, unk1: i32) -> Result<::nn::mii::CharInfo> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -91,8 +113,30 @@ impl IDatabaseService {
 		Ok(*res.get_raw())
 	}
 
-	// fn get2(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get3(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get2(&self, unk0: i32, unk2: &mut [::nn::mii::StoreDataElement]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(8)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_mut_slice(unk2, 6))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	pub fn get3(&self, unk0: i32, unk2: &mut [::nn::mii::StoreData]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(9)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_mut_slice(unk2, 6))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn update_latest1(&self, unk0: ::nn::mii::StoreData, unk1: i32) -> Result<::nn::mii::StoreData> {
 		use megaton_hammer::ipc::{Request, Response};
 

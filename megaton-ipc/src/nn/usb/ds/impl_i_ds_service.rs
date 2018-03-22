@@ -86,7 +86,19 @@ impl IDsService {
 		Ok(*res.get_raw())
 	}
 
-	// fn set_vid_pid_bcd(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(feature = "switch-2.0.0")]
+	pub fn set_vid_pid_bcd(&self, descriptor: &::nn::usb::UsbDescriptorData) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(5)
+			.args(())
+			.descriptor(IPCBuffer::from_ref(descriptor, 5))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 }
 
 impl FromKObject for IDsService {

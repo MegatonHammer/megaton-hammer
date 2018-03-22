@@ -21,7 +21,18 @@ impl IDeliveryCacheProgressService {
 		Ok(res.pop_handle())
 	}
 
-	// fn get_impl(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_impl(&self, unk0: &mut ::nn::bcat::detail::DeliveryCacheProgressImpl) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(1)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x1a))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 }
 
 impl FromKObject for IDeliveryCacheProgressService {

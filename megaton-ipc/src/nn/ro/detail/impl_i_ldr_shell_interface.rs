@@ -44,7 +44,26 @@ impl AsRef<Session> for ILdrShellInterface {
 	}
 }
 impl ILdrShellInterface {
-	// fn add_process_to_launch_queue(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn add_process_to_launch_queue(&self, unk0: &[u8; 0x200], size: u32, app_id: ::nn::ncm::ApplicationId) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			size: u32,
+			app_id: ::nn::ncm::ApplicationId,
+		}
+		let req = Request::new(0)
+			.args(InRaw {
+				size,
+				app_id,
+			})
+			.descriptor(IPCBuffer::from_ref(unk0, 0x19))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn clear_launch_queue(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 

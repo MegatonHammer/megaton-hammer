@@ -114,10 +114,54 @@ impl IUser {
 	}
 
 	// fn unknown12(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown13(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown14(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown15(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown16(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn unknown13(&self, unk0: u64, unk1: &mut [u8; 0x58]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(13)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x1a))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn unknown14(&self, unk0: u64, unk1: &mut [u8; 0x100]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(14)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x1a))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn unknown15(&self, unk0: u64, unk1: &mut [u8; 0x40]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(15)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x1a))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn unknown16(&self, unk0: u64, unk1: &mut [u8; 0x40]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(16)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x1a))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn unknown17(&self, unk0: u64) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 

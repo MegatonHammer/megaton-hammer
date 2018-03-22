@@ -44,7 +44,27 @@ impl AsRef<Session> for IFileSystemProxy {
 	}
 }
 impl IFileSystemProxy {
-	// fn mount_content(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(not(feature = "switch-2.0.0"))]
+	pub fn mount_content(&self, tid: ::nn::ApplicationId, flag: u32, path: &i8) -> Result<::nn::fssrv::sf::IFileSystem> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			tid: ::nn::ApplicationId,
+			flag: u32,
+		}
+		let req = Request::new(0)
+			.args(InRaw {
+				tid,
+				flag,
+			})
+			.descriptor(IPCBuffer::from_ref(path, 0x19))
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+	}
+
 	pub fn initialize(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -85,7 +105,27 @@ impl IFileSystemProxy {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	// fn mount_content(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(feature = "switch-2.0.0")]
+	pub fn mount_content(&self, tid: ::nn::ApplicationId, flag: u32, path: &[u8; 0x301]) -> Result<::nn::fssrv::sf::IFileSystem> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			tid: ::nn::ApplicationId,
+			flag: u32,
+		}
+		let req = Request::new(8)
+			.args(InRaw {
+				tid,
+				flag,
+			})
+			.descriptor(IPCBuffer::from_ref(path, 0x19))
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+	}
+
 	#[cfg(feature = "switch-3.0.0")]
 	pub fn open_data_file_system_by_application_id(&self, tid: ::nn::ApplicationId) -> Result<::nn::fssrv::sf::IFileSystem> {
 		use megaton_hammer::ipc::{Request, Response};
@@ -97,7 +137,18 @@ impl IFileSystemProxy {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	// fn mount_bis(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn mount_bis(&self, partition_id: ::nn::fssrv::sf::Partition, path: &[u8; 0x301]) -> Result<::nn::fssrv::sf::IFileSystem> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(11)
+			.args(partition_id)
+			.descriptor(IPCBuffer::from_ref(path, 0x19))
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+	}
+
 	pub fn open_bis_partition(&self, partition_id: ::nn::fssrv::sf::Partition) -> Result<::nn::fssrv::sf::IStorage> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -118,7 +169,18 @@ impl IFileSystemProxy {
 		Ok(())
 	}
 
-	// fn open_host_file_system_impl(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn open_host_file_system_impl(&self, path: &[u8; 0x301]) -> Result<::nn::fssrv::sf::IFileSystem> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(17)
+			.args(())
+			.descriptor(IPCBuffer::from_ref(path, 0x19))
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+	}
+
 	pub fn mount_sd_card(&self, ) -> Result<::nn::fssrv::sf::IFileSystem> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -576,8 +638,36 @@ impl IFileSystemProxy {
 		Ok(())
 	}
 
-	// fn get_rights_id_by_path(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_rights_id_by_path2(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(feature = "switch-2.0.0")]
+	pub fn get_rights_id_by_path(&self, path: &[u8; 0x301]) -> Result<u128> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(609)
+			.args(())
+			.descriptor(IPCBuffer::from_ref(path, 0x19))
+			;
+		let res : Response<u128> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	#[cfg(feature = "switch-3.0.0")]
+	pub fn get_rights_id_by_path2(&self, path: &[u8; 0x301]) -> Result<(u128, u8)> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(610)
+			.args(())
+			.descriptor(IPCBuffer::from_ref(path, 0x19))
+			;
+		#[repr(C)] #[derive(Clone)] struct OutRaw {
+			rights: u128,
+			unk2: u8,
+		}
+		let res : Response<OutRaw> = self.0.send(req)?;
+		Ok((res.get_raw().rights.clone(),res.get_raw().unk2.clone()))
+	}
+
 	#[cfg(feature = "switch-2.0.0")]
 	pub fn set_sd_card_encryption_seed(&self, seedmaybe: u128) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
@@ -590,7 +680,18 @@ impl IFileSystemProxy {
 	}
 
 	// fn get_and_clear_file_system_proxy_error_info(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn set_bis_root_for_host(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn set_bis_root_for_host(&self, unk0: u32, path: &[u8; 0x301]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(1000)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_ref(path, 0x19))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn set_save_data_size(&self, unk0: u64, unk1: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -609,7 +710,18 @@ impl IFileSystemProxy {
 		Ok(())
 	}
 
-	// fn set_save_data_root_path(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn set_save_data_root_path(&self, path: &[u8; 0x301]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(1002)
+			.args(())
+			.descriptor(IPCBuffer::from_ref(path, 0x19))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn disable_auto_save_data_creation(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 

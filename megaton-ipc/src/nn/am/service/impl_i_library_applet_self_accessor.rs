@@ -123,7 +123,18 @@ impl ILibraryAppletSelfAccessor {
 		Ok(*res.get_raw())
 	}
 
-	// fn get_main_applet_application_control_property(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_main_applet_application_control_property(&self, unk0: &mut ::nn::ns::ApplicationControlProperty) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(15)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x16))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn get_main_applet_storage_id(&self, ) -> Result<::nn::ncm::StorageId> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -134,7 +145,18 @@ impl ILibraryAppletSelfAccessor {
 		Ok(*res.get_raw())
 	}
 
-	// fn get_caller_applet_identity_info_stack(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_caller_applet_identity_info_stack(&self, unk1: &mut [::nn::am::service::AppletIdentityInfo]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(17)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_slice(unk1, 6))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn pop_extra_storage(&self, ) -> Result<::nn::am::service::IStorage> {
 		use megaton_hammer::ipc::{Request, Response};
 

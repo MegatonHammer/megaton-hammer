@@ -73,8 +73,33 @@ impl IHardwareOpusDecoderManager {
 		Ok(*res.get_raw())
 	}
 
-	// fn initialize_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_work_buffer_size_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(feature = "switch-3.0.0")]
+	pub fn initialize_ex(&self, unk0: u32, unk1: &KObject, unk2: &[u8; 0x110]) -> Result<Session> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(2)
+			.args(unk0)
+			.copy_handle(unk1)
+			.descriptor(IPCBuffer::from_ref(unk2, 0x19))
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+	}
+
+	#[cfg(feature = "switch-3.0.0")]
+	pub fn get_work_buffer_size_ex(&self, unk0: &[u8; 0x110]) -> Result<u32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(3)
+			.args(())
+			.descriptor(IPCBuffer::from_ref(unk0, 0x19))
+			;
+		let res : Response<u32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 }
 
 impl FromKObject for IHardwareOpusDecoderManager {

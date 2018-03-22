@@ -49,7 +49,18 @@ impl IDsEndpoint {
 		Ok(res.pop_handle())
 	}
 
-	// fn get_report_data(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_report_data(&self, entries: &mut [::nn::usb::UsbReportEntry]) -> Result<u32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(3)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_slice(entries, 8))
+			;
+		let res : Response<u32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn stall(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 

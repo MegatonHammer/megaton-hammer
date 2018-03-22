@@ -11,7 +11,18 @@ impl AsRef<Session> for IDsInterface {
 	}
 }
 impl IDsInterface {
-	// fn get_ds_endpoint(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_ds_endpoint(&self, unk0: &[::nn::usb::UsbEndpointDescriptor]) -> Result<::nn::usb::ds::IDsEndpoint> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(0)
+			.args(())
+			.descriptor(IPCBuffer::from_slice(unk0, 5))
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+	}
+
 	pub fn get_setup_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 

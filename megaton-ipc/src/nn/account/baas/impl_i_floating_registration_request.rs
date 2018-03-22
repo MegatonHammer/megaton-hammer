@@ -41,7 +41,18 @@ impl IFloatingRegistrationRequest {
 		Ok(*res.get_raw())
 	}
 
-	// fn get_nickname(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_nickname(&self, unk0: &mut [i8]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(14)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_slice(unk0, 0xa))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	// fn get_profile_image(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn load_id_token_cache(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn register_async(&self, ) -> Result<(::nn::account::Uid, ::nn::account::detail::IAsyncContext)> {
@@ -64,7 +75,19 @@ impl IFloatingRegistrationRequest {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	// fn set_system_program_identification(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn set_system_program_identification(&self, unk0: u64, unk2: &::nn::account::SystemProgramIdentification) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(110)
+			.args(unk0)
+			.send_pid()
+			.descriptor(IPCBuffer::from_ref(unk2, 0x19))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn ensure_id_token_cache_async(&self, ) -> Result<::nn::account::detail::IAsyncContext> {
 		use megaton_hammer::ipc::{Request, Response};
 

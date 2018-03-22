@@ -11,8 +11,46 @@ impl AsRef<Session> for IStorage {
 	}
 }
 impl IStorage {
-	// fn read(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn write(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn read(&self, offset: u64, length: u64, buffer: &mut [i8]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			offset: u64,
+			length: u64,
+		}
+		let req = Request::new(0)
+			.args(InRaw {
+				offset,
+				length,
+			})
+			.descriptor(IPCBuffer::from_mut_slice(buffer, 0x46))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn write(&self, offset: u64, length: u64, data: &[i8]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			offset: u64,
+			length: u64,
+		}
+		let req = Request::new(1)
+			.args(InRaw {
+				offset,
+				length,
+			})
+			.descriptor(IPCBuffer::from_slice(data, 0x45))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn flush(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 

@@ -52,7 +52,18 @@ impl IApplicationDisplayService {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	// fn list_displays(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn list_displays(&self, unk1: &mut [::nn::vi::DisplayInfo]) -> Result<i64> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(1000)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_slice(unk1, 6))
+			;
+		let res : Response<i64> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn open_display(&self, unk0: ::nn::vi::DisplayName) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 

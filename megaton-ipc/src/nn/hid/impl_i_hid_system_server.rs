@@ -130,7 +130,18 @@ impl IHidSystemServer {
 		Ok(res.pop_handle())
 	}
 
-	// fn get_npads_with_nfc(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_npads_with_nfc(&self, unk1: &mut [u32]) -> Result<i64> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(211)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_slice(unk1, 0xa))
+			;
+		let res : Response<i64> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn acquire_nfc_activate_event_handle(&self, unk0: u32) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -281,7 +292,18 @@ impl IHidSystemServer {
 		Ok(())
 	}
 
-	// fn get_unique_pads_from_npad(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_unique_pads_from_npad(&self, unk0: u32, unk2: &mut [::nn::hid::system::UniquePadId]) -> Result<i64> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(321)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_mut_slice(unk2, 0xa))
+			;
+		let res : Response<i64> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn get_ir_sensor_state(&self, unk0: u32, unk1: ::nn::applet::AppletResourceUserId) -> Result<i64> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -482,7 +504,18 @@ impl IHidSystemServer {
 		Ok(res.pop_handle())
 	}
 
-	// fn get_play_report_controller_usages(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_play_report_controller_usages(&self, unk1: &mut [::nn::hid::system::PlayReportControllerUsage]) -> Result<i64> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(541)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_slice(unk1, 0xa))
+			;
+		let res : Response<i64> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn acquire_play_report_registered_device_update_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -493,7 +526,18 @@ impl IHidSystemServer {
 		Ok(res.pop_handle())
 	}
 
-	// fn get_registered_devices(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_registered_devices(&self, unk1: &mut [::nn::hid::system::RegisteredDevice]) -> Result<i64> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(543)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_slice(unk1, 0xa))
+			;
+		let res : Response<i64> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn acquire_connection_trigger_timeout_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -563,7 +607,18 @@ impl IHidSystemServer {
 		Ok(res.pop_handle())
 	}
 
-	// fn get_unique_pad_ids(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_unique_pad_ids(&self, unk1: &mut [::nn::hid::system::UniquePadId]) -> Result<i64> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(703)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_slice(unk1, 0xa))
+			;
+		let res : Response<i64> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn acquire_joy_detach_on_bluetooth_off_event_handle(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -575,7 +630,18 @@ impl IHidSystemServer {
 		Ok(res.pop_handle())
 	}
 
-	// fn list_six_axis_sensor_handles(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn list_six_axis_sensor_handles(&self, unk0: ::nn::hid::system::UniquePadId, unk2: &mut [::nn::hid::system::UniqueSixAxisSensorHandle]) -> Result<i64> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(800)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_mut_slice(unk2, 0xa))
+			;
+		let res : Response<i64> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn is_six_axis_sensor_user_calibration_supported(&self, unk0: ::nn::hid::system::UniqueSixAxisSensorHandle) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 

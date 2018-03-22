@@ -21,7 +21,18 @@ impl IUserLocalCommunicationService {
 		Ok(*res.get_raw())
 	}
 
-	// fn get_network_info(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_network_info(&self, unk0: &mut [u8; 0x480]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(1)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x1a))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn get_ipv4_address(&self, ) -> Result<(u32, u32)> {
 		use megaton_hammer::ipc::{Request, Response};
 

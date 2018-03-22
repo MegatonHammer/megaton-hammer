@@ -43,7 +43,19 @@ impl IManagerForApplication {
 
 	// fn load_id_token_cache(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_nintendo_account_user_resource_cache_for_application(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn create_authorization_request(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn create_authorization_request(&self, unk0: u32, unk1: &KObject, unk2: &::nn::account::NintendoAccountAuthorizationRequestParameters) -> Result<::nn::account::nas::IAuthorizationRequest> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(150)
+			.args(unk0)
+			.copy_handle(unk1)
+			.descriptor(IPCBuffer::from_ref(unk2, 0x19))
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+	}
+
 }
 
 impl FromKObject for IManagerForApplication {

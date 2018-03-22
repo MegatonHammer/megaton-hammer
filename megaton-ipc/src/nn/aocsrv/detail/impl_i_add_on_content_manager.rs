@@ -54,7 +54,28 @@ impl IAddOnContentManager {
 		Ok(*res.get_raw())
 	}
 
-	// fn list_add_on_content_by_application_id(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn list_add_on_content_by_application_id(&self, unk0: i32, unk1: i32, unk2: ::nn::ncm::ApplicationId, unk4: &mut [i32]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: i32,
+			unk1: i32,
+			unk2: ::nn::ncm::ApplicationId,
+		}
+		let req = Request::new(1)
+			.args(InRaw {
+				unk0,
+				unk1,
+				unk2,
+			})
+			.descriptor(IPCBuffer::from_mut_slice(unk4, 6))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn count_add_on_content(&self, unk0: u64) -> Result<i32> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -66,7 +87,29 @@ impl IAddOnContentManager {
 		Ok(*res.get_raw())
 	}
 
-	// fn list_add_on_content(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn list_add_on_content(&self, unk0: i32, unk1: i32, unk2: u64, unk5: &mut [i32]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: i32,
+			unk1: i32,
+			unk2: u64,
+		}
+		let req = Request::new(3)
+			.args(InRaw {
+				unk0,
+				unk1,
+				unk2,
+			})
+			.send_pid()
+			.descriptor(IPCBuffer::from_mut_slice(unk5, 6))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn get_add_on_content_base_id_by_application_id(&self, unk0: ::nn::ncm::ApplicationId) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 

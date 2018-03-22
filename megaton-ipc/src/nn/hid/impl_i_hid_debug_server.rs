@@ -84,7 +84,18 @@ impl IHidDebugServer {
 		Ok(())
 	}
 
-	// fn set_touch_screen_auto_pilot_state(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn set_touch_screen_auto_pilot_state(&self, unk0: &[::nn::hid::TouchState]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(11)
+			.args(())
+			.descriptor(IPCBuffer::from_slice(unk0, 5))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn unset_touch_screen_auto_pilot_state(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 

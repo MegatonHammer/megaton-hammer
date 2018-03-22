@@ -11,7 +11,18 @@ impl AsRef<Session> for IDirectory {
 	}
 }
 impl IDirectory {
-	// fn read(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn read(&self, unk1: &mut [::nn::fssrv::sf::IDirectoryEntry]) -> Result<u64> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(0)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_slice(unk1, 6))
+			;
+		let res : Response<u64> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn get_entry_count(&self, ) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 

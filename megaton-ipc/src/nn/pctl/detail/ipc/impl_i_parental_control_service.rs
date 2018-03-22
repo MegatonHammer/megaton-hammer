@@ -21,8 +21,46 @@ impl IParentalControlService {
 		Ok(())
 	}
 
-	// fn confirm_launch_application_permission(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn confirm_resume_application_permission(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn confirm_launch_application_permission(&self, unk0: bool, unk1: ::nn::ncm::ApplicationId, unk2: &[i8]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: bool,
+			unk1: ::nn::ncm::ApplicationId,
+		}
+		let req = Request::new(1002)
+			.args(InRaw {
+				unk0,
+				unk1,
+			})
+			.descriptor(IPCBuffer::from_slice(unk2, 9))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn confirm_resume_application_permission(&self, unk0: bool, unk1: ::nn::ncm::ApplicationId, unk2: &[i8]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: bool,
+			unk1: ::nn::ncm::ApplicationId,
+		}
+		let req = Request::new(1003)
+			.args(InRaw {
+				unk0,
+				unk1,
+			})
+			.descriptor(IPCBuffer::from_slice(unk2, 9))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn confirm_sns_post_permission(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -223,8 +261,30 @@ impl IParentalControlService {
 		Ok(())
 	}
 
-	// fn get_free_communication_application_list(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn update_free_communication_application_list(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_free_communication_application_list(&self, unk0: i32, unk2: &mut [::nn::pctl::FreeCommunicationApplicationInfo]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(1044)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_mut_slice(unk2, 6))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	pub fn update_free_communication_application_list(&self, unk0: &[::nn::pctl::FreeCommunicationApplicationInfo]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(1045)
+			.args(())
+			.descriptor(IPCBuffer::from_slice(unk0, 5))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn disable_features_for_reset(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -245,9 +305,42 @@ impl IParentalControlService {
 		Ok(())
 	}
 
-	// fn unlock_restriction_temporarily(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unlock_system_settings_restriction(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn set_pin_code(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn unlock_restriction_temporarily(&self, unk0: &[i8]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(1201)
+			.args(())
+			.descriptor(IPCBuffer::from_slice(unk0, 9))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn unlock_system_settings_restriction(&self, unk0: &[i8]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(1202)
+			.args(())
+			.descriptor(IPCBuffer::from_slice(unk0, 9))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn set_pin_code(&self, unk0: &[i8]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(1203)
+			.args(())
+			.descriptor(IPCBuffer::from_slice(unk0, 9))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn generate_inquiry_code(&self, ) -> Result<::nn::pctl::InquiryCode> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -258,7 +351,18 @@ impl IParentalControlService {
 		Ok(*res.get_raw())
 	}
 
-	// fn check_master_key(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn check_master_key(&self, unk0: ::nn::pctl::InquiryCode, unk1: &[i8]) -> Result<bool> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(1205)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_slice(unk1, 9))
+			;
+		let res : Response<bool> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn get_pin_code_length(&self, ) -> Result<i32> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -309,7 +413,18 @@ impl IParentalControlService {
 		Ok(*res.get_raw())
 	}
 
-	// fn get_account_nickname(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_account_nickname(&self, unk0: ::nn::pctl::detail::PairingAccountInfoBase, unk2: &mut [i8]) -> Result<u32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(1421)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_mut_slice(unk2, 0xa))
+			;
+		let res : Response<u32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn get_account_state(&self, unk0: ::nn::pctl::detail::PairingAccountInfoBase) -> Result<i32> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -524,7 +639,18 @@ impl IParentalControlService {
 		Ok(*res.get_raw())
 	}
 
-	// fn request_pairing_async(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn request_pairing_async(&self, unk0: &[i8]) -> Result<(::nn::pctl::detail::AsyncData, KObject)> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(2001)
+			.args(())
+			.descriptor(IPCBuffer::from_slice(unk0, 9))
+			;
+		let mut res : Response<::nn::pctl::detail::AsyncData> = self.0.send(req)?;
+		Ok((*res.get_raw(),res.pop_handle()))
+	}
+
 	pub fn finish_request_pairing(&self, unk0: ::nn::pctl::detail::AsyncData) -> Result<::nn::pctl::detail::PairingInfoBase> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -588,8 +714,34 @@ impl IParentalControlService {
 	// fn finish_unlink_pairing(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_account_mii_image_async(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn finish_get_account_mii_image(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_account_mii_image_content_type_async(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn finish_get_account_mii_image_content_type(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_account_mii_image_content_type_async(&self, unk0: ::nn::pctl::detail::PairingAccountInfoBase, unk4: &mut [i8]) -> Result<(::nn::pctl::detail::AsyncData, u32, KObject)> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(2011)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_mut_slice(unk4, 0xa))
+			;
+		#[repr(C)] #[derive(Clone)] struct OutRaw {
+			unk1: ::nn::pctl::detail::AsyncData,
+			unk2: u32,
+		}
+		let mut res : Response<OutRaw> = self.0.send(req)?;
+		Ok((res.get_raw().unk1.clone(),res.get_raw().unk2.clone(),res.pop_handle()))
+	}
+
+	pub fn finish_get_account_mii_image_content_type(&self, unk0: ::nn::pctl::detail::AsyncData, unk2: &mut [i8]) -> Result<u32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(2012)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_mut_slice(unk2, 0xa))
+			;
+		let res : Response<u32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn synchronize_parental_control_settings_async(&self, ) -> Result<(::nn::pctl::detail::AsyncData, KObject)> {
 		use megaton_hammer::ipc::{Request, Response};
 

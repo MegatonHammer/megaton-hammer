@@ -45,8 +45,31 @@ impl AsRef<Session> for IFirmwareDebugSettingsServer {
 }
 impl IFirmwareDebugSettingsServer {
 	// fn set_settings_item_value(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn reset_settings_item_value(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn create_settings_item_key_iterator(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn reset_settings_item_value(&self, unk0: &::nn::settings::SettingsName, unk1: &::nn::settings::SettingsItemKey) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(3)
+			.args(())
+			.descriptor(IPCBuffer::from_ref(unk0, 0x19))
+			.descriptor(IPCBuffer::from_ref(unk1, 0x19))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn create_settings_item_key_iterator(&self, unk0: &::nn::settings::SettingsName) -> Result<::nn::settings::ISettingsItemKeyIterator> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(4)
+			.args(())
+			.descriptor(IPCBuffer::from_ref(unk0, 0x19))
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+	}
+
 	#[cfg(feature = "switch-4.0.0")]
 	pub fn read_settings(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};

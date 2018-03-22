@@ -228,11 +228,13 @@ def gen_ipc_method(cmd, f):
 			objects_arr.append(name + ".as_ref().as_ref()")
 		elif ty[0] == "object":
 			objects_arr.append(name + ".as_ref()")
-		elif ty[0] == "buffer" and (ty[2] == 0x21 or ty[2] == 0x22):
+		elif ty[0] == "buffer":
 			if ty[3] == 0:
 				buffers.append("IPCBuffer::from_slice(%s, %s)" % (name, emitInt(ty[2])))
 			else:
 				buffers.append("IPCBuffer::from_ref(%s, %s)" % (name, emitInt(ty[2])))
+		elif ty[0] == "array":
+			buffers.append("IPCBuffer::from_slice(%s, %s)" % (name, emitInt(ty[2])))
 		elif ty[0] == "pid":
 			pass
 		else:
@@ -240,13 +242,13 @@ def gen_ipc_method(cmd, f):
 
 	# Grab output buffers to
 	for (name, ty) in cmd['outputs']:
-		if ty[0] == "buffer" and (ty[2] == 0x21 or ty[2] == 0x22):
+		if ty[0] == "buffer":
 			if ty[3] == 0:
 				buffers.append("IPCBuffer::from_mut_slice(%s, %s)" % (name, emitInt(ty[2])))
 			else:
 				buffers.append("IPCBuffer::from_mut_ref(%s, %s)" % (name, emitInt(ty[2])))
-		elif ty[0] == "buffer" or ty[0] == "array":
-			raise UnsupportedStructException('array')
+		elif ty[0] == "array":
+			buffers.append("IPCBuffer::from_mut_slice(%s, %s)" % (name, emitInt(ty[2])))
 
 
 	if len(args_arr) == 1:

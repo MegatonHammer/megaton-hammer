@@ -124,7 +124,18 @@ impl IFactorySettingsServer {
 		Ok(*res.get_raw())
 	}
 
-	// fn get_wireless_lan_country_codes(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_wireless_lan_country_codes(&self, unk1: &mut [::nn::settings::factory::CountryCode]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(8)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_slice(unk1, 0xa))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn get_serial_number(&self, ) -> Result<::nn::settings::factory::SerialNumber> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -165,12 +176,78 @@ impl IFactorySettingsServer {
 		Ok(*res.get_raw())
 	}
 
-	// fn get_eci_device_certificate(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_eticket_device_certificate(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_ssl_key(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_ssl_certificate(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_game_card_key(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_game_card_certificate(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_eci_device_certificate(&self, unk0: &mut ::nn::settings::factory::EccB233DeviceCertificate) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(14)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x16))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn get_eticket_device_certificate(&self, unk0: &mut ::nn::settings::factory::Rsa2048DeviceCertificate) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(15)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x16))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn get_ssl_key(&self, unk0: &mut ::nn::settings::factory::SslKey) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(16)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x16))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn get_ssl_certificate(&self, unk0: &mut ::nn::settings::factory::SslCertificate) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(17)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x16))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn get_game_card_key(&self, unk0: &mut ::nn::settings::factory::GameCardKey) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(18)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x16))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn get_game_card_certificate(&self, unk0: &mut ::nn::settings::factory::GameCardCertificate) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(19)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x16))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn get_eci_device_key(&self, ) -> Result<::nn::settings::factory::EccB233DeviceKey> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -181,7 +258,18 @@ impl IFactorySettingsServer {
 		Ok(*res.get_raw())
 	}
 
-	// fn get_eticket_device_key(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_eticket_device_key(&self, unk0: &mut ::nn::settings::factory::Rsa2048DeviceKey) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(21)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x16))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn get_speaker_parameter(&self, ) -> Result<::nn::settings::factory::SpeakerParameter> {
 		use megaton_hammer::ipc::{Request, Response};
 

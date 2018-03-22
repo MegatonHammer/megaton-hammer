@@ -220,7 +220,18 @@ impl IRequest {
 	}
 
 	// fn get_applet_info(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_additional_info(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_additional_info(&self, unk1: &mut ::nn::nifm::AdditionalInfo) -> Result<u32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(22)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x16))
+			;
+		let res : Response<u32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn set_kept_in_sleep(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 

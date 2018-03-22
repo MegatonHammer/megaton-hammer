@@ -131,7 +131,22 @@ impl AsRef<Session> for INvDrvServices {
 	}
 }
 impl INvDrvServices {
-	// fn open(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn open(&self, path: &[i8]) -> Result<(u32, u32)> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(0)
+			.args(())
+			.descriptor(IPCBuffer::from_slice(path, 5))
+			;
+		#[repr(C)] #[derive(Clone)] struct OutRaw {
+			fd: u32,
+			error_code: u32,
+		}
+		let res : Response<OutRaw> = self.0.send(req)?;
+		Ok((res.get_raw().fd.clone(),res.get_raw().error_code.clone()))
+	}
+
 	pub fn ioctl(&self, fd: u32, rq_id: u32, unk2: u32, unk3: u32) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 

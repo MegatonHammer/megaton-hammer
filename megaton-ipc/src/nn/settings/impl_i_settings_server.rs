@@ -54,7 +54,18 @@ impl ISettingsServer {
 		Ok(*res.get_raw())
 	}
 
-	// fn get_available_language_codes(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_available_language_codes(&self, unk1: &mut [::nn::settings::LanguageCode]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(1)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_slice(unk1, 0xa))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	#[cfg(feature = "switch-4.0.0")]
 	pub fn make_language_code(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};

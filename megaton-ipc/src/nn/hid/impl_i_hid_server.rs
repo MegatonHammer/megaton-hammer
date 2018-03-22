@@ -138,7 +138,18 @@ impl IHidServer {
 		Ok(())
 	}
 
-	// fn get_xpad_ids(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_xpad_ids(&self, unk1: &mut [::nn::hid::BasicXpadId]) -> Result<i64> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(55)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_slice(unk1, 0xa))
+			;
+		let res : Response<i64> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn activate_joy_xpad(&self, unk0: ::nn::hid::JoyXpadId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -159,7 +170,18 @@ impl IHidServer {
 		Ok(res.pop_handle())
 	}
 
-	// fn get_joy_xpad_ids(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_joy_xpad_ids(&self, unk1: &mut [::nn::hid::JoyXpadId]) -> Result<i64> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(59)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_slice(unk1, 0xa))
+			;
+		let res : Response<i64> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn activate_six_axis_sensor(&self, unk0: ::nn::hid::BasicXpadId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -614,7 +636,19 @@ impl IHidServer {
 		Ok(*res.get_raw())
 	}
 
-	// fn set_supported_npad_id_type(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn set_supported_npad_id_type(&self, unk0: ::nn::applet::AppletResourceUserId, unk2: &[u32]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(102)
+			.args(unk0)
+			.send_pid()
+			.descriptor(IPCBuffer::from_slice(unk2, 9))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn activate_npad(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -970,7 +1004,19 @@ impl IHidServer {
 		Ok(*res.get_raw())
 	}
 
-	// fn send_vibration_values(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn send_vibration_values(&self, unk0: ::nn::applet::AppletResourceUserId, unk1: &[::nn::hid::VibrationDeviceHandle], unk2: &[::nn::hid::VibrationValue]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(206)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_slice(unk1, 9))
+			.descriptor(IPCBuffer::from_slice(unk2, 9))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn activate_console_six_axis_sensor(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 

@@ -45,7 +45,18 @@ impl IUser {
 
 	// fn unknown5(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown6(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown7(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn unknown7(&self, unk0: u64, unk1: &mut [u8; 0x58]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(7)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x1a))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn unknown8(&self, unk0: u64) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 

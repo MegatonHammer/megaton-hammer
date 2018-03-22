@@ -69,7 +69,21 @@ impl IAllSystemAppletProxiesService {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	// fn open_library_applet_proxy(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(feature = "switch-3.0.0")]
+	pub fn open_library_applet_proxy(&self, unk0: u64, unk2: &KObject, unk3: &::nn::am::AppletAttribute) -> Result<::nn::am::service::ILibraryAppletProxy> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(201)
+			.args(unk0)
+			.send_pid()
+			.copy_handle(unk2)
+			.descriptor(IPCBuffer::from_ref(unk3, 0x15))
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+	}
+
 	pub fn open_overlay_applet_proxy(&self, unk0: u64, unk2: &KObject) -> Result<::nn::am::service::IOverlayAppletProxy> {
 		use megaton_hammer::ipc::{Request, Response};
 

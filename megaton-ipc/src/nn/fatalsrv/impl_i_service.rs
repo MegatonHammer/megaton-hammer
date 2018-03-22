@@ -82,7 +82,27 @@ impl IService {
 		Ok(())
 	}
 
-	// fn transition_to_fatal_error(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn transition_to_fatal_error(&self, error_code: u64, unk1: u64, error_buf: &[u8; 0x110]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			error_code: u64,
+			unk1: u64,
+		}
+		let req = Request::new(2)
+			.args(InRaw {
+				error_code,
+				unk1,
+			})
+			.send_pid()
+			.descriptor(IPCBuffer::from_ref(error_buf, 0x15))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 }
 
 impl FromKObject for IService {

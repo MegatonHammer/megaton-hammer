@@ -11,7 +11,18 @@ impl AsRef<Session> for IGeneralService {
 	}
 }
 impl IGeneralService {
-	// fn get_client_id(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_client_id(&self, unk0: &mut ::nn::nifm::ClientId) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(1)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x1a))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn create_scan_request(&self, ) -> Result<::nn::nifm::detail::IScanRequest> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -32,11 +43,66 @@ impl IGeneralService {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	// fn get_current_network_profile(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn enumerate_network_interfaces(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn enumerate_network_profiles(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_network_profile(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn set_network_profile(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_current_network_profile(&self, unk0: &mut ::nn::nifm::detail::sf::NetworkProfileData) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(5)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x1a))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn enumerate_network_interfaces(&self, unk0: u32, unk2: &mut [::nn::nifm::detail::sf::NetworkInterfaceInfo]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(6)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_mut_slice(unk2, 0xa))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	pub fn enumerate_network_profiles(&self, unk0: u8, unk2: &mut [::nn::nifm::detail::sf::NetworkProfileBasicInfo]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(7)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_mut_slice(unk2, 6))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	pub fn get_network_profile(&self, unk0: ::nn::util::Uuid, unk1: &mut ::nn::nifm::detail::sf::NetworkProfileData) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(8)
+			.args(unk0)
+			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x1a))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn set_network_profile(&self, unk0: &::nn::nifm::detail::sf::NetworkProfileData) -> Result<::nn::util::Uuid> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(9)
+			.args(())
+			.descriptor(IPCBuffer::from_ref(unk0, 0x19))
+			;
+		let res : Response<::nn::util::Uuid> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn remove_network_profile(&self, unk0: ::nn::util::Uuid) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -47,7 +113,18 @@ impl IGeneralService {
 		Ok(())
 	}
 
-	// fn get_scan_data(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_scan_data(&self, unk1: &mut [::nn::nifm::detail::sf::AccessPointData]) -> Result<i32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(11)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_slice(unk1, 6))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn get_current_ip_address(&self, ) -> Result<::nn::nifm::IpV4Address> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -58,8 +135,30 @@ impl IGeneralService {
 		Ok(*res.get_raw())
 	}
 
-	// fn get_current_access_point(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn create_temporary_network_profile(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_current_access_point(&self, unk0: &mut ::nn::nifm::detail::sf::AccessPointData) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(13)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x1a))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn create_temporary_network_profile(&self, unk0: &::nn::nifm::detail::sf::NetworkProfileData) -> Result<(::nn::util::Uuid, ::nn::nifm::detail::INetworkProfile)> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(14)
+			.args(())
+			.descriptor(IPCBuffer::from_ref(unk0, 0x19))
+			;
+		let mut res : Response<::nn::util::Uuid> = self.0.send(req)?;
+		Ok((*res.get_raw(),unsafe { FromKObject::from_kobject(res.pop_handle()) }))
+	}
+
 	// fn get_current_ip_config_info(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn set_wireless_communication_enabled(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
@@ -111,7 +210,18 @@ impl IGeneralService {
 		Ok(*res.get_raw())
 	}
 
-	// fn is_any_internet_request_accepted(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn is_any_internet_request_accepted(&self, unk0: &::nn::nifm::ClientId) -> Result<bool> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(21)
+			.args(())
+			.descriptor(IPCBuffer::from_ref(unk0, 0x19))
+			;
+		let res : Response<bool> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn is_any_foreground_request_accepted(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -152,9 +262,42 @@ impl IGeneralService {
 		Ok(*res.get_raw())
 	}
 
-	// fn set_exclusive_client(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_default_ip_setting(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn set_default_ip_setting(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn set_exclusive_client(&self, unk0: &::nn::nifm::ClientId) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(26)
+			.args(())
+			.descriptor(IPCBuffer::from_ref(unk0, 0x19))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn get_default_ip_setting(&self, unk0: &mut ::nn::nifm::IpSettingData) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(27)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x1a))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn set_default_ip_setting(&self, unk0: &::nn::nifm::IpSettingData) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(28)
+			.args(())
+			.descriptor(IPCBuffer::from_ref(unk0, 0x19))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn set_wireless_communication_enabled_for_test(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -185,7 +328,18 @@ impl IGeneralService {
 		Ok(res.pop_handle())
 	}
 
-	// fn get_telemetry_info(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_telemetry_info(&self, unk0: &mut ::nn::nifm::TelemetryInfo) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(32)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x16))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn confirm_system_availability(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
