@@ -104,7 +104,6 @@ impl Logger {
             let available_capacity = svc_log_space.capacity() - svc_log_space.len();
             if data.len() > available_capacity {
                 // Worse-case. Just print it all out and start fresh.
-                return;
                 unsafe { svc::output_debug_string(svc_log_space.as_ptr(), svc_log_space.len()); }
                 unsafe { svc::output_debug_string(data.as_ptr(), data.len()); }
                 let _ = svc_log_space.drain(..);
