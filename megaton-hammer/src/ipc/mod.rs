@@ -255,25 +255,24 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
     }
 
     pub fn descriptor(mut self, buf: IPCBuffer<'a>) -> Self {
-        /*enum Direction { In, Out }
-        enum Family { AB, XC }*/
+        enum Direction { In, Out }
+        enum Family { AB, XC }
 
         if buf.ty & 0x20 == 0 {
-            unimplemented!();
-            /*let direction = if buf.ty & 0b0001 != 0 { Direction::In }
+            let direction = if buf.ty & 0b0001 != 0 { Direction::In }
             else if buf.ty & 0b0010 != 0 { Direction::Out }
-            else { panic!("Invalid buffer type {}", buf.ty); }
+            else { panic!("Invalid buffer type {}", buf.ty); };
 
             let family = if buf.ty & 0b0100 != 0 { Family::AB }
             else if buf.ty & 0b1000 != 0 { Family::XC }
-            else { panic!("Invalid buffer type {}", buf.ty); }
+            else { panic!("Invalid buffer type {}", buf.ty); };
 
             match (direction, family) {
                 (Direction::In, Family::AB) => self.a_descriptors.push(buf),
                 (Direction::Out, Family::AB) => self.b_descriptors.push(buf),
                 (Direction::In, Family::XC) => self.x_descriptors.push(buf),
                 (Direction::Out, Family::XC) => ()
-            }*/
+            }
         } else if buf.ty == 0x21 {
             self.a_descriptors.push(buf);
             self.x_descriptors.push(IPCBuffer::null());
