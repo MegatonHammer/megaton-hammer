@@ -31,27 +31,9 @@ impl IDownloadTaskInterface {
 		Ok(())
 	}
 
-	pub fn request_ensure_download_task(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(703)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn request_ensure_download_task(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn list_download_task_status(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn request_download_task_list_data(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(705)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn request_download_task_list_data(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn try_commit_current_application_download_task(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 

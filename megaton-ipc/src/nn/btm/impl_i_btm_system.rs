@@ -44,7 +44,7 @@ impl AsRef<Session> for IBtmSystem {
 	}
 }
 impl IBtmSystem {
-	pub fn unknown0(&self, ) -> Result<Session> {
+	pub fn get_core_impl(&self, ) -> Result<Session> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(0)

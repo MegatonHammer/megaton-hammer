@@ -144,16 +144,7 @@ impl IBoardPowerControlManager {
 		Ok(())
 	}
 
-	pub fn unknown10(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(10)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown10(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for IBoardPowerControlManager {

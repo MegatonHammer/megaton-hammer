@@ -44,16 +44,7 @@ impl AsRef<Session> for ILocationResolverManager {
 	}
 }
 impl ILocationResolverManager {
-	pub fn get_location_resolver(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(0)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn get_location_resolver(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn get_registered_location_resolver(&self, ) -> Result<Session> {
 		use megaton_hammer::ipc::{Request, Response};
 

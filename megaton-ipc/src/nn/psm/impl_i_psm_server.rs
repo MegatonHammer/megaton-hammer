@@ -44,7 +44,7 @@ impl AsRef<Session> for IPsmServer {
 	}
 }
 impl IPsmServer {
-	pub fn unknown0(&self, ) -> Result<u32> {
+	pub fn get_battery_charge_percentage(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(0)
@@ -54,7 +54,7 @@ impl IPsmServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown1(&self, ) -> Result<u32> {
+	pub fn get_charger_type(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(1)
@@ -64,7 +64,7 @@ impl IPsmServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown2(&self, ) -> Result<()> {
+	pub fn enable_battery_charging(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(2)
@@ -74,7 +74,7 @@ impl IPsmServer {
 		Ok(())
 	}
 
-	pub fn unknown3(&self, ) -> Result<()> {
+	pub fn disable_battery_charging(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(3)
@@ -84,7 +84,7 @@ impl IPsmServer {
 		Ok(())
 	}
 
-	pub fn unknown4(&self, ) -> Result<u8> {
+	pub fn is_battery_charging_enabled(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(4)
@@ -94,7 +94,7 @@ impl IPsmServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown5(&self, ) -> Result<()> {
+	pub fn acquire_controller_power_supply(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(5)
@@ -104,7 +104,7 @@ impl IPsmServer {
 		Ok(())
 	}
 
-	pub fn unknown6(&self, ) -> Result<()> {
+	pub fn release_controller_power_supply(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(6)
@@ -124,7 +124,7 @@ impl IPsmServer {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn unknown8(&self, ) -> Result<()> {
+	pub fn enable_enough_power_charge_emulation(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(8)
@@ -134,7 +134,7 @@ impl IPsmServer {
 		Ok(())
 	}
 
-	pub fn unknown9(&self, ) -> Result<()> {
+	pub fn disable_enough_power_charge_emulation(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(9)
@@ -144,7 +144,7 @@ impl IPsmServer {
 		Ok(())
 	}
 
-	pub fn unknown10(&self, ) -> Result<()> {
+	pub fn enable_fast_battery_charging(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(10)
@@ -154,7 +154,7 @@ impl IPsmServer {
 		Ok(())
 	}
 
-	pub fn unknown11(&self, ) -> Result<()> {
+	pub fn disable_fast_battery_charging(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(11)
@@ -184,7 +184,7 @@ impl IPsmServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown14(&self, ) -> Result<u8> {
+	pub fn is_enough_power_supplied(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(14)
@@ -194,7 +194,7 @@ impl IPsmServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown15(&self, ) -> Result<u64> {
+	pub fn get_battery_age_percentage(&self, ) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(15)
@@ -204,7 +204,7 @@ impl IPsmServer {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown16(&self, ) -> Result<KObject> {
+	pub fn get_battery_charge_info_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(16)
@@ -214,16 +214,7 @@ impl IPsmServer {
 		Ok(res.pop_handle())
 	}
 
-	pub fn unknown17(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(17)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn get_battery_charge_info_fields(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for IPsmServer {

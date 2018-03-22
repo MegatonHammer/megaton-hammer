@@ -44,87 +44,15 @@ impl AsRef<Session> for IShopServiceManager {
 	}
 }
 impl IShopServiceManager {
-	pub fn request_device_authentication_token(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(0)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn request_cached_device_authentication_token(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(1)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn request_register_device_account(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(100)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn request_unregister_device_account(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(101)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn request_device_account_status(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(102)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn request_device_authentication_token(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn request_cached_device_authentication_token(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn request_register_device_account(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn request_unregister_device_account(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn request_device_account_status(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_device_account_info(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn request_device_registration_info(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(104)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn request_transfer_device_account(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(105)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn request_sync_registration(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(106)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn request_device_registration_info(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn request_transfer_device_account(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn request_sync_registration(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn is_own_device_id(&self, unk0: u64) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -135,56 +63,11 @@ impl IShopServiceManager {
 		Ok(*res.get_raw())
 	}
 
-	pub fn request_register_notification_token(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(200)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn request_unlink_device(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(300)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn request_unlink_device_integrated(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(301)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn request_link_device(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(302)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn has_device_link(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(303)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn request_register_notification_token(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn request_unlink_device(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn request_unlink_device_integrated(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn request_link_device(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn has_device_link(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn request_unlink_device_all(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -215,36 +98,9 @@ impl IShopServiceManager {
 		Ok(())
 	}
 
-	pub fn get_account_by_virtual_account(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(400)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn request_sync_ticket(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(500)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn request_download_ticket(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(501)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn get_account_by_virtual_account(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn request_sync_ticket(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn request_download_ticket(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn request_download_ticket_for_prepurchased_contents(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 

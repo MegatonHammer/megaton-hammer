@@ -11,7 +11,7 @@ impl AsRef<Session> for IBtmSystemCore {
 	}
 }
 impl IBtmSystemCore {
-	pub fn unknown0(&self, ) -> Result<()> {
+	pub fn start_gamepad_pairing_impl(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(0)
@@ -21,7 +21,7 @@ impl IBtmSystemCore {
 		Ok(())
 	}
 
-	pub fn unknown1(&self, ) -> Result<()> {
+	pub fn cancel_gamepad_pairing_impl(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(1)
@@ -31,7 +31,7 @@ impl IBtmSystemCore {
 		Ok(())
 	}
 
-	pub fn unknown2(&self, ) -> Result<()> {
+	pub fn clear_gamepad_pairing_database_impl(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(2)
@@ -41,7 +41,7 @@ impl IBtmSystemCore {
 		Ok(())
 	}
 
-	pub fn unknown3(&self, ) -> Result<u8> {
+	pub fn get_paired_gamepad_count_impl(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(3)
@@ -51,7 +51,7 @@ impl IBtmSystemCore {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown4(&self, ) -> Result<()> {
+	pub fn enable_radio_impl(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(4)
@@ -61,7 +61,7 @@ impl IBtmSystemCore {
 		Ok(())
 	}
 
-	pub fn unknown5(&self, ) -> Result<()> {
+	pub fn disable_radio_impl(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(5)
@@ -71,7 +71,7 @@ impl IBtmSystemCore {
 		Ok(())
 	}
 
-	pub fn unknown6(&self, ) -> Result<u8> {
+	pub fn get_radio_on_off_impl(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(6)
@@ -81,9 +81,9 @@ impl IBtmSystemCore {
 		Ok(*res.get_raw())
 	}
 
-	// fn unknown7(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown8(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown9(&self, ) -> Result<u8> {
+	// fn acquire_radio_event_impl(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn acquire_gamepad_pairing_event_impl(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn is_gamepad_pairing_started_impl(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(9)

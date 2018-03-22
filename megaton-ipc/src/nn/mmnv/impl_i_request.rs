@@ -104,16 +104,7 @@ impl IRequest {
 		Ok(*res.get_raw())
 	}
 
-	pub fn module_init_clk(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(4)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn module_init_clk(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn module_deinit_clk(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 

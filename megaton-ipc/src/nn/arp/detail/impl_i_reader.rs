@@ -44,46 +44,10 @@ impl AsRef<Session> for IReader {
 	}
 }
 impl IReader {
-	pub fn read_header0(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(0)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn read_header1(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(1)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn read_data0(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(2)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn read_data1(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(3)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn read_header0(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn read_header1(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn read_data0(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn read_data1(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for IReader {

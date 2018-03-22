@@ -44,36 +44,9 @@ impl AsRef<Session> for INvDrvDebugFSServices {
 	}
 }
 impl INvDrvDebugFSServices {
-	pub fn open_log(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(0)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn close_log(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(1)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn read_log(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(2)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn open_log(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn close_log(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn read_log(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for INvDrvDebugFSServices {

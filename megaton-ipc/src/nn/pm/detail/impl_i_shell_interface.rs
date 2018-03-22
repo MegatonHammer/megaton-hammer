@@ -44,16 +44,7 @@ impl AsRef<Session> for IShellInterface {
 	}
 }
 impl IShellInterface {
-	pub fn launch_process(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(0)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn launch_process(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn terminate_process_by_pid(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 

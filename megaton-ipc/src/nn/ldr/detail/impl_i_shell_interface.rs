@@ -44,16 +44,7 @@ impl AsRef<Session> for IShellInterface {
 	}
 }
 impl IShellInterface {
-	pub fn add_process_to_launch_queue(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(0)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn add_process_to_launch_queue(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn clear_launch_queue(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 

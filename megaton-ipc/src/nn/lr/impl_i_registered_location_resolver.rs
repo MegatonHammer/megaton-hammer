@@ -11,26 +11,8 @@ impl AsRef<Session> for IRegisteredLocationResolver {
 	}
 }
 impl IRegisteredLocationResolver {
-	pub fn get_patch_type0_nca_path(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(0)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn register_patch_type0_fallback_path(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(1)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn get_patch_type0_nca_path(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn register_patch_type0_fallback_path(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unregister_patch_type0_fallback_path(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -41,38 +23,9 @@ impl IRegisteredLocationResolver {
 		Ok(())
 	}
 
-	pub fn set_patch_type0_nca_path(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(3)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-2.0.0")]
-	pub fn get_patch_type1_nca_path(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(4)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-2.0.0")]
-	pub fn register_patch_type1_fallback_path(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(5)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn set_patch_type0_nca_path(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_patch_type1_nca_path(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn register_patch_type1_fallback_path(&self, UNKNOWN) -> Result<UNKNOWN>;
 	#[cfg(feature = "switch-2.0.0")]
 	pub fn unregister_patch_type1_fallback_path(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
@@ -84,17 +37,7 @@ impl IRegisteredLocationResolver {
 		Ok(())
 	}
 
-	#[cfg(feature = "switch-2.0.0")]
-	pub fn set_patch_type1_nca_path(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(7)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn set_patch_type1_nca_path(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for IRegisteredLocationResolver {

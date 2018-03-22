@@ -31,16 +31,7 @@ impl IRegistrar {
 		Ok(())
 	}
 
-	pub fn write_data(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(2)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn write_data(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for IRegistrar {

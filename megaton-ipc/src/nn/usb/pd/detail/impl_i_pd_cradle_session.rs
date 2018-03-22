@@ -49,46 +49,10 @@ impl IPdCradleSession {
 		Ok(())
 	}
 
-	pub fn get_fw_type(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(3)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn get_fw_revision(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(4)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn get_manufacturer_id(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(5)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn get_device_id(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(6)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn get_fw_type(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_fw_revision(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_manufacturer_id(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_device_id(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for IPdCradleSession {

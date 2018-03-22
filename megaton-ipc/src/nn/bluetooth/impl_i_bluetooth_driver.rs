@@ -94,36 +94,9 @@ impl IBluetoothDriver {
 		Ok(())
 	}
 
-	pub fn get_adapter_properties(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(5)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn get_adapter_property(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(6)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn set_adapter_property(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(7)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn get_adapter_properties(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_adapter_property(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_adapter_property(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn start_discovery(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -144,112 +117,22 @@ impl IBluetoothDriver {
 		Ok(())
 	}
 
-	pub fn create_bond(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(10)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn create_bond(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn remove_bond(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn cancel_bond(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn pin_reply(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(13)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn ssp_reply(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(14)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn pin_reply(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn ssp_reply(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown15(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn init_interfaces(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(16)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn init_interfaces(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn hid_host_interface_connect(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn hid_host_interface_disconnect(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn hid_host_interface_send_data(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(19)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn hid_host_interface_send_data2(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(20)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn hid_host_interface_set_report(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(21)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn hid_host_interface_get_report(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(22)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn hid_host_interface_send_data(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn hid_host_interface_send_data2(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn hid_host_interface_set_report(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn hid_host_interface_get_report(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn hid_host_interface_wake_controller(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn hid_host_interface_add_paired_device(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(24)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn hid_host_interface_get_paired_device(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(25)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn hid_host_interface_add_paired_device(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn hid_host_interface_get_paired_device(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn hid_host_interface_cleanup_and_shutdown(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -261,36 +144,9 @@ impl IBluetoothDriver {
 	}
 
 	// fn unknown27(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn ext_interface_set_tsi(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(28)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn ext_interface_set_burst_mode(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(29)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn ext_interface_set_zero_retran(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(30)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn ext_interface_set_tsi(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn ext_interface_set_burst_mode(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn ext_interface_set_zero_retran(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn ext_interface_set_mc_mode(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -331,16 +187,7 @@ impl IBluetoothDriver {
 		Ok(())
 	}
 
-	pub fn ext_interface_set_visibility(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(35)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn ext_interface_set_visibility(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown36(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -352,16 +199,7 @@ impl IBluetoothDriver {
 	}
 
 	// fn unknown37(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn hid_host_interface_get_latest_plr(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(38)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn hid_host_interface_get_latest_plr(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn ext_interface_get_pending_connections(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -372,16 +210,7 @@ impl IBluetoothDriver {
 		Ok(())
 	}
 
-	pub fn hid_host_interface_get_channel_map(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(40)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn hid_host_interface_get_channel_map(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn set_is_bluetooth_boost_enabled(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 

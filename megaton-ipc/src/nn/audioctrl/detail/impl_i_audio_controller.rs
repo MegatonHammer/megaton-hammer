@@ -44,7 +44,7 @@ impl AsRef<Session> for IAudioController {
 	}
 }
 impl IAudioController {
-	pub fn unknown0(&self, unk0: u32) -> Result<u32> {
+	pub fn get_target_volume(&self, unk0: u32) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(0)
@@ -54,7 +54,7 @@ impl IAudioController {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown1(&self, unk0: u32, unk1: u32) -> Result<()> {
+	pub fn set_target_volume(&self, unk0: u32, unk1: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -72,7 +72,7 @@ impl IAudioController {
 		Ok(())
 	}
 
-	pub fn unknown2(&self, ) -> Result<u32> {
+	pub fn get_target_volume_min(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(2)
@@ -82,7 +82,7 @@ impl IAudioController {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown3(&self, ) -> Result<u32> {
+	pub fn get_target_volume_max(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(3)
@@ -92,17 +92,8 @@ impl IAudioController {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown4(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(4)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown5(&self, unk0: u8, unk1: u32) -> Result<()> {
+	// fn is_target_mute(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn set_target_mute(&self, unk0: u8, unk1: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -120,27 +111,9 @@ impl IAudioController {
 		Ok(())
 	}
 
-	pub fn unknown6(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(6)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown7(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(7)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown8(&self, ) -> Result<u32> {
+	// fn is_target_connected(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_default_target(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_default_target(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(8)
@@ -150,7 +123,7 @@ impl IAudioController {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown9(&self, unk0: u32) -> Result<u32> {
+	pub fn get_audio_output_mode(&self, unk0: u32) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(9)
@@ -160,7 +133,7 @@ impl IAudioController {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown10(&self, unk0: u32, unk1: u32) -> Result<()> {
+	pub fn set_audio_output_mode(&self, unk0: u32, unk1: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -178,7 +151,7 @@ impl IAudioController {
 		Ok(())
 	}
 
-	pub fn unknown11(&self, unk0: u32) -> Result<()> {
+	pub fn set_force_mute_policy(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(11)
@@ -188,7 +161,7 @@ impl IAudioController {
 		Ok(())
 	}
 
-	pub fn unknown12(&self, ) -> Result<u32> {
+	pub fn get_force_mute_policy(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(12)
@@ -198,7 +171,7 @@ impl IAudioController {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown13(&self, unk0: u32) -> Result<u32> {
+	pub fn get_output_mode_setting(&self, unk0: u32) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(13)
@@ -208,7 +181,7 @@ impl IAudioController {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown14(&self, unk0: u32, unk1: u32) -> Result<()> {
+	pub fn set_output_mode_setting(&self, unk0: u32, unk1: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -226,7 +199,7 @@ impl IAudioController {
 		Ok(())
 	}
 
-	pub fn unknown15(&self, unk0: u32) -> Result<()> {
+	pub fn set_output_target(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(15)
@@ -236,7 +209,7 @@ impl IAudioController {
 		Ok(())
 	}
 
-	pub fn unknown16(&self, unk0: u8) -> Result<()> {
+	pub fn set_input_target_force_enabled(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(16)
@@ -247,7 +220,7 @@ impl IAudioController {
 	}
 
 	#[cfg(feature = "switch-3.0.0")]
-	pub fn unknown17(&self, unk0: u32) -> Result<()> {
+	pub fn set_headphone_output_level_mode(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(17)
@@ -258,7 +231,7 @@ impl IAudioController {
 	}
 
 	#[cfg(feature = "switch-3.0.0")]
-	pub fn unknown18(&self, ) -> Result<u32> {
+	pub fn get_headphone_output_level_mode(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(18)
@@ -269,7 +242,7 @@ impl IAudioController {
 	}
 
 	#[cfg(feature = "switch-3.0.0")]
-	pub fn unknown19(&self, ) -> Result<KObject> {
+	pub fn acquire_audio_volume_update_event_for_play_report(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(19)
@@ -280,7 +253,7 @@ impl IAudioController {
 	}
 
 	#[cfg(feature = "switch-3.0.0")]
-	pub fn unknown20(&self, ) -> Result<KObject> {
+	pub fn acquire_audio_output_device_update_event_for_play_report(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(20)
@@ -291,7 +264,7 @@ impl IAudioController {
 	}
 
 	#[cfg(feature = "switch-3.0.0")]
-	pub fn unknown21(&self, ) -> Result<u32> {
+	pub fn get_audio_output_target_for_play_report(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(21)
@@ -302,7 +275,7 @@ impl IAudioController {
 	}
 
 	#[cfg(feature = "switch-3.0.0")]
-	pub fn unknown22(&self, ) -> Result<()> {
+	pub fn notify_headphone_volume_warning_displayed_event(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(22)
@@ -313,7 +286,7 @@ impl IAudioController {
 	}
 
 	#[cfg(feature = "switch-4.0.0")]
-	pub fn unknown23(&self, ) -> Result<()> {
+	pub fn set_system_output_master_volume(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(23)
@@ -324,7 +297,7 @@ impl IAudioController {
 	}
 
 	#[cfg(feature = "switch-4.0.0")]
-	pub fn unknown24(&self, ) -> Result<()> {
+	pub fn get_system_output_master_volume(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(24)
@@ -335,7 +308,7 @@ impl IAudioController {
 	}
 
 	#[cfg(feature = "switch-4.0.0")]
-	pub fn unknown25(&self, ) -> Result<()> {
+	pub fn get_audio_volume_data_for_play_report(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(25)
@@ -346,7 +319,7 @@ impl IAudioController {
 	}
 
 	#[cfg(feature = "switch-4.0.0")]
-	pub fn unknown26(&self, ) -> Result<()> {
+	pub fn update_headphone_settings(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(26)

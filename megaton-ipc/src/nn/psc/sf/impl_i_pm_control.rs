@@ -114,16 +114,7 @@ impl IPmControl {
 		Ok(())
 	}
 
-	pub fn unknown6(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(6)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown6(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for IPmControl {

@@ -94,16 +94,7 @@ impl ISystemUpdateInterface {
 		Ok(())
 	}
 
-	pub fn notify_background_network_update(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(5)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn notify_background_network_update(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn notify_ex_fat_driver_downloaded_for_debug(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 

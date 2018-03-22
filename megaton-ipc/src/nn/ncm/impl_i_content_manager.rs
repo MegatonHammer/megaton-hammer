@@ -84,28 +84,10 @@ impl IContentManager {
 		Ok(())
 	}
 
-	pub fn get_i_content_storage(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(4)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn get_i_content_meta_database(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(5)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn get_i_content_storage(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_i_content_meta_database(&self, UNKNOWN) -> Result<UNKNOWN>;
 	#[cfg(not(feature = "switch-2.0.0"))]
-	pub fn close_and_lock_i_content_storage(&self, ) -> Result<()> {
+	pub fn close_content_storage_forcibly(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(6)
@@ -116,7 +98,7 @@ impl IContentManager {
 	}
 
 	#[cfg(not(feature = "switch-2.0.0"))]
-	pub fn close_and_lock_i_content_meta_database(&self, ) -> Result<()> {
+	pub fn close_content_meta_database_forcibly(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(7)

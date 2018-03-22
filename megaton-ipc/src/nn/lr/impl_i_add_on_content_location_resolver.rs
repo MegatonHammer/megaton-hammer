@@ -11,16 +11,7 @@ impl AsRef<Session> for IAddOnContentLocationResolver {
 	}
 }
 impl IAddOnContentLocationResolver {
-	pub fn get_add_on_content_nca_path(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(0)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn get_add_on_content_nca_path(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn register_add_on_content(&self, unk0: u8, unk1: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 

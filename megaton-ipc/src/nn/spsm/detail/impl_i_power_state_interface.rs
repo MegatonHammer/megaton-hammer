@@ -84,7 +84,7 @@ impl IPowerStateInterface {
 		Ok(())
 	}
 
-	pub fn unknown4(&self, ) -> Result<KObject> {
+	pub fn get_notification_message_event_handle(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(4)
@@ -104,16 +104,7 @@ impl IPowerStateInterface {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown6(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(6)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown6(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown7(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -124,11 +115,31 @@ impl IPowerStateInterface {
 		Ok(())
 	}
 
-	// fn unknown8(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown9(&self, unk0: u64) -> Result<()> {
+	// fn analyze_performance_log_for_last_sleep_wake_sequence(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn change_home_button_long_pressing_time(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(9)
+			.args(unk0)
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn unknown10(&self, ) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(10)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn unknown11(&self, unk0: u64) -> Result<()> {
+		use megaton_hammer::ipc::{Request, Response};
+
+		let req = Request::new(11)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;

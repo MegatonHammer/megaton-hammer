@@ -11,26 +11,8 @@ impl AsRef<Session> for IPortSession {
 	}
 }
 impl IPortSession {
-	pub fn open_session(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(0)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn open_session_for_test(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(1)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn open_session(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn open_session_for_test(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown2(&self, ) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -41,16 +23,7 @@ impl IPortSession {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown3(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(3)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown4(&self, ) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -61,26 +34,8 @@ impl IPortSession {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown5(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(5)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn unknown6(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(6)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown5(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown6(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown7(&self, unk0: u32) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 

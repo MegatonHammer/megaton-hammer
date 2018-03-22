@@ -44,26 +44,8 @@ impl AsRef<Session> for IManager {
 	}
 }
 impl IManager {
-	pub fn get_i_session(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(0)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn list_endpoints(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(1)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn get_i_session(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn list_endpoints(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for IManager {

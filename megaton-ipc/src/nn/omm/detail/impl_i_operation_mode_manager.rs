@@ -84,16 +84,7 @@ impl IOperationModeManager {
 		Ok(())
 	}
 
-	pub fn enter_sleep_and_wait(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(4)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn enter_sleep_and_wait(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn get_cradle_status(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -124,17 +115,7 @@ impl IOperationModeManager {
 		Ok(())
 	}
 
-	#[cfg(feature = "switch-2.0.0")]
-	pub fn unknown8(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(8)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown8(&self, UNKNOWN) -> Result<UNKNOWN>;
 	#[cfg(feature = "switch-2.0.0")]
 	pub fn unknown9(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};

@@ -44,36 +44,9 @@ impl AsRef<Session> for IDevelopInterface {
 	}
 }
 impl IDevelopInterface {
-	pub fn launch_title(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(0)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn terminate_title_by_pid(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(1)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn terminate_title_by_title_id(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(2)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn launch_title(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn terminate_title_by_pid(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn terminate_title_by_title_id(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn get_ns_dev_wait_event(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -84,26 +57,8 @@ impl IDevelopInterface {
 		Ok(())
 	}
 
-	pub fn get_ns_dev_event_type(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(4)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn terminate_crashing_title(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(5)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn get_ns_dev_event_type(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn terminate_crashing_title(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn install_title(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -114,26 +69,8 @@ impl IDevelopInterface {
 		Ok(())
 	}
 
-	pub fn set_event_state6(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(7)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn set_event_state(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(8)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn set_event_state6(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_event_state(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl FromKObject for IDevelopInterface {

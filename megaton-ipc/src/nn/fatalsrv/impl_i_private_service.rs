@@ -44,7 +44,7 @@ impl AsRef<Session> for IPrivateService {
 	}
 }
 impl IPrivateService {
-	pub fn unknown0(&self, ) -> Result<KObject> {
+	pub fn get_fatal_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(0)

@@ -11,16 +11,7 @@ impl AsRef<Session> for IDocumentInterface {
 	}
 }
 impl IDocumentInterface {
-	pub fn get_application_content_path(&self, ) -> Result<()> {
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(21)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn get_application_content_path(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn resolve_application_content_path(&self, unk0: u8, unk1: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 

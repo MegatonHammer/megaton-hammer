@@ -46,7 +46,7 @@ impl AsRef<Session> for IAudioRendererManager {
 impl IAudioRendererManager {
 	// fn open_audio_renderer(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_audio_renderer_work_buffer_size(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn get_audio_renderers_process_master_volume(&self, unk0: u64) -> Result<Session> {
+	pub fn unknown2(&self, unk0: u64) -> Result<Session> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(2)
@@ -56,7 +56,7 @@ impl IAudioRendererManager {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	// fn set_audio_renderers_process_master_volume(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
 	#[cfg(feature = "switch-4.0.0")]
 	pub fn unknown4(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};

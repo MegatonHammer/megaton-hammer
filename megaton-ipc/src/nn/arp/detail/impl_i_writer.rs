@@ -54,7 +54,7 @@ impl IWriter {
 		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
 	}
 
-	pub fn submit_writer(&self, unk0: u64) -> Result<()> {
+	pub fn delete_properties(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(1)
