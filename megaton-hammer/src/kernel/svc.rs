@@ -273,7 +273,18 @@ define_out00_svc! {
 }
 
 define_out32_svc! {
-    /// Create transfer memory
+    /// Creates transfer memory.
+    ///
+    /// The address should point to some Heap memory.
+    ///
+    /// Reprotects the addr block with the perms you give it, and sets bit0 into
+    /// MemoryAttribute.
+    ///
+    /// Executable permission is not allowed.
+    ///
+    /// Closing all handlese automatically causes the bit0 in MemoryAttribute to
+    /// clear, and the permission to reset.
+    ///
     create_transfer_memory(0x15,
         out: *mut TransferMemory,
         addr: *mut cty::c_void,
