@@ -46,8 +46,6 @@ pub unsafe extern fn trampoline() -> ! {
     intrinsics::unreachable();
 }
 
-static mut EXIT: Option<extern fn(u64) -> !> = None;
-
 #[no_mangle]
 pub unsafe extern fn start(config: *mut LoaderConfigEntry, _thread_handle: u64, exit: extern fn(u64) -> !) -> ! {
     // Clean the BSS.
@@ -66,12 +64,10 @@ bssloop:
 run:
     " : : : "x5", "x6" : "volatile");
 
-    EXIT = Some(exit);
-
     let start_addr : *mut ();
     // TODO: Avoid relocations by getting _start address with asm...
     asm!("adrp $0, _start" : "=r"(start_addr));
-    let ret = megaton_start(config, _thread_handle, start_addr);
+    let ret = megaton_start(config, _thread_handle, start_addr, exit);
     exit(ret as u64);
 }
 
@@ -93,7 +89,7 @@ IS_NRO:
 
 mod relocation;
 
-unsafe extern fn megaton_start(config: *mut LoaderConfigEntry, _thread_handle: u64, aslr_base: *mut ()) -> i32 {
+unsafe extern fn megaton_start(config: *mut LoaderConfigEntry, _thread_handle: u64, aslr_base: *mut (), exit: extern fn(u64) -> !) -> i32 {
     let mut dyn_info = relocation::DynInfo {
         init_array: None,
         fini_array: None
@@ -105,7 +101,7 @@ unsafe extern fn megaton_start(config: *mut LoaderConfigEntry, _thread_handle: u
     }
 
     use loader;
-    if let Err(err) = loader::init_loader(config) {
+    if let Err(err) = loader::init_loader(config, exit) {
         return err;
     }
 
@@ -131,6 +127,7 @@ unsafe extern fn megaton_start(config: *mut LoaderConfigEntry, _thread_handle: u
 mod langitems {
     extern crate compiler_builtins;
     use core;
+    use loader;
 
     #[lang = "termination"]
     pub trait Termination {
@@ -164,11 +161,6 @@ mod langitems {
         // TODO: Exit the program. Turns out this is surprisingly difficult.
         // NOTE: This will not unwind the stack. If you panic, we'll almost
         // certainly leak resources.
-        unsafe {
-            match super::EXIT {
-                Some(f) => f(1),
-                None => super::__svc_exit_process()
-            }
-        }
+        loader::exit(1)
     }
 }

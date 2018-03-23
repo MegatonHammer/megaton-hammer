@@ -30,7 +30,8 @@ pub struct LoaderConfig {
     override_heap: Mutex<Option<HeapStrategy>>,
     override_services: ArrayVec<[(u64, u32); 32]>,
     stdio_sockets: Option<(u32, u32, u32, SocketKind)>,
-    log: Option<Mutex<io::Cursor<&'static mut [u8]>>>
+    log: Option<Mutex<io::Cursor<&'static mut [u8]>>>,
+    exit: extern fn(u64) -> !
 }
 
 pub enum HeapStrategy{
@@ -44,6 +45,15 @@ pub fn acquire_heap_strategy() -> Option<HeapStrategy> {
     match LOADER.try() {
         Some(x) => x.override_heap.lock().take(),
         None => None
+    }
+}
+
+/// Cleanly exits. Used by std.
+pub fn exit(u: u64) -> ! {
+    // This function should never panic, as it is called by the panic handler.
+    match LOADER.try().map(|ldr| ldr.exit) {
+        Some(exit) => exit(u),
+        None => unsafe { ::kernel::svc::exit_process() }
     }
 }
 
@@ -178,7 +188,7 @@ impl LoaderConfigTag {
 /// ⚠  FOR INTERNAL USE ONLY. YOU SHOULD NOT HAVE TO CALL THIS.
 ///
 /// The pointer should point to a *valid* linked list of LoaderConfigEntry.
-pub unsafe fn init_loader(mut entry: *mut LoaderConfigEntry) -> Result<(), i32> {
+pub unsafe fn init_loader(entry: *mut LoaderConfigEntry, exit: extern fn(u64) -> !) -> Result<(), i32> {
     use core::slice;
     use core::marker::PhantomData;
 
@@ -205,7 +215,8 @@ pub unsafe fn init_loader(mut entry: *mut LoaderConfigEntry) -> Result<(), i32> 
         override_heap: Mutex::new(Some(HeapStrategy::SetHeapSize)),
         override_services: ArrayVec::new(),
         log: None,
-        stdio_sockets: None
+        stdio_sockets: None,
+        exit: exit
     };
 
     for entry in LoaderConfigEntryIterator(entry, PhantomData) {
