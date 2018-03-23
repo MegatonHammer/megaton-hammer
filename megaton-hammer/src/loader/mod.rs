@@ -180,6 +180,25 @@ impl LoaderConfigTag {
 /// The pointer should point to a *valid* linked list of LoaderConfigEntry.
 pub unsafe fn init_loader(mut entry: *mut LoaderConfigEntry) -> Result<(), i32> {
     use core::slice;
+    use core::marker::PhantomData;
+
+    struct LoaderConfigEntryIterator<'a>(*mut LoaderConfigEntry, PhantomData<&'a ()>);
+    impl<'a> Iterator for LoaderConfigEntryIterator<'a> {
+        type Item = &'a LoaderConfigEntry;
+        fn next(&mut self) -> Option<&'a LoaderConfigEntry> {
+            unsafe {
+                if self.0.is_null() {
+                    None
+                } else if (*self.0).tag == LoaderConfigTag::END_OF_LIST {
+                    None
+                } else {
+                    let ptr = self.0;
+                    self.0 = self.0.offset(1);
+                    ptr.as_ref()
+                }
+            }
+        }
+    }
 
     let mut config = LoaderConfig {
         main_thread: 0,
@@ -189,47 +208,42 @@ pub unsafe fn init_loader(mut entry: *mut LoaderConfigEntry) -> Result<(), i32> 
         stdio_sockets: None
     };
 
-    if !entry.is_null() {
-        loop {
-            match (*entry).tag {
-                LoaderConfigTag::END_OF_LIST => break,
-                LoaderConfigTag::LOG => {
-                    config.log = Some(Mutex::new(io::Cursor::new(slice::from_raw_parts_mut((*entry).data.0 as _, (*entry).data.1 as _))));
-                },
-                LoaderConfigTag::STDIO_SOCKET => {
-                    let stdin = (*entry).data.0 & 0xFFFFFF;
-                    let stdout = ((*entry).data.0 >> 32) & 0xFFFFFF;
-                    let stderr = (*entry).data.0 & 0xFFFFFF;
-                    let kind = ((*entry).data.0 >> 32) & 0xFFFFFF;
-                    let kind = if kind == 0 {
-                        SocketKind::BsdU
-                    } else if kind == 1 {
-                        SocketKind::BsdS
-                    } else {
-                        // Skip this value, we don't know it. Maybe error out?
-                        continue;
-                    };
-                    config.stdio_sockets = Some((stdin as u32, stdout as u32, stderr as u32, kind));
-                },
-                LoaderConfigTag::OVERRIDE_SERVICE => {
-                    config.override_services.push(((*entry).data.0, (*entry).data.1 as u32));
-                },
-                LoaderConfigTag::MAIN_THREAD_HANDLE => config.main_thread = (*entry).data.0 as u32,
-                LoaderConfigTag::OVERRIDE_HEAP =>
-                    *config.override_heap.lock() = Some(HeapStrategy::OverrideHeap(Unique::new(slice::from_raw_parts_mut((*entry).data.0 as _, (*entry).data.1 as usize)).unwrap())),
-                LoaderConfigTag::APPLET_WORKAROUND => {},
-                tag => {
-                    if (*entry).flags & 1 == 1 {
-                        // Flag is mandatory! If we don't know about it, we
-                        // should commit suicide.
-                        return Err(346 | ((100 + tag) << 9) as i32);
-                    }
+    for entry in LoaderConfigEntryIterator(entry, PhantomData) {
+        match entry.tag {
+            LoaderConfigTag::END_OF_LIST => break,
+            LoaderConfigTag::LOG => {
+                config.log = Some(Mutex::new(io::Cursor::new(slice::from_raw_parts_mut((*entry).data.0 as _, (*entry).data.1 as _))));
+            },
+            LoaderConfigTag::STDIO_SOCKET => {
+                let stdin = (*entry).data.0 & 0xFFFFFF;
+                let stdout = ((*entry).data.0 >> 32) & 0xFFFFFF;
+                let stderr = (*entry).data.0 & 0xFFFFFF;
+                let kind = ((*entry).data.0 >> 32) & 0xFFFFFF;
+                let kind = if kind == 0 {
+                    SocketKind::BsdU
+                } else if kind == 1 {
+                    SocketKind::BsdS
+                } else {
+                    // Skip this value, we don't know it. Maybe error out?
+                    continue;
+                };
+                config.stdio_sockets = Some((stdin as u32, stdout as u32, stderr as u32, kind));
+            },
+            LoaderConfigTag::OVERRIDE_SERVICE => {
+                config.override_services.push(((*entry).data.0, (*entry).data.1 as u32));
+            },
+            LoaderConfigTag::MAIN_THREAD_HANDLE => config.main_thread = (*entry).data.0 as u32,
+            LoaderConfigTag::OVERRIDE_HEAP =>
+                *config.override_heap.lock() = Some(HeapStrategy::OverrideHeap(Unique::new(slice::from_raw_parts_mut((*entry).data.0 as _, (*entry).data.1 as usize)).unwrap())),
+            LoaderConfigTag::APPLET_WORKAROUND => {},
+            tag => {
+                if (*entry).flags & 1 == 1 {
+                    // Flag is mandatory! If we don't know about it, we
+                    // should commit suicide.
+                    return Err(346 | ((100 + tag) << 9) as i32);
                 }
             }
-            entry = entry.offset(1);
         }
-    } else {
-        // TODO: What to do about the main thread then ?
     }
     LOADER.call_once(|| config);
     Ok(())
