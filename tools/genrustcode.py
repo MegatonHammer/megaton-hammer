@@ -224,8 +224,6 @@ def gen_ipc_method(cmd, f):
 			args_arr.append((name, getType(False, ty)))
 		elif ty[0] == "KObject":
 			objects_arr.append(name)
-		elif ty[0] == "object" and ty[1][0] in ifaces:
-			objects_arr.append(name + ".as_ref().as_ref()")
 		elif ty[0] == "object":
 			objects_arr.append(name + ".as_ref()")
 		elif ty[0] == "buffer":
@@ -433,6 +431,7 @@ for name, cmds in ifaces.items():
 		# Use statements
 		print("use megaton_hammer::kernel::{FromKObject, KObject, Session};", file=f)
 		print("use megaton_hammer::error::Result;", file=f)
+		print("use core::ops::{Deref, DerefMut};", file=f)
 		if name in services:
 			print("use alloc::arc::Arc;", file=f)
 		# Check if we'll need to send/receive a buffer
@@ -453,9 +452,16 @@ for name, cmds in ifaces.items():
 			print("}", file=f)
 			print("", file=f)
 
-		print("impl AsRef<Session> for %s {" % ifacename, file=f)
-		print("\tfn as_ref(&self) -> &Session {", file=f)
+		print("impl Deref for %s {" % ifacename, file=f)
+		print("\ttype Target = Session;", file=f)
+		print("\tfn deref(&self) -> &Session {", file=f)
 		print("\t\t&self.0", file=f)
+		print("\t}", file=f)
+		print("}", file=f)
+
+		print("impl DerefMut for %s {" % ifacename, file=f)
+		print("\tfn deref_mut(&mut self) -> &mut Session {", file=f)
+		print("\t\t&mut self.0", file=f)
 		print("\t}", file=f)
 		print("}", file=f)
 
