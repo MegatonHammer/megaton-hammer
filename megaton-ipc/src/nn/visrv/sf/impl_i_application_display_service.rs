@@ -126,7 +126,29 @@ impl IApplicationDisplayService {
 		Ok((res.get_raw().unk1.clone(),res.get_raw().unk2.clone()))
 	}
 
-	// fn open_layer(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn open_layer(&self, unk0: ::nn::vi::DisplayName, unk1: u64, unk2: ::nn::applet::AppletResourceUserId, unk5: &mut [u8; 0x100]) -> Result<i64> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			unk0: ::nn::vi::DisplayName,
+			unk1: u64,
+			unk2: ::nn::applet::AppletResourceUserId,
+		}
+		let req = Request::new(2020)
+			.args(InRaw {
+				unk0,
+				unk1,
+				unk2,
+			})
+			.send_pid()
+			.descriptor(IPCBuffer::from_mut_ref(unk5, 6))
+			;
+		let res : Response<i64> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn close_layer(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
