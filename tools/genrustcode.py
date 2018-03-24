@@ -91,7 +91,7 @@ def getType(output, ty):
 	elif ty[0] == 'object':
 		it = ty[1][0]
 		if it in ifaces:
-			ret = '::' + it
+			ret = '::' + it + "<Session>"
 		else:
 			ret = "Session"
 		if output:
@@ -224,8 +224,6 @@ def gen_ipc_method(cmd, f):
 			args_arr.append((name, getType(False, ty)))
 		elif ty[0] == "KObject":
 			objects_arr.append(name)
-		elif ty[0] == "object" and ty[1][0] in ifaces:
-			objects_arr.append(name + ".as_ref().as_ref()")
 		elif ty[0] == "object":
 			objects_arr.append(name + ".as_ref()")
 		elif ty[0] == "buffer":
@@ -331,7 +329,7 @@ def gen_new_method(f, ifacename, servicename):
 	print("\t\tuse spin::Mutex;", file=f)
 	print("\t\tuse core::mem::ManuallyDrop;", file=f)
 	print("\t\tlazy_static! {", file=f)
-	print("\t\t\tstatic ref HANDLE : Mutex<Weak<%s>> = Mutex::new(Weak::new());" % ifacename, file=f)
+	print("\t\t\tstatic ref HANDLE : Mutex<Weak<%s<Session>>> = Mutex::new(Weak::new());" % ifacename, file=f)
 	print("\t\t}", file=f)
 	print("\t\tif let Some(hnd) = HANDLE.lock().upgrade() {", file=f)
 	print("\t\t\treturn Ok(hnd)", file=f)
@@ -431,35 +429,43 @@ for name, cmds in ifaces.items():
 		# Print module documentation
 		print("", file=f)
 		# Use statements
-		print("use megaton_hammer::kernel::{FromKObject, KObject, Session};", file=f)
+		print("use megaton_hammer::kernel::{FromKObject, KObject, Session, Domain, Object};", file=f)
 		print("use megaton_hammer::error::Result;", file=f)
+		print("use core::ops::{Deref, DerefMut};", file=f)
 		if name in services:
 			print("use alloc::arc::Arc;", file=f)
 		# Check if we'll need to send/receive a buffer
 
 		print("", file=f)
 		print("#[derive(Debug)]", file=f)
-		print("pub struct %s(Session);" % ifacename, file=f)
+		print("pub struct %s<T>(T);" % ifacename, file=f)
 		print("", file=f)
 		if name in services:
-			print("impl %s {" % ifacename, file=f)
+			print("impl %s<Session> {" % ifacename, file=f)
 			for s in services[name]:
 				if len(services[name]) == 1:
-					print("\tpub fn new() -> Result<Arc<%s>> {" % ifacename, file=f)
+					print("\tpub fn new() -> Result<Arc<%s<Session>>> {" % ifacename, file=f)
 				else:
-					print("\tpub fn new_%s() -> Result<Arc<%s>> {" % (s.replace(":", "_").replace("-", "_"), ifacename), file=f)
+					print("\tpub fn new_%s() -> Result<Arc<%s<Session>>> {" % (s.replace(":", "_").replace("-", "_"), ifacename), file=f)
 				gen_new_method(f, ifacename, s)
 				print("\t}", file=f)
 			print("}", file=f)
 			print("", file=f)
 
-		print("impl AsRef<Session> for %s {" % ifacename, file=f)
-		print("\tfn as_ref(&self) -> &Session {", file=f)
+		print("impl<T> Deref for %s<T> {" % ifacename, file=f)
+		print("\ttype Target = T;", file=f)
+		print("\tfn deref(&self) -> &T {", file=f)
 		print("\t\t&self.0", file=f)
 		print("\t}", file=f)
 		print("}", file=f)
 
-		print("impl %s {" % ifacename, file=f)
+		print("impl<T> DerefMut for %s<T> {" % ifacename, file=f)
+		print("\tfn deref_mut(&mut self) -> &mut T {", file=f)
+		print("\t\t&mut self.0", file=f)
+		print("\t}", file=f)
+		print("}", file=f)
+
+		print("impl<T: Object> %s<T> {" % ifacename, file=f)
 		for cmd in cmds['cmds']:
 			fn_io = StringIO()
 			print("    ", cmd['name'])
@@ -500,9 +506,15 @@ for name, cmds in ifaces.items():
 				print("\t// fn %s(&self, UNKNOWN) -> Result<UNKNOWN>;" % camelToSnake(cmd['name']), file=f)
 		print("}", file=f)
 		print("", file=f)
-		print("impl FromKObject for %s {" % ifacename, file=f)
-		print("\tunsafe fn from_kobject(obj: KObject) -> %s {" % ifacename, file=f)
+		print("impl FromKObject for %s<Session> {" % ifacename, file=f)
+		print("\tunsafe fn from_kobject(obj: KObject) -> %s<Session> {" % ifacename, file=f)
 		print("\t\t%s(Session::from_kobject(obj))" % ifacename, file=f)
+		print("\t}", file=f)
+		print("}", file=f)
+		print("", file=f)
+		print("impl FromKObject for %s<Domain> {" % ifacename, file=f)
+		print("\tunsafe fn from_kobject(obj: KObject) -> %s<Domain> {" % ifacename, file=f)
+		print("\t\t%s(Domain::from_kobject(obj))" % ifacename, file=f)
 		print("\t}", file=f)
 		print("}", file=f)
 
