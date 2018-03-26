@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IHtcsManager(Session);
+pub struct IHtcsManager<T>(T);
 
-impl IHtcsManager {
-	pub fn new() -> Result<Arc<IHtcsManager>> {
+impl IHtcsManager<Session> {
+	pub fn new() -> Result<Arc<IHtcsManager<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IHtcsManager>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IHtcsManager<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IHtcsManager {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"htcs\0\0\0\0").map(|s| Arc::new(unsafe { IHtcsManager::from_kobject(s) }));
+		let r = sm.get_service(*b"htcs\0\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IHtcsManager<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IHtcsManager(domain)),
+			Err((sess, err)) => Err((IHtcsManager(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IHtcsManager<Session>> {
+		Ok(IHtcsManager(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IHtcsManager {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IHtcsManager<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IHtcsManager {
+impl<T> DerefMut for IHtcsManager<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IHtcsManager<T> {
 	pub fn unknown0(&self, ) -> Result<(u32, u32)> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -147,24 +165,24 @@ impl IHtcsManager {
 
 	// fn get_peer_name_any(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_default_host_name(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown12(&self, ) -> Result<(u32, Session)> {
+	pub fn unknown12(&self, ) -> Result<(u32, T)> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(12)
 			.args(())
 			;
 		let mut res : Response<u32> = self.0.send(req)?;
-		Ok((*res.get_raw(),unsafe { FromKObject::from_kobject(res.pop_handle()) }))
+		Ok((*res.get_raw(),T::from_res(&mut res).into()))
 	}
 
-	pub fn create_socket(&self, unk0: u8) -> Result<(u32, Session)> {
+	pub fn create_socket(&self, unk0: u8) -> Result<(u32, T)> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(13)
 			.args(unk0)
 			;
 		let mut res : Response<u32> = self.0.send(req)?;
-		Ok((*res.get_raw(),unsafe { FromKObject::from_kobject(res.pop_handle()) }))
+		Ok((*res.get_raw(),T::from_res(&mut res).into()))
 	}
 
 	pub fn register_process_id(&self, unk0: u64) -> Result<()> {
@@ -191,8 +209,8 @@ impl IHtcsManager {
 
 }
 
-impl FromKObject for IHtcsManager {
-	unsafe fn from_kobject(obj: KObject) -> IHtcsManager {
-		IHtcsManager(Session::from_kobject(obj))
+impl<T: Object> From<T> for IHtcsManager<T> {
+	fn from(obj: T) -> IHtcsManager<T> {
+		IHtcsManager(obj)
 	}
 }

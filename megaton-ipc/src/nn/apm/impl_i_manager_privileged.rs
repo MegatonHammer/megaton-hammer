@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IManagerPrivileged(Session);
+pub struct IManagerPrivileged<T>(T);
 
-impl IManagerPrivileged {
-	pub fn new() -> Result<Arc<IManagerPrivileged>> {
+impl IManagerPrivileged<Session> {
+	pub fn new() -> Result<Arc<IManagerPrivileged<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IManagerPrivileged>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IManagerPrivileged<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,35 +30,52 @@ impl IManagerPrivileged {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"apm:p\0\0\0").map(|s| Arc::new(unsafe { IManagerPrivileged::from_kobject(s) }));
+		let r = sm.get_service(*b"apm:p\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IManagerPrivileged<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IManagerPrivileged(domain)),
+			Err((sess, err)) => Err((IManagerPrivileged(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IManagerPrivileged<Session>> {
+		Ok(IManagerPrivileged(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IManagerPrivileged {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IManagerPrivileged<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IManagerPrivileged {
-	pub fn open_session(&self, ) -> Result<::nn::apm::ISession> {
+impl<T> DerefMut for IManagerPrivileged<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IManagerPrivileged<T> {
+	pub fn open_session(&self, ) -> Result<::nn::apm::ISession<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(0)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 }
 
-impl FromKObject for IManagerPrivileged {
-	unsafe fn from_kobject(obj: KObject) -> IManagerPrivileged {
-		IManagerPrivileged(Session::from_kobject(obj))
+impl<T: Object> From<T> for IManagerPrivileged<T> {
+	fn from(obj: T) -> IManagerPrivileged<T> {
+		IManagerPrivileged(obj)
 	}
 }

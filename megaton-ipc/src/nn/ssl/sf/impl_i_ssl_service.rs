@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct ISslService(Session);
+pub struct ISslService<T>(T);
 
-impl ISslService {
-	pub fn new() -> Result<Arc<ISslService>> {
+impl ISslService<Session> {
+	pub fn new() -> Result<Arc<ISslService<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<ISslService>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<ISslService<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,22 +30,39 @@ impl ISslService {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"ssl\0\0\0\0\0").map(|s| Arc::new(unsafe { ISslService::from_kobject(s) }));
+		let r = sm.get_service(*b"ssl\0\0\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<ISslService<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(ISslService(domain)),
+			Err((sess, err)) => Err((ISslService(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<ISslService<Session>> {
+		Ok(ISslService(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for ISslService {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for ISslService<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl ISslService {
-	pub fn create_context(&self, unk0: ::nn::ssl::sf::SslVersion, unk1: u64) -> Result<::nn::ssl::sf::ISslContext> {
+impl<T> DerefMut for ISslService<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> ISslService<T> {
+	pub fn create_context(&self, unk0: ::nn::ssl::sf::SslVersion, unk1: u64) -> Result<::nn::ssl::sf::ISslContext<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -60,7 +78,7 @@ impl ISslService {
 			.send_pid()
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	pub fn get_context_count(&self, ) -> Result<u32> {
@@ -88,8 +106,8 @@ impl ISslService {
 
 }
 
-impl FromKObject for ISslService {
-	unsafe fn from_kobject(obj: KObject) -> ISslService {
-		ISslService(Session::from_kobject(obj))
+impl<T: Object> From<T> for ISslService<T> {
+	fn from(obj: T) -> ISslService<T> {
+		ISslService(obj)
 	}
 }

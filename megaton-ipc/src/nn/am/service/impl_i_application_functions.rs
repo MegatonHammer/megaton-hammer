@@ -1,38 +1,58 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IApplicationFunctions(Session);
+pub struct IApplicationFunctions<T>(T);
 
-impl AsRef<Session> for IApplicationFunctions {
-	fn as_ref(&self) -> &Session {
+impl IApplicationFunctions<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IApplicationFunctions<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IApplicationFunctions(domain)),
+			Err((sess, err)) => Err((IApplicationFunctions(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IApplicationFunctions<Session>> {
+		Ok(IApplicationFunctions(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IApplicationFunctions<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IApplicationFunctions {
-	pub fn pop_launch_parameter(&self, unk0: u32) -> Result<::nn::am::service::IStorage> {
+impl<T> DerefMut for IApplicationFunctions<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IApplicationFunctions<T> {
+	pub fn pop_launch_parameter(&self, unk0: u32) -> Result<::nn::am::service::IStorage<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(1)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn create_application_and_push_and_request_to_start(&self, unk0: ::nn::ncm::ApplicationId, unk1: &::nn::am::service::IStorage) -> Result<()> {
+	pub fn create_application_and_push_and_request_to_start(&self, unk0: ::nn::ncm::ApplicationId, unk1: &::nn::am::service::IStorage<Session>) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(10)
 			.args(unk0)
-			.copy_handle(unk1.as_ref().as_ref())
+			.copy_handle(unk1.as_ref())
 			;
 		let _res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
 
-	pub fn create_application_and_push_and_request_to_start_for_quest(&self, unk0: u32, unk1: u32, unk2: ::nn::ncm::ApplicationId, unk3: &::nn::am::service::IStorage) -> Result<()> {
+	pub fn create_application_and_push_and_request_to_start_for_quest(&self, unk0: u32, unk1: u32, unk2: ::nn::ncm::ApplicationId, unk3: &::nn::am::service::IStorage<Session>) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -47,7 +67,7 @@ impl IApplicationFunctions {
 				unk1,
 				unk2,
 			})
-			.copy_handle(unk3.as_ref().as_ref())
+			.copy_handle(unk3.as_ref())
 			;
 		let _res : Response<()> = self.0.send(req)?;
 		Ok(())
@@ -274,8 +294,8 @@ impl IApplicationFunctions {
 
 }
 
-impl FromKObject for IApplicationFunctions {
-	unsafe fn from_kobject(obj: KObject) -> IApplicationFunctions {
-		IApplicationFunctions(Session::from_kobject(obj))
+impl<T: Object> From<T> for IApplicationFunctions<T> {
+	fn from(obj: T) -> IApplicationFunctions<T> {
+		IApplicationFunctions(obj)
 	}
 }

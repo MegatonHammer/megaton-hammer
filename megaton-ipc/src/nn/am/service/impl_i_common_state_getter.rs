@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct ICommonStateGetter(Session);
+pub struct ICommonStateGetter<T>(T);
 
-impl AsRef<Session> for ICommonStateGetter {
-	fn as_ref(&self) -> &Session {
+impl ICommonStateGetter<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<ICommonStateGetter<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(ICommonStateGetter(domain)),
+			Err((sess, err)) => Err((ICommonStateGetter(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<ICommonStateGetter<Session>> {
+		Ok(ICommonStateGetter(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for ICommonStateGetter<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl ICommonStateGetter {
+impl<T> DerefMut for ICommonStateGetter<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> ICommonStateGetter<T> {
 	pub fn get_event_handle(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -151,35 +171,35 @@ impl ICommonStateGetter {
 		Ok(res.pop_handle())
 	}
 
-	pub fn push_to_general_channel(&self, unk0: &::nn::am::service::IStorage) -> Result<()> {
+	pub fn push_to_general_channel(&self, unk0: &::nn::am::service::IStorage<Session>) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(20)
 			.args(())
-			.copy_handle(unk0.as_ref().as_ref())
+			.copy_handle(unk0.as_ref())
 			;
 		let _res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
 
-	pub fn get_home_button_reader_lock_accessor(&self, ) -> Result<::nn::am::service::ILockAccessor> {
+	pub fn get_home_button_reader_lock_accessor(&self, ) -> Result<::nn::am::service::ILockAccessor<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(30)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn get_reader_lock_accessor_ex(&self, unk0: i32) -> Result<::nn::am::service::ILockAccessor> {
+	pub fn get_reader_lock_accessor_ex(&self, unk0: i32) -> Result<::nn::am::service::ILockAccessor<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(31)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	pub fn get_cradle_fw_version(&self, ) -> Result<(u32, u32, u32, u32)> {
@@ -254,8 +274,8 @@ impl ICommonStateGetter {
 
 }
 
-impl FromKObject for ICommonStateGetter {
-	unsafe fn from_kobject(obj: KObject) -> ICommonStateGetter {
-		ICommonStateGetter(Session::from_kobject(obj))
+impl<T: Object> From<T> for ICommonStateGetter<T> {
+	fn from(obj: T) -> ICommonStateGetter<T> {
+		ICommonStateGetter(obj)
 	}
 }

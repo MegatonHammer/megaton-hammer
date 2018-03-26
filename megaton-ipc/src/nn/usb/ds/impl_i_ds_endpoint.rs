@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IDsEndpoint(Session);
+pub struct IDsEndpoint<T>(T);
 
-impl AsRef<Session> for IDsEndpoint {
-	fn as_ref(&self) -> &Session {
+impl IDsEndpoint<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IDsEndpoint<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IDsEndpoint(domain)),
+			Err((sess, err)) => Err((IDsEndpoint(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IDsEndpoint<Session>> {
+		Ok(IDsEndpoint(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IDsEndpoint<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IDsEndpoint {
+impl<T> DerefMut for IDsEndpoint<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IDsEndpoint<T> {
 	pub fn post_buffer_async(&self, size: u32, buffer: u64) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -83,8 +103,8 @@ impl IDsEndpoint {
 
 }
 
-impl FromKObject for IDsEndpoint {
-	unsafe fn from_kobject(obj: KObject) -> IDsEndpoint {
-		IDsEndpoint(Session::from_kobject(obj))
+impl<T: Object> From<T> for IDsEndpoint<T> {
+	fn from(obj: T) -> IDsEndpoint<T> {
+		IDsEndpoint(obj)
 	}
 }

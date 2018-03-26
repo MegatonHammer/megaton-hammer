@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct ISslConnection(Session);
+pub struct ISslConnection<T>(T);
 
-impl AsRef<Session> for ISslConnection {
-	fn as_ref(&self) -> &Session {
+impl ISslConnection<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<ISslConnection<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(ISslConnection(domain)),
+			Err((sess, err)) => Err((ISslConnection(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<ISslConnection<Session>> {
+		Ok(ISslConnection(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for ISslConnection<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl ISslConnection {
+impl<T> DerefMut for ISslConnection<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> ISslConnection<T> {
 	pub fn set_socket_descriptor(&self, unk0: i32) -> Result<i32> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -216,8 +236,8 @@ impl ISslConnection {
 	// fn get_verify_cert_errors(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
-impl FromKObject for ISslConnection {
-	unsafe fn from_kobject(obj: KObject) -> ISslConnection {
-		ISslConnection(Session::from_kobject(obj))
+impl<T: Object> From<T> for ISslConnection<T> {
+	fn from(obj: T) -> ISslConnection<T> {
+		ISslConnection(obj)
 	}
 }

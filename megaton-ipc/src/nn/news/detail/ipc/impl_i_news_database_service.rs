@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct INewsDatabaseService(Session);
+pub struct INewsDatabaseService<T>(T);
 
-impl AsRef<Session> for INewsDatabaseService {
-	fn as_ref(&self) -> &Session {
+impl INewsDatabaseService<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<INewsDatabaseService<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(INewsDatabaseService(domain)),
+			Err((sess, err)) => Err((INewsDatabaseService(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<INewsDatabaseService<Session>> {
+		Ok(INewsDatabaseService(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for INewsDatabaseService<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl INewsDatabaseService {
+impl<T> DerefMut for INewsDatabaseService<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> INewsDatabaseService<T> {
 	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
@@ -19,8 +39,8 @@ impl INewsDatabaseService {
 	// fn unknown5(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
-impl FromKObject for INewsDatabaseService {
-	unsafe fn from_kobject(obj: KObject) -> INewsDatabaseService {
-		INewsDatabaseService(Session::from_kobject(obj))
+impl<T: Object> From<T> for INewsDatabaseService<T> {
+	fn from(obj: T) -> INewsDatabaseService<T> {
+		INewsDatabaseService(obj)
 	}
 }

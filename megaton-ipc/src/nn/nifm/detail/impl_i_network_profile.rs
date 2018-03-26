@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct INetworkProfile(Session);
+pub struct INetworkProfile<T>(T);
 
-impl AsRef<Session> for INetworkProfile {
-	fn as_ref(&self) -> &Session {
+impl INetworkProfile<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<INetworkProfile<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(INetworkProfile(domain)),
+			Err((sess, err)) => Err((INetworkProfile(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<INetworkProfile<Session>> {
+		Ok(INetworkProfile(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for INetworkProfile<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl INetworkProfile {
+impl<T> DerefMut for INetworkProfile<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> INetworkProfile<T> {
 	pub fn update(&self, unk0: &::nn::nifm::detail::sf::NetworkProfileData) -> Result<::nn::util::Uuid> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
@@ -45,8 +65,8 @@ impl INetworkProfile {
 
 }
 
-impl FromKObject for INetworkProfile {
-	unsafe fn from_kobject(obj: KObject) -> INetworkProfile {
-		INetworkProfile(Session::from_kobject(obj))
+impl<T: Object> From<T> for INetworkProfile<T> {
+	fn from(obj: T) -> INetworkProfile<T> {
+		INetworkProfile(obj)
 	}
 }

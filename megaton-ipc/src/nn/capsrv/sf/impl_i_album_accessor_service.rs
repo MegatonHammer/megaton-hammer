@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IAlbumAccessorService(Session);
+pub struct IAlbumAccessorService<T>(T);
 
-impl IAlbumAccessorService {
-	pub fn new() -> Result<Arc<IAlbumAccessorService>> {
+impl IAlbumAccessorService<Session> {
+	pub fn new() -> Result<Arc<IAlbumAccessorService<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IAlbumAccessorService>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IAlbumAccessorService<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IAlbumAccessorService {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"caps:a\0\0").map(|s| Arc::new(unsafe { IAlbumAccessorService::from_kobject(s) }));
+		let r = sm.get_service(*b"caps:a\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IAlbumAccessorService<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IAlbumAccessorService(domain)),
+			Err((sess, err)) => Err((IAlbumAccessorService(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IAlbumAccessorService<Session>> {
+		Ok(IAlbumAccessorService(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IAlbumAccessorService {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IAlbumAccessorService<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IAlbumAccessorService {
+impl<T> DerefMut for IAlbumAccessorService<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IAlbumAccessorService<T> {
 	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
@@ -117,8 +135,8 @@ impl IAlbumAccessorService {
 
 }
 
-impl FromKObject for IAlbumAccessorService {
-	unsafe fn from_kobject(obj: KObject) -> IAlbumAccessorService {
-		IAlbumAccessorService(Session::from_kobject(obj))
+impl<T: Object> From<T> for IAlbumAccessorService<T> {
+	fn from(obj: T) -> IAlbumAccessorService<T> {
+		IAlbumAccessorService(obj)
 	}
 }

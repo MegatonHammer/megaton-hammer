@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IGeneralService(Session);
+pub struct IGeneralService<T>(T);
 
-impl AsRef<Session> for IGeneralService {
-	fn as_ref(&self) -> &Session {
+impl IGeneralService<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IGeneralService<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IGeneralService(domain)),
+			Err((sess, err)) => Err((IGeneralService(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IGeneralService<Session>> {
+		Ok(IGeneralService(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IGeneralService<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IGeneralService {
+impl<T> DerefMut for IGeneralService<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IGeneralService<T> {
 	pub fn get_client_id(&self, unk0: &mut ::nn::nifm::ClientId) -> Result<()> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
@@ -23,24 +43,24 @@ impl IGeneralService {
 		Ok(())
 	}
 
-	pub fn create_scan_request(&self, ) -> Result<::nn::nifm::detail::IScanRequest> {
+	pub fn create_scan_request(&self, ) -> Result<::nn::nifm::detail::IScanRequest<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(2)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn create_request(&self, unk0: i32) -> Result<::nn::nifm::detail::IRequest> {
+	pub fn create_request(&self, unk0: i32) -> Result<::nn::nifm::detail::IRequest<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(4)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	pub fn get_current_network_profile(&self, unk0: &mut ::nn::nifm::detail::sf::NetworkProfileData) -> Result<()> {
@@ -147,7 +167,7 @@ impl IGeneralService {
 		Ok(())
 	}
 
-	pub fn create_temporary_network_profile(&self, unk0: &::nn::nifm::detail::sf::NetworkProfileData) -> Result<(::nn::util::Uuid, ::nn::nifm::detail::INetworkProfile)> {
+	pub fn create_temporary_network_profile(&self, unk0: &::nn::nifm::detail::sf::NetworkProfileData) -> Result<(::nn::util::Uuid, ::nn::nifm::detail::INetworkProfile<T>)> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -156,7 +176,7 @@ impl IGeneralService {
 			.descriptor(IPCBuffer::from_ref(unk0, 0x19))
 			;
 		let mut res : Response<::nn::util::Uuid> = self.0.send(req)?;
-		Ok((*res.get_raw(),unsafe { FromKObject::from_kobject(res.pop_handle()) }))
+		Ok((*res.get_raw(),T::from_res(&mut res).into()))
 	}
 
 	// fn get_current_ip_config_info(&self, UNKNOWN) -> Result<UNKNOWN>;
@@ -352,8 +372,8 @@ impl IGeneralService {
 
 }
 
-impl FromKObject for IGeneralService {
-	unsafe fn from_kobject(obj: KObject) -> IGeneralService {
-		IGeneralService(Session::from_kobject(obj))
+impl<T: Object> From<T> for IGeneralService<T> {
+	fn from(obj: T) -> IGeneralService<T> {
+		IGeneralService(obj)
 	}
 }

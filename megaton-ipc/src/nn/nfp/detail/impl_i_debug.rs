@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IDebug(Session);
+pub struct IDebug<T>(T);
 
-impl AsRef<Session> for IDebug {
-	fn as_ref(&self) -> &Session {
+impl IDebug<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IDebug<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IDebug(domain)),
+			Err((sess, err)) => Err((IDebug(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IDebug<Session>> {
+		Ok(IDebug(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IDebug<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IDebug {
+impl<T> DerefMut for IDebug<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IDebug<T> {
 	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown1(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
@@ -499,8 +519,8 @@ impl IDebug {
 
 }
 
-impl FromKObject for IDebug {
-	unsafe fn from_kobject(obj: KObject) -> IDebug {
-		IDebug(Session::from_kobject(obj))
+impl<T: Object> From<T> for IDebug<T> {
+	fn from(obj: T) -> IDebug<T> {
+		IDebug(obj)
 	}
 }

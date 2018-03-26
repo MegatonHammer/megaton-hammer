@@ -30,31 +30,51 @@ pub trait FromKObject {
     unsafe fn from_kobject(obj: KObject) -> Self;
 }
 
+#[derive(Debug)]
+struct AllocatedMemory(*mut u8, ::alloc::heap::Layout);
+impl Drop for AllocatedMemory {
+    fn drop(&mut self) {
+        use alloc::heap::{Heap, Alloc};
+        unsafe { Heap.dealloc(self.0, self.1.clone()); }
+    }
+}
+
+
 /// Transfer Memory Object
 ///
 /// Used to transfer memory from one process to another. Several IPC APIs expect
 /// to be initialized with some transfer memory. This API allows you to acquire
 /// it.
 #[derive(Debug)]
-#[repr(transparent)]
-pub struct TransferMemory(KObject);
+pub struct TransferMemory(KObject, Option<AllocatedMemory>);
 
 impl TransferMemory {
     /// Allocates memory properly for transfer memory.
     pub fn new(size: usize) -> Result<TransferMemory> {
-        use alloc::vec::Vec;
+        use alloc::heap::{Heap, Layout, Alloc};
         use core::mem;
 
         // TODO: Use alloc_pages if present, default to normal allocator.
-        let mut mem : Vec<u8> = Vec::with_capacity(size);
+        // Align at the page level.
+        let layout = Layout::from_size_align(size, 0x1000).expect("Given size is invalid");
+
+        if layout.size() == 0 {
+            panic!("Tried to allocate TransferMemory of size 0!");
+        }
+
+        let mem = match unsafe { Heap.alloc(layout.clone()) } {
+            Ok(mem) => mem,
+            Err(e) => Heap.oom(e)
+        };
+
         let mut out = 0;
         // TODO: Allow passing some permission bits.
-        let res = unsafe { svc::create_transfer_memory(&mut out, mem.as_mut_ptr() as _, size as u64, 0) };
+        let res = unsafe { svc::create_transfer_memory(&mut out, mem as _, size as u64, 0) };
         mem::forget(mem);
         if res != 0 {
             return Err(Error(res));
         }
-        Ok(TransferMemory(KObject(out)))
+        Ok(TransferMemory(KObject(out), Some(AllocatedMemory(mem, layout))))
     }
 }
 
@@ -73,6 +93,6 @@ impl Into<KObject> for TransferMemory {
 
 impl FromKObject for TransferMemory {
     unsafe fn from_kobject(obj: KObject) -> TransferMemory {
-        TransferMemory(obj)
+        TransferMemory(obj, None)
     }
 }

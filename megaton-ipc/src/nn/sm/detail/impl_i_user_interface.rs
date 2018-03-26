@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IUserInterface(Session);
+pub struct IUserInterface<T>(T);
 
-impl IUserInterface {
-	pub fn new() -> Result<Arc<IUserInterface>> {
+impl IUserInterface<Session> {
+	pub fn new() -> Result<Arc<IUserInterface<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IUserInterface>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IUserInterface<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -33,19 +34,36 @@ impl IUserInterface {
 		if r != 0 {
 			return Err(Error(r))
 		} else {
-			let ret = Arc::new(unsafe { IUserInterface::from_kobject(KObject::new(session)) });
+			let ret = Arc::new(unsafe { Session::from(unsafe { KObject::new(session) }).into() });
 			*HANDLE.lock() = Arc::downgrade(&ret);
 			return Ok(ret);
 		}
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IUserInterface<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IUserInterface(domain)),
+			Err((sess, err)) => Err((IUserInterface(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IUserInterface<Session>> {
+		Ok(IUserInterface(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IUserInterface {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IUserInterface<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IUserInterface {
+impl<T> DerefMut for IUserInterface<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IUserInterface<T> {
 	pub fn initialize(&self, reserved: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -99,8 +117,8 @@ impl IUserInterface {
 
 }
 
-impl FromKObject for IUserInterface {
-	unsafe fn from_kobject(obj: KObject) -> IUserInterface {
-		IUserInterface(Session::from_kobject(obj))
+impl<T: Object> From<T> for IUserInterface<T> {
+	fn from(obj: T) -> IUserInterface<T> {
+		IUserInterface(obj)
 	}
 }

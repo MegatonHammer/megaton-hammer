@@ -1,55 +1,75 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IApplicationDisplayService(Session);
+pub struct IApplicationDisplayService<T>(T);
 
-impl AsRef<Session> for IApplicationDisplayService {
-	fn as_ref(&self) -> &Session {
+impl IApplicationDisplayService<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IApplicationDisplayService<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IApplicationDisplayService(domain)),
+			Err((sess, err)) => Err((IApplicationDisplayService(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IApplicationDisplayService<Session>> {
+		Ok(IApplicationDisplayService(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IApplicationDisplayService<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IApplicationDisplayService {
-	pub fn get_relay_service(&self, ) -> Result<::nns::hosbinder::IHOSBinderDriver> {
+impl<T> DerefMut for IApplicationDisplayService<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IApplicationDisplayService<T> {
+	pub fn get_relay_service(&self, ) -> Result<::nns::hosbinder::IHOSBinderDriver<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(100)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn get_system_display_service(&self, ) -> Result<::nn::visrv::sf::ISystemDisplayService> {
+	pub fn get_system_display_service(&self, ) -> Result<::nn::visrv::sf::ISystemDisplayService<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(101)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn get_manager_display_service(&self, ) -> Result<::nn::visrv::sf::IManagerDisplayService> {
+	pub fn get_manager_display_service(&self, ) -> Result<::nn::visrv::sf::IManagerDisplayService<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(102)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	#[cfg(feature = "switch-2.0.0")]
-	pub fn get_indirect_display_transaction_service(&self, ) -> Result<::nns::hosbinder::IHOSBinderDriver> {
+	pub fn get_indirect_display_transaction_service(&self, ) -> Result<::nns::hosbinder::IHOSBinderDriver<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(103)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	pub fn list_displays(&self, unk1: &mut [::nn::vi::DisplayInfo]) -> Result<i64> {
@@ -234,8 +254,8 @@ impl IApplicationDisplayService {
 
 }
 
-impl FromKObject for IApplicationDisplayService {
-	unsafe fn from_kobject(obj: KObject) -> IApplicationDisplayService {
-		IApplicationDisplayService(Session::from_kobject(obj))
+impl<T: Object> From<T> for IApplicationDisplayService<T> {
+	fn from(obj: T) -> IApplicationDisplayService<T> {
+		IApplicationDisplayService(obj)
 	}
 }

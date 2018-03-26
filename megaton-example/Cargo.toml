@@ -6,3 +6,4 @@ authors = ["roblabla <unfiltered@roblab.la>"]
 [dependencies]
 megaton-hammer = { path = "../megaton-hammer"  }
 megaton-ipc = { path = "../megaton-ipc" }
+byteorder = "1.2.1"

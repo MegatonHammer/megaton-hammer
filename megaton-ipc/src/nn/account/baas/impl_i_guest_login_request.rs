@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IGuestLoginRequest(Session);
+pub struct IGuestLoginRequest<T>(T);
 
-impl AsRef<Session> for IGuestLoginRequest {
-	fn as_ref(&self) -> &Session {
+impl IGuestLoginRequest<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IGuestLoginRequest<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IGuestLoginRequest(domain)),
+			Err((sess, err)) => Err((IGuestLoginRequest(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IGuestLoginRequest<Session>> {
+		Ok(IGuestLoginRequest(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IGuestLoginRequest<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IGuestLoginRequest {
+impl<T> DerefMut for IGuestLoginRequest<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IGuestLoginRequest<T> {
 	pub fn get_session_id(&self, ) -> Result<::nn::account::detail::Uuid> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -57,8 +77,8 @@ impl IGuestLoginRequest {
 	// fn load_id_token_cache(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
-impl FromKObject for IGuestLoginRequest {
-	unsafe fn from_kobject(obj: KObject) -> IGuestLoginRequest {
-		IGuestLoginRequest(Session::from_kobject(obj))
+impl<T: Object> From<T> for IGuestLoginRequest<T> {
+	fn from(obj: T) -> IGuestLoginRequest<T> {
+		IGuestLoginRequest(obj)
 	}
 }

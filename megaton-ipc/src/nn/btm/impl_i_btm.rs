@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IBtm(Session);
+pub struct IBtm<T>(T);
 
-impl IBtm {
-	pub fn new() -> Result<Arc<IBtm>> {
+impl IBtm<Session> {
+	pub fn new() -> Result<Arc<IBtm<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IBtm>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IBtm<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IBtm {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"btm\0\0\0\0\0").map(|s| Arc::new(unsafe { IBtm::from_kobject(s) }));
+		let r = sm.get_service(*b"btm\0\0\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IBtm<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IBtm(domain)),
+			Err((sess, err)) => Err((IBtm(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IBtm<Session>> {
+		Ok(IBtm(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IBtm {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IBtm<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IBtm {
+impl<T> DerefMut for IBtm<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IBtm<T> {
 	pub fn unknown0(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -110,8 +128,8 @@ impl IBtm {
 	// fn unknown18(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
-impl FromKObject for IBtm {
-	unsafe fn from_kobject(obj: KObject) -> IBtm {
-		IBtm(Session::from_kobject(obj))
+impl<T: Object> From<T> for IBtm<T> {
+	fn from(obj: T) -> IBtm<T> {
+		IBtm(obj)
 	}
 }

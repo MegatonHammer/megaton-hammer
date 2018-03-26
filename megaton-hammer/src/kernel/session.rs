@@ -1,8 +1,9 @@
 use ipc::{Request, Response};
 use kernel::svc::send_sync_request;
-use kernel::{FromKObject, KObject};
+use kernel::{KObject};
 use error::*;
 use tls::TlsStruct;
+use alloc::arc::Arc;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Object
@@ -17,6 +18,7 @@ mod private {
 
 pub trait Object : private::Sealed {
     fn send<T: Clone, Y: Clone>(&self, req: Request<T>) -> Result<Response<Y>>;
+    fn from_res<Y: Clone>(res: &mut Response<Y>) -> Self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -40,21 +42,18 @@ impl Session {
         let req = Request::new(2)
             .ty(MessageType::Control)
             .args(());
-        if let Err(err) = self.send::<(), ()>(req) {
-            Err((self, err))
-        } else {
-            Ok(Session(self.0))
-        }
+        let mut res = self.send::<(), ()>(req)?;
+        Ok(Session(res.pop_handle()))
     }
 
     pub fn send<T: Clone, Y: Clone>(&self, req: Request<T>) -> Result<Response<Y>> {
         let mut ipc_buf = TlsStruct::borrow_ipc_mut();
-        req.pack(&mut *ipc_buf, false);
+        req.pack(&mut *ipc_buf, None);
         let err = unsafe { send_sync_request((self.0).0) };
         if err != 0 {
             return Err(Error(err));
         }
-        Response::unpack(&mut ipc_buf[..])
+        Response::unpack(&mut ipc_buf[..], false)
     }
 
     pub fn to_domain(self) -> ::core::result::Result<Domain, (Session, Error)> {
@@ -63,10 +62,10 @@ impl Session {
         let req = Request::new(0)
             .ty(MessageType::Control)
             .args(());
-        if let Err(err) = self.send::<(), ()>(req) {
-            Err((self, err))
-        } else {
-            Ok(Domain(self.0))
+        let res : Result<Response<u32>> = self.send(req);
+        match res {
+            Ok(res) => Ok(Domain(Arc::new(self.0), *res.get_raw())),
+            Err(err) => Err((self, err))
         }
     }
 }
@@ -75,6 +74,10 @@ impl Object for Session {
     // TODO: This is basically CMIF, instead of being a true low-level session.
     fn send<T: Clone, Y: Clone>(&self, req: Request<T>) -> Result<Response<Y>> {
         Session::send(self, req)
+    }
+
+    fn from_res<Y: Clone>(res: &mut Response<Y>) -> Session {
+        Session(res.pop_handle())
     }
 }
 
@@ -91,8 +94,9 @@ impl Into<KObject> for Session {
     }
 }
 
-impl FromKObject for Session {
-    unsafe fn from_kobject(obj: KObject) -> Session {
+// TODO: Think about the safety implication of this huge footgun.
+impl From<KObject> for Session {
+    fn from(obj: KObject) -> Session {
         Session(obj)
     }
 }
@@ -102,47 +106,52 @@ impl FromKObject for Session {
 ////////////////////////////////////////////////////////////////////////////////
 
 #[derive(Debug)]
-pub struct Domain(KObject);
+pub struct Domain(Arc<KObject>, u32);
 
 
 impl Domain {
-    pub unsafe fn from_raw(handle: KObject) -> Domain {
-        Domain(handle)
+    pub fn new(ses: Arc<KObject>, domain_id: u32) -> Domain {
+        Domain(ses, domain_id)
     }
-
-    pub fn send<T: Clone, Y: Clone>(&self, req: Request<T>) -> Result<Response<Y>> {
+    fn send<T: Clone, Y: Clone>(&self, req: Request<T>) -> Result<Response<Y>> {
         let mut ipc_buf = TlsStruct::borrow_ipc_mut();
-        req.pack(&mut *ipc_buf, true);
+        req.pack(&mut *ipc_buf, Some(self.1));
         let err = unsafe { send_sync_request((self.0).0) };
         if err != 0 {
             return Err(Error(err));
         }
-        Response::unpack(&mut ipc_buf[..])
+        Response::unpack(&mut ipc_buf[..], true)
     }
 }
+
+// TODO: impl Drop for Domain
 
 impl Object for Domain {
     // TODO: This is basically CMIF, instead of being a true low-level Domain.
     fn send<T: Clone, Y: Clone>(&self, req: Request<T>) -> Result<Response<Y>> {
         Domain::send(self, req)
     }
-}
 
-impl AsRef<KObject> for Domain {
-    fn as_ref(&self) -> &KObject {
-        &self.0
+    fn from_res<Y: Clone>(res: &mut Response<Y>) -> Domain {
+        unimplemented!()
     }
 }
 
-// TODO: Impl from instead
-impl Into<KObject> for Domain {
-    fn into(self) -> KObject {
-        self.0
-    }
-}
+//impl AsRef<KObject> for Domain {
+//    fn as_ref(&self) -> &KObject {
+//        &self.0
+//    }
+//}
+//
+//// TODO: Impl from instead
+//impl Into<KObject> for Domain {
+//    fn into(self) -> KObject {
+//        self.0
+//    }
+//}
 
-impl FromKObject for Domain {
+/*impl FromKObject for Domain {
     unsafe fn from_kobject(obj: KObject) -> Domain {
         Domain(obj)
     }
-}
+}*/

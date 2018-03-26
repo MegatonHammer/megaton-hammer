@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IApplicationManagerInterface(Session);
+pub struct IApplicationManagerInterface<T>(T);
 
-impl AsRef<Session> for IApplicationManagerInterface {
-	fn as_ref(&self) -> &Session {
+impl IApplicationManagerInterface<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IApplicationManagerInterface<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IApplicationManagerInterface(domain)),
+			Err((sess, err)) => Err((IApplicationManagerInterface(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IApplicationManagerInterface<Session>> {
+		Ok(IApplicationManagerInterface(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IApplicationManagerInterface<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IApplicationManagerInterface {
+impl<T> DerefMut for IApplicationManagerInterface<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IApplicationManagerInterface<T> {
 	// fn list_application_record(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn generate_application_record_count(&self, ) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
@@ -360,14 +380,14 @@ impl IApplicationManagerInterface {
 		Ok(*res.get_raw())
 	}
 
-	pub fn get_game_card_stopper(&self, ) -> Result<Session> {
+	pub fn get_game_card_stopper(&self, ) -> Result<T> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(62)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	pub fn is_system_program_installed(&self, unk0: u64) -> Result<u8> {
@@ -390,14 +410,14 @@ impl IApplicationManagerInterface {
 		Ok(())
 	}
 
-	pub fn get_request_server_stopper(&self, ) -> Result<Session> {
+	pub fn get_request_server_stopper(&self, ) -> Result<T> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(65)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	pub fn get_background_apply_delta_stress_task_info(&self, ) -> Result<u128> {
@@ -1259,8 +1279,8 @@ impl IApplicationManagerInterface {
 
 }
 
-impl FromKObject for IApplicationManagerInterface {
-	unsafe fn from_kobject(obj: KObject) -> IApplicationManagerInterface {
-		IApplicationManagerInterface(Session::from_kobject(obj))
+impl<T: Object> From<T> for IApplicationManagerInterface<T> {
+	fn from(obj: T) -> IApplicationManagerInterface<T> {
+		IApplicationManagerInterface(obj)
 	}
 }

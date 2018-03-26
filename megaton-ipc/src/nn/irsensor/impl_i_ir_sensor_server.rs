@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IIrSensorServer(Session);
+pub struct IIrSensorServer<T>(T);
 
-impl IIrSensorServer {
-	pub fn new() -> Result<Arc<IIrSensorServer>> {
+impl IIrSensorServer<Session> {
+	pub fn new() -> Result<Arc<IIrSensorServer<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IIrSensorServer>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IIrSensorServer<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IIrSensorServer {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"irs\0\0\0\0\0").map(|s| Arc::new(unsafe { IIrSensorServer::from_kobject(s) }));
+		let r = sm.get_service(*b"irs\0\0\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IIrSensorServer<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IIrSensorServer(domain)),
+			Err((sess, err)) => Err((IIrSensorServer(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IIrSensorServer<Session>> {
+		Ok(IIrSensorServer(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IIrSensorServer {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IIrSensorServer<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IIrSensorServer {
+impl<T> DerefMut for IIrSensorServer<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IIrSensorServer<T> {
 	pub fn activate_irsensor(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -218,8 +236,8 @@ impl IIrSensorServer {
 
 }
 
-impl FromKObject for IIrSensorServer {
-	unsafe fn from_kobject(obj: KObject) -> IIrSensorServer {
-		IIrSensorServer(Session::from_kobject(obj))
+impl<T: Object> From<T> for IIrSensorServer<T> {
+	fn from(obj: T) -> IIrSensorServer<T> {
+		IIrSensorServer(obj)
 	}
 }

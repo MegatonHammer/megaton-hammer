@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IMeasurementServer(Session);
+pub struct IMeasurementServer<T>(T);
 
-impl IMeasurementServer {
-	pub fn new() -> Result<Arc<IMeasurementServer>> {
+impl IMeasurementServer<Session> {
+	pub fn new() -> Result<Arc<IMeasurementServer<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IMeasurementServer>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IMeasurementServer<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,29 +30,46 @@ impl IMeasurementServer {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"ts\0\0\0\0\0\0").map(|s| Arc::new(unsafe { IMeasurementServer::from_kobject(s) }));
+		let r = sm.get_service(*b"ts\0\0\0\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IMeasurementServer<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IMeasurementServer(domain)),
+			Err((sess, err)) => Err((IMeasurementServer(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IMeasurementServer<Session>> {
+		Ok(IMeasurementServer(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IMeasurementServer {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IMeasurementServer<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IMeasurementServer {
+impl<T> DerefMut for IMeasurementServer<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IMeasurementServer<T> {
 	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
-impl FromKObject for IMeasurementServer {
-	unsafe fn from_kobject(obj: KObject) -> IMeasurementServer {
-		IMeasurementServer(Session::from_kobject(obj))
+impl<T: Object> From<T> for IMeasurementServer<T> {
+	fn from(obj: T) -> IMeasurementServer<T> {
+		IMeasurementServer(obj)
 	}
 }

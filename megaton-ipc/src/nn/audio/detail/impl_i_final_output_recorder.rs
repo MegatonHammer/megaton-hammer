@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IFinalOutputRecorder(Session);
+pub struct IFinalOutputRecorder<T>(T);
 
-impl AsRef<Session> for IFinalOutputRecorder {
-	fn as_ref(&self) -> &Session {
+impl IFinalOutputRecorder<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IFinalOutputRecorder<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IFinalOutputRecorder(domain)),
+			Err((sess, err)) => Err((IFinalOutputRecorder(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IFinalOutputRecorder<Session>> {
+		Ok(IFinalOutputRecorder(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IFinalOutputRecorder<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IFinalOutputRecorder {
+impl<T> DerefMut for IFinalOutputRecorder<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IFinalOutputRecorder<T> {
 	pub fn get_final_output_recorder_state(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -77,8 +97,8 @@ impl IFinalOutputRecorder {
 	// fn get_released_final_output_recorder_buffer_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
-impl FromKObject for IFinalOutputRecorder {
-	unsafe fn from_kobject(obj: KObject) -> IFinalOutputRecorder {
-		IFinalOutputRecorder(Session::from_kobject(obj))
+impl<T: Object> From<T> for IFinalOutputRecorder<T> {
+	fn from(obj: T) -> IFinalOutputRecorder<T> {
+		IFinalOutputRecorder(obj)
 	}
 }

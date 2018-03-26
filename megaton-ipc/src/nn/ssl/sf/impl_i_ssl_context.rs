@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct ISslContext(Session);
+pub struct ISslContext<T>(T);
 
-impl AsRef<Session> for ISslContext {
-	fn as_ref(&self) -> &Session {
+impl ISslContext<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<ISslContext<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(ISslContext(domain)),
+			Err((sess, err)) => Err((ISslContext(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<ISslContext<Session>> {
+		Ok(ISslContext(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for ISslContext<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl ISslContext {
+impl<T> DerefMut for ISslContext<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> ISslContext<T> {
 	pub fn set_option(&self, unk0: ::nn::ssl::sf::ContextOption, unk1: i32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -39,14 +59,14 @@ impl ISslContext {
 		Ok(*res.get_raw())
 	}
 
-	pub fn create_connection(&self, ) -> Result<::nn::ssl::sf::ISslConnection> {
+	pub fn create_connection(&self, ) -> Result<::nn::ssl::sf::ISslConnection<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(2)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	pub fn get_connection_count(&self, ) -> Result<u32> {
@@ -105,8 +125,8 @@ impl ISslContext {
 
 }
 
-impl FromKObject for ISslContext {
-	unsafe fn from_kobject(obj: KObject) -> ISslContext {
-		ISslContext(Session::from_kobject(obj))
+impl<T: Object> From<T> for ISslContext<T> {
+	fn from(obj: T) -> ISslContext<T> {
+		ISslContext(obj)
 	}
 }

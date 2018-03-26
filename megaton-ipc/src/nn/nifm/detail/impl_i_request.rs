@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IRequest(Session);
+pub struct IRequest<T>(T);
 
-impl AsRef<Session> for IRequest {
-	fn as_ref(&self) -> &Session {
+impl IRequest<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IRequest<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IRequest(domain)),
+			Err((sess, err)) => Err((IRequest(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IRequest<Session>> {
+		Ok(IRequest(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IRequest<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IRequest {
+impl<T> DerefMut for IRequest<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IRequest<T> {
 	pub fn get_request_state(&self, ) -> Result<i32> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -264,8 +284,8 @@ impl IRequest {
 
 }
 
-impl FromKObject for IRequest {
-	unsafe fn from_kobject(obj: KObject) -> IRequest {
-		IRequest(Session::from_kobject(obj))
+impl<T: Object> From<T> for IRequest<T> {
+	fn from(obj: T) -> IRequest<T> {
+		IRequest(obj)
 	}
 }

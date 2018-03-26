@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IApplicationAccessor(Session);
+pub struct IApplicationAccessor<T>(T);
 
-impl AsRef<Session> for IApplicationAccessor {
-	fn as_ref(&self) -> &Session {
+impl IApplicationAccessor<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IApplicationAccessor<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IApplicationAccessor(domain)),
+			Err((sess, err)) => Err((IApplicationAccessor(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IApplicationAccessor<Session>> {
+		Ok(IApplicationAccessor(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IApplicationAccessor<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IApplicationAccessor {
+impl<T> DerefMut for IApplicationAccessor<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IApplicationAccessor<T> {
 	pub fn get_applet_state_changed_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -101,14 +121,14 @@ impl IApplicationAccessor {
 		Ok(*res.get_raw())
 	}
 
-	pub fn get_current_library_applet(&self, ) -> Result<::nn::am::service::IAppletAccessor> {
+	pub fn get_current_library_applet(&self, ) -> Result<::nn::am::service::IAppletAccessor<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(112)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	pub fn get_application_id(&self, ) -> Result<::nn::ncm::ApplicationId> {
@@ -121,12 +141,12 @@ impl IApplicationAccessor {
 		Ok(*res.get_raw())
 	}
 
-	pub fn push_launch_parameter(&self, unk0: u32, unk1: &::nn::am::service::IStorage) -> Result<()> {
+	pub fn push_launch_parameter(&self, unk0: u32, unk1: &::nn::am::service::IStorage<Session>) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(121)
 			.args(unk0)
-			.copy_handle(unk1.as_ref().as_ref())
+			.copy_handle(unk1.as_ref())
 			;
 		let _res : Response<()> = self.0.send(req)?;
 		Ok(())
@@ -136,8 +156,8 @@ impl IApplicationAccessor {
 	// fn get_application_launch_property(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
-impl FromKObject for IApplicationAccessor {
-	unsafe fn from_kobject(obj: KObject) -> IApplicationAccessor {
-		IApplicationAccessor(Session::from_kobject(obj))
+impl<T: Object> From<T> for IApplicationAccessor<T> {
+	fn from(obj: T) -> IApplicationAccessor<T> {
+		IApplicationAccessor(obj)
 	}
 }

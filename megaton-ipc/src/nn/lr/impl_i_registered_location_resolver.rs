@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IRegisteredLocationResolver(Session);
+pub struct IRegisteredLocationResolver<T>(T);
 
-impl AsRef<Session> for IRegisteredLocationResolver {
-	fn as_ref(&self) -> &Session {
+impl IRegisteredLocationResolver<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IRegisteredLocationResolver<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IRegisteredLocationResolver(domain)),
+			Err((sess, err)) => Err((IRegisteredLocationResolver(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IRegisteredLocationResolver<Session>> {
+		Ok(IRegisteredLocationResolver(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IRegisteredLocationResolver<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IRegisteredLocationResolver {
+impl<T> DerefMut for IRegisteredLocationResolver<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IRegisteredLocationResolver<T> {
 	// fn get_patch_type0_nca_path(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn register_patch_type0_fallback_path(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unregister_patch_type0_fallback_path(&self, unk0: u64) -> Result<()> {
@@ -40,8 +60,8 @@ impl IRegisteredLocationResolver {
 	// fn set_patch_type1_nca_path(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
-impl FromKObject for IRegisteredLocationResolver {
-	unsafe fn from_kobject(obj: KObject) -> IRegisteredLocationResolver {
-		IRegisteredLocationResolver(Session::from_kobject(obj))
+impl<T: Object> From<T> for IRegisteredLocationResolver<T> {
+	fn from(obj: T) -> IRegisteredLocationResolver<T> {
+		IRegisteredLocationResolver(obj)
 	}
 }

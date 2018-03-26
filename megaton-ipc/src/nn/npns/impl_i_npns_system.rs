@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct INpnsSystem(Session);
+pub struct INpnsSystem<T>(T);
 
-impl INpnsSystem {
-	pub fn new() -> Result<Arc<INpnsSystem>> {
+impl INpnsSystem<Session> {
+	pub fn new() -> Result<Arc<INpnsSystem<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<INpnsSystem>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<INpnsSystem<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl INpnsSystem {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"npns:s\0\0").map(|s| Arc::new(unsafe { INpnsSystem::from_kobject(s) }));
+		let r = sm.get_service(*b"npns:s\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<INpnsSystem<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(INpnsSystem(domain)),
+			Err((sess, err)) => Err((INpnsSystem(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<INpnsSystem<Session>> {
+		Ok(INpnsSystem(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for INpnsSystem {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for INpnsSystem<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl INpnsSystem {
+impl<T> DerefMut for INpnsSystem<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> INpnsSystem<T> {
 	pub fn unknown1(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -327,8 +345,8 @@ impl INpnsSystem {
 
 }
 
-impl FromKObject for INpnsSystem {
-	unsafe fn from_kobject(obj: KObject) -> INpnsSystem {
-		INpnsSystem(Session::from_kobject(obj))
+impl<T: Object> From<T> for INpnsSystem<T> {
+	fn from(obj: T) -> INpnsSystem<T> {
+		INpnsSystem(obj)
 	}
 }

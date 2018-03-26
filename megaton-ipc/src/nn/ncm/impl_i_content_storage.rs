@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IContentStorage(Session);
+pub struct IContentStorage<T>(T);
 
-impl AsRef<Session> for IContentStorage {
-	fn as_ref(&self) -> &Session {
+impl IContentStorage<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IContentStorage<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IContentStorage(domain)),
+			Err((sess, err)) => Err((IContentStorage(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IContentStorage<Session>> {
+		Ok(IContentStorage(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IContentStorage<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IContentStorage {
+impl<T> DerefMut for IContentStorage<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IContentStorage<T> {
 	pub fn generate_place_holder_id(&self, ) -> Result<u128> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -119,8 +139,8 @@ impl IContentStorage {
 
 }
 
-impl FromKObject for IContentStorage {
-	unsafe fn from_kobject(obj: KObject) -> IContentStorage {
-		IContentStorage(Session::from_kobject(obj))
+impl<T: Object> From<T> for IContentStorage<T> {
+	fn from(obj: T) -> IContentStorage<T> {
+		IContentStorage(obj)
 	}
 }

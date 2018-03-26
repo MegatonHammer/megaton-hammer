@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IPrivateService(Session);
+pub struct IPrivateService<T>(T);
 
-impl IPrivateService {
-	pub fn new() -> Result<Arc<IPrivateService>> {
+impl IPrivateService<Session> {
+	pub fn new() -> Result<Arc<IPrivateService<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IPrivateService>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IPrivateService<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IPrivateService {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"fatal:p\0").map(|s| Arc::new(unsafe { IPrivateService::from_kobject(s) }));
+		let r = sm.get_service(*b"fatal:p\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IPrivateService<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IPrivateService(domain)),
+			Err((sess, err)) => Err((IPrivateService(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IPrivateService<Session>> {
+		Ok(IPrivateService(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IPrivateService {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IPrivateService<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IPrivateService {
+impl<T> DerefMut for IPrivateService<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IPrivateService<T> {
 	pub fn get_fatal_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -56,8 +74,8 @@ impl IPrivateService {
 
 }
 
-impl FromKObject for IPrivateService {
-	unsafe fn from_kobject(obj: KObject) -> IPrivateService {
-		IPrivateService(Session::from_kobject(obj))
+impl<T: Object> From<T> for IPrivateService<T> {
+	fn from(obj: T) -> IPrivateService<T> {
+		IPrivateService(obj)
 	}
 }

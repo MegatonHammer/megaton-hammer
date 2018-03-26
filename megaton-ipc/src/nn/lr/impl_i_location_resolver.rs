@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct ILocationResolver(Session);
+pub struct ILocationResolver<T>(T);
 
-impl AsRef<Session> for ILocationResolver {
-	fn as_ref(&self) -> &Session {
+impl ILocationResolver<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<ILocationResolver<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(ILocationResolver(domain)),
+			Err((sess, err)) => Err((ILocationResolver(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<ILocationResolver<Session>> {
+		Ok(ILocationResolver(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for ILocationResolver<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl ILocationResolver {
+impl<T> DerefMut for ILocationResolver<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> ILocationResolver<T> {
 	// fn get_program_nca_path(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn set_program_nca_path(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_user_control_nca_path(&self, UNKNOWN) -> Result<UNKNOWN>;
@@ -32,8 +52,8 @@ impl ILocationResolver {
 
 }
 
-impl FromKObject for ILocationResolver {
-	unsafe fn from_kobject(obj: KObject) -> ILocationResolver {
-		ILocationResolver(Session::from_kobject(obj))
+impl<T: Object> From<T> for ILocationResolver<T> {
+	fn from(obj: T) -> ILocationResolver<T> {
+		ILocationResolver(obj)
 	}
 }

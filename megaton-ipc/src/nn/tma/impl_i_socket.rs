@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct ISocket(Session);
+pub struct ISocket<T>(T);
 
-impl AsRef<Session> for ISocket {
-	fn as_ref(&self) -> &Session {
+impl ISocket<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<ISocket<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(ISocket(domain)),
+			Err((sess, err)) => Err((ISocket(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<ISocket<Session>> {
+		Ok(ISocket(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for ISocket<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl ISocket {
+impl<T> DerefMut for ISocket<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> ISocket<T> {
 	pub fn close(&self, ) -> Result<(u32, u32)> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -82,8 +102,8 @@ impl ISocket {
 
 }
 
-impl FromKObject for ISocket {
-	unsafe fn from_kobject(obj: KObject) -> ISocket {
-		ISocket(Session::from_kobject(obj))
+impl<T: Object> From<T> for ISocket<T> {
+	fn from(obj: T) -> ISocket<T> {
+		ISocket(obj)
 	}
 }

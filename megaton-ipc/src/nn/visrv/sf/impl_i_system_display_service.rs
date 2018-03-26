@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct ISystemDisplayService(Session);
+pub struct ISystemDisplayService<T>(T);
 
-impl AsRef<Session> for ISystemDisplayService {
-	fn as_ref(&self) -> &Session {
+impl ISystemDisplayService<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<ISystemDisplayService<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(ISystemDisplayService(domain)),
+			Err((sess, err)) => Err((ISystemDisplayService(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<ISystemDisplayService<Session>> {
+		Ok(ISystemDisplayService(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for ISystemDisplayService<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl ISystemDisplayService {
+impl<T> DerefMut for ISystemDisplayService<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> ISystemDisplayService<T> {
 	pub fn get_z_order_count_min(&self, unk0: u64) -> Result<i64> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -457,8 +477,8 @@ impl ISystemDisplayService {
 
 }
 
-impl FromKObject for ISystemDisplayService {
-	unsafe fn from_kobject(obj: KObject) -> ISystemDisplayService {
-		ISystemDisplayService(Session::from_kobject(obj))
+impl<T: Object> From<T> for ISystemDisplayService<T> {
+	fn from(obj: T) -> ISystemDisplayService<T> {
+		ISystemDisplayService(obj)
 	}
 }

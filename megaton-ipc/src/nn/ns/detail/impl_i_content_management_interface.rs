@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IContentManagementInterface(Session);
+pub struct IContentManagementInterface<T>(T);
 
-impl AsRef<Session> for IContentManagementInterface {
-	fn as_ref(&self) -> &Session {
+impl IContentManagementInterface<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IContentManagementInterface<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IContentManagementInterface(domain)),
+			Err((sess, err)) => Err((IContentManagementInterface(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IContentManagementInterface<Session>> {
+		Ok(IContentManagementInterface(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IContentManagementInterface<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IContentManagementInterface {
+impl<T> DerefMut for IContentManagementInterface<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IContentManagementInterface<T> {
 	// fn calculate_application_occupied_size(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn check_sd_card_mount_status(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
@@ -48,8 +68,8 @@ impl IContentManagementInterface {
 
 }
 
-impl FromKObject for IContentManagementInterface {
-	unsafe fn from_kobject(obj: KObject) -> IContentManagementInterface {
-		IContentManagementInterface(Session::from_kobject(obj))
+impl<T: Object> From<T> for IContentManagementInterface<T> {
+	fn from(obj: T) -> IContentManagementInterface<T> {
+		IContentManagementInterface(obj)
 	}
 }

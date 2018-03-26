@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IProgramRegistry(Session);
+pub struct IProgramRegistry<T>(T);
 
-impl IProgramRegistry {
-	pub fn new() -> Result<Arc<IProgramRegistry>> {
+impl IProgramRegistry<Session> {
+	pub fn new() -> Result<Arc<IProgramRegistry<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IProgramRegistry>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IProgramRegistry<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IProgramRegistry {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"fsp-pr\0\0").map(|s| Arc::new(unsafe { IProgramRegistry::from_kobject(s) }));
+		let r = sm.get_service(*b"fsp-pr\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IProgramRegistry<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IProgramRegistry(domain)),
+			Err((sess, err)) => Err((IProgramRegistry(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IProgramRegistry<Session>> {
+		Ok(IProgramRegistry(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IProgramRegistry {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IProgramRegistry<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IProgramRegistry {
+impl<T> DerefMut for IProgramRegistry<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IProgramRegistry<T> {
 	// fn set_fs_permissions(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn clear_fs_permissions(&self, pid: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
@@ -67,8 +85,8 @@ impl IProgramRegistry {
 
 }
 
-impl FromKObject for IProgramRegistry {
-	unsafe fn from_kobject(obj: KObject) -> IProgramRegistry {
-		IProgramRegistry(Session::from_kobject(obj))
+impl<T: Object> From<T> for IProgramRegistry<T> {
+	fn from(obj: T) -> IProgramRegistry<T> {
+		IProgramRegistry(obj)
 	}
 }

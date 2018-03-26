@@ -2,95 +2,138 @@
 
 extern crate megaton_hammer;
 extern crate megaton_ipc;
+extern crate byteorder;
 
-use std as core;
-use std::fmt::Write;
-use megaton_ipc::nn::socket::BsdBufferConfig;
-use megaton_hammer::kernel::{svc, KObject};
+use byteorder::{WriteBytesExt, NativeEndian};
+use megaton_hammer::kernel::{TransferMemory, KObject, Domain};
+use megaton_ipc::{nn, nns};
+use std::sync::Arc;
 
-static mut BSD_MEM: [u8; 0x234000] = [0; 0x234000];
-
-#[derive(Debug)]
-#[repr(C)]
-struct SockAddrIn {
-    sin_len: u8,
-    sin_family: u8,
-    sin_port: u16,
-    sin_addr: u32,
-    sin_zero: [u8; 8]
+// TODO: This kind of sucks. And is only a problem because my IPC bindings don't
+// have a concept of strings yet. We need to fix this.
+pub fn u8_slice_to_i8_slice(slice: &[u8]) -> &[i8] {
+    unsafe { &*(slice as *const _  as *const [i8]) }
 }
-
-const AF_INET: u8 = 2;
-const AF_INET6: u8 = 17;
-const AF_ROUTE: u8 = 28;
 
 fn main() {
-    writeln!(megaton_hammer::loader::Logger, "We are rust, and we are in the main!").unwrap();
+    // Let's get ferris to show up on my switch.
 
-    let socket_ipc = megaton_ipc::nn::socket::sf::IClient::new().expect("Failed to get bsd service");
+    // Init the nv stuff
+    println!("Create nv");
+    let nvdrv = nns::nvdrv::INvDrvServices::new_nvdrv_a().unwrap();
 
-    //writeln!(megaton_crt0::SvcLog, "The socket is {:?}", socket_ipc).unwrap();
+    // Initialize nvdrv
+    println!("Create transfer memory");
+    let transfer_mem = TransferMemory::new(0x30000).unwrap();
+    let temporary_process = unsafe { KObject::new(megaton_hammer::kernel::svc::CURRENT_PROCESS) };
+    println!("Initialize nv");
+    nvdrv.initialize(0x30000, &temporary_process, transfer_mem.as_ref()).unwrap();
+    std::mem::drop(temporary_process);
 
-    let bsd_config = BsdBufferConfig {
-        version: 1,
-        tcp_tx_buf_size: 0x8000,
-        tcp_rx_buf_size: 0x10000,
-        tcp_tx_buf_max_size: 0x40000,
-        tcp_rx_buf_max_size: 0x40000,
-        udp_tx_buf_size: 0x2400,
-        udp_rx_buf_size: 0xA500,
-        sb_efficiency: 4,
+    println!("Open /dev/nvhost-as-gpu");
+    let nvasgpu = nvdrv.open(u8_slice_to_i8_slice(&b"/dev/nvhost-as-gpu"[..])).unwrap();
+    println!("Open /dev/nvmap");
+    let nvmap = nvdrv.open(u8_slice_to_i8_slice(&b"/dev/nvmap"[..])).unwrap();
+
+    // Init the vi stuff.
+    println!("new IManagerRootService");
+    let vi_m = nn::visrv::sf::IManagerRootService::new().unwrap();
+    //println!("Duplicate IManagerRootService");
+    //let vi_m = Arc::try_unwrap(vi_m).unwrap();
+    //println!("ToDomain IManagerRootService");
+    //let vi_m = vi_m.to_domain().unwrap();
+    println!("get_display_service");
+    let disp_svc = vi_m.get_display_service(1).unwrap();
+    println!("get_relay_service");
+    let relay_svc = disp_svc.get_relay_service().unwrap();
+    println!("get_system_display_service");
+    let system_disp_svc = disp_svc.get_system_display_service().unwrap();
+    println!("get_manager_display_service");
+    let manager_disp_svc = disp_svc.get_manager_display_service().unwrap();
+
+    // Open display
+    let display_id = {
+        let mut display = [0u8; 64];
+        display[..b"Default".len()].copy_from_slice(b"Default");
+        disp_svc.open_display(display).unwrap()
     };
 
-    let mut mem_handle = 0;
-    let r = unsafe { svc::create_transfer_memory(&mut mem_handle, BSD_MEM.as_mut_ptr() as _, core::mem::size_of_val(&BSD_MEM) as u64, 0) };
-    // TODO: Really need to turn the SVCs into a proper API...
-    if r != 0 {
-        writeln!(megaton_hammer::loader::Logger, "Failed to create transfer memory: {}", r);
-        return;
-    }
-    let mem_handle = unsafe { KObject::new(mem_handle) };
-    writeln!(megaton_hammer::loader::Logger, "Initializing {:?} - {:?}", socket_ipc, mem_handle);
-    socket_ipc.initialize(bsd_config, 0, unsafe { core::mem::size_of_val(&BSD_MEM) as u64 }, &mem_handle).expect("Failed to initialize bsd");
-
-
-    let (socket, bsd_errno) = socket_ipc.socket(AF_INET as u32, 1, 6).expect("Failed to create Socket");
-    if socket == -1 {
-        writeln!(megaton_hammer::loader::Logger, "Failed to create Socket: {}", bsd_errno);
-        //writeln!(megaton_crt0::SvcLog, "Failed to create Socket: {}", bsd_errno);
-        return;
-    }
-
-    let sockaddrin = SockAddrIn {
-        sin_len: core::mem::size_of::<SockAddrIn>() as u8,
-        sin_family: AF_INET,
-        sin_port: 2991u16.to_be(),
-        sin_addr: (91 << 24 | 121 << 16 | 81 << 8 | 160u32).to_be(),
-        sin_zero: [0; 8]
+    // Open a layer
+    let layer_id = manager_disp_svc.create_managed_layer(1, display_id, 0).unwrap();
+    let mut parcel = [0u8; 0x100];
+    let binder = {
+        let mut display = [0u8; 64];
+        display[..b"Default".len()].copy_from_slice(b"Default");
+        disp_svc.open_layer(display, layer_id, 0, &mut parcel);
     };
 
-    let sockaddr = unsafe { core::mem::transmute(sockaddrin) };
-
-    let (ret, bsd_errno) = socket_ipc.connect(socket as u32, &sockaddr).expect("Failed to connect");
-    if ret == -1 {
-        writeln!(megaton_hammer::loader::Logger, "Failed to connect: {}", bsd_errno);
-        //writeln!(megaton_crt0::SvcLog, "Failed to connect: {}", bsd_errno);
-        return;
-    }
-
-    // Transmute ? Really ?
-    let (ret, bsd_errno) = socket_ipc.write(socket as u32, unsafe { core::mem::transmute("This is a simple socket test from rust".as_bytes()) } ).expect("Failed to write");
-    if ret == -1 {
-        //writeln!(megaton_crt0::SvcLog, "Failed to write: {}", bsd_errno);
-    }
-    writeln!(megaton_hammer::loader::Logger, "I'm done !");
+    println!("So, erm, does this work? I'm in rust btw")
 }
 
-/*fn bsd_Get_transfer_mem_size(config: &BsdBufferConfig) -> usize {
-    let tcp_tx_buf_max_size = if config.tcp_tx_buf_max_size != 0 { config.tcp_tx_buf_max_size } else { config.tcp_tx_buf_size };
-    let tcp_rx_buf_max_size = if config.tcp_rx_buf_max_size != 0 { config.tcp_rx_buf_max_size } else { config.tcp_rx_buf_size };
-    let sum = tcp_tx_buf_max_size + tcp_rx_buf_max_size + config.udp_tx_buf_size + config.udp_rx_buf_size;
+/*struct IGraphicBufferProducer(Arc<nns::hosbinder::IHOSBinderDriver>);
 
-    let sum = ((sum + 0xFFF) >> 12) << 12; // Page round-up
-    return config.sb_efficiency * sum;
+
+impl IGraphicBufferProducer {
+    pub fn connect(binder: Arc<nns::hosbinder::IHOSBinderDriver>, api: u32, producer_controlled_by_app: bool) -> (u32, IGraphicBufferProducer) {
+        let parcel = WriteParcel::new();
+        parcel.write_interface_token("android.gui.IGraphicBufferProducer");
+        parcel.write_u32(0);
+        parcel.write_u32(api);
+        parcel.write_u32(if producer_controlled_by_app { 1 } else { 0 });
+
+        // TODO: Implement binder
+        //binder.
+    }
+}
+
+struct ReadParcel<'a>(&'a [u8]);
+
+impl<'a> ReadParcel<'a> {
+    fn new(data: &[u8]) -> ReadParcel {
+        ReadParcel(data)
+    }
+
+    fn read_binder() -> IGraphicBufferProducer {
+        
+    }
+}
+
+struct WriteParcel(Vec<u8>);
+
+impl WriteParcel {
+    pub fn new() -> WriteParcel {
+        WriteParcel(Vec::new())
+    }
+
+    pub fn write_interface_token(&mut self, token: &str) {
+        self.write_u32(0x100); // TODO: Is this the strict-mode policy?
+        self.write_string16(token);
+    }
+
+    pub fn write_string16(&mut self, s: &str) {
+        // TODO: Surely there's an easier way.
+        struct Iter([u8; 2], usize);
+        impl Iterator for Iter {
+            type Item = u8;
+            fn next(&mut self) -> Option<u8> {
+                if self.1 >= 2 {
+                    None
+                } else {
+                    let ret = Some(self.0[self.1]);
+                    self.1 += 1;
+                    ret
+                }
+            }
+        }
+        self.write_u32(s.len());
+        self.0.extend(self.s.encode_utf16().flat_map(|n| {
+            let x = [0; 2];
+            NativeEndian::write_u16(&x[..]);
+            Iter(x, 0)
+        }));
+    }
+
+    pub fn write_u32(&mut self, val: u32) {
+        self.0.write_u32::<NativeEndian>(val).expect("Write bigger than usize");
+    }
 }*/

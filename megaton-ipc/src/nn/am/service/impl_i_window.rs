@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IWindow(Session);
+pub struct IWindow<T>(T);
 
-impl AsRef<Session> for IWindow {
-	fn as_ref(&self) -> &Session {
+impl IWindow<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IWindow<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IWindow(domain)),
+			Err((sess, err)) => Err((IWindow(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IWindow<Session>> {
+		Ok(IWindow(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IWindow<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IWindow {
+impl<T> DerefMut for IWindow<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IWindow<T> {
 	pub fn unknown12345(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -23,8 +43,8 @@ impl IWindow {
 
 }
 
-impl FromKObject for IWindow {
-	unsafe fn from_kobject(obj: KObject) -> IWindow {
-		IWindow(Session::from_kobject(obj))
+impl<T: Object> From<T> for IWindow<T> {
+	fn from(obj: T) -> IWindow<T> {
+		IWindow(obj)
 	}
 }

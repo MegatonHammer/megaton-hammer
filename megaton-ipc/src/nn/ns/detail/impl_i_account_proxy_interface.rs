@@ -1,21 +1,41 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IAccountProxyInterface(Session);
+pub struct IAccountProxyInterface<T>(T);
 
-impl AsRef<Session> for IAccountProxyInterface {
-	fn as_ref(&self) -> &Session {
+impl IAccountProxyInterface<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IAccountProxyInterface<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IAccountProxyInterface(domain)),
+			Err((sess, err)) => Err((IAccountProxyInterface(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IAccountProxyInterface<Session>> {
+		Ok(IAccountProxyInterface(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IAccountProxyInterface<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IAccountProxyInterface {
+impl<T> DerefMut for IAccountProxyInterface<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IAccountProxyInterface<T> {
 	// fn create_user_account(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
-impl FromKObject for IAccountProxyInterface {
-	unsafe fn from_kobject(obj: KObject) -> IAccountProxyInterface {
-		IAccountProxyInterface(Session::from_kobject(obj))
+impl<T: Object> From<T> for IAccountProxyInterface<T> {
+	fn from(obj: T) -> IAccountProxyInterface<T> {
+		IAccountProxyInterface(obj)
 	}
 }

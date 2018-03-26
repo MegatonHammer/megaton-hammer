@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IBtmDebug(Session);
+pub struct IBtmDebug<T>(T);
 
-impl IBtmDebug {
-	pub fn new() -> Result<Arc<IBtmDebug>> {
+impl IBtmDebug<Session> {
+	pub fn new() -> Result<Arc<IBtmDebug<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IBtmDebug>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IBtmDebug<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IBtmDebug {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"btm:dbg\0").map(|s| Arc::new(unsafe { IBtmDebug::from_kobject(s) }));
+		let r = sm.get_service(*b"btm:dbg\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IBtmDebug<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IBtmDebug(domain)),
+			Err((sess, err)) => Err((IBtmDebug(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IBtmDebug<Session>> {
+		Ok(IBtmDebug(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IBtmDebug {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IBtmDebug<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IBtmDebug {
+impl<T> DerefMut for IBtmDebug<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IBtmDebug<T> {
 	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
@@ -55,8 +73,8 @@ impl IBtmDebug {
 	// fn unknown8(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
-impl FromKObject for IBtmDebug {
-	unsafe fn from_kobject(obj: KObject) -> IBtmDebug {
-		IBtmDebug(Session::from_kobject(obj))
+impl<T: Object> From<T> for IBtmDebug<T> {
+	fn from(obj: T) -> IBtmDebug<T> {
+		IBtmDebug(obj)
 	}
 }

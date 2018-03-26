@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct ISteadyClock(Session);
+pub struct ISteadyClock<T>(T);
 
-impl AsRef<Session> for ISteadyClock {
-	fn as_ref(&self) -> &Session {
+impl ISteadyClock<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<ISteadyClock<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(ISteadyClock(domain)),
+			Err((sess, err)) => Err((ISteadyClock(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<ISteadyClock<Session>> {
+		Ok(ISteadyClock(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for ISteadyClock<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl ISteadyClock {
+impl<T> DerefMut for ISteadyClock<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> ISteadyClock<T> {
 	pub fn get_current_time_point(&self, ) -> Result<::nn::time::SteadyClockTimePoint> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -93,8 +113,8 @@ impl ISteadyClock {
 
 }
 
-impl FromKObject for ISteadyClock {
-	unsafe fn from_kobject(obj: KObject) -> ISteadyClock {
-		ISteadyClock(Session::from_kobject(obj))
+impl<T: Object> From<T> for ISteadyClock<T> {
+	fn from(obj: T) -> ISteadyClock<T> {
+		ISteadyClock(obj)
 	}
 }

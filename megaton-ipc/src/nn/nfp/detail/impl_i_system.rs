@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct ISystem(Session);
+pub struct ISystem<T>(T);
 
-impl AsRef<Session> for ISystem {
-	fn as_ref(&self) -> &Session {
+impl ISystem<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<ISystem<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(ISystem(domain)),
+			Err((sess, err)) => Err((ISystem(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<ISystem<Session>> {
+		Ok(ISystem(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for ISystem<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl ISystem {
+impl<T> DerefMut for ISystem<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> ISystem<T> {
 	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown1(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
@@ -279,8 +299,8 @@ impl ISystem {
 
 }
 
-impl FromKObject for ISystem {
-	unsafe fn from_kobject(obj: KObject) -> ISystem {
-		ISystem(Session::from_kobject(obj))
+impl<T: Object> From<T> for ISystem<T> {
+	fn from(obj: T) -> ISystem<T> {
+		ISystem(obj)
 	}
 }

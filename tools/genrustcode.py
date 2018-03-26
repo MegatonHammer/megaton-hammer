@@ -90,10 +90,11 @@ def getType(output, ty):
 			return ("&mut [%s]" if output else "&[%s]") % getType(output, ty[1])
 	elif ty[0] == 'object':
 		it = ty[1][0]
+		underlying_type = "T" if output else "Session"
 		if it in ifaces:
-			ret = '::' + it + "<Session>"
+			ret = '::' + it + "<" + underlying_type + ">"
 		else:
-			ret = "Session"
+			ret = underlying_type
 		if output:
 			return ret
 		else:
@@ -305,7 +306,7 @@ def gen_ipc_method(cmd, f):
 		elif t is not None:
 			args_arr.append("res.get_raw().%s.clone()" % name)
 		elif ty[0] == "object":
-			args_arr.append("unsafe { FromKObject::from_kobject(res.pop_handle()) }")
+			args_arr.append("T::from_res(&mut res).into()")
 		elif ty[0] == "KObject":
 			args_arr.append("res.pop_handle()")
 		elif ty[0] == "buffer" or ty[0] == "array":
@@ -352,7 +353,7 @@ def gen_new_method(f, ifacename, servicename):
 		print("\t\tif r != 0 {", file=f)
 		print("\t\t\treturn Err(Error(r))", file=f)
 		print("\t\t} else {", file=f)
-		print("\t\t\tlet ret = Arc::new(unsafe { %s::from_kobject(KObject::new(session)) });" % ifacename, file=f)
+		print("\t\t\tlet ret = Arc::new(unsafe { Session::from(unsafe { KObject::new(session) }).into() });", file=f)
 		print("\t\t\t*HANDLE.lock() = Arc::downgrade(&ret);", file=f)
 		print("\t\t\treturn Ok(ret);", file=f)
 		print("\t\t}", file=f)
@@ -368,7 +369,7 @@ def gen_new_method(f, ifacename, servicename):
 		print("\t\t\treturn Ok(ret);", file=f)
 		print("\t\t}", file=f)
 		print("", file=f)
-		print("\t\tlet r = sm.get_service(*b\"%s\").map(|s| Arc::new(unsafe { %s::from_kobject(s) }));" % (s_name, ifacename), file=f)
+		print("\t\tlet r = sm.get_service(*b\"%s\").map(|s: KObject| Arc::new(Session::from(s).into()));" % s_name, file=f)
 		print("\t\tif let Ok(service) = r {", file=f)
 		print("\t\t\t*HANDLE.lock() = Arc::downgrade(&service);", file=f)
 		print("\t\t\treturn Ok(service);", file=f)
@@ -429,8 +430,8 @@ for name, cmds in ifaces.items():
 		# Print module documentation
 		print("", file=f)
 		# Use statements
-		print("use megaton_hammer::kernel::{FromKObject, KObject, Session, Domain, Object};", file=f)
-		print("use megaton_hammer::error::Result;", file=f)
+		print("use megaton_hammer::kernel::{KObject, Session, Domain, Object};", file=f)
+		print("use megaton_hammer::error::*;", file=f)
 		print("use core::ops::{Deref, DerefMut};", file=f)
 		if name in services:
 			print("use alloc::arc::Arc;", file=f)
@@ -440,17 +441,27 @@ for name, cmds in ifaces.items():
 		print("#[derive(Debug)]", file=f)
 		print("pub struct %s<T>(T);" % ifacename, file=f)
 		print("", file=f)
-		if name in services:
-			print("impl %s<Session> {" % ifacename, file=f)
-			for s in services[name]:
-				if len(services[name]) == 1:
-					print("\tpub fn new() -> Result<Arc<%s<Session>>> {" % ifacename, file=f)
-				else:
-					print("\tpub fn new_%s() -> Result<Arc<%s<Session>>> {" % (s.replace(":", "_").replace("-", "_"), ifacename), file=f)
-				gen_new_method(f, ifacename, s)
-				print("\t}", file=f)
-			print("}", file=f)
+		print("impl %s<Session> {" % ifacename, file=f)
+		for s in services.get(name, []):
+			if len(services[name]) == 1:
+				print("\tpub fn new() -> Result<Arc<%s<Session>>> {" % ifacename, file=f)
+			else:
+				print("\tpub fn new_%s() -> Result<Arc<%s<Session>>> {" % (s.replace(":", "_").replace("-", "_"), ifacename), file=f)
+			gen_new_method(f, ifacename, s)
+			print("\t}", file=f)
 			print("", file=f)
+		print("\tpub fn to_domain(self) -> ::core::result::Result<%s<Domain>, (Self, Error)> {" % ifacename, file=f)
+		print("\t\tmatch self.0.to_domain() {", file=f)
+		print("\t\t\tOk(domain) => Ok(%s(domain))," % ifacename, file=f)
+		print("\t\t\tErr((sess, err)) => Err((%s(sess), err))" % ifacename, file=f)
+		print("\t\t}", file=f)
+		print("\t}", file=f)
+		print("", file=f)
+		print("\tpub fn duplicate(&self) -> Result<%s<Session>> {" % ifacename, file=f)
+		print("\t\tOk(%s(self.0.duplicate()?))" % ifacename, file=f)
+		print("\t}", file=f)
+		print("}", file=f)
+		print("", file=f)
 
 		print("impl<T> Deref for %s<T> {" % ifacename, file=f)
 		print("\ttype Target = T;", file=f)
@@ -506,15 +517,10 @@ for name, cmds in ifaces.items():
 				print("\t// fn %s(&self, UNKNOWN) -> Result<UNKNOWN>;" % camelToSnake(cmd['name']), file=f)
 		print("}", file=f)
 		print("", file=f)
-		print("impl FromKObject for %s<Session> {" % ifacename, file=f)
-		print("\tunsafe fn from_kobject(obj: KObject) -> %s<Session> {" % ifacename, file=f)
-		print("\t\t%s(Session::from_kobject(obj))" % ifacename, file=f)
-		print("\t}", file=f)
-		print("}", file=f)
-		print("", file=f)
-		print("impl FromKObject for %s<Domain> {" % ifacename, file=f)
-		print("\tunsafe fn from_kobject(obj: KObject) -> %s<Domain> {" % ifacename, file=f)
-		print("\t\t%s(Domain::from_kobject(obj))" % ifacename, file=f)
+		# TODO: Think about the safety implications of this.
+		print("impl<T: Object> From<T> for %s<T> {" % ifacename, file=f)
+		print("\tfn from(obj: T) -> %s<T> {" % ifacename, file=f)
+		print("\t\t%s(obj)" % ifacename, file=f)
 		print("\t}", file=f)
 		print("}", file=f)
 

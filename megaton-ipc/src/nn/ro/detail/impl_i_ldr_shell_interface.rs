@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct ILdrShellInterface(Session);
+pub struct ILdrShellInterface<T>(T);
 
-impl ILdrShellInterface {
-	pub fn new() -> Result<Arc<ILdrShellInterface>> {
+impl ILdrShellInterface<Session> {
+	pub fn new() -> Result<Arc<ILdrShellInterface<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<ILdrShellInterface>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<ILdrShellInterface<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl ILdrShellInterface {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"ldr:shel").map(|s| Arc::new(unsafe { ILdrShellInterface::from_kobject(s) }));
+		let r = sm.get_service(*b"ldr:shel").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<ILdrShellInterface<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(ILdrShellInterface(domain)),
+			Err((sess, err)) => Err((ILdrShellInterface(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<ILdrShellInterface<Session>> {
+		Ok(ILdrShellInterface(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for ILdrShellInterface {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for ILdrShellInterface<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl ILdrShellInterface {
+impl<T> DerefMut for ILdrShellInterface<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> ILdrShellInterface<T> {
 	pub fn add_process_to_launch_queue(&self, unk0: &[u8; 0x200], size: u32, app_id: ::nn::ncm::ApplicationId) -> Result<()> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
@@ -76,8 +94,8 @@ impl ILdrShellInterface {
 
 }
 
-impl FromKObject for ILdrShellInterface {
-	unsafe fn from_kobject(obj: KObject) -> ILdrShellInterface {
-		ILdrShellInterface(Session::from_kobject(obj))
+impl<T: Object> From<T> for ILdrShellInterface<T> {
+	fn from(obj: T) -> ILdrShellInterface<T> {
+		ILdrShellInterface(obj)
 	}
 }

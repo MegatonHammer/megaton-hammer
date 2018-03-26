@@ -124,6 +124,35 @@ impl HandleDescriptorHeader {
     }
 }
 
+#[repr(transparent)]
+struct DomainMessageHeader(u32);
+
+impl DomainMessageHeader {
+    pub fn get_command(&self) -> u8 {
+        self.0.get_bits(0..8) as u8
+    }
+
+    pub fn set_command(&mut self, n: u8) {
+        self.0 = *self.0.set_bits(0..8, n as u32);
+    }
+
+    pub fn get_input_object_count(&self) -> u8 {
+        self.0.get_bits(8..16) as u8
+    }
+
+    pub fn set_input_object_count(&mut self, n: u8) {
+        self.0 = *self.0.set_bits(8..16, n as u32);
+    }
+
+    pub fn get_data_len(&self) -> u16 {
+        self.0.get_bits(16..32) as u16
+    }
+
+    pub fn set_data_len(&mut self, n: u16) {
+        self.0 = *self.0.set_bits(16..32, n as u32);
+    }
+}
+
 assert_eq_size!(AssertHandleDescriptorHeader; u16, HandleDescriptorHeader);
 
 #[derive(Debug)]
@@ -299,7 +328,7 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
 
     // Write the data to an IPC buffer to be sent to the Switch OS.
     // TODO: If this is not sent, it can leak move handles!
-    pub fn pack(self, data: &mut [u8]) {
+    pub fn pack(self, data: &mut [u8], domain_id: Option<u32>) {
         // TODO: Memset data first
         let mut cursor = CursorWrite::new(data);
 
@@ -329,13 +358,11 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
                 hdr.set_c_descriptor_flags(2 + self.c_descriptors.len() as u8);
             }
 
-            // TODO: Domain, type 0xA. 0x10 = padding, 8 = sfci, 8 = cmdid.
-            hdr.set_raw_section_size(((0x10 + 8 + 8 + core::mem::size_of::<T>()) / 4) as u16);
-            if self.copy_handles.len() > 0 ||
-                self.move_handles.len() > 0 || self.send_pid {
-
-                hdr.set_enable_handle_descriptor(true);
-            }
+            // 0x10 = padding, 8 = sfci, 8 = cmdid, 12=domain header.
+            hdr.set_raw_section_size(((0x10 + 8 + 8 + if domain_id.is_some() { 12 } else { 0 } + core::mem::size_of::<T>()) / 4) as u16);
+            let enable_handle_descriptor = self.copy_handles.len() > 0 ||
+                self.move_handles.len() > 0 || self.send_pid;
+            hdr.set_enable_handle_descriptor(enable_handle_descriptor);
         }
 
         // First, write the handle descriptor
@@ -404,7 +431,21 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
         // Align to 16-byte boundary
         let before_pad = ((cursor.pos() + (16 - 1)) & !(16 - 1)) - cursor.pos();
         cursor.skip_write(before_pad);
-        // TODO: Domain messages
+
+        if let Some(obj) = domain_id {
+            {
+                let hdr = cursor.skip_write(core::mem::size_of::<DomainMessageHeader>());
+                let hdr = unsafe {
+                    (hdr.as_mut_ptr() as *mut DomainMessageHeader).as_mut().unwrap()
+                };
+                hdr.set_command(1);
+                hdr.set_input_object_count(0);
+                hdr.set_data_len(core::mem::size_of::<T>() as u16);
+            }
+            cursor.write_u32::<LE>(obj);
+            // Apparently this is some padding. :shrug:
+            cursor.write_u64::<LE>(0);
+        }
         cursor.write(b"SFCI\0\0\0\0");
         cursor.write_u64::<LE>(self.cmd_id);
         // TODO: Should blow up if that's not true. Alternatively: This should
@@ -415,7 +456,13 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
                 (raw_data.as_mut_ptr() as *mut T).as_mut().unwrap()
             };
             *raw_data = args.clone();
+        } else {
+            if core::mem::size_of::<T>() != 0 {
+                panic!("Called pack with arguments unset");
+            }
         }
+
+        // Write input object IDs. For now: none.
 
         // Total padding should be 0x10
         cursor.skip_write(0x10 - before_pad);
@@ -431,7 +478,7 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
         // transmuting ?
         let other_self : Self = unsafe { core::mem::transmute_copy(&self) };
         let mut arr = [0; 0x100];
-        other_self.pack(&mut arr);
+        other_self.pack(&mut arr, None);
 
         // Let's emulate what xxd is doing, so we can turn it back to binary
         // with xxd -r
@@ -473,16 +520,18 @@ pub struct Response<RAW> {
     error: u64,
     pid: Option<u64>,
     handles: ArrayVec<[KObject; 32]>,
+    objects: ArrayVec<[u32; 256]>, // TODO: Maybe it'd be fine to lower this below the theoretical limit?
     ret: RAW
 }
 
 impl<T: Clone> Response<T> {
     // TODO: Mark unpack as unsafe (for all the obvious reasons)
-    pub fn unpack(data: &[u8]) -> Result<Response<T>> {
+    pub fn unpack(data: &[u8], is_domain: bool) -> Result<Response<T>> {
         let mut this : Response<T> = Response {
             error: 0,
             pid: None,
             handles: ArrayVec::new(),
+            objects: ArrayVec::new(),
             ret: unsafe { mem::uninitialized() }
         };
 
@@ -497,7 +546,9 @@ impl<T: Clone> Response<T> {
         // TODO: What about control messages ?
         // TODO: What about buffers ??
         assert_eq!(hdr.get_ty(), 0);
-        assert_eq!(hdr.get_raw_section_size() as usize, (core::mem::size_of::<T>() + 8 + 8 + 0x10) / 4);
+        if !is_domain {
+            assert_eq!(hdr.get_raw_section_size() as usize, (core::mem::size_of::<T>() + 8 + 8 + 0x10) / 4);
+        }
 
         // First, read the handle descriptor
         if hdr.get_enable_handle_descriptor() {
@@ -549,6 +600,19 @@ impl<T: Clone> Response<T> {
         // Align to 16-byte boundary
         let before_pad = ((cursor.pos() + (16 - 1)) & !(16 - 1)) - cursor.pos();
         cursor.skip_read(before_pad);
+
+        let domain_hdr = if is_domain {
+            let domain_hdr = cursor.skip_read(core::mem::size_of::<DomainMessageHeader>());
+            let domain_hdr = unsafe {
+                (domain_hdr.as_ptr() as *const DomainMessageHeader).as_ref().unwrap()
+            };
+            assert_eq!(domain_hdr.get_data_len() as usize, core::mem::size_of::<T>() + 8 + 8);
+            assert_eq!(hdr.get_raw_section_size() as usize, 16 + domain_hdr.get_data_len() as usize + domain_hdr.get_input_object_count() as usize * 4, "Invalid raw data size for domain");
+            let _domain_id = cursor.read_u32::<LE>();
+            cursor.skip_read(8);
+            Some(domain_hdr)
+        } else { None };
+
         // Find SFCO
         cursor.assert(b"SFCO\0\0\0\0");
         this.error = cursor.read_u64::<LE>();
@@ -557,6 +621,12 @@ impl<T: Clone> Response<T> {
             (raw.as_ptr() as *const T).as_ref().unwrap()
         };
         this.ret = raw.clone();
+
+        if let Some(domain_hdr) = domain_hdr {
+            for i in 0..domain_hdr.get_input_object_count() {
+                this.objects.push(cursor.read_u32::<LE>());
+            }
+        }
         // Total padding should be 0x10
         cursor.skip_read(0x10 - before_pad);
 
@@ -571,5 +641,10 @@ impl<T: Clone> Response<T> {
 
     pub fn pop_handle(&mut self) -> KObject {
         self.handles.remove(0)
+    }
+
+    // TODO: This API smells terrible.
+    pub fn pop_domain_object(&mut self) -> u32 {
+        unimplemented!();
     }
 }

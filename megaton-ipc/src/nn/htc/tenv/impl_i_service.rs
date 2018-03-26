@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IService(Session);
+pub struct IService<T>(T);
 
-impl AsRef<Session> for IService {
-	fn as_ref(&self) -> &Session {
+impl IService<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IService<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IService(domain)),
+			Err((sess, err)) => Err((IService(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IService<Session>> {
+		Ok(IService(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IService<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IService {
+impl<T> DerefMut for IService<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IService<T> {
 	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown2(&self, unk0: u64) -> Result<()> {
@@ -25,8 +45,8 @@ impl IService {
 
 }
 
-impl FromKObject for IService {
-	unsafe fn from_kobject(obj: KObject) -> IService {
-		IService(Session::from_kobject(obj))
+impl<T: Object> From<T> for IService<T> {
+	fn from(obj: T) -> IService<T> {
+		IService(obj)
 	}
 }

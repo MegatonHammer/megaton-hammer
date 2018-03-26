@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IFileSystemProxy(Session);
+pub struct IFileSystemProxy<T>(T);
 
-impl IFileSystemProxy {
-	pub fn new() -> Result<Arc<IFileSystemProxy>> {
+impl IFileSystemProxy<Session> {
+	pub fn new() -> Result<Arc<IFileSystemProxy<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IFileSystemProxy>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IFileSystemProxy<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,23 +30,40 @@ impl IFileSystemProxy {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"fsp-srv\0").map(|s| Arc::new(unsafe { IFileSystemProxy::from_kobject(s) }));
+		let r = sm.get_service(*b"fsp-srv\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IFileSystemProxy<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IFileSystemProxy(domain)),
+			Err((sess, err)) => Err((IFileSystemProxy(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IFileSystemProxy<Session>> {
+		Ok(IFileSystemProxy(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IFileSystemProxy {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IFileSystemProxy<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IFileSystemProxy {
+impl<T> DerefMut for IFileSystemProxy<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IFileSystemProxy<T> {
 	#[cfg(not(feature = "switch-2.0.0"))]
-	pub fn mount_content(&self, tid: ::nn::ApplicationId, flag: u32, path: &i8) -> Result<::nn::fssrv::sf::IFileSystem> {
+	pub fn mount_content(&self, tid: ::nn::ApplicationId, flag: u32, path: &i8) -> Result<::nn::fssrv::sf::IFileSystem<T>> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -62,7 +80,7 @@ impl IFileSystemProxy {
 			.descriptor(IPCBuffer::from_ref(path, 0x19))
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	pub fn initialize(&self, unk0: u64) -> Result<()> {
@@ -76,18 +94,18 @@ impl IFileSystemProxy {
 		Ok(())
 	}
 
-	pub fn open_data_file_system_by_current_process(&self, ) -> Result<::nn::fssrv::sf::IFileSystem> {
+	pub fn open_data_file_system_by_current_process(&self, ) -> Result<::nn::fssrv::sf::IFileSystem<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(2)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	#[cfg(feature = "switch-2.0.0")]
-	pub fn mount_content7(&self, tid: ::nn::ApplicationId, nca_type: u32) -> Result<::nn::fssrv::sf::IFileSystem> {
+	pub fn mount_content7(&self, tid: ::nn::ApplicationId, nca_type: u32) -> Result<::nn::fssrv::sf::IFileSystem<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -102,11 +120,11 @@ impl IFileSystemProxy {
 			})
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	#[cfg(feature = "switch-2.0.0")]
-	pub fn mount_content(&self, tid: ::nn::ApplicationId, flag: u32, path: &[u8; 0x301]) -> Result<::nn::fssrv::sf::IFileSystem> {
+	pub fn mount_content(&self, tid: ::nn::ApplicationId, flag: u32, path: &[u8; 0x301]) -> Result<::nn::fssrv::sf::IFileSystem<T>> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -123,21 +141,21 @@ impl IFileSystemProxy {
 			.descriptor(IPCBuffer::from_ref(path, 0x19))
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	#[cfg(feature = "switch-3.0.0")]
-	pub fn open_data_file_system_by_application_id(&self, tid: ::nn::ApplicationId) -> Result<::nn::fssrv::sf::IFileSystem> {
+	pub fn open_data_file_system_by_application_id(&self, tid: ::nn::ApplicationId) -> Result<::nn::fssrv::sf::IFileSystem<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(9)
 			.args(tid)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn mount_bis(&self, partition_id: ::nn::fssrv::sf::Partition, path: &[u8; 0x301]) -> Result<::nn::fssrv::sf::IFileSystem> {
+	pub fn mount_bis(&self, partition_id: ::nn::fssrv::sf::Partition, path: &[u8; 0x301]) -> Result<::nn::fssrv::sf::IFileSystem<T>> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -146,17 +164,17 @@ impl IFileSystemProxy {
 			.descriptor(IPCBuffer::from_ref(path, 0x19))
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn open_bis_partition(&self, partition_id: ::nn::fssrv::sf::Partition) -> Result<::nn::fssrv::sf::IStorage> {
+	pub fn open_bis_partition(&self, partition_id: ::nn::fssrv::sf::Partition) -> Result<::nn::fssrv::sf::IStorage<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(12)
 			.args(partition_id)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	pub fn invalidate_bis_cache(&self, ) -> Result<()> {
@@ -169,7 +187,7 @@ impl IFileSystemProxy {
 		Ok(())
 	}
 
-	pub fn open_host_file_system_impl(&self, path: &[u8; 0x301]) -> Result<::nn::fssrv::sf::IFileSystem> {
+	pub fn open_host_file_system_impl(&self, path: &[u8; 0x301]) -> Result<::nn::fssrv::sf::IFileSystem<T>> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -178,17 +196,17 @@ impl IFileSystemProxy {
 			.descriptor(IPCBuffer::from_ref(path, 0x19))
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn mount_sd_card(&self, ) -> Result<::nn::fssrv::sf::IFileSystem> {
+	pub fn mount_sd_card(&self, ) -> Result<::nn::fssrv::sf::IFileSystem<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(18)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	#[cfg(feature = "switch-2.0.0")]
@@ -292,7 +310,7 @@ impl IFileSystemProxy {
 		Ok(*res.get_raw())
 	}
 
-	pub fn open_game_card_partition(&self, partition_id: ::nn::fssrv::sf::Partition, unk1: u32) -> Result<::nn::fssrv::sf::IStorage> {
+	pub fn open_game_card_partition(&self, partition_id: ::nn::fssrv::sf::Partition, unk1: u32) -> Result<::nn::fssrv::sf::IStorage<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -307,10 +325,10 @@ impl IFileSystemProxy {
 			})
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn mount_game_card_partition(&self, unk0: u32, unk1: u32) -> Result<::nn::fssrv::sf::IFileSystem> {
+	pub fn mount_game_card_partition(&self, unk0: u32, unk1: u32) -> Result<::nn::fssrv::sf::IFileSystem<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -325,7 +343,7 @@ impl IFileSystemProxy {
 			})
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	#[cfg(feature = "switch-3.0.0")]
@@ -351,7 +369,7 @@ impl IFileSystemProxy {
 		Ok(())
 	}
 
-	pub fn mount_save_data(&self, input: u8, save_struct: ::nn::fssrv::sf::SaveStruct) -> Result<::nn::fssrv::sf::IFileSystem> {
+	pub fn mount_save_data(&self, input: u8, save_struct: ::nn::fssrv::sf::SaveStruct) -> Result<::nn::fssrv::sf::IFileSystem<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -366,10 +384,10 @@ impl IFileSystemProxy {
 			})
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn mount_system_save_data(&self, input: u8, save_struct: ::nn::fssrv::sf::SaveStruct) -> Result<::nn::fssrv::sf::IFileSystem> {
+	pub fn mount_system_save_data(&self, input: u8, save_struct: ::nn::fssrv::sf::SaveStruct) -> Result<::nn::fssrv::sf::IFileSystem<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -384,11 +402,11 @@ impl IFileSystemProxy {
 			})
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	#[cfg(feature = "switch-2.0.0")]
-	pub fn mount_save_data_read_only(&self, input: u8, save_struct: ::nn::fssrv::sf::SaveStruct) -> Result<::nn::fssrv::sf::IFileSystem> {
+	pub fn mount_save_data_read_only(&self, input: u8, save_struct: ::nn::fssrv::sf::SaveStruct) -> Result<::nn::fssrv::sf::IFileSystem<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -403,75 +421,75 @@ impl IFileSystemProxy {
 			})
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	// fn read_save_data_file_system_extra_data_with_space_id(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn read_save_data_file_system_extra_data(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn write_save_data_file_system_extra_data(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn open_save_data_info_reader(&self, ) -> Result<::nn::fssrv::sf::ISaveDataInfoReader> {
+	pub fn open_save_data_info_reader(&self, ) -> Result<::nn::fssrv::sf::ISaveDataInfoReader<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(60)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn open_save_data_iterator(&self, unk0: u8) -> Result<Session> {
+	pub fn open_save_data_iterator(&self, unk0: u8) -> Result<T> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(61)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	// fn open_save_data_thumbnail_file(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn mount_image_directory(&self, unk0: u32) -> Result<::nn::fssrv::sf::IFileSystem> {
+	pub fn mount_image_directory(&self, unk0: u32) -> Result<::nn::fssrv::sf::IFileSystem<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(100)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn mount_content_storage(&self, content_storage_id: u32) -> Result<::nn::fssrv::sf::IFileSystem> {
+	pub fn mount_content_storage(&self, content_storage_id: u32) -> Result<::nn::fssrv::sf::IFileSystem<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(110)
 			.args(content_storage_id)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn open_data_storage_by_current_process(&self, ) -> Result<::nn::fssrv::sf::IStorage> {
+	pub fn open_data_storage_by_current_process(&self, ) -> Result<::nn::fssrv::sf::IStorage<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(200)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	#[cfg(feature = "switch-3.0.0")]
-	pub fn open_data_storage_by_application_id(&self, tid: ::nn::ApplicationId) -> Result<::nn::fssrv::sf::IStorage> {
+	pub fn open_data_storage_by_application_id(&self, tid: ::nn::ApplicationId) -> Result<::nn::fssrv::sf::IStorage<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(201)
 			.args(tid)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn open_data_storage_by_data_id(&self, tid: ::nn::ApplicationId, storage_id: u8) -> Result<::nn::fssrv::sf::IStorage> {
+	pub fn open_data_storage_by_data_id(&self, tid: ::nn::ApplicationId, storage_id: u8) -> Result<::nn::fssrv::sf::IStorage<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -486,47 +504,47 @@ impl IFileSystemProxy {
 			})
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn open_rom_storage(&self, ) -> Result<::nn::fssrv::sf::IStorage> {
+	pub fn open_rom_storage(&self, ) -> Result<::nn::fssrv::sf::IStorage<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(203)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn open_device_operator(&self, ) -> Result<::nn::fssrv::sf::IDeviceOperator> {
+	pub fn open_device_operator(&self, ) -> Result<::nn::fssrv::sf::IDeviceOperator<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(400)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn open_sd_card_detection_event_notifier(&self, ) -> Result<::nn::fssrv::sf::IEventNotifier> {
+	pub fn open_sd_card_detection_event_notifier(&self, ) -> Result<::nn::fssrv::sf::IEventNotifier<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(500)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn open_game_card_detection_event_notifier(&self, ) -> Result<::nn::fssrv::sf::IEventNotifier> {
+	pub fn open_game_card_detection_event_notifier(&self, ) -> Result<::nn::fssrv::sf::IEventNotifier<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(501)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	#[cfg(not(feature = "switch-4.0.0"))]
@@ -755,8 +773,8 @@ impl IFileSystemProxy {
 	// fn output_access_log_to_sd_card(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
-impl FromKObject for IFileSystemProxy {
-	unsafe fn from_kobject(obj: KObject) -> IFileSystemProxy {
-		IFileSystemProxy(Session::from_kobject(obj))
+impl<T: Object> From<T> for IFileSystemProxy<T> {
+	fn from(obj: T) -> IFileSystemProxy<T> {
+		IFileSystemProxy(obj)
 	}
 }

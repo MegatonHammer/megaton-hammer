@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IAudioController(Session);
+pub struct IAudioController<T>(T);
 
-impl IAudioController {
-	pub fn new() -> Result<Arc<IAudioController>> {
+impl IAudioController<Session> {
+	pub fn new() -> Result<Arc<IAudioController<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IAudioController>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IAudioController<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IAudioController {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"audctl\0\0").map(|s| Arc::new(unsafe { IAudioController::from_kobject(s) }));
+		let r = sm.get_service(*b"audctl\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IAudioController<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IAudioController(domain)),
+			Err((sess, err)) => Err((IAudioController(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IAudioController<Session>> {
+		Ok(IAudioController(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IAudioController {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IAudioController<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IAudioController {
+impl<T> DerefMut for IAudioController<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IAudioController<T> {
 	pub fn get_target_volume(&self, unk0: u32) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -331,8 +349,8 @@ impl IAudioController {
 
 }
 
-impl FromKObject for IAudioController {
-	unsafe fn from_kobject(obj: KObject) -> IAudioController {
-		IAudioController(Session::from_kobject(obj))
+impl<T: Object> From<T> for IAudioController<T> {
+	fn from(obj: T) -> IAudioController<T> {
+		IAudioController(obj)
 	}
 }

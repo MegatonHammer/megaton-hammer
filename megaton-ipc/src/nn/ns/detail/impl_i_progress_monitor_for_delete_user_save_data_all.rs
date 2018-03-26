@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IProgressMonitorForDeleteUserSaveDataAll(Session);
+pub struct IProgressMonitorForDeleteUserSaveDataAll<T>(T);
 
-impl AsRef<Session> for IProgressMonitorForDeleteUserSaveDataAll {
-	fn as_ref(&self) -> &Session {
+impl IProgressMonitorForDeleteUserSaveDataAll<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IProgressMonitorForDeleteUserSaveDataAll<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IProgressMonitorForDeleteUserSaveDataAll(domain)),
+			Err((sess, err)) => Err((IProgressMonitorForDeleteUserSaveDataAll(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IProgressMonitorForDeleteUserSaveDataAll<Session>> {
+		Ok(IProgressMonitorForDeleteUserSaveDataAll(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IProgressMonitorForDeleteUserSaveDataAll<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IProgressMonitorForDeleteUserSaveDataAll {
+impl<T> DerefMut for IProgressMonitorForDeleteUserSaveDataAll<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IProgressMonitorForDeleteUserSaveDataAll<T> {
 	pub fn unknown0(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -44,8 +64,8 @@ impl IProgressMonitorForDeleteUserSaveDataAll {
 	// fn unknown10(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
-impl FromKObject for IProgressMonitorForDeleteUserSaveDataAll {
-	unsafe fn from_kobject(obj: KObject) -> IProgressMonitorForDeleteUserSaveDataAll {
-		IProgressMonitorForDeleteUserSaveDataAll(Session::from_kobject(obj))
+impl<T: Object> From<T> for IProgressMonitorForDeleteUserSaveDataAll<T> {
+	fn from(obj: T) -> IProgressMonitorForDeleteUserSaveDataAll<T> {
+		IProgressMonitorForDeleteUserSaveDataAll(obj)
 	}
 }

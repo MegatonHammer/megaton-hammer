@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IManager(Session);
+pub struct IManager<T>(T);
 
-impl IManager {
-	pub fn new() -> Result<Arc<IManager>> {
+impl IManager<Session> {
+	pub fn new() -> Result<Arc<IManager<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IManager>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IManager<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IManager {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"tc\0\0\0\0\0\0").map(|s| Arc::new(unsafe { IManager::from_kobject(s) }));
+		let r = sm.get_service(*b"tc\0\0\0\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IManager<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IManager(domain)),
+			Err((sess, err)) => Err((IManager(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IManager<Session>> {
+		Ok(IManager(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IManager {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IManager<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IManager {
+impl<T> DerefMut for IManager<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IManager<T> {
 	pub fn set_operating_mode(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -144,8 +162,8 @@ impl IManager {
 
 }
 
-impl FromKObject for IManager {
-	unsafe fn from_kobject(obj: KObject) -> IManager {
-		IManager(Session::from_kobject(obj))
+impl<T: Object> From<T> for IManager<T> {
+	fn from(obj: T) -> IManager<T> {
+		IManager(obj)
 	}
 }

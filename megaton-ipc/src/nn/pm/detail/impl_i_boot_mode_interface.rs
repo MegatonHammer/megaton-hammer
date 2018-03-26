@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IBootModeInterface(Session);
+pub struct IBootModeInterface<T>(T);
 
-impl IBootModeInterface {
-	pub fn new() -> Result<Arc<IBootModeInterface>> {
+impl IBootModeInterface<Session> {
+	pub fn new() -> Result<Arc<IBootModeInterface<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IBootModeInterface>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IBootModeInterface<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IBootModeInterface {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"pm:bm\0\0\0").map(|s| Arc::new(unsafe { IBootModeInterface::from_kobject(s) }));
+		let r = sm.get_service(*b"pm:bm\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IBootModeInterface<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IBootModeInterface(domain)),
+			Err((sess, err)) => Err((IBootModeInterface(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IBootModeInterface<Session>> {
+		Ok(IBootModeInterface(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IBootModeInterface {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IBootModeInterface<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IBootModeInterface {
+impl<T> DerefMut for IBootModeInterface<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IBootModeInterface<T> {
 	pub fn get_boot_mode(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -66,8 +84,8 @@ impl IBootModeInterface {
 
 }
 
-impl FromKObject for IBootModeInterface {
-	unsafe fn from_kobject(obj: KObject) -> IBootModeInterface {
-		IBootModeInterface(Session::from_kobject(obj))
+impl<T: Object> From<T> for IBootModeInterface<T> {
+	fn from(obj: T) -> IBootModeInterface<T> {
+		IBootModeInterface(obj)
 	}
 }

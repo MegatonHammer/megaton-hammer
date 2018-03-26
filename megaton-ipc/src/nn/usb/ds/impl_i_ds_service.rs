@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IDsService(Session);
+pub struct IDsService<T>(T);
 
-impl IDsService {
-	pub fn new() -> Result<Arc<IDsService>> {
+impl IDsService<Session> {
+	pub fn new() -> Result<Arc<IDsService<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IDsService>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IDsService<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IDsService {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"usb:ds\0\0").map(|s| Arc::new(unsafe { IDsService::from_kobject(s) }));
+		let r = sm.get_service(*b"usb:ds\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IDsService<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IDsService(domain)),
+			Err((sess, err)) => Err((IDsService(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IDsService<Session>> {
+		Ok(IDsService(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IDsService {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IDsService<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IDsService {
+impl<T> DerefMut for IDsService<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IDsService<T> {
 	pub fn bind_device(&self, complex_id: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -101,8 +119,8 @@ impl IDsService {
 
 }
 
-impl FromKObject for IDsService {
-	unsafe fn from_kobject(obj: KObject) -> IDsService {
-		IDsService(Session::from_kobject(obj))
+impl<T: Object> From<T> for IDsService<T> {
+	fn from(obj: T) -> IDsService<T> {
+		IDsService(obj)
 	}
 }

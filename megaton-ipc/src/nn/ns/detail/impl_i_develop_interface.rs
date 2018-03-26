@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IDevelopInterface(Session);
+pub struct IDevelopInterface<T>(T);
 
-impl IDevelopInterface {
-	pub fn new() -> Result<Arc<IDevelopInterface>> {
+impl IDevelopInterface<Session> {
+	pub fn new() -> Result<Arc<IDevelopInterface<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IDevelopInterface>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IDevelopInterface<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IDevelopInterface {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"ns:dev\0\0").map(|s| Arc::new(unsafe { IDevelopInterface::from_kobject(s) }));
+		let r = sm.get_service(*b"ns:dev\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IDevelopInterface<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IDevelopInterface(domain)),
+			Err((sess, err)) => Err((IDevelopInterface(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IDevelopInterface<Session>> {
+		Ok(IDevelopInterface(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IDevelopInterface {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IDevelopInterface<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IDevelopInterface {
+impl<T> DerefMut for IDevelopInterface<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IDevelopInterface<T> {
 	// fn launch_title(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn terminate_title_by_pid(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn terminate_title_by_title_id(&self, UNKNOWN) -> Result<UNKNOWN>;
@@ -73,8 +91,8 @@ impl IDevelopInterface {
 	// fn set_event_state(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
-impl FromKObject for IDevelopInterface {
-	unsafe fn from_kobject(obj: KObject) -> IDevelopInterface {
-		IDevelopInterface(Session::from_kobject(obj))
+impl<T: Object> From<T> for IDevelopInterface<T> {
+	fn from(obj: T) -> IDevelopInterface<T> {
+		IDevelopInterface(obj)
 	}
 }

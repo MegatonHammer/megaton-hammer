@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IRequest(Session);
+pub struct IRequest<T>(T);
 
-impl IRequest {
-	pub fn new() -> Result<Arc<IRequest>> {
+impl IRequest<Session> {
+	pub fn new() -> Result<Arc<IRequest<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IRequest>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IRequest<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IRequest {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"eupld:r\0").map(|s| Arc::new(unsafe { IRequest::from_kobject(s) }));
+		let r = sm.get_service(*b"eupld:r\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IRequest<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IRequest(domain)),
+			Err((sess, err)) => Err((IRequest(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IRequest<Session>> {
+		Ok(IRequest(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IRequest {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IRequest<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IRequest {
+impl<T> DerefMut for IRequest<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IRequest<T> {
 	pub fn unknown0(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -88,8 +106,8 @@ impl IRequest {
 
 }
 
-impl FromKObject for IRequest {
-	unsafe fn from_kobject(obj: KObject) -> IRequest {
-		IRequest(Session::from_kobject(obj))
+impl<T: Object> From<T> for IRequest<T> {
+	fn from(obj: T) -> IRequest<T> {
+		IRequest(obj)
 	}
 }

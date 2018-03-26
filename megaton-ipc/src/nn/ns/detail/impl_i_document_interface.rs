@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IDocumentInterface(Session);
+pub struct IDocumentInterface<T>(T);
 
-impl AsRef<Session> for IDocumentInterface {
-	fn as_ref(&self) -> &Session {
+impl IDocumentInterface<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IDocumentInterface<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IDocumentInterface(domain)),
+			Err((sess, err)) => Err((IDocumentInterface(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IDocumentInterface<Session>> {
+		Ok(IDocumentInterface(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IDocumentInterface<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IDocumentInterface {
+impl<T> DerefMut for IDocumentInterface<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IDocumentInterface<T> {
 	// fn get_application_content_path(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn resolve_application_content_path(&self, unk0: u8, unk1: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
@@ -32,8 +52,8 @@ impl IDocumentInterface {
 
 }
 
-impl FromKObject for IDocumentInterface {
-	unsafe fn from_kobject(obj: KObject) -> IDocumentInterface {
-		IDocumentInterface(Session::from_kobject(obj))
+impl<T: Object> From<T> for IDocumentInterface<T> {
+	fn from(obj: T) -> IDocumentInterface<T> {
+		IDocumentInterface(obj)
 	}
 }

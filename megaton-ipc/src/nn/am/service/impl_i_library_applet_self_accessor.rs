@@ -1,53 +1,73 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct ILibraryAppletSelfAccessor(Session);
+pub struct ILibraryAppletSelfAccessor<T>(T);
 
-impl AsRef<Session> for ILibraryAppletSelfAccessor {
-	fn as_ref(&self) -> &Session {
+impl ILibraryAppletSelfAccessor<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<ILibraryAppletSelfAccessor<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(ILibraryAppletSelfAccessor(domain)),
+			Err((sess, err)) => Err((ILibraryAppletSelfAccessor(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<ILibraryAppletSelfAccessor<Session>> {
+		Ok(ILibraryAppletSelfAccessor(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for ILibraryAppletSelfAccessor<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl ILibraryAppletSelfAccessor {
-	pub fn pop_in_data(&self, ) -> Result<::nn::am::service::IStorage> {
+impl<T> DerefMut for ILibraryAppletSelfAccessor<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> ILibraryAppletSelfAccessor<T> {
+	pub fn pop_in_data(&self, ) -> Result<::nn::am::service::IStorage<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(0)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn push_out_data(&self, unk0: &::nn::am::service::IStorage) -> Result<()> {
+	pub fn push_out_data(&self, unk0: &::nn::am::service::IStorage<Session>) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(1)
 			.args(())
-			.copy_handle(unk0.as_ref().as_ref())
+			.copy_handle(unk0.as_ref())
 			;
 		let _res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
 
-	pub fn pop_interactive_in_data(&self, ) -> Result<::nn::am::service::IStorage> {
+	pub fn pop_interactive_in_data(&self, ) -> Result<::nn::am::service::IStorage<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(2)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn push_interactive_out_data(&self, unk0: &::nn::am::service::IStorage) -> Result<()> {
+	pub fn push_interactive_out_data(&self, unk0: &::nn::am::service::IStorage<Session>) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(3)
 			.args(())
-			.copy_handle(unk0.as_ref().as_ref())
+			.copy_handle(unk0.as_ref())
 			;
 		let _res : Response<()> = self.0.send(req)?;
 		Ok(())
@@ -157,14 +177,14 @@ impl ILibraryAppletSelfAccessor {
 		Ok(*res.get_raw())
 	}
 
-	pub fn pop_extra_storage(&self, ) -> Result<::nn::am::service::IStorage> {
+	pub fn pop_extra_storage(&self, ) -> Result<::nn::am::service::IStorage<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(20)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	pub fn get_pop_extra_storage_event(&self, ) -> Result<KObject> {
@@ -177,23 +197,23 @@ impl ILibraryAppletSelfAccessor {
 		Ok(res.pop_handle())
 	}
 
-	pub fn unpop_in_data(&self, unk0: &::nn::am::service::IStorage) -> Result<()> {
+	pub fn unpop_in_data(&self, unk0: &::nn::am::service::IStorage<Session>) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(30)
 			.args(())
-			.copy_handle(unk0.as_ref().as_ref())
+			.copy_handle(unk0.as_ref())
 			;
 		let _res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
 
-	pub fn unpop_extra_storage(&self, unk0: &::nn::am::service::IStorage) -> Result<()> {
+	pub fn unpop_extra_storage(&self, unk0: &::nn::am::service::IStorage<Session>) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(31)
 			.args(())
-			.copy_handle(unk0.as_ref().as_ref())
+			.copy_handle(unk0.as_ref())
 			;
 		let _res : Response<()> = self.0.send(req)?;
 		Ok(())
@@ -221,8 +241,8 @@ impl ILibraryAppletSelfAccessor {
 
 }
 
-impl FromKObject for ILibraryAppletSelfAccessor {
-	unsafe fn from_kobject(obj: KObject) -> ILibraryAppletSelfAccessor {
-		ILibraryAppletSelfAccessor(Session::from_kobject(obj))
+impl<T: Object> From<T> for ILibraryAppletSelfAccessor<T> {
+	fn from(obj: T) -> ILibraryAppletSelfAccessor<T> {
+		ILibraryAppletSelfAccessor(obj)
 	}
 }

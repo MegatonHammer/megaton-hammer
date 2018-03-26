@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IServerSession(Session);
+pub struct IServerSession<T>(T);
 
-impl IServerSession {
-	pub fn new() -> Result<Arc<IServerSession>> {
+impl IServerSession<Session> {
+	pub fn new() -> Result<Arc<IServerSession<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IServerSession>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IServerSession<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,29 +30,46 @@ impl IServerSession {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"ahid:cd\0").map(|s| Arc::new(unsafe { IServerSession::from_kobject(s) }));
+		let r = sm.get_service(*b"ahid:cd\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IServerSession<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IServerSession(domain)),
+			Err((sess, err)) => Err((IServerSession(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IServerSession<Session>> {
+		Ok(IServerSession(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IServerSession {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IServerSession<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IServerSession {
+impl<T> DerefMut for IServerSession<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IServerSession<T> {
 	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
-impl FromKObject for IServerSession {
-	unsafe fn from_kobject(obj: KObject) -> IServerSession {
-		IServerSession(Session::from_kobject(obj))
+impl<T: Object> From<T> for IServerSession<T> {
+	fn from(obj: T) -> IServerSession<T> {
+		IServerSession(obj)
 	}
 }

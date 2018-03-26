@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IDeliveryCacheDirectoryService(Session);
+pub struct IDeliveryCacheDirectoryService<T>(T);
 
-impl AsRef<Session> for IDeliveryCacheDirectoryService {
-	fn as_ref(&self) -> &Session {
+impl IDeliveryCacheDirectoryService<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IDeliveryCacheDirectoryService<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IDeliveryCacheDirectoryService(domain)),
+			Err((sess, err)) => Err((IDeliveryCacheDirectoryService(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IDeliveryCacheDirectoryService<Session>> {
+		Ok(IDeliveryCacheDirectoryService(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IDeliveryCacheDirectoryService<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IDeliveryCacheDirectoryService {
+impl<T> DerefMut for IDeliveryCacheDirectoryService<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IDeliveryCacheDirectoryService<T> {
 	pub fn open(&self, unk0: ::nn::bcat::DirectoryName) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -45,8 +65,8 @@ impl IDeliveryCacheDirectoryService {
 
 }
 
-impl FromKObject for IDeliveryCacheDirectoryService {
-	unsafe fn from_kobject(obj: KObject) -> IDeliveryCacheDirectoryService {
-		IDeliveryCacheDirectoryService(Session::from_kobject(obj))
+impl<T: Object> From<T> for IDeliveryCacheDirectoryService<T> {
+	fn from(obj: T) -> IDeliveryCacheDirectoryService<T> {
+		IDeliveryCacheDirectoryService(obj)
 	}
 }

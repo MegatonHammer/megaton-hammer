@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IReader(Session);
+pub struct IReader<T>(T);
 
-impl IReader {
-	pub fn new() -> Result<Arc<IReader>> {
+impl IReader<Session> {
+	pub fn new() -> Result<Arc<IReader<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IReader>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IReader<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,29 +30,46 @@ impl IReader {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"arp:r\0\0\0").map(|s| Arc::new(unsafe { IReader::from_kobject(s) }));
+		let r = sm.get_service(*b"arp:r\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IReader<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IReader(domain)),
+			Err((sess, err)) => Err((IReader(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IReader<Session>> {
+		Ok(IReader(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IReader {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IReader<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IReader {
+impl<T> DerefMut for IReader<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IReader<T> {
 	// fn read_header0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn read_header1(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn read_data0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn read_data1(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
-impl FromKObject for IReader {
-	unsafe fn from_kobject(obj: KObject) -> IReader {
-		IReader(Session::from_kobject(obj))
+impl<T: Object> From<T> for IReader<T> {
+	fn from(obj: T) -> IReader<T> {
+		IReader(obj)
 	}
 }

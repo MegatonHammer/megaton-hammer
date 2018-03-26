@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IGeneralInterface(Session);
+pub struct IGeneralInterface<T>(T);
 
-impl IGeneralInterface {
-	pub fn new() -> Result<Arc<IGeneralInterface>> {
+impl IGeneralInterface<Session> {
+	pub fn new() -> Result<Arc<IGeneralInterface<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IGeneralInterface>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IGeneralInterface<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IGeneralInterface {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"spl:\0\0\0\0").map(|s| Arc::new(unsafe { IGeneralInterface::from_kobject(s) }));
+		let r = sm.get_service(*b"spl:\0\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IGeneralInterface<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IGeneralInterface(domain)),
+			Err((sess, err)) => Err((IGeneralInterface(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IGeneralInterface<Session>> {
+		Ok(IGeneralInterface(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IGeneralInterface {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IGeneralInterface<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IGeneralInterface {
+impl<T> DerefMut for IGeneralInterface<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IGeneralInterface<T> {
 	pub fn get_config(&self, unk0: u32) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -118,8 +136,8 @@ impl IGeneralInterface {
 	// fn get_shared_data(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
-impl FromKObject for IGeneralInterface {
-	unsafe fn from_kobject(obj: KObject) -> IGeneralInterface {
-		IGeneralInterface(Session::from_kobject(obj))
+impl<T: Object> From<T> for IGeneralInterface<T> {
+	fn from(obj: T) -> IGeneralInterface<T> {
+		IGeneralInterface(obj)
 	}
 }

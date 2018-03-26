@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IBaasAccessTokenAccessor(Session);
+pub struct IBaasAccessTokenAccessor<T>(T);
 
-impl IBaasAccessTokenAccessor {
-	pub fn new() -> Result<Arc<IBaasAccessTokenAccessor>> {
+impl IBaasAccessTokenAccessor<Session> {
+	pub fn new() -> Result<Arc<IBaasAccessTokenAccessor<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IBaasAccessTokenAccessor>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IBaasAccessTokenAccessor<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,29 +30,46 @@ impl IBaasAccessTokenAccessor {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"acc:aa\0\0").map(|s| Arc::new(unsafe { IBaasAccessTokenAccessor::from_kobject(s) }));
+		let r = sm.get_service(*b"acc:aa\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IBaasAccessTokenAccessor<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IBaasAccessTokenAccessor(domain)),
+			Err((sess, err)) => Err((IBaasAccessTokenAccessor(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IBaasAccessTokenAccessor<Session>> {
+		Ok(IBaasAccessTokenAccessor(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IBaasAccessTokenAccessor {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IBaasAccessTokenAccessor<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IBaasAccessTokenAccessor {
-	pub fn ensure_cache_async(&self, unk0: ::nn::account::Uid) -> Result<::nn::account::detail::IAsyncContext> {
+impl<T> DerefMut for IBaasAccessTokenAccessor<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IBaasAccessTokenAccessor<T> {
+	pub fn ensure_cache_async(&self, unk0: ::nn::account::Uid) -> Result<::nn::account::detail::IAsyncContext<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(0)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	// fn load_cache(&self, UNKNOWN) -> Result<UNKNOWN>;
@@ -65,7 +83,7 @@ impl IBaasAccessTokenAccessor {
 		Ok(*res.get_raw())
 	}
 
-	pub fn register_notification_token_async(&self, unk0: ::nn::npns::NotificationToken, unk1: ::nn::account::Uid) -> Result<::nn::account::detail::IAsyncContext> {
+	pub fn register_notification_token_async(&self, unk0: ::nn::npns::NotificationToken, unk1: ::nn::account::Uid) -> Result<::nn::account::detail::IAsyncContext<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -80,23 +98,23 @@ impl IBaasAccessTokenAccessor {
 			})
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn unregister_notification_token_async(&self, unk0: ::nn::account::Uid) -> Result<::nn::account::detail::IAsyncContext> {
+	pub fn unregister_notification_token_async(&self, unk0: ::nn::account::Uid) -> Result<::nn::account::detail::IAsyncContext<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(51)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 }
 
-impl FromKObject for IBaasAccessTokenAccessor {
-	unsafe fn from_kobject(obj: KObject) -> IBaasAccessTokenAccessor {
-		IBaasAccessTokenAccessor(Session::from_kobject(obj))
+impl<T: Object> From<T> for IBaasAccessTokenAccessor<T> {
+	fn from(obj: T) -> IBaasAccessTokenAccessor<T> {
+		IBaasAccessTokenAccessor(obj)
 	}
 }

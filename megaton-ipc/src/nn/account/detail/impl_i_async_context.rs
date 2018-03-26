@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IAsyncContext(Session);
+pub struct IAsyncContext<T>(T);
 
-impl AsRef<Session> for IAsyncContext {
-	fn as_ref(&self) -> &Session {
+impl IAsyncContext<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IAsyncContext<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IAsyncContext(domain)),
+			Err((sess, err)) => Err((IAsyncContext(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IAsyncContext<Session>> {
+		Ok(IAsyncContext(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IAsyncContext<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IAsyncContext {
+impl<T> DerefMut for IAsyncContext<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IAsyncContext<T> {
 	pub fn get_system_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -53,8 +73,8 @@ impl IAsyncContext {
 
 }
 
-impl FromKObject for IAsyncContext {
-	unsafe fn from_kobject(obj: KObject) -> IAsyncContext {
-		IAsyncContext(Session::from_kobject(obj))
+impl<T: Object> From<T> for IAsyncContext<T> {
+	fn from(obj: T) -> IAsyncContext<T> {
+		IAsyncContext(obj)
 	}
 }
