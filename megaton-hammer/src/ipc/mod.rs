@@ -331,11 +331,9 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
 
             // TODO: Domain, type 0xA. 0x10 = padding, 8 = sfci, 8 = cmdid.
             hdr.set_raw_section_size(((0x10 + 8 + 8 + core::mem::size_of::<T>()) / 4) as u16);
-            if self.copy_handles.len() > 0 ||
-                self.move_handles.len() > 0 || self.send_pid {
-
-                hdr.set_enable_handle_descriptor(true);
-            }
+            let enable_handle_descriptor = self.copy_handles.len() > 0 ||
+                self.move_handles.len() > 0 || self.send_pid;
+            hdr.set_enable_handle_descriptor(enable_handle_descriptor);
         }
 
         // First, write the handle descriptor
