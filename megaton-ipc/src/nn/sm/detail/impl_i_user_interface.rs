@@ -28,8 +28,7 @@ impl IUserInterface {
 			return Ok(ret);
 		}
 
-		let mut session = 0;
-		let r = unsafe { svc::connect_to_named_port(&mut session, "sm:".as_ptr()) };
+		let (r, session) = unsafe { svc::connect_to_named_port("sm:".as_ptr()) };
 		if r != 0 {
 			return Err(Error(r))
 		} else {

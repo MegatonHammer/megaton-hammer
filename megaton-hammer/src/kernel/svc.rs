@@ -160,6 +160,9 @@ define_svcs! {
     /// Closes the specified handle
     close_handle("svc 0x16", ("{x0}"(handle)), handle: Handle) -> Result;
 
+    /// Connect to a named port
+    connect_to_named_port("svc 0x1F", ("={x0}"(0), "={x1}"(1)), ("{x1}"(name)), name: *const cty::c_char) -> (Result, Session);
+
     /// Send sync request
     send_sync_request("svc 0x21", ("{x0}"(session)), session: Session) -> Result;
 
