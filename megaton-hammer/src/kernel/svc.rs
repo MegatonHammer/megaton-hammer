@@ -168,6 +168,34 @@ define_svcs! {
 
     /// Output a debug string
     output_debug_string("svc 0x27", ("{x0}"(s), "{x1}"(size)), s: *const u8, size: usize) -> Result;
+
+    /// Get info about a handle.
+    ///
+    /// Handle Type | `info_id` | `info_sub_id`         | Description
+    /// ------------|-----------|-----------------------|-----------------------
+    /// Process     | 0         | 0                     | AllowedCpuIdBitmask
+    /// Process     | 1         | 0                     | AllowedThreadPrioBitmask
+    /// Process     | 2         | 0                     | MapRegionBaseAddr
+    /// Process     | 3         | 0                     | MapRegionSize
+    /// Process     | 4         | 0                     | HeapRegionBaseAddr
+    /// Process     | 5         | 0                     | HeapRegionSize
+    /// Process     | 6         | 0                     | TotalMemoryAvailable. Total memory available(free+used).
+    /// Process     | 7         | 0                     | TotalMemoryUsage. Total used size of codebin memory + main-thread stack + allocated heap.
+    /// Zero        | 8         | 0                     | IsCurrentProcessBeingDebugged
+    /// Zero        | 9         | 0                     | Returns ResourceLimit handle for current process. Used by PM.
+    /// Zero        | 10        | -1, {current coreid}  | IdleTickCount
+    /// Zero        | 11        | 0-3                   | RandomEntropy from current process. TRNG. Used to seed usermode PRNGs.
+    /// Process     | 12        | 0                     | [2.0.0+] AddressSpaceBaseAddr
+    /// Process     | 13        | 0                     | [2.0.0+] AddressSpaceSize
+    /// Process     | 14        | 0                     | [2.0.0+] NewMapRegionBaseAddr
+    /// Process     | 15        | 0                     | [2.0.0+] NewMapRegionSize
+    /// Process     | 16        | 0                     | [3.0.0+] IsVirtualAddressMemoryEnabled
+    /// Process     | 17        | 0                     | [3.0.0+] Some size in bytes.
+    /// Process     | 18        | 0                     | [3.0.0+] TitleId
+    /// Zero        | 19        | 0                     | [4.0.0+] PrivilegedProcessId_LowerBound
+    /// Zero        | 19        | 1                     | [4.0.0+] PrivilegedProcessId_UpperBound
+    /// Thread      | 0xF0000002| 0                     | Performance counter related. 
+    get_info("svc 0x29", ("={x0}"(0), "={x1}"(1)), ("{x1}"(info_id), "{x2}"(handle), "{x3}"(info_sub_id)), info_id: u64, handle: Handle, info_sub_id: u64) -> (Result, u64);
 }
 
 //
