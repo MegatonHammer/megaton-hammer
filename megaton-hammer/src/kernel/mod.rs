@@ -35,6 +35,9 @@ pub trait FromKObject {
 /// Used to transfer memory from one process to another. Several IPC APIs expect
 /// to be initialized with some transfer memory. This API allows you to acquire
 /// it.
+///
+/// Note: The memory acquired this way is lost *forever*. This is because we
+/// cannot know when the other party is done with it.
 #[derive(Debug)]
 #[repr(transparent)]
 pub struct TransferMemory(KObject);
@@ -42,13 +45,17 @@ pub struct TransferMemory(KObject);
 impl TransferMemory {
     /// Allocates memory properly for transfer memory.
     pub fn new(size: usize) -> Result<TransferMemory> {
-        use alloc::vec::Vec;
+        use alloc::heap::{Alloc, Heap, Layout};
         use core::mem;
 
         // TODO: Use alloc_pages if present, default to normal allocator.
-        let mut mem : Vec<u8> = Vec::with_capacity(size);
+        let mem : *mut u8 = unsafe { Heap.alloc(Layout::from_size_align(size, 0x20000).unwrap()).unwrap() };
         // TODO: Allow passing some permission bits.
         let (res, out) = unsafe { svc::create_transfer_memory(mem as _, size as u64, 0) };
+
+        // Leak the memory. We'll never be able to use it again.
+        // TODO: *maybe* there's some kind of event I could listen to or
+        // something, that would allow reclaiming the lost memory?
         mem::forget(mem);
         if res != 0 {
             return Err(Error(res));
