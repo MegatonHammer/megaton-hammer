@@ -23,11 +23,12 @@ use spin::Mutex;
 use core::ptr::Unique;
 use core::mem::ManuallyDrop;
 use kernel::{FromKObject, Session, KObject};
+use bit_field::BitField;
 
 #[doc(hidden)]
 pub struct LoaderConfig {
     main_thread: u32,
-    override_heap: Mutex<Option<HeapStrategy>>,
+    heap_strategy: Mutex<Option<HeapStrategy>>,
     override_services: ArrayVec<[(u64, u32); 32]>,
     stdio_sockets: Option<(u32, u32, u32, SocketKind)>,
     log: Option<Mutex<io::Cursor<&'static mut [u8]>>>,
@@ -43,7 +44,7 @@ pub enum HeapStrategy{
 pub fn acquire_heap_strategy() -> Option<HeapStrategy> {
     // Avoid panicking here as much as possible. We're called with locks held.
     match LOADER.try() {
-        Some(x) => x.override_heap.lock().take(),
+        Some(x) => x.heap_strategy.lock().take(),
         None => None
     }
 }
@@ -212,7 +213,7 @@ pub unsafe fn init_loader(entry: *mut LoaderConfigEntry, exit: extern fn(u64) ->
 
     let mut config = LoaderConfig {
         main_thread: 0,
-        override_heap: Mutex::new(Some(HeapStrategy::SetHeapSize)),
+        heap_strategy: Mutex::new(Some(HeapStrategy::SetHeapSize)),
         override_services: ArrayVec::new(),
         log: None,
         stdio_sockets: None,
@@ -226,10 +227,10 @@ pub unsafe fn init_loader(entry: *mut LoaderConfigEntry, exit: extern fn(u64) ->
                 config.log = Some(Mutex::new(io::Cursor::new(slice::from_raw_parts_mut((*entry).data.0 as _, (*entry).data.1 as _))));
             },
             LoaderConfigTag::STDIO_SOCKET => {
-                let stdin = (*entry).data.0 & 0xFFFFFF;
-                let stdout = ((*entry).data.0 >> 32) & 0xFFFFFF;
-                let stderr = (*entry).data.0 & 0xFFFFFF;
-                let kind = ((*entry).data.0 >> 32) & 0xFFFFFF;
+                let stdin = (*entry).data.0.get_bits(0..32);
+                let stdout = (*entry).data.0.get_bits(32..64);
+                let stderr = (*entry).data.1.get_bits(0..32);
+                let kind = (*entry).data.1.get_bits(32..64);
                 let kind = if kind == 0 {
                     SocketKind::BsdU
                 } else if kind == 1 {
@@ -244,8 +245,9 @@ pub unsafe fn init_loader(entry: *mut LoaderConfigEntry, exit: extern fn(u64) ->
                 config.override_services.push(((*entry).data.0, (*entry).data.1 as u32));
             },
             LoaderConfigTag::MAIN_THREAD_HANDLE => config.main_thread = (*entry).data.0 as u32,
-            LoaderConfigTag::OVERRIDE_HEAP =>
-                *config.override_heap.lock() = Some(HeapStrategy::OverrideHeap(Unique::new(slice::from_raw_parts_mut((*entry).data.0 as _, (*entry).data.1 as usize)).unwrap())),
+            LoaderConfigTag::OVERRIDE_HEAP => {
+                *config.heap_strategy.lock() = Some(HeapStrategy::OverrideHeap(Unique::new(slice::from_raw_parts_mut((*entry).data.0 as _, (*entry).data.1 as usize)).unwrap()))
+            },
             LoaderConfigTag::APPLET_WORKAROUND => {},
             tag => {
                 if (*entry).flags & 1 == 1 {
