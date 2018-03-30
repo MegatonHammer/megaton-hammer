@@ -47,9 +47,8 @@ impl TransferMemory {
 
         // TODO: Use alloc_pages if present, default to normal allocator.
         let mut mem : Vec<u8> = Vec::with_capacity(size);
-        let mut out = 0;
         // TODO: Allow passing some permission bits.
-        let res = unsafe { svc::create_transfer_memory(&mut out, mem.as_mut_ptr() as _, size as u64, 0) };
+        let (res, out) = unsafe { svc::create_transfer_memory(mem as _, size as u64, 0) };
         mem::forget(mem);
         if res != 0 {
             return Err(Error(res));
