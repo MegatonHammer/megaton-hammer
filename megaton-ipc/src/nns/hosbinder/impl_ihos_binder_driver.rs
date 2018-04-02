@@ -44,7 +44,29 @@ impl AsRef<Session> for IHOSBinderDriver {
 	}
 }
 impl IHOSBinderDriver {
-	// fn transact_parcel(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn transact_parcel(&self, id: i32, code: u32, flags: u32, parcel_data: &[u8], parcel_reply: &mut [u8]) -> Result<()> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			id: i32,
+			code: u32,
+			flags: u32,
+		}
+		let req = Request::new(0)
+			.args(InRaw {
+				id,
+				code,
+				flags,
+			})
+			.descriptor(IPCBuffer::from_slice(parcel_data, 5))
+			.descriptor(IPCBuffer::from_mut_slice(parcel_reply, 6))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn adjust_refcount(&self, unk0: i32, unk1: i32, unk2: i32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 

@@ -147,7 +147,29 @@ impl INvDrvServices {
 		Ok((res.get_raw().fd.clone(),res.get_raw().error_code.clone()))
 	}
 
-	// fn ioctl(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn ioctl(&self, fd: u32, rq_id: u32, unk1: u64, inbuf: &[u8], outbuf: &mut [u8]) -> Result<u32> {
+		use megaton_hammer::ipc::IPCBuffer;
+		use megaton_hammer::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			fd: u32,
+			rq_id: u32,
+			unk1: u64,
+		}
+		let req = Request::new(1)
+			.args(InRaw {
+				fd,
+				rq_id,
+				unk1,
+			})
+			.descriptor(IPCBuffer::from_slice(inbuf, 0x21))
+			.descriptor(IPCBuffer::from_mut_slice(outbuf, 0x22))
+			;
+		let res : Response<u32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn close(&self, fd: u32) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
