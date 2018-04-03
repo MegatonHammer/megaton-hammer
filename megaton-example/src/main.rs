@@ -1,4 +1,5 @@
 //#![no_std]
+#![feature(termination_trait)]
 
 extern crate megaton_hammer;
 extern crate megaton_ipc;
@@ -19,57 +20,75 @@ pub fn u8_slice_to_i8_slice(slice: &[u8]) -> &[i8] {
     unsafe { &*(slice as *const _  as *const [i8]) }
 }
 
-fn main() {
+#[derive(Debug)]
+enum MyError {
+    MegatonError(megaton_hammer::error::Error),
+    ImageError(image::ImageError),
+}
+
+impl From<image::ImageError> for MyError {
+    fn from(err: image::ImageError) -> MyError {
+        MyError::ImageError(err)
+    }
+}
+
+impl From<megaton_hammer::error::Error> for MyError {
+    fn from(err: megaton_hammer::error::Error) -> MyError {
+        MyError::MegatonError(err)
+    }
+}
+
+fn main() -> std::result::Result<(), MyError> {
     // Let's get ferris to show up on my switch.
 
     // Init the nv stuff
     println!("Create nv");
-    let nvdrv = nns::nvdrv::INvDrvServices::new_nvdrv_a().unwrap();
+    let nvdrv = nns::nvdrv::INvDrvServices::new_nvdrv_a()?;
 
     // Initialize nvdrv
     println!("Create transfer memory");
-    let transfer_mem = TransferMemory::new(0x30000).unwrap();
+    let transfer_mem = TransferMemory::new(0x30000)?;
     let temporary_process = unsafe { KObject::new(megaton_hammer::kernel::svc::CURRENT_PROCESS) };
     println!("Initialize nv");
-    nvdrv.initialize(0x30000, &temporary_process, transfer_mem.as_ref()).unwrap();
+    nvdrv.initialize(0x30000, &temporary_process, transfer_mem.as_ref())?;
     std::mem::drop(temporary_process);
 
     println!("Open /dev/nvhost-as-gpu");
-    let (nvasgpu, err) = nvdrv.open(u8_slice_to_i8_slice(&b"/dev/nvhost-as-gpu"[..])).unwrap();
+    let (nvasgpu, err) = nvdrv.open(u8_slice_to_i8_slice(&b"/dev/nvhost-as-gpu"[..]))?;
     if err != 0 {
         panic!("Failed to open");
     }
     println!("Open /dev/nvmap");
-    let (nvmap, err) = nvdrv.open(u8_slice_to_i8_slice(&b"/dev/nvmap"[..])).unwrap();
+    let (nvmap, err) = nvdrv.open(u8_slice_to_i8_slice(&b"/dev/nvmap"[..]))?;
     if err != 0 {
         panic!("Failed to open");
     }
     // Init the vi stuff.
     println!("new IManagerRootService");
-    let vi_m = nn::visrv::sf::IManagerRootService::new().unwrap();
+    let vi_m = nn::visrv::sf::IManagerRootService::new()?;
     println!("get_display_service");
-    let disp_svc = vi_m.get_display_service(1).unwrap();
+    let disp_svc = vi_m.get_display_service(1)?;
     println!("get_relay_service");
-    let relay_svc = disp_svc.get_relay_service().unwrap();
+    let relay_svc = disp_svc.get_relay_service()?;
     println!("get_system_display_service");
-    let system_disp_svc = disp_svc.get_system_display_service().unwrap();
+    let system_disp_svc = disp_svc.get_system_display_service()?;
     println!("get_manager_display_service");
-    let manager_disp_svc = disp_svc.get_manager_display_service().unwrap();
+    let manager_disp_svc = disp_svc.get_manager_display_service()?;
 
     println!("Open display");
     let display_id = {
         let mut display = [0u8; 64];
         display[..b"Default".len()].copy_from_slice(b"Default");
-        disp_svc.open_display(display).unwrap()
+        disp_svc.open_display(display)?
     };
 
     println!("Open a layer");
-    let layer_id = manager_disp_svc.create_managed_layer(1, display_id, 0).unwrap();
+    let layer_id = manager_disp_svc.create_managed_layer(1, display_id, 0)?;
     let mut parcel = [0u8; 0x100];
     let binder_id = {
         let mut display = [0u8; 64];
         display[..b"Default".len()].copy_from_slice(b"Default");
-        disp_svc.open_layer(display, layer_id, 0, &mut parcel).unwrap()
+        disp_svc.open_layer(display, layer_id, 0, &mut parcel)?
     };
 
     // Connect to the IGBP. Take a look at the following link for reference.
@@ -82,13 +101,13 @@ fn main() {
         parcel.write_u32(2); // API
         parcel.write_u32(0); // ProducerControlledByApp.
         let mut parcel_out = RawParcel::default();
-        relay_svc.transact_parcel(binder_id as i32, CONNECT, 0, parcel.build().as_bytes(), parcel_out.as_bytes_mut()).unwrap();
+        relay_svc.transact_parcel(binder_id as i32, CONNECT, 0, parcel.build().as_bytes(), parcel_out.as_bytes_mut())?;
 
         let mut reader = parcel_out.into_parcel_reader();
         let qbo = QueueBufferOutput::from_parcel(&mut reader);
-        if reader.read_u32() != 0 {
-            panic!("Failed to connect to igbp");
-        }
+        //if reader.read_u32() != 0 {
+        //    panic!("Failed to connect to igbp");
+        //}
         qbo
     };
 
@@ -112,7 +131,7 @@ fn main() {
                     // those, I believe this is, erm, "mostly OK" ? But I should
                     // find a better way to deal with it.
                     unsafe { std::slice::from_raw_parts(&create as *const NvMapIocCreateArgs as *const u8, std::mem::size_of::<NvMapIocCreateArgs>()) },
-                    unsafe { std::slice::from_raw_parts_mut(&mut create as *mut NvMapIocCreateArgs as *mut u8, std::mem::size_of::<NvMapIocCreateArgs>()) }).unwrap();
+                    unsafe { std::slice::from_raw_parts_mut(&mut create as *mut NvMapIocCreateArgs as *mut u8, std::mem::size_of::<NvMapIocCreateArgs>()) })?;
         if ret != 0 {
             panic!("Ioctl failed");
         }
@@ -142,7 +161,7 @@ fn main() {
                     // those, I believe this is, erm, "mostly OK" ? But I should
                     // find a better way to deal with it.
                     unsafe { std::slice::from_raw_parts(&alloc as *const NvMapIocAllocArgs as *const u8, std::mem::size_of::<NvMapIocAllocArgs>()) },
-                    unsafe { std::slice::from_raw_parts_mut(&mut alloc as *mut NvMapIocAllocArgs as *mut u8, std::mem::size_of::<NvMapIocAllocArgs>()) }).unwrap();
+                    unsafe { std::slice::from_raw_parts_mut(&mut alloc as *mut NvMapIocAllocArgs as *mut u8, std::mem::size_of::<NvMapIocAllocArgs>()) })?;
 
         if ret != 0 {
             panic!("Ioctl alloc failed");
@@ -175,7 +194,7 @@ fn main() {
         parcel.write_u32(0); // Unknown
         buf.write_to_parcel(&mut parcel);
         let mut parcel_out = RawParcel::default();
-        relay_svc.transact_parcel(binder_id as i32, SET_PREALLOCATED_BUFFER, 0, parcel.build().as_bytes(), parcel_out.as_bytes_mut()).unwrap();
+        relay_svc.transact_parcel(binder_id as i32, SET_PREALLOCATED_BUFFER, 0, parcel.build().as_bytes(), parcel_out.as_bytes_mut())?;
     }
 
     // TODO: Set scaling mode
@@ -192,7 +211,7 @@ fn main() {
         parcel.write_u32(0); // get_frame_timestamp
         parcel.write_u32(0xb00); // usage
         let mut parcel_out = RawParcel::default();
-        relay_svc.transact_parcel(binder_id as i32, DEQUEUE_BUFFER, 0, parcel.build().as_bytes(), parcel_out.as_bytes_mut()).unwrap();
+        relay_svc.transact_parcel(binder_id as i32, DEQUEUE_BUFFER, 0, parcel.build().as_bytes(), parcel_out.as_bytes_mut())?;
         let mut parcel_out = parcel_out.into_parcel_reader();
         let slot = parcel_out.read_u32();
         // Read fence
@@ -211,7 +230,7 @@ fn main() {
         parcel.write_interface_token("android.gui.IGraphicBufferProducer");
         parcel.write_u32(slot); // Slot
         let mut parcel_out = RawParcel::default();
-        let res = relay_svc.transact_parcel(binder_id as i32, REQUEST_BUFFER, 0, parcel.build().as_bytes(), parcel_out.as_bytes_mut()).unwrap();
+        let res = relay_svc.transact_parcel(binder_id as i32, REQUEST_BUFFER, 0, parcel.build().as_bytes(), parcel_out.as_bytes_mut())?;
         let mut parcel_out = parcel_out.into_parcel_reader();
         let non_null = parcel_out.read_u32() != 0;
         if non_null {
@@ -230,9 +249,11 @@ fn main() {
 
     println!("Loading image from FERRIS");
     let image = PNGDecoder::new(Cursor::new(&FERRIS[..]));
+    println!("Getting a frame");
+    let frame = image.into_frames()?.next().unwrap().into_buffer();
 
-    println!("Resizing FERRIS");
-    let frame = image::imageops::resize(&image.into_frames().unwrap().next().unwrap().into_buffer(), 1280, 760, image::FilterType::Lanczos3);
+    //println!("Resizing FERRIS");
+    //let frame = image::imageops::resize(&image.into_frames()?.next()?.into_buffer(), 1280, 760, image::FilterType::Lanczos3);
 
 
     // Blit
@@ -313,7 +334,7 @@ fn main() {
         parcel.write_u32(0);
 
         let mut parcel_out = RawParcel::default();
-        let res = relay_svc.transact_parcel(binder_id as i32, QUEUE_BUFFER, 0, parcel.build().as_bytes(), parcel_out.as_bytes_mut()).unwrap();
+        let res = relay_svc.transact_parcel(binder_id as i32, QUEUE_BUFFER, 0, parcel.build().as_bytes(), parcel_out.as_bytes_mut())?;
         let mut parcel_out = parcel_out.into_parcel_reader();
 
         let _ = QueueBufferOutput::from_parcel(&mut parcel_out);
