@@ -8,10 +8,11 @@ extern crate image;
 extern crate math;
 
 use byteorder::{ReadBytesExt, WriteBytesExt, LE, ByteOrder};
-use megaton_hammer::kernel::{TransferMemory, KObject, svc};
+use megaton_hammer::kernel::{TransferMemory, KObject, FromKObject, Event, svc};
 use megaton_ipc::{nn, nns};
 use std::io::{Seek, SeekFrom, Cursor};
-use image::png::PNGDecoder;
+//use image::png::PNGDecoder;
+use image::bmp::BMPDecoder;
 use image::{Pixel, ImageDecoder};
 
 // TODO: This kind of sucks. And is only a problem because my IPC bindings don't
@@ -41,11 +42,8 @@ impl From<megaton_hammer::error::Error> for MyError {
 fn main() -> std::result::Result<(), MyError> {
     // Let's get ferris to show up on my switch.
 
-    // Init the nv stuff
-    println!("Create nv");
+    println!("Initialize NV");
     let nvdrv = nns::nvdrv::INvDrvServices::new_nvdrv_a()?;
-
-    // Initialize nvdrv
     println!("Create transfer memory");
     let transfer_mem = TransferMemory::new(0x30000)?;
     let temporary_process = unsafe { KObject::new(megaton_hammer::kernel::svc::CURRENT_PROCESS) };
@@ -63,8 +61,8 @@ fn main() -> std::result::Result<(), MyError> {
     if err != 0 {
         panic!("Failed to open");
     }
-    // Init the vi stuff.
-    println!("new IManagerRootService");
+
+    println!("Initialize vi");
     let vi_m = nn::visrv::sf::IManagerRootService::new()?;
     println!("get_display_service");
     let disp_svc = vi_m.get_display_service(1)?;
@@ -84,11 +82,18 @@ fn main() -> std::result::Result<(), MyError> {
 
     println!("Open a layer");
     let layer_id = manager_disp_svc.create_managed_layer(1, display_id, 0)?;
-    let mut parcel = [0u8; 0x100];
     let binder_id = {
+        let mut parcel = RawParcel::default();
         let mut display = [0u8; 64];
         display[..b"Default".len()].copy_from_slice(b"Default");
-        disp_svc.open_layer(display, layer_id, 0, &mut parcel)?
+        let _window_size = disp_svc.open_layer(display, layer_id, 0, parcel.as_bytes_mut())?;
+
+        let mut reader = parcel.into_parcel_reader();
+        let fbo = FlatBinderObject::from_parcel(&mut reader);
+        let binder = fbo.inner as i32;
+        relay_svc.adjust_refcount(binder, 1, 0)?;
+        relay_svc.adjust_refcount(binder, 1, 1)?;
+        binder
     };
 
     // Connect to the IGBP. Take a look at the following link for reference.
@@ -197,171 +202,213 @@ fn main() -> std::result::Result<(), MyError> {
         relay_svc.transact_parcel(binder_id as i32, SET_PREALLOCATED_BUFFER, 0, parcel.build().as_bytes(), parcel_out.as_bytes_mut())?;
     }
 
-    // TODO: Set scaling mode
-    // TODO: Add layer to stack
-    // TODO: Set layer z
-    // TODO: Get vsync event
-    println!("Dequeue buffer");
-    let slot = {
-        let mut parcel = OwnedParcel::new();
-        parcel.write_interface_token("android.gui.IGraphicBufferProducer");
-        parcel.write_u32(1); // Pixel format
-        parcel.write_u32(1280); // width
-        parcel.write_u32(720); // height
-        parcel.write_u32(0); // get_frame_timestamp
-        parcel.write_u32(0xb00); // usage
-        let mut parcel_out = RawParcel::default();
-        relay_svc.transact_parcel(binder_id as i32, DEQUEUE_BUFFER, 0, parcel.build().as_bytes(), parcel_out.as_bytes_mut())?;
-        let mut parcel_out = parcel_out.into_parcel_reader();
-        let slot = parcel_out.read_u32();
-        // Read fence
-        parcel_out.0.seek(SeekFrom::Current(44));
-        let status = parcel_out.read_u32();
-        if status != 0 {
-            //panic!("WTF");
-        }
-        slot
-    };
+    println!("Set scaling mode");
+    disp_svc.set_layer_scaling_mode(2, layer_id)?;
 
-    // Request buffer if it hasn't been requested already.
-    println!("Request buffer");
-    {
-        let mut parcel = OwnedParcel::new();
-        parcel.write_interface_token("android.gui.IGraphicBufferProducer");
-        parcel.write_u32(slot); // Slot
-        let mut parcel_out = RawParcel::default();
-        let res = relay_svc.transact_parcel(binder_id as i32, REQUEST_BUFFER, 0, parcel.build().as_bytes(), parcel_out.as_bytes_mut())?;
-        let mut parcel_out = parcel_out.into_parcel_reader();
-        let non_null = parcel_out.read_u32() != 0;
-        if non_null {
-            //let len = parcel_out.read_u32();
-            //if len != 0x16c {
-            //    panic!("Invalid length");
-            //}
-            //let unk = parcel_out.read_u32();
-            // TODO: Get graphicbuffer.
-        }
-        let status = parcel_out.read_u32();
-        if status != 0 {
-            //panic!("WTF");
-        }
+    println!("Add layer to stack");
+    for stack in [0x0, 0x2, 0x4, 0x5, 0xA].iter() {
+        manager_disp_svc.add_to_layer_stack(*stack, layer_id)?;
     }
+
+    println!("Set Z layer");
+    system_disp_svc.set_layer_z(layer_id, 2)?;
+
 
     println!("Loading image from FERRIS");
-    let image = PNGDecoder::new(Cursor::new(&FERRIS[..]));
-    println!("Getting a frame");
+    let image = BMPDecoder::new(Cursor::new(&FERRIS[..]));
+    println!("Getting frame");
     let frame = image.into_frames()?.next().unwrap().into_buffer();
-
     //println!("Resizing FERRIS");
-    //let frame = image::imageops::resize(&image.into_frames()?.next()?.into_buffer(), 1280, 760, image::FilterType::Lanczos3);
+    //let frame = image::imageops::resize(&image.into_frames()?.next().unwrap().into_buffer(), 1280, 760, image::FilterType::Lanczos3);
+
+    let vevent = unsafe { Event::from_kobject(disp_svc.get_display_vsync_event(display_id)?) };
+    for _ in 0..60 {
+        println!("Dequeue buffer");
+        let slot = {
+            let mut parcel = OwnedParcel::new();
+            parcel.write_interface_token("android.gui.IGraphicBufferProducer");
+            parcel.write_u32(1); // Pixel format
+            parcel.write_u32(1280); // width
+            parcel.write_u32(720); // height
+            parcel.write_u32(0); // get_frame_timestamp
+            parcel.write_u32(0xb00); // usage
+            let mut parcel_out = RawParcel::default();
+            relay_svc.transact_parcel(binder_id as i32, DEQUEUE_BUFFER, 0, parcel.build().as_bytes(), parcel_out.as_bytes_mut())?;
+            let mut parcel_out = parcel_out.into_parcel_reader();
+            let slot = parcel_out.read_u32();
+            // Read fence
+            parcel_out.0.seek(SeekFrom::Current(44));
+            let status = parcel_out.read_u32();
+            //if status != 0 {
+            //    panic!("WTF");
+            //}
+            //slot
+            0
+        };
+
+        // Request buffer if it hasn't been requested already.
+        println!("Request buffer");
+        {
+            let mut parcel = OwnedParcel::new();
+            parcel.write_interface_token("android.gui.IGraphicBufferProducer");
+            parcel.write_u32(slot); // Slot
+            let mut parcel_out = RawParcel::default();
+            let res = relay_svc.transact_parcel(binder_id as i32, REQUEST_BUFFER, 0, parcel.build().as_bytes(), parcel_out.as_bytes_mut())?;
+            let mut parcel_out = parcel_out.into_parcel_reader();
+            let non_null = parcel_out.read_u32() != 0;
+            if non_null {
+                //let len = parcel_out.read_u32();
+                //if len != 0x16c {
+                //    panic!("Invalid length");
+                //}
+                let unk = parcel_out.read_u32();
+                // TODO: Get graphicbuffer.
+            }
+            let status = parcel_out.read_u32();
+            //if status != 0 {
+            //    panic!("WTF");
+            //}
+        }
 
 
-    // Blit
-    println!("Blit");
-    {
-        fn pdep(mask: u32, mut value: u32) -> u32 {
-            let mut out = 0;
-            for shift in 0..32 {
-                let bit = 1 << shift;
-                if mask & bit != 0 {
-                    if value & 1 != 0 {
-                        out |= bit
+        // Blit
+        println!("Blit");
+        {
+            fn pdep(mask: u32, mut value: u32) -> u32 {
+                let mut out = 0;
+                for shift in 0..32 {
+                    let bit = 1 << shift;
+                    if mask & bit != 0 {
+                        if value & 1 != 0 {
+                            out |= bit
+                        }
+                        value >>= 1;
                     }
-                    value >>= 1;
+                }
+                out
+            }
+            fn swizzle_x(v: u32) -> u32 { pdep(!0x7B4, v) }
+            fn swizzle_y(v: u32) -> u32 { pdep(0x7B4, v) }
+            let x0 = 0;
+            let y0 = 0;
+            let mut offs_x0 = swizzle_x(x0);
+            let mut offs_y = swizzle_y(y0);
+            let x_mask = swizzle_x(!0);
+            let y_mask = swizzle_y(!0);
+            let incr_y = swizzle_x(128 * 10);
+            let tile_height = 128;
+
+            offs_x0 += incr_y * (y0 / tile_height);
+
+            // TODO: Add clipping.
+            for y in 0..frame.height() {
+                let mut offs_x = offs_x0;
+                for x in 0..frame.width() {
+                    let pixel = frame.get_pixel(x, y);
+                    mem[slot as usize][offs_y as usize + offs_x as usize] = LE::read_u32(pixel.channels());
+                    offs_x = offs_x.wrapping_sub(x_mask) & x_mask;
+                }
+                offs_y = offs_y.wrapping_sub(y_mask) & y_mask;
+                if offs_y == 0 {
+                    offs_x0 += incr_y; // wrap into next tile row
                 }
             }
-            out
         }
-        fn swizzle_x(v: u32) -> u32 { pdep(!0x7B4, v) }
-        fn swizzle_y(v: u32) -> u32 { pdep(0x7B4, v) }
-        let x0 = 0;
-        let y0 = 0;
-        let mut offs_x0 = swizzle_x(x0);
-        let mut offs_y = swizzle_y(y0);
-        let x_mask = swizzle_x(!0);
-        let y_mask = swizzle_y(!0);
-        let incr_y = swizzle_x(128 * 10);
-        let tile_height = 128;
 
-        offs_x0 += incr_y * (y0 / tile_height);
+        // Enqueue buffer
+        println!("Enqueue buffer");
+        {
+            let mut parcel = OwnedParcel::new();
+            parcel.write_interface_token("android.gui.IGraphicBufferProducer");
+            parcel.write_u32(slot); // Slot
+            parcel.write_u32(0x54); parcel.write_u32(0); // unknown, but always those values
+            parcel.write_u32(0x588bbba9); parcel.write_u32(0); // Timestamp, u64
+            parcel.write_u32(1); // unknown, but always those values
+            parcel.write_u32(0);
+            parcel.write_u32(0);
 
-        // TODO: Add clipping.
-        for y in 0..frame.height() {
-            let mut offs_x = offs_x0;
-            for x in 0..frame.width() {
-                let pixel = frame.get_pixel(x, y);
-                mem[slot as usize][offs_y as usize + offs_x as usize] = LE::read_u32(pixel.channels());
-                offs_x = (offs_x - x_mask) & x_mask;
+            parcel.write_u32(0); // sometimes zero
+            parcel.write_u32(0);
+
+            parcel.write_u32(0);
+
+            parcel.write_u32(0); // Also seen 2
+
+            parcel.write_u32(0);
+            parcel.write_u32(0);
+
+            parcel.write_u32(1); // fence?
+            parcel.write_u32(1);
+            parcel.write_u32(0xa3);
+            parcel.write_u32(0);
+            parcel.write_u32(-1i32 as u32);
+            parcel.write_u32(0);
+            //parcel.write_u32(-1i32 as u32);
+            parcel.write_u32(0);
+            parcel.write_u32(-1i32 as u32);
+            parcel.write_u32(0);
+
+            let mut parcel_out = RawParcel::default();
+            let res = relay_svc.transact_parcel(binder_id as i32, QUEUE_BUFFER, 0, parcel.build().as_bytes(), parcel_out.as_bytes_mut())?;
+            let mut parcel_out = parcel_out.into_parcel_reader();
+
+            let _ = QueueBufferOutput::from_parcel(&mut parcel_out);
+
+            let status = parcel_out.read_u32();
+            if status != 0 {
+                panic!("WTF");
             }
-            offs_y = (offs_y - y_mask) & y_mask;
-            if offs_y == 0 {
-                offs_x0 += incr_y;
-            }
         }
+        vevent.wait()?;
+        vevent.reset()?;
     }
-
-    // Enqueue buffer
-    println!("Enqueue buffer");
-    {
-        let mut parcel = OwnedParcel::new();
-        parcel.write_interface_token("android.gui.IGraphicBufferProducer");
-        parcel.write_u32(slot); // Slot
-        parcel.write_u32(0x54); parcel.write_u32(0); // unknown, but always those values
-        parcel.write_u32(0x588bbba9); parcel.write_u32(0); // Timestamp, u64
-        parcel.write_u32(1); // unknown, but always those values
-        parcel.write_u32(0);
-        parcel.write_u32(0);
-
-        parcel.write_u32(0); // sometimes zero
-        parcel.write_u32(0);
-
-        parcel.write_u32(0);
-
-        parcel.write_u32(0); // Also seen 2
-
-        parcel.write_u32(0);
-        parcel.write_u32(0);
-
-        parcel.write_u32(1); // fence?
-        parcel.write_u32(1);
-        parcel.write_u32(0xa3);
-        parcel.write_u32(0);
-        parcel.write_u32(-1i32 as u32);
-        parcel.write_u32(0);
-        parcel.write_u32(-1i32 as u32);
-        parcel.write_u32(0);
-        parcel.write_u32(-1i32 as u32);
-        parcel.write_u32(0);
-
-        let mut parcel_out = RawParcel::default();
-        let res = relay_svc.transact_parcel(binder_id as i32, QUEUE_BUFFER, 0, parcel.build().as_bytes(), parcel_out.as_bytes_mut())?;
-        let mut parcel_out = parcel_out.into_parcel_reader();
-
-        let _ = QueueBufferOutput::from_parcel(&mut parcel_out);
-
-        let status = parcel_out.read_u32();
-        if status != 0 {
-            panic!("WTF");
-        }
-    }
-
-    // TODO: Wait sync
-    // TODO: Reset event
-    loop {}
+    Ok(())
 }
 
 //static FERRIS : &'static [u8; 8] = [0, 0, 0, 0, 0, 0, 0, 0];
 
-static FERRIS: &'static [u8; 33061] = include_bytes!("../img/ferris.png");
+//static FERRIS: &'static [u8; 33061] = include_bytes!("../img/ferris.png");
+static FERRIS: &'static [u8; 153718] = include_bytes!("../img/ferris.bmp");
 // Graphic buffer stuff
 
 //struct IGraphicBufferProducer(Arc<IHOSBinderDriver>, u32);
-
+//
 //impl IGraphicBufferProducer {
 //    pub fn dequeue_buffer(&self) {
 //
 //    }
 //}
+
+
+// TODO: Layer trait?
+//struct ManagedLayer(Arc<IManagerDisplayService>, u64);
+//
+//impl Drop for ManagedLayer {
+//	fn drop(&mut self) {
+//		self.0.destroy_managed_layer(self.1);
+//	}
+//}
+
+/// Binder object in a parcel
+#[repr(C)]
+#[derive(Debug)]
+struct FlatBinderObject {
+    ty: u32,
+    flags: u32,
+    inner: usize, // Can either be a void *binder or a u32 handle
+    cookie: usize
+}
+
+impl FlatBinderObject {
+    fn from_parcel(parcel: &mut ParcelReader) -> FlatBinderObject {
+        FlatBinderObject {
+            ty: parcel.read_u32(),
+            flags: parcel.read_u32(),
+            inner: parcel.read_u64() as usize,
+            cookie: parcel.read_u64() as usize
+        }
+    }
+}
 
 // Returned by igbp_connect
 #[repr(C)]
@@ -512,6 +559,9 @@ struct ParcelReader(std::io::Cursor<Vec<u8>>);
 impl ParcelReader {
     pub fn read_u32(&mut self) -> u32 {
         self.0.read_u32::<LE>().unwrap()
+    }
+    pub fn read_u64(&mut self) -> u64 {
+        self.0.read_u64::<LE>().unwrap()
     }
 }
 
