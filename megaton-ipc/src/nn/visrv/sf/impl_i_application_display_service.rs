@@ -126,7 +126,7 @@ impl IApplicationDisplayService {
 		Ok((res.get_raw().unk1.clone(),res.get_raw().unk2.clone()))
 	}
 
-	pub fn open_layer(&self, unk0: ::nn::vi::DisplayName, unk1: u64, unk2: ::nn::applet::AppletResourceUserId, unk5: &mut [u8; 0x100]) -> Result<i64> {
+	pub fn open_layer(&self, unk0: ::nn::vi::DisplayName, unk1: u64, unk2: ::nn::applet::AppletResourceUserId, unk5: &mut [u8]) -> Result<i64> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -143,7 +143,7 @@ impl IApplicationDisplayService {
 				unk2,
 			})
 			.send_pid()
-			.descriptor(IPCBuffer::from_mut_ref(unk5, 6))
+			.descriptor(IPCBuffer::from_mut_slice(unk5, 6))
 			;
 		let res : Response<i64> = self.0.send(req)?;
 		Ok(*res.get_raw())
