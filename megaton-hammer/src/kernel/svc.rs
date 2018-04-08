@@ -160,6 +160,15 @@ define_svcs! {
     /// Closes the specified handle
     close_handle("svc 0x16", ("{x0}"(handle)), handle: Handle) -> Result;
 
+    /// Resets a signal. Takes a revent or process.
+    reset_signal("svc 0x17", ("{x0}"(signal)), signal: Handle) -> Result;
+
+    /// Wait synchronization
+    wait_synchronization("svc 0x18", ("={x0}"(0), "={x1}"(1)), ("{x1}"(handles), "{x2}"(num_handles), "{x3}"(timeout)),
+        handles: *const Handle,
+        num_handles: u32,
+        timeout: u64) -> (Result, u32);
+
     /// Connect to a named port
     connect_to_named_port("svc 0x1F", ("={x0}"(0), "={x1}"(1)), ("{x1}"(name)), name: *const cty::c_char) -> (Result, Session);
 

@@ -82,3 +82,40 @@ impl FromKObject for TransferMemory {
         TransferMemory(obj)
     }
 }
+
+/// Event Object
+#[derive(Debug)]
+#[repr(transparent)]
+pub struct Event(KObject);
+
+impl Event {
+    pub fn wait(&self) -> Result<()> {
+        let (res, _idx) = unsafe { svc::wait_synchronization(&(self.0).0, 1, !0) };
+        if res == 0 {
+            Ok(())
+        } else {
+            Err(Error(res))
+        }
+    }
+
+    pub fn reset(&self) -> Result<()> {
+        let res = unsafe { svc::reset_signal((self.0).0) };
+        if res == 0 {
+            Ok(())
+        } else {
+            Err(Error(res))
+        }
+    }
+}
+
+impl Into<KObject> for Event {
+    fn into(self) -> KObject {
+        self.0
+    }
+}
+
+impl FromKObject for Event {
+    unsafe fn from_kobject(obj: KObject) -> Event {
+        Event(obj)
+    }
+}
