@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct ILocalManager(Session);
+pub struct ILocalManager<T>(T);
 
-impl ILocalManager {
-	pub fn new() -> Result<Arc<ILocalManager>> {
+impl ILocalManager<Session> {
+	pub fn new() -> Result<Arc<ILocalManager<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<ILocalManager>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<ILocalManager<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl ILocalManager {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"wlan:lcl").map(|s| Arc::new(unsafe { ILocalManager::from_kobject(s) }));
+		let r = sm.get_service(*b"wlan:lcl").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<ILocalManager<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(ILocalManager(domain)),
+			Err((sess, err)) => Err((ILocalManager(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<ILocalManager<Session>> {
+		Ok(ILocalManager(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for ILocalManager {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for ILocalManager<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl ILocalManager {
+impl<T> DerefMut for ILocalManager<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> ILocalManager<T> {
 	pub fn unknown0(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -280,8 +298,8 @@ impl ILocalManager {
 
 }
 
-impl FromKObject for ILocalManager {
-	unsafe fn from_kobject(obj: KObject) -> ILocalManager {
-		ILocalManager(Session::from_kobject(obj))
+impl<T: Object> From<T> for ILocalManager<T> {
+	fn from(obj: T) -> ILocalManager<T> {
+		ILocalManager(obj)
 	}
 }

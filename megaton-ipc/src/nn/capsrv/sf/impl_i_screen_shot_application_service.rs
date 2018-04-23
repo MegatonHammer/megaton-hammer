@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IScreenShotApplicationService(Session);
+pub struct IScreenShotApplicationService<T>(T);
 
-impl IScreenShotApplicationService {
-	pub fn new() -> Result<Arc<IScreenShotApplicationService>> {
+impl IScreenShotApplicationService<Session> {
+	pub fn new() -> Result<Arc<IScreenShotApplicationService<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IScreenShotApplicationService>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IScreenShotApplicationService<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,27 +30,44 @@ impl IScreenShotApplicationService {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"caps:su\0").map(|s| Arc::new(unsafe { IScreenShotApplicationService::from_kobject(s) }));
+		let r = sm.get_service(*b"caps:su\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IScreenShotApplicationService<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IScreenShotApplicationService(domain)),
+			Err((sess, err)) => Err((IScreenShotApplicationService(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IScreenShotApplicationService<Session>> {
+		Ok(IScreenShotApplicationService(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IScreenShotApplicationService {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IScreenShotApplicationService<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IScreenShotApplicationService {
+impl<T> DerefMut for IScreenShotApplicationService<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IScreenShotApplicationService<T> {
 	// fn save_screen_shot(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn save_screen_shot_ex0(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
-impl FromKObject for IScreenShotApplicationService {
-	unsafe fn from_kobject(obj: KObject) -> IScreenShotApplicationService {
-		IScreenShotApplicationService(Session::from_kobject(obj))
+impl<T: Object> From<T> for IScreenShotApplicationService<T> {
+	fn from(obj: T) -> IScreenShotApplicationService<T> {
+		IScreenShotApplicationService(obj)
 	}
 }

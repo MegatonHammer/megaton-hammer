@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IAudioOutManagerForApplet(Session);
+pub struct IAudioOutManagerForApplet<T>(T);
 
-impl IAudioOutManagerForApplet {
-	pub fn new() -> Result<Arc<IAudioOutManagerForApplet>> {
+impl IAudioOutManagerForApplet<Session> {
+	pub fn new() -> Result<Arc<IAudioOutManagerForApplet<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IAudioOutManagerForApplet>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IAudioOutManagerForApplet<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IAudioOutManagerForApplet {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"audout:a").map(|s| Arc::new(unsafe { IAudioOutManagerForApplet::from_kobject(s) }));
+		let r = sm.get_service(*b"audout:a").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IAudioOutManagerForApplet<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IAudioOutManagerForApplet(domain)),
+			Err((sess, err)) => Err((IAudioOutManagerForApplet(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IAudioOutManagerForApplet<Session>> {
+		Ok(IAudioOutManagerForApplet(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IAudioOutManagerForApplet {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IAudioOutManagerForApplet<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IAudioOutManagerForApplet {
+impl<T> DerefMut for IAudioOutManagerForApplet<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IAudioOutManagerForApplet<T> {
 	pub fn request_suspend_audio_outs(&self, unk0: u64, unk1: u64) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -112,8 +130,8 @@ impl IAudioOutManagerForApplet {
 
 }
 
-impl FromKObject for IAudioOutManagerForApplet {
-	unsafe fn from_kobject(obj: KObject) -> IAudioOutManagerForApplet {
-		IAudioOutManagerForApplet(Session::from_kobject(obj))
+impl<T: Object> From<T> for IAudioOutManagerForApplet<T> {
+	fn from(obj: T) -> IAudioOutManagerForApplet<T> {
+		IAudioOutManagerForApplet(obj)
 	}
 }

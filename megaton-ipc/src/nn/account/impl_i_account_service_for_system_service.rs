@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IAccountServiceForSystemService(Session);
+pub struct IAccountServiceForSystemService<T>(T);
 
-impl IAccountServiceForSystemService {
-	pub fn new() -> Result<Arc<IAccountServiceForSystemService>> {
+impl IAccountServiceForSystemService<Session> {
+	pub fn new() -> Result<Arc<IAccountServiceForSystemService<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IAccountServiceForSystemService>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IAccountServiceForSystemService<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IAccountServiceForSystemService {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"acc:u1\0\0").map(|s| Arc::new(unsafe { IAccountServiceForSystemService::from_kobject(s) }));
+		let r = sm.get_service(*b"acc:u1\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IAccountServiceForSystemService<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IAccountServiceForSystemService(domain)),
+			Err((sess, err)) => Err((IAccountServiceForSystemService(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IAccountServiceForSystemService<Session>> {
+		Ok(IAccountServiceForSystemService(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IAccountServiceForSystemService {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IAccountServiceForSystemService<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IAccountServiceForSystemService {
+impl<T> DerefMut for IAccountServiceForSystemService<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IAccountServiceForSystemService<T> {
 	pub fn get_user_count(&self, ) -> Result<i32> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -98,14 +116,14 @@ impl IAccountServiceForSystemService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn get_profile(&self, unk0: ::nn::account::Uid) -> Result<::nn::account::profile::IProfile> {
+	pub fn get_profile(&self, unk0: ::nn::account::Uid) -> Result<::nn::account::profile::IProfile<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(5)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	pub fn get_profile_digest(&self, unk0: ::nn::account::Uid) -> Result<::nn::account::ProfileDigest> {
@@ -139,54 +157,54 @@ impl IAccountServiceForSystemService {
 		Ok(*res.get_raw())
 	}
 
-	pub fn get_user_registration_notifier(&self, ) -> Result<::nn::account::detail::INotifier> {
+	pub fn get_user_registration_notifier(&self, ) -> Result<::nn::account::detail::INotifier<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(100)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn get_user_state_change_notifier(&self, ) -> Result<::nn::account::detail::INotifier> {
+	pub fn get_user_state_change_notifier(&self, ) -> Result<::nn::account::detail::INotifier<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(101)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn get_baas_account_manager_for_system_service(&self, unk0: ::nn::account::Uid) -> Result<::nn::account::baas::IManagerForSystemService> {
+	pub fn get_baas_account_manager_for_system_service(&self, unk0: ::nn::account::Uid) -> Result<::nn::account::baas::IManagerForSystemService<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(102)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn get_baas_user_availability_change_notifier(&self, ) -> Result<::nn::account::detail::INotifier> {
+	pub fn get_baas_user_availability_change_notifier(&self, ) -> Result<::nn::account::detail::INotifier<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(103)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn get_profile_update_notifier(&self, ) -> Result<::nn::account::detail::INotifier> {
+	pub fn get_profile_update_notifier(&self, ) -> Result<::nn::account::detail::INotifier<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(104)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	// fn store_save_data_thumbnail(&self, UNKNOWN) -> Result<UNKNOWN>;
@@ -255,8 +273,8 @@ impl IAccountServiceForSystemService {
 
 }
 
-impl FromKObject for IAccountServiceForSystemService {
-	unsafe fn from_kobject(obj: KObject) -> IAccountServiceForSystemService {
-		IAccountServiceForSystemService(Session::from_kobject(obj))
+impl<T: Object> From<T> for IAccountServiceForSystemService<T> {
+	fn from(obj: T) -> IAccountServiceForSystemService<T> {
+		IAccountServiceForSystemService(obj)
 	}
 }

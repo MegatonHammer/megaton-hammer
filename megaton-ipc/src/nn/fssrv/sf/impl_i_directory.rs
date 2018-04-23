@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IDirectory(Session);
+pub struct IDirectory<T>(T);
 
-impl AsRef<Session> for IDirectory {
-	fn as_ref(&self) -> &Session {
+impl IDirectory<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IDirectory<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IDirectory(domain)),
+			Err((sess, err)) => Err((IDirectory(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IDirectory<Session>> {
+		Ok(IDirectory(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IDirectory<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IDirectory {
+impl<T> DerefMut for IDirectory<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IDirectory<T> {
 	pub fn read(&self, unk1: &mut [::nn::fssrv::sf::IDirectoryEntry]) -> Result<u64> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
@@ -35,8 +55,8 @@ impl IDirectory {
 
 }
 
-impl FromKObject for IDirectory {
-	unsafe fn from_kobject(obj: KObject) -> IDirectory {
-		IDirectory(Session::from_kobject(obj))
+impl<T: Object> From<T> for IDirectory<T> {
+	fn from(obj: T) -> IDirectory<T> {
+		IDirectory(obj)
 	}
 }

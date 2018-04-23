@@ -1,0 +1,3 @@
+(load-nro "target/aarch64-roblabla-switch/debug/megaton-example.nro" 0x7100000000)
+(enable-hbapi)
+(run-from 0x7100000000)

@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IAudioRendererManager(Session);
+pub struct IAudioRendererManager<T>(T);
 
-impl IAudioRendererManager {
-	pub fn new() -> Result<Arc<IAudioRendererManager>> {
+impl IAudioRendererManager<Session> {
+	pub fn new() -> Result<Arc<IAudioRendererManager<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IAudioRendererManager>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IAudioRendererManager<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,31 +30,48 @@ impl IAudioRendererManager {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"audren:u").map(|s| Arc::new(unsafe { IAudioRendererManager::from_kobject(s) }));
+		let r = sm.get_service(*b"audren:u").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IAudioRendererManager<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IAudioRendererManager(domain)),
+			Err((sess, err)) => Err((IAudioRendererManager(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IAudioRendererManager<Session>> {
+		Ok(IAudioRendererManager(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IAudioRendererManager {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IAudioRendererManager<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IAudioRendererManager {
+impl<T> DerefMut for IAudioRendererManager<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IAudioRendererManager<T> {
 	// fn open_audio_renderer(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_audio_renderer_work_buffer_size(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown2(&self, unk0: u64) -> Result<Session> {
+	pub fn unknown2(&self, unk0: u64) -> Result<T> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(2)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
@@ -70,8 +88,8 @@ impl IAudioRendererManager {
 
 }
 
-impl FromKObject for IAudioRendererManager {
-	unsafe fn from_kobject(obj: KObject) -> IAudioRendererManager {
-		IAudioRendererManager(Session::from_kobject(obj))
+impl<T: Object> From<T> for IAudioRendererManager<T> {
+	fn from(obj: T) -> IAudioRendererManager<T> {
+		IAudioRendererManager(obj)
 	}
 }

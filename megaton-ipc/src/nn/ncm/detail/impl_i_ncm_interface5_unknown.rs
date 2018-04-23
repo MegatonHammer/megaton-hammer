@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct INcmInterface5Unknown(Session);
+pub struct INcmInterface5Unknown<T>(T);
 
-impl AsRef<Session> for INcmInterface5Unknown {
-	fn as_ref(&self) -> &Session {
+impl INcmInterface5Unknown<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<INcmInterface5Unknown<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(INcmInterface5Unknown(domain)),
+			Err((sess, err)) => Err((INcmInterface5Unknown(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<INcmInterface5Unknown<Session>> {
+		Ok(INcmInterface5Unknown(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for INcmInterface5Unknown<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl INcmInterface5Unknown {
+impl<T> DerefMut for INcmInterface5Unknown<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> INcmInterface5Unknown<T> {
 	pub fn unknown5(&self, ) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -53,8 +73,8 @@ impl INcmInterface5Unknown {
 
 }
 
-impl FromKObject for INcmInterface5Unknown {
-	unsafe fn from_kobject(obj: KObject) -> INcmInterface5Unknown {
-		INcmInterface5Unknown(Session::from_kobject(obj))
+impl<T: Object> From<T> for INcmInterface5Unknown<T> {
+	fn from(obj: T) -> INcmInterface5Unknown<T> {
+		INcmInterface5Unknown(obj)
 	}
 }

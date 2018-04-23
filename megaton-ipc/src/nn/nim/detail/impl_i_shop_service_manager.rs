@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IShopServiceManager(Session);
+pub struct IShopServiceManager<T>(T);
 
-impl IShopServiceManager {
-	pub fn new() -> Result<Arc<IShopServiceManager>> {
+impl IShopServiceManager<Session> {
+	pub fn new() -> Result<Arc<IShopServiceManager<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IShopServiceManager>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IShopServiceManager<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IShopServiceManager {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"nim:shp\0").map(|s| Arc::new(unsafe { IShopServiceManager::from_kobject(s) }));
+		let r = sm.get_service(*b"nim:shp\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IShopServiceManager<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IShopServiceManager(domain)),
+			Err((sess, err)) => Err((IShopServiceManager(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IShopServiceManager<Session>> {
+		Ok(IShopServiceManager(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IShopServiceManager {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IShopServiceManager<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IShopServiceManager {
+impl<T> DerefMut for IShopServiceManager<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IShopServiceManager<T> {
 	// fn request_device_authentication_token(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn request_cached_device_authentication_token(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn request_register_device_account(&self, UNKNOWN) -> Result<UNKNOWN>;
@@ -113,8 +131,8 @@ impl IShopServiceManager {
 
 }
 
-impl FromKObject for IShopServiceManager {
-	unsafe fn from_kobject(obj: KObject) -> IShopServiceManager {
-		IShopServiceManager(Session::from_kobject(obj))
+impl<T: Object> From<T> for IShopServiceManager<T> {
+	fn from(obj: T) -> IShopServiceManager<T> {
+		IShopServiceManager(obj)
 	}
 }

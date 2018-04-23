@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IAlbumControlService(Session);
+pub struct IAlbumControlService<T>(T);
 
-impl IAlbumControlService {
-	pub fn new() -> Result<Arc<IAlbumControlService>> {
+impl IAlbumControlService<Session> {
+	pub fn new() -> Result<Arc<IAlbumControlService<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IAlbumControlService>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IAlbumControlService<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IAlbumControlService {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"caps:c\0\0").map(|s| Arc::new(unsafe { IAlbumControlService::from_kobject(s) }));
+		let r = sm.get_service(*b"caps:c\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IAlbumControlService<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IAlbumControlService(domain)),
+			Err((sess, err)) => Err((IAlbumControlService(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IAlbumControlService<Session>> {
+		Ok(IAlbumControlService(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IAlbumControlService {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IAlbumControlService<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IAlbumControlService {
+impl<T> DerefMut for IAlbumControlService<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IAlbumControlService<T> {
 	pub fn unknown2001(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -126,8 +144,8 @@ impl IAlbumControlService {
 	// fn unknown2301(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
-impl FromKObject for IAlbumControlService {
-	unsafe fn from_kobject(obj: KObject) -> IAlbumControlService {
-		IAlbumControlService(Session::from_kobject(obj))
+impl<T: Object> From<T> for IAlbumControlService<T> {
+	fn from(obj: T) -> IAlbumControlService<T> {
+		IAlbumControlService(obj)
 	}
 }

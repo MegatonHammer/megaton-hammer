@@ -1,27 +1,47 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IBcatService(Session);
+pub struct IBcatService<T>(T);
 
-impl AsRef<Session> for IBcatService {
-	fn as_ref(&self) -> &Session {
+impl IBcatService<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IBcatService<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IBcatService(domain)),
+			Err((sess, err)) => Err((IBcatService(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IBcatService<Session>> {
+		Ok(IBcatService(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IBcatService<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IBcatService {
-	pub fn request_sync_delivery_cache(&self, ) -> Result<::nn::bcat::detail::ipc::IDeliveryCacheProgressService> {
+impl<T> DerefMut for IBcatService<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IBcatService<T> {
+	pub fn request_sync_delivery_cache(&self, ) -> Result<::nn::bcat::detail::ipc::IDeliveryCacheProgressService<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(10100)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn request_sync_delivery_cache_with_application_id(&self, unk0: u32, unk1: ::nn::ApplicationId) -> Result<::nn::bcat::detail::ipc::IDeliveryCacheProgressService> {
+	pub fn request_sync_delivery_cache_with_application_id(&self, unk0: u32, unk1: ::nn::ApplicationId) -> Result<::nn::bcat::detail::ipc::IDeliveryCacheProgressService<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -36,7 +56,7 @@ impl IBcatService {
 			})
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	pub fn set_passphrase(&self, unk0: ::nn::ApplicationId, unk1: &[i8]) -> Result<()> {
@@ -136,8 +156,8 @@ impl IBcatService {
 
 }
 
-impl FromKObject for IBcatService {
-	unsafe fn from_kobject(obj: KObject) -> IBcatService {
-		IBcatService(Session::from_kobject(obj))
+impl<T: Object> From<T> for IBcatService<T> {
+	fn from(obj: T) -> IBcatService<T> {
+		IBcatService(obj)
 	}
 }

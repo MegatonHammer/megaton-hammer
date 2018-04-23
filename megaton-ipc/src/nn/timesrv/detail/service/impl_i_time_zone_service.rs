@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct ITimeZoneService(Session);
+pub struct ITimeZoneService<T>(T);
 
-impl AsRef<Session> for ITimeZoneService {
-	fn as_ref(&self) -> &Session {
+impl ITimeZoneService<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<ITimeZoneService<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(ITimeZoneService(domain)),
+			Err((sess, err)) => Err((ITimeZoneService(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<ITimeZoneService<Session>> {
+		Ok(ITimeZoneService(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for ITimeZoneService<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl ITimeZoneService {
+impl<T> DerefMut for ITimeZoneService<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> ITimeZoneService<T> {
 	pub fn get_device_location_name(&self, ) -> Result<::nn::time::LocationName> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -132,8 +152,8 @@ impl ITimeZoneService {
 
 }
 
-impl FromKObject for ITimeZoneService {
-	unsafe fn from_kobject(obj: KObject) -> ITimeZoneService {
-		ITimeZoneService(Session::from_kobject(obj))
+impl<T: Object> From<T> for ITimeZoneService<T> {
+	fn from(obj: T) -> ITimeZoneService<T> {
+		ITimeZoneService(obj)
 	}
 }

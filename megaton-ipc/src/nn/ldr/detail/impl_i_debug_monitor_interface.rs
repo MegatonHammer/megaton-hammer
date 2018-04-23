@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IDebugMonitorInterface(Session);
+pub struct IDebugMonitorInterface<T>(T);
 
-impl IDebugMonitorInterface {
-	pub fn new() -> Result<Arc<IDebugMonitorInterface>> {
+impl IDebugMonitorInterface<Session> {
+	pub fn new() -> Result<Arc<IDebugMonitorInterface<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IDebugMonitorInterface>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IDebugMonitorInterface<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IDebugMonitorInterface {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"ldr:dmnt").map(|s| Arc::new(unsafe { IDebugMonitorInterface::from_kobject(s) }));
+		let r = sm.get_service(*b"ldr:dmnt").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IDebugMonitorInterface<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IDebugMonitorInterface(domain)),
+			Err((sess, err)) => Err((IDebugMonitorInterface(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IDebugMonitorInterface<Session>> {
+		Ok(IDebugMonitorInterface(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IDebugMonitorInterface {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IDebugMonitorInterface<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IDebugMonitorInterface {
+impl<T> DerefMut for IDebugMonitorInterface<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IDebugMonitorInterface<T> {
 	pub fn add_process_to_debug_launch_queue(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -76,8 +94,8 @@ impl IDebugMonitorInterface {
 
 }
 
-impl FromKObject for IDebugMonitorInterface {
-	unsafe fn from_kobject(obj: KObject) -> IDebugMonitorInterface {
-		IDebugMonitorInterface(Session::from_kobject(obj))
+impl<T: Object> From<T> for IDebugMonitorInterface<T> {
+	fn from(obj: T) -> IDebugMonitorInterface<T> {
+		IDebugMonitorInterface(obj)
 	}
 }

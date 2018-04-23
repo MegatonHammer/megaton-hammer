@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IWriter(Session);
+pub struct IWriter<T>(T);
 
-impl IWriter {
-	pub fn new() -> Result<Arc<IWriter>> {
+impl IWriter<Session> {
+	pub fn new() -> Result<Arc<IWriter<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IWriter>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IWriter<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,29 +30,46 @@ impl IWriter {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"arp:w\0\0\0").map(|s| Arc::new(unsafe { IWriter::from_kobject(s) }));
+		let r = sm.get_service(*b"arp:w\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IWriter<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IWriter(domain)),
+			Err((sess, err)) => Err((IWriter(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IWriter<Session>> {
+		Ok(IWriter(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IWriter {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IWriter<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IWriter {
-	pub fn get_i_registrar(&self, ) -> Result<Session> {
+impl<T> DerefMut for IWriter<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IWriter<T> {
+	pub fn get_i_registrar(&self, ) -> Result<T> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(0)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	pub fn delete_properties(&self, unk0: u64) -> Result<()> {
@@ -66,8 +84,8 @@ impl IWriter {
 
 }
 
-impl FromKObject for IWriter {
-	unsafe fn from_kobject(obj: KObject) -> IWriter {
-		IWriter(Session::from_kobject(obj))
+impl<T: Object> From<T> for IWriter<T> {
+	fn from(obj: T) -> IWriter<T> {
+		IWriter(obj)
 	}
 }

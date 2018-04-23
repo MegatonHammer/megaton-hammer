@@ -1,60 +1,80 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IApplicationCreator(Session);
+pub struct IApplicationCreator<T>(T);
 
-impl AsRef<Session> for IApplicationCreator {
-	fn as_ref(&self) -> &Session {
+impl IApplicationCreator<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IApplicationCreator<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IApplicationCreator(domain)),
+			Err((sess, err)) => Err((IApplicationCreator(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IApplicationCreator<Session>> {
+		Ok(IApplicationCreator(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IApplicationCreator<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IApplicationCreator {
-	pub fn create_application(&self, unk0: ::nn::ncm::ApplicationId) -> Result<::nn::am::service::IApplicationAccessor> {
+impl<T> DerefMut for IApplicationCreator<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IApplicationCreator<T> {
+	pub fn create_application(&self, unk0: ::nn::ncm::ApplicationId) -> Result<::nn::am::service::IApplicationAccessor<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(0)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn pop_launch_requested_application(&self, ) -> Result<::nn::am::service::IApplicationAccessor> {
+	pub fn pop_launch_requested_application(&self, ) -> Result<::nn::am::service::IApplicationAccessor<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(1)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn create_system_application(&self, unk0: ::nn::ncm::SystemApplicationId) -> Result<::nn::am::service::IApplicationAccessor> {
+	pub fn create_system_application(&self, unk0: ::nn::ncm::SystemApplicationId) -> Result<::nn::am::service::IApplicationAccessor<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(10)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn pop_floating_application_for_development(&self, ) -> Result<::nn::am::service::IApplicationAccessor> {
+	pub fn pop_floating_application_for_development(&self, ) -> Result<::nn::am::service::IApplicationAccessor<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(100)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 }
 
-impl FromKObject for IApplicationCreator {
-	unsafe fn from_kobject(obj: KObject) -> IApplicationCreator {
-		IApplicationCreator(Session::from_kobject(obj))
+impl<T: Object> From<T> for IApplicationCreator<T> {
+	fn from(obj: T) -> IApplicationCreator<T> {
+		IApplicationCreator(obj)
 	}
 }

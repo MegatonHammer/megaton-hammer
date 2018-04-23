@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct ILockAccessor(Session);
+pub struct ILockAccessor<T>(T);
 
-impl AsRef<Session> for ILockAccessor {
-	fn as_ref(&self) -> &Session {
+impl ILockAccessor<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<ILockAccessor<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(ILockAccessor(domain)),
+			Err((sess, err)) => Err((ILockAccessor(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<ILockAccessor<Session>> {
+		Ok(ILockAccessor(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for ILockAccessor<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl ILockAccessor {
+impl<T> DerefMut for ILockAccessor<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> ILockAccessor<T> {
 	pub fn try_lock(&self, unk0: bool) -> Result<(bool, KObject)> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -43,8 +63,8 @@ impl ILockAccessor {
 
 }
 
-impl FromKObject for ILockAccessor {
-	unsafe fn from_kobject(obj: KObject) -> ILockAccessor {
-		ILockAccessor(Session::from_kobject(obj))
+impl<T: Object> From<T> for ILockAccessor<T> {
+	fn from(obj: T) -> ILockAccessor<T> {
+		ILockAccessor(obj)
 	}
 }

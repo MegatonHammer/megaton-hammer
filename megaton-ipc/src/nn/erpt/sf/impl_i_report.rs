@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IReport(Session);
+pub struct IReport<T>(T);
 
-impl AsRef<Session> for IReport {
-	fn as_ref(&self) -> &Session {
+impl IReport<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IReport<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IReport(domain)),
+			Err((sess, err)) => Err((IReport(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IReport<Session>> {
+		Ok(IReport(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IReport<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IReport {
+impl<T> DerefMut for IReport<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IReport<T> {
 	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown2(&self, unk0: u32) -> Result<()> {
@@ -55,8 +75,8 @@ impl IReport {
 
 }
 
-impl FromKObject for IReport {
-	unsafe fn from_kobject(obj: KObject) -> IReport {
-		IReport(Session::from_kobject(obj))
+impl<T: Object> From<T> for IReport<T> {
+	fn from(obj: T) -> IReport<T> {
+		IReport(obj)
 	}
 }

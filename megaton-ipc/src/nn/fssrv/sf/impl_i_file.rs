@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IFile(Session);
+pub struct IFile<T>(T);
 
-impl AsRef<Session> for IFile {
-	fn as_ref(&self) -> &Session {
+impl IFile<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IFile<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IFile(domain)),
+			Err((sess, err)) => Err((IFile(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IFile<Session>> {
+		Ok(IFile(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IFile<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IFile {
+impl<T> DerefMut for IFile<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IFile<T> {
 	pub fn read(&self, unk0: u32, offset: u64, size: u64, out_buf: &mut [i8]) -> Result<u64> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
@@ -87,8 +107,8 @@ impl IFile {
 
 }
 
-impl FromKObject for IFile {
-	unsafe fn from_kobject(obj: KObject) -> IFile {
-		IFile(Session::from_kobject(obj))
+impl<T: Object> From<T> for IFile<T> {
+	fn from(obj: T) -> IFile<T> {
+		IFile(obj)
 	}
 }

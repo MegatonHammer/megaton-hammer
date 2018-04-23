@@ -1,17 +1,37 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IDsInterface(Session);
+pub struct IDsInterface<T>(T);
 
-impl AsRef<Session> for IDsInterface {
-	fn as_ref(&self) -> &Session {
+impl IDsInterface<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IDsInterface<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IDsInterface(domain)),
+			Err((sess, err)) => Err((IDsInterface(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IDsInterface<Session>> {
+		Ok(IDsInterface(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IDsInterface<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IDsInterface {
-	pub fn get_ds_endpoint(&self, unk0: &[::nn::usb::UsbEndpointDescriptor]) -> Result<::nn::usb::ds::IDsEndpoint> {
+impl<T> DerefMut for IDsInterface<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IDsInterface<T> {
+	pub fn get_ds_endpoint(&self, unk0: &[::nn::usb::UsbEndpointDescriptor]) -> Result<::nn::usb::ds::IDsEndpoint<T>> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -20,7 +40,7 @@ impl IDsInterface {
 			.descriptor(IPCBuffer::from_slice(unk0, 5))
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	pub fn get_setup_event(&self, ) -> Result<KObject> {
@@ -124,8 +144,8 @@ impl IDsInterface {
 
 }
 
-impl FromKObject for IDsInterface {
-	unsafe fn from_kobject(obj: KObject) -> IDsInterface {
-		IDsInterface(Session::from_kobject(obj))
+impl<T: Object> From<T> for IDsInterface<T> {
+	fn from(obj: T) -> IDsInterface<T> {
+		IDsInterface(obj)
 	}
 }

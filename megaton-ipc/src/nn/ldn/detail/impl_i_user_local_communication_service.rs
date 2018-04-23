@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IUserLocalCommunicationService(Session);
+pub struct IUserLocalCommunicationService<T>(T);
 
-impl AsRef<Session> for IUserLocalCommunicationService {
-	fn as_ref(&self) -> &Session {
+impl IUserLocalCommunicationService<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IUserLocalCommunicationService<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IUserLocalCommunicationService(domain)),
+			Err((sess, err)) => Err((IUserLocalCommunicationService(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IUserLocalCommunicationService<Session>> {
+		Ok(IUserLocalCommunicationService(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IUserLocalCommunicationService<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IUserLocalCommunicationService {
+impl<T> DerefMut for IUserLocalCommunicationService<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IUserLocalCommunicationService<T> {
 	pub fn get_state(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -191,8 +211,8 @@ impl IUserLocalCommunicationService {
 
 }
 
-impl FromKObject for IUserLocalCommunicationService {
-	unsafe fn from_kobject(obj: KObject) -> IUserLocalCommunicationService {
-		IUserLocalCommunicationService(Session::from_kobject(obj))
+impl<T: Object> From<T> for IUserLocalCommunicationService<T> {
+	fn from(obj: T) -> IUserLocalCommunicationService<T> {
+		IUserLocalCommunicationService(obj)
 	}
 }

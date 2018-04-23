@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IAudioController(Session);
+pub struct IAudioController<T>(T);
 
-impl AsRef<Session> for IAudioController {
-	fn as_ref(&self) -> &Session {
+impl IAudioController<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IAudioController<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IAudioController(domain)),
+			Err((sess, err)) => Err((IAudioController(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IAudioController<Session>> {
+		Ok(IAudioController(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IAudioController<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IAudioController {
+impl<T> DerefMut for IAudioController<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IAudioController<T> {
 	pub fn set_expected_master_volume(&self, unk0: f32, unk1: f32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -79,8 +99,8 @@ impl IAudioController {
 
 }
 
-impl FromKObject for IAudioController {
-	unsafe fn from_kobject(obj: KObject) -> IAudioController {
-		IAudioController(Session::from_kobject(obj))
+impl<T: Object> From<T> for IAudioController<T> {
+	fn from(obj: T) -> IAudioController<T> {
+		IAudioController(obj)
 	}
 }

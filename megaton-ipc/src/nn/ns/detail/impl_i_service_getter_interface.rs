@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IServiceGetterInterface(Session);
+pub struct IServiceGetterInterface<T>(T);
 
-impl IServiceGetterInterface {
-	pub fn new_ns_rid() -> Result<Arc<IServiceGetterInterface>> {
+impl IServiceGetterInterface<Session> {
+	pub fn new_ns_rid() -> Result<Arc<IServiceGetterInterface<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IServiceGetterInterface>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IServiceGetterInterface<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,19 +30,20 @@ impl IServiceGetterInterface {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"ns:rid\0\0").map(|s| Arc::new(unsafe { IServiceGetterInterface::from_kobject(s) }));
+		let r = sm.get_service(*b"ns:rid\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
-	pub fn new_ns_web() -> Result<Arc<IServiceGetterInterface>> {
+
+	pub fn new_ns_web() -> Result<Arc<IServiceGetterInterface<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IServiceGetterInterface>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IServiceGetterInterface<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -58,19 +60,20 @@ impl IServiceGetterInterface {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"ns:web\0\0").map(|s| Arc::new(unsafe { IServiceGetterInterface::from_kobject(s) }));
+		let r = sm.get_service(*b"ns:web\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
-	pub fn new_ns_ec() -> Result<Arc<IServiceGetterInterface>> {
+
+	pub fn new_ns_ec() -> Result<Arc<IServiceGetterInterface<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IServiceGetterInterface>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IServiceGetterInterface<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -87,19 +90,20 @@ impl IServiceGetterInterface {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"ns:ec\0\0\0").map(|s| Arc::new(unsafe { IServiceGetterInterface::from_kobject(s) }));
+		let r = sm.get_service(*b"ns:ec\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
-	pub fn new_ns_am2() -> Result<Arc<IServiceGetterInterface>> {
+
+	pub fn new_ns_am2() -> Result<Arc<IServiceGetterInterface<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IServiceGetterInterface>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IServiceGetterInterface<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -116,19 +120,20 @@ impl IServiceGetterInterface {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"ns:am2\0\0").map(|s| Arc::new(unsafe { IServiceGetterInterface::from_kobject(s) }));
+		let r = sm.get_service(*b"ns:am2\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
-	pub fn new_ns_rt() -> Result<Arc<IServiceGetterInterface>> {
+
+	pub fn new_ns_rt() -> Result<Arc<IServiceGetterInterface<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IServiceGetterInterface>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IServiceGetterInterface<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -145,21 +150,38 @@ impl IServiceGetterInterface {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"ns:rt\0\0\0").map(|s| Arc::new(unsafe { IServiceGetterInterface::from_kobject(s) }));
+		let r = sm.get_service(*b"ns:rt\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IServiceGetterInterface<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IServiceGetterInterface(domain)),
+			Err((sess, err)) => Err((IServiceGetterInterface(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IServiceGetterInterface<Session>> {
+		Ok(IServiceGetterInterface(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IServiceGetterInterface {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IServiceGetterInterface<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IServiceGetterInterface {
+impl<T> DerefMut for IServiceGetterInterface<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IServiceGetterInterface<T> {
 	pub fn get_e_commerce_interface(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -180,70 +202,70 @@ impl IServiceGetterInterface {
 		Ok(())
 	}
 
-	pub fn get_factory_reset_interface(&self, ) -> Result<Session> {
+	pub fn get_factory_reset_interface(&self, ) -> Result<T> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(7994)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn get_account_proxy_interface(&self, ) -> Result<Session> {
+	pub fn get_account_proxy_interface(&self, ) -> Result<T> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(7995)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn get_application_manager_interface(&self, ) -> Result<Session> {
+	pub fn get_application_manager_interface(&self, ) -> Result<T> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(7996)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn get_download_task_interface(&self, ) -> Result<Session> {
+	pub fn get_download_task_interface(&self, ) -> Result<T> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(7997)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn get_content_management_interface(&self, ) -> Result<Session> {
+	pub fn get_content_management_interface(&self, ) -> Result<T> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(7998)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn get_document_interface(&self, ) -> Result<Session> {
+	pub fn get_document_interface(&self, ) -> Result<T> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(7999)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 }
 
-impl FromKObject for IServiceGetterInterface {
-	unsafe fn from_kobject(obj: KObject) -> IServiceGetterInterface {
-		IServiceGetterInterface(Session::from_kobject(obj))
+impl<T: Object> From<T> for IServiceGetterInterface<T> {
+	fn from(obj: T) -> IServiceGetterInterface<T> {
+		IServiceGetterInterface(obj)
 	}
 }

@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct INotifyService(Session);
+pub struct INotifyService<T>(T);
 
-impl INotifyService {
-	pub fn new() -> Result<Arc<INotifyService>> {
+impl INotifyService<Session> {
+	pub fn new() -> Result<Arc<INotifyService<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<INotifyService>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<INotifyService<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl INotifyService {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"pdm:ntfy").map(|s| Arc::new(unsafe { INotifyService::from_kobject(s) }));
+		let r = sm.get_service(*b"pdm:ntfy").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<INotifyService<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(INotifyService(domain)),
+			Err((sess, err)) => Err((INotifyService(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<INotifyService<Session>> {
+		Ok(INotifyService(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for INotifyService {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for INotifyService<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl INotifyService {
+impl<T> DerefMut for INotifyService<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> INotifyService<T> {
 	pub fn unknown0(&self, unk0: u64, unk1: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -95,8 +113,8 @@ impl INotifyService {
 	// fn unknown5(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
-impl FromKObject for INotifyService {
-	unsafe fn from_kobject(obj: KObject) -> INotifyService {
-		INotifyService(Session::from_kobject(obj))
+impl<T: Object> From<T> for INotifyService<T> {
+	fn from(obj: T) -> INotifyService<T> {
+		INotifyService(obj)
 	}
 }

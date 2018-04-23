@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IQueryService(Session);
+pub struct IQueryService<T>(T);
 
-impl IQueryService {
-	pub fn new() -> Result<Arc<IQueryService>> {
+impl IQueryService<Session> {
+	pub fn new() -> Result<Arc<IQueryService<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IQueryService>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IQueryService<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IQueryService {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"pdm:qry\0").map(|s| Arc::new(unsafe { IQueryService::from_kobject(s) }));
+		let r = sm.get_service(*b"pdm:qry\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IQueryService<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IQueryService(domain)),
+			Err((sess, err)) => Err((IQueryService(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IQueryService<Session>> {
+		Ok(IQueryService(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IQueryService {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IQueryService<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IQueryService {
+impl<T> DerefMut for IQueryService<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IQueryService<T> {
 	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
@@ -137,8 +155,8 @@ impl IQueryService {
 	// fn unknown10(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
-impl FromKObject for IQueryService {
-	unsafe fn from_kobject(obj: KObject) -> IQueryService {
-		IQueryService(Session::from_kobject(obj))
+impl<T: Object> From<T> for IQueryService<T> {
+	fn from(obj: T) -> IQueryService<T> {
+		IQueryService(obj)
 	}
 }

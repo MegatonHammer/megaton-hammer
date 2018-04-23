@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IPmControl(Session);
+pub struct IPmControl<T>(T);
 
-impl IPmControl {
-	pub fn new() -> Result<Arc<IPmControl>> {
+impl IPmControl<Session> {
+	pub fn new() -> Result<Arc<IPmControl<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IPmControl>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IPmControl<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IPmControl {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"psc:c\0\0\0").map(|s| Arc::new(unsafe { IPmControl::from_kobject(s) }));
+		let r = sm.get_service(*b"psc:c\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IPmControl<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IPmControl(domain)),
+			Err((sess, err)) => Err((IPmControl(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IPmControl<Session>> {
+		Ok(IPmControl(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IPmControl {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IPmControl<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IPmControl {
+impl<T> DerefMut for IPmControl<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IPmControl<T> {
 	pub fn unknown0(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -117,8 +135,8 @@ impl IPmControl {
 	// fn unknown6(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
-impl FromKObject for IPmControl {
-	unsafe fn from_kobject(obj: KObject) -> IPmControl {
-		IPmControl(Session::from_kobject(obj))
+impl<T: Object> From<T> for IPmControl<T> {
+	fn from(obj: T) -> IPmControl<T> {
+		IPmControl(obj)
 	}
 }

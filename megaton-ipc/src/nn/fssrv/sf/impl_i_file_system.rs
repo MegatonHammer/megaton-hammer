@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IFileSystem(Session);
+pub struct IFileSystem<T>(T);
 
-impl AsRef<Session> for IFileSystem {
-	fn as_ref(&self) -> &Session {
+impl IFileSystem<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IFileSystem<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IFileSystem(domain)),
+			Err((sess, err)) => Err((IFileSystem(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IFileSystem<Session>> {
+		Ok(IFileSystem(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IFileSystem<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IFileSystem {
+impl<T> DerefMut for IFileSystem<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IFileSystem<T> {
 	pub fn create_file(&self, mode: u32, size: u64, path: &[u8; 0x301]) -> Result<()> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
@@ -117,7 +137,7 @@ impl IFileSystem {
 		Ok(*res.get_raw())
 	}
 
-	pub fn open_file(&self, mode: u32, path: &[u8; 0x301]) -> Result<::nn::fssrv::sf::IFile> {
+	pub fn open_file(&self, mode: u32, path: &[u8; 0x301]) -> Result<::nn::fssrv::sf::IFile<T>> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -126,10 +146,10 @@ impl IFileSystem {
 			.descriptor(IPCBuffer::from_ref(path, 0x19))
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn open_directory(&self, unk0: u32, path: &[u8; 0x301]) -> Result<::nn::fssrv::sf::IDirectory> {
+	pub fn open_directory(&self, unk0: u32, path: &[u8; 0x301]) -> Result<::nn::fssrv::sf::IDirectory<T>> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -138,7 +158,7 @@ impl IFileSystem {
 			.descriptor(IPCBuffer::from_ref(path, 0x19))
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	pub fn commit(&self, ) -> Result<()> {
@@ -191,8 +211,8 @@ impl IFileSystem {
 	// fn get_file_time_stamp_raw(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
-impl FromKObject for IFileSystem {
-	unsafe fn from_kobject(obj: KObject) -> IFileSystem {
-		IFileSystem(Session::from_kobject(obj))
+impl<T: Object> From<T> for IFileSystem<T> {
+	fn from(obj: T) -> IFileSystem<T> {
+		IFileSystem(obj)
 	}
 }

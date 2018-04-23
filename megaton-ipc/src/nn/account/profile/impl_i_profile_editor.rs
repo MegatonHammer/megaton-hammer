@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IProfileEditor(Session);
+pub struct IProfileEditor<T>(T);
 
-impl AsRef<Session> for IProfileEditor {
-	fn as_ref(&self) -> &Session {
+impl IProfileEditor<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IProfileEditor<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IProfileEditor(domain)),
+			Err((sess, err)) => Err((IProfileEditor(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IProfileEditor<Session>> {
+		Ok(IProfileEditor(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IProfileEditor<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IProfileEditor {
+impl<T> DerefMut for IProfileEditor<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IProfileEditor<T> {
 	pub fn get(&self, unk1: &mut ::nn::account::profile::UserData) -> Result<::nn::account::profile::ProfileBase> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
@@ -59,8 +79,8 @@ impl IProfileEditor {
 	// fn store_with_image(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
-impl FromKObject for IProfileEditor {
-	unsafe fn from_kobject(obj: KObject) -> IProfileEditor {
-		IProfileEditor(Session::from_kobject(obj))
+impl<T: Object> From<T> for IProfileEditor<T> {
+	fn from(obj: T) -> IProfileEditor<T> {
+		IProfileEditor(obj)
 	}
 }

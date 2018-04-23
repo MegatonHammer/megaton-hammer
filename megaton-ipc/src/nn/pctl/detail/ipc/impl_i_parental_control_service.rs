@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IParentalControlService(Session);
+pub struct IParentalControlService<T>(T);
 
-impl AsRef<Session> for IParentalControlService {
-	fn as_ref(&self) -> &Session {
+impl IParentalControlService<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IParentalControlService<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IParentalControlService(domain)),
+			Err((sess, err)) => Err((IParentalControlService(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IParentalControlService<Session>> {
+		Ok(IParentalControlService(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IParentalControlService<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IParentalControlService {
+impl<T> DerefMut for IParentalControlService<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IParentalControlService<T> {
 	pub fn check_free_communication_permission(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -774,8 +794,8 @@ impl IParentalControlService {
 
 }
 
-impl FromKObject for IParentalControlService {
-	unsafe fn from_kobject(obj: KObject) -> IParentalControlService {
-		IParentalControlService(Session::from_kobject(obj))
+impl<T: Object> From<T> for IParentalControlService<T> {
+	fn from(obj: T) -> IParentalControlService<T> {
+		IParentalControlService(obj)
 	}
 }

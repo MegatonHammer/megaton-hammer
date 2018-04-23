@@ -1,24 +1,44 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IOAuthProcedureForNintendoAccountLinkage(Session);
+pub struct IOAuthProcedureForNintendoAccountLinkage<T>(T);
 
-impl AsRef<Session> for IOAuthProcedureForNintendoAccountLinkage {
-	fn as_ref(&self) -> &Session {
+impl IOAuthProcedureForNintendoAccountLinkage<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IOAuthProcedureForNintendoAccountLinkage<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IOAuthProcedureForNintendoAccountLinkage(domain)),
+			Err((sess, err)) => Err((IOAuthProcedureForNintendoAccountLinkage(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IOAuthProcedureForNintendoAccountLinkage<Session>> {
+		Ok(IOAuthProcedureForNintendoAccountLinkage(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IOAuthProcedureForNintendoAccountLinkage<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IOAuthProcedureForNintendoAccountLinkage {
-	pub fn prepare_async(&self, ) -> Result<::nn::account::detail::IAsyncContext> {
+impl<T> DerefMut for IOAuthProcedureForNintendoAccountLinkage<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IOAuthProcedureForNintendoAccountLinkage<T> {
+	pub fn prepare_async(&self, ) -> Result<::nn::account::detail::IAsyncContext<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(0)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	pub fn get_request(&self, unk0: &mut ::nn::account::RequestUrl, unk1: &mut ::nn::account::CallbackUri) -> Result<()> {
@@ -46,7 +66,7 @@ impl IOAuthProcedureForNintendoAccountLinkage {
 		Ok(())
 	}
 
-	pub fn apply_response_async(&self, unk0: &[i8]) -> Result<::nn::account::detail::IAsyncContext> {
+	pub fn apply_response_async(&self, unk0: &[i8]) -> Result<::nn::account::detail::IAsyncContext<T>> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -55,7 +75,7 @@ impl IOAuthProcedureForNintendoAccountLinkage {
 			.descriptor(IPCBuffer::from_slice(unk0, 9))
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	pub fn suspend(&self, ) -> Result<::nn::account::detail::Uuid> {
@@ -105,8 +125,8 @@ impl IOAuthProcedureForNintendoAccountLinkage {
 
 }
 
-impl FromKObject for IOAuthProcedureForNintendoAccountLinkage {
-	unsafe fn from_kobject(obj: KObject) -> IOAuthProcedureForNintendoAccountLinkage {
-		IOAuthProcedureForNintendoAccountLinkage(Session::from_kobject(obj))
+impl<T: Object> From<T> for IOAuthProcedureForNintendoAccountLinkage<T> {
+	fn from(obj: T) -> IOAuthProcedureForNintendoAccountLinkage<T> {
+		IOAuthProcedureForNintendoAccountLinkage(obj)
 	}
 }

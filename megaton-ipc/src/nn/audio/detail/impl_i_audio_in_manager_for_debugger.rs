@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IAudioInManagerForDebugger(Session);
+pub struct IAudioInManagerForDebugger<T>(T);
 
-impl IAudioInManagerForDebugger {
-	pub fn new() -> Result<Arc<IAudioInManagerForDebugger>> {
+impl IAudioInManagerForDebugger<Session> {
+	pub fn new() -> Result<Arc<IAudioInManagerForDebugger<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IAudioInManagerForDebugger>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IAudioInManagerForDebugger<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IAudioInManagerForDebugger {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"audin:d\0").map(|s| Arc::new(unsafe { IAudioInManagerForDebugger::from_kobject(s) }));
+		let r = sm.get_service(*b"audin:d\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IAudioInManagerForDebugger<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IAudioInManagerForDebugger(domain)),
+			Err((sess, err)) => Err((IAudioInManagerForDebugger(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IAudioInManagerForDebugger<Session>> {
+		Ok(IAudioInManagerForDebugger(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IAudioInManagerForDebugger {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IAudioInManagerForDebugger<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IAudioInManagerForDebugger {
+impl<T> DerefMut for IAudioInManagerForDebugger<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IAudioInManagerForDebugger<T> {
 	pub fn list_audio_ins(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -99,8 +117,8 @@ impl IAudioInManagerForDebugger {
 
 }
 
-impl FromKObject for IAudioInManagerForDebugger {
-	unsafe fn from_kobject(obj: KObject) -> IAudioInManagerForDebugger {
-		IAudioInManagerForDebugger(Session::from_kobject(obj))
+impl<T: Object> From<T> for IAudioInManagerForDebugger<T> {
+	fn from(obj: T) -> IAudioInManagerForDebugger<T> {
+		IAudioInManagerForDebugger(obj)
 	}
 }

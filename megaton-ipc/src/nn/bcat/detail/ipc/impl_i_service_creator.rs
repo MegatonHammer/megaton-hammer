@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IServiceCreator(Session);
+pub struct IServiceCreator<T>(T);
 
-impl IServiceCreator {
-	pub fn new_bcat_a() -> Result<Arc<IServiceCreator>> {
+impl IServiceCreator<Session> {
+	pub fn new_bcat_a() -> Result<Arc<IServiceCreator<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IServiceCreator>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IServiceCreator<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,19 +30,20 @@ impl IServiceCreator {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"bcat:a\0\0").map(|s| Arc::new(unsafe { IServiceCreator::from_kobject(s) }));
+		let r = sm.get_service(*b"bcat:a\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
-	pub fn new_bcat_m() -> Result<Arc<IServiceCreator>> {
+
+	pub fn new_bcat_m() -> Result<Arc<IServiceCreator<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IServiceCreator>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IServiceCreator<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -58,19 +60,20 @@ impl IServiceCreator {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"bcat:m\0\0").map(|s| Arc::new(unsafe { IServiceCreator::from_kobject(s) }));
+		let r = sm.get_service(*b"bcat:m\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
-	pub fn new_bcat_u() -> Result<Arc<IServiceCreator>> {
+
+	pub fn new_bcat_u() -> Result<Arc<IServiceCreator<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IServiceCreator>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IServiceCreator<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -87,19 +90,20 @@ impl IServiceCreator {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"bcat:u\0\0").map(|s| Arc::new(unsafe { IServiceCreator::from_kobject(s) }));
+		let r = sm.get_service(*b"bcat:u\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
-	pub fn new_bcat_s() -> Result<Arc<IServiceCreator>> {
+
+	pub fn new_bcat_s() -> Result<Arc<IServiceCreator<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IServiceCreator>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IServiceCreator<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -116,22 +120,39 @@ impl IServiceCreator {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"bcat:s\0\0").map(|s| Arc::new(unsafe { IServiceCreator::from_kobject(s) }));
+		let r = sm.get_service(*b"bcat:s\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IServiceCreator<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IServiceCreator(domain)),
+			Err((sess, err)) => Err((IServiceCreator(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IServiceCreator<Session>> {
+		Ok(IServiceCreator(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IServiceCreator {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IServiceCreator<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IServiceCreator {
-	pub fn create_bcat_service(&self, unk0: u64) -> Result<::nn::bcat::detail::ipc::IBcatService> {
+impl<T> DerefMut for IServiceCreator<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IServiceCreator<T> {
+	pub fn create_bcat_service(&self, unk0: u64) -> Result<::nn::bcat::detail::ipc::IBcatService<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(0)
@@ -139,10 +160,10 @@ impl IServiceCreator {
 			.send_pid()
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn create_delivery_cache_storage_service(&self, unk0: u64) -> Result<::nn::bcat::detail::ipc::IDeliveryCacheStorageService> {
+	pub fn create_delivery_cache_storage_service(&self, unk0: u64) -> Result<::nn::bcat::detail::ipc::IDeliveryCacheStorageService<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(1)
@@ -150,23 +171,23 @@ impl IServiceCreator {
 			.send_pid()
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn create_delivery_cache_storage_service_with_application_id(&self, unk0: ::nn::ApplicationId) -> Result<::nn::bcat::detail::ipc::IDeliveryCacheStorageService> {
+	pub fn create_delivery_cache_storage_service_with_application_id(&self, unk0: ::nn::ApplicationId) -> Result<::nn::bcat::detail::ipc::IDeliveryCacheStorageService<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(2)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 }
 
-impl FromKObject for IServiceCreator {
-	unsafe fn from_kobject(obj: KObject) -> IServiceCreator {
-		IServiceCreator(Session::from_kobject(obj))
+impl<T: Object> From<T> for IServiceCreator<T> {
+	fn from(obj: T) -> IServiceCreator<T> {
+		IServiceCreator(obj)
 	}
 }

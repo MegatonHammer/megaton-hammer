@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IContentMetaDatabase(Session);
+pub struct IContentMetaDatabase<T>(T);
 
-impl AsRef<Session> for IContentMetaDatabase {
-	fn as_ref(&self) -> &Session {
+impl IContentMetaDatabase<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IContentMetaDatabase<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IContentMetaDatabase(domain)),
+			Err((sess, err)) => Err((IContentMetaDatabase(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IContentMetaDatabase<Session>> {
+		Ok(IContentMetaDatabase(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IContentMetaDatabase<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IContentMetaDatabase {
+impl<T> DerefMut for IContentMetaDatabase<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IContentMetaDatabase<T> {
 	// fn insert_entry_content_records(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn read_entry_content_records(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn remove_entry_content_records(&self, UNKNOWN) -> Result<UNKNOWN>;
@@ -51,8 +71,8 @@ impl IContentMetaDatabase {
 	// fn get_add_on_content_entry_unknown_record_size(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
-impl FromKObject for IContentMetaDatabase {
-	unsafe fn from_kobject(obj: KObject) -> IContentMetaDatabase {
-		IContentMetaDatabase(Session::from_kobject(obj))
+impl<T: Object> From<T> for IContentMetaDatabase<T> {
+	fn from(obj: T) -> IContentMetaDatabase<T> {
+		IContentMetaDatabase(obj)
 	}
 }

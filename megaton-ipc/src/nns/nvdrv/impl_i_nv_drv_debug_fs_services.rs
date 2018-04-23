@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct INvDrvDebugFSServices(Session);
+pub struct INvDrvDebugFSServices<T>(T);
 
-impl INvDrvDebugFSServices {
-	pub fn new() -> Result<Arc<INvDrvDebugFSServices>> {
+impl INvDrvDebugFSServices<Session> {
+	pub fn new() -> Result<Arc<INvDrvDebugFSServices<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<INvDrvDebugFSServices>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<INvDrvDebugFSServices<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,28 +30,45 @@ impl INvDrvDebugFSServices {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"nvdrvdbg").map(|s| Arc::new(unsafe { INvDrvDebugFSServices::from_kobject(s) }));
+		let r = sm.get_service(*b"nvdrvdbg").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<INvDrvDebugFSServices<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(INvDrvDebugFSServices(domain)),
+			Err((sess, err)) => Err((INvDrvDebugFSServices(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<INvDrvDebugFSServices<Session>> {
+		Ok(INvDrvDebugFSServices(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for INvDrvDebugFSServices {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for INvDrvDebugFSServices<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl INvDrvDebugFSServices {
+impl<T> DerefMut for INvDrvDebugFSServices<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> INvDrvDebugFSServices<T> {
 	// fn open_log(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn close_log(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn read_log(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
-impl FromKObject for INvDrvDebugFSServices {
-	unsafe fn from_kobject(obj: KObject) -> INvDrvDebugFSServices {
-		INvDrvDebugFSServices(Session::from_kobject(obj))
+impl<T: Object> From<T> for INvDrvDebugFSServices<T> {
+	fn from(obj: T) -> INvDrvDebugFSServices<T> {
+		INvDrvDebugFSServices(obj)
 	}
 }

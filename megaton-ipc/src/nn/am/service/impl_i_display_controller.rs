@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IDisplayController(Session);
+pub struct IDisplayController<T>(T);
 
-impl AsRef<Session> for IDisplayController {
-	fn as_ref(&self) -> &Session {
+impl IDisplayController<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IDisplayController<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IDisplayController(domain)),
+			Err((sess, err)) => Err((IDisplayController(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IDisplayController<Session>> {
+		Ok(IDisplayController(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IDisplayController<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IDisplayController {
+impl<T> DerefMut for IDisplayController<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IDisplayController<T> {
 	// fn get_last_foreground_capture_image(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn update_last_foreground_capture_image(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
@@ -177,8 +197,8 @@ impl IDisplayController {
 
 }
 
-impl FromKObject for IDisplayController {
-	unsafe fn from_kobject(obj: KObject) -> IDisplayController {
-		IDisplayController(Session::from_kobject(obj))
+impl<T: Object> From<T> for IDisplayController<T> {
+	fn from(obj: T) -> IDisplayController<T> {
+		IDisplayController(obj)
 	}
 }

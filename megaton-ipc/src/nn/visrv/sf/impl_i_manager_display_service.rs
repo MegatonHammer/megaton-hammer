@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IManagerDisplayService(Session);
+pub struct IManagerDisplayService<T>(T);
 
-impl AsRef<Session> for IManagerDisplayService {
-	fn as_ref(&self) -> &Session {
+impl IManagerDisplayService<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IManagerDisplayService<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IManagerDisplayService(domain)),
+			Err((sess, err)) => Err((IManagerDisplayService(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IManagerDisplayService<Session>> {
+		Ok(IManagerDisplayService(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IManagerDisplayService<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IManagerDisplayService {
+impl<T> DerefMut for IManagerDisplayService<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IManagerDisplayService<T> {
 	pub fn get_display_resolution(&self, unk0: u64) -> Result<(i64, i64)> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -329,8 +349,8 @@ impl IManagerDisplayService {
 
 }
 
-impl FromKObject for IManagerDisplayService {
-	unsafe fn from_kobject(obj: KObject) -> IManagerDisplayService {
-		IManagerDisplayService(Session::from_kobject(obj))
+impl<T: Object> From<T> for IManagerDisplayService<T> {
+	fn from(obj: T) -> IManagerDisplayService<T> {
+		IManagerDisplayService(obj)
 	}
 }

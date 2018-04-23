@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct ISocketManager(Session);
+pub struct ISocketManager<T>(T);
 
-impl ISocketManager {
-	pub fn new() -> Result<Arc<ISocketManager>> {
+impl ISocketManager<Session> {
+	pub fn new() -> Result<Arc<ISocketManager<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<ISocketManager>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<ISocketManager<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl ISocketManager {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"wlan:soc").map(|s| Arc::new(unsafe { ISocketManager::from_kobject(s) }));
+		let r = sm.get_service(*b"wlan:soc").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<ISocketManager<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(ISocketManager(domain)),
+			Err((sess, err)) => Err((ISocketManager(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<ISocketManager<Session>> {
+		Ok(ISocketManager(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for ISocketManager {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for ISocketManager<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl ISocketManager {
+impl<T> DerefMut for ISocketManager<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> ISocketManager<T> {
 	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown1(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
@@ -112,8 +130,8 @@ impl ISocketManager {
 
 }
 
-impl FromKObject for ISocketManager {
-	unsafe fn from_kobject(obj: KObject) -> ISocketManager {
-		ISocketManager(Session::from_kobject(obj))
+impl<T: Object> From<T> for ISocketManager<T> {
+	fn from(obj: T) -> ISocketManager<T> {
+		ISocketManager(obj)
 	}
 }

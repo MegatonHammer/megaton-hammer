@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IDeviceOperator(Session);
+pub struct IDeviceOperator<T>(T);
 
-impl AsRef<Session> for IDeviceOperator {
-	fn as_ref(&self) -> &Session {
+impl IDeviceOperator<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IDeviceOperator<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IDeviceOperator(domain)),
+			Err((sess, err)) => Err((IDeviceOperator(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IDeviceOperator<Session>> {
+		Ok(IDeviceOperator(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IDeviceOperator<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IDeviceOperator {
+impl<T> DerefMut for IDeviceOperator<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IDeviceOperator<T> {
 	pub fn is_sd_card_inserted(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -235,8 +255,8 @@ impl IDeviceOperator {
 
 }
 
-impl FromKObject for IDeviceOperator {
-	unsafe fn from_kobject(obj: KObject) -> IDeviceOperator {
-		IDeviceOperator(Session::from_kobject(obj))
+impl<T: Object> From<T> for IDeviceOperator<T> {
+	fn from(obj: T) -> IDeviceOperator<T> {
+		IDeviceOperator(obj)
 	}
 }

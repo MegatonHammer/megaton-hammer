@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IReceiver(Session);
+pub struct IReceiver<T>(T);
 
-impl AsRef<Session> for IReceiver {
-	fn as_ref(&self) -> &Session {
+impl IReceiver<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IReceiver<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IReceiver(domain)),
+			Err((sess, err)) => Err((IReceiver(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IReceiver<Session>> {
+		Ok(IReceiver(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IReceiver<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IReceiver {
+impl<T> DerefMut for IReceiver<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IReceiver<T> {
 	pub fn unknown0(&self, unk0: u128) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -45,8 +65,8 @@ impl IReceiver {
 	// fn unknown4(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
-impl FromKObject for IReceiver {
-	unsafe fn from_kobject(obj: KObject) -> IReceiver {
-		IReceiver(Session::from_kobject(obj))
+impl<T: Object> From<T> for IReceiver<T> {
+	fn from(obj: T) -> IReceiver<T> {
+		IReceiver(obj)
 	}
 }

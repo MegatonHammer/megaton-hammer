@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IAsyncData(Session);
+pub struct IAsyncData<T>(T);
 
-impl AsRef<Session> for IAsyncData {
-	fn as_ref(&self) -> &Session {
+impl IAsyncData<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IAsyncData<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IAsyncData(domain)),
+			Err((sess, err)) => Err((IAsyncData(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IAsyncData<Session>> {
+		Ok(IAsyncData(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IAsyncData<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IAsyncData {
+impl<T> DerefMut for IAsyncData<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IAsyncData<T> {
 	pub fn unknown0(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -45,8 +65,8 @@ impl IAsyncData {
 	// fn unknown4(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
-impl FromKObject for IAsyncData {
-	unsafe fn from_kobject(obj: KObject) -> IAsyncData {
-		IAsyncData(Session::from_kobject(obj))
+impl<T: Object> From<T> for IAsyncData<T> {
+	fn from(obj: T) -> IAsyncData<T> {
+		IAsyncData(obj)
 	}
 }

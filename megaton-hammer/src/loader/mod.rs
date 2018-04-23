@@ -67,7 +67,7 @@ pub fn get_override_service(service_name: [u8; 8]) -> Option<ManuallyDrop<Sessio
     for &(cur_service_name, service) in loader.override_services.iter() {
         if cur_service_name == service_name {
             unsafe {
-                return Some(ManuallyDrop::new(Session::from_kobject(KObject::new(service))));
+                return Some(ManuallyDrop::new(Session::from(KObject::new(service))));
             }
         }
     }

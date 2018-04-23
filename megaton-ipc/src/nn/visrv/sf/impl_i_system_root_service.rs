@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct ISystemRootService(Session);
+pub struct ISystemRootService<T>(T);
 
-impl ISystemRootService {
-	pub fn new() -> Result<Arc<ISystemRootService>> {
+impl ISystemRootService<Session> {
+	pub fn new() -> Result<Arc<ISystemRootService<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<ISystemRootService>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<ISystemRootService<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,32 +30,49 @@ impl ISystemRootService {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"vi:s\0\0\0\0").map(|s| Arc::new(unsafe { ISystemRootService::from_kobject(s) }));
+		let r = sm.get_service(*b"vi:s\0\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<ISystemRootService<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(ISystemRootService(domain)),
+			Err((sess, err)) => Err((ISystemRootService(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<ISystemRootService<Session>> {
+		Ok(ISystemRootService(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for ISystemRootService {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for ISystemRootService<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl ISystemRootService {
-	pub fn get_display_service(&self, unk0: u32) -> Result<::nn::visrv::sf::IApplicationDisplayService> {
+impl<T> DerefMut for ISystemRootService<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> ISystemRootService<T> {
+	pub fn get_display_service(&self, unk0: u32) -> Result<::nn::visrv::sf::IApplicationDisplayService<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(1)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn get_display_service_with_proxy_name_exchange(&self, unk0: ::nn::vi::ProxyName, unk1: u32) -> Result<::nn::visrv::sf::IApplicationDisplayService> {
+	pub fn get_display_service_with_proxy_name_exchange(&self, unk0: ::nn::vi::ProxyName, unk1: u32) -> Result<::nn::visrv::sf::IApplicationDisplayService<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -69,13 +87,13 @@ impl ISystemRootService {
 			})
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 }
 
-impl FromKObject for ISystemRootService {
-	unsafe fn from_kobject(obj: KObject) -> ISystemRootService {
-		ISystemRootService(Session::from_kobject(obj))
+impl<T: Object> From<T> for ISystemRootService<T> {
+	fn from(obj: T) -> ISystemRootService<T> {
+		ISystemRootService(obj)
 	}
 }

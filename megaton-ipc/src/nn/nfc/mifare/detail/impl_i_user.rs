@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IUser(Session);
+pub struct IUser<T>(T);
 
-impl AsRef<Session> for IUser {
-	fn as_ref(&self) -> &Session {
+impl IUser<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IUser<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IUser(domain)),
+			Err((sess, err)) => Err((IUser(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IUser<Session>> {
+		Ok(IUser(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IUser<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IUser {
+impl<T> DerefMut for IUser<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IUser<T> {
 	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown1(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
@@ -119,8 +139,8 @@ impl IUser {
 
 }
 
-impl FromKObject for IUser {
-	unsafe fn from_kobject(obj: KObject) -> IUser {
-		IUser(Session::from_kobject(obj))
+impl<T: Object> From<T> for IUser<T> {
+	fn from(obj: T) -> IUser<T> {
+		IUser(obj)
 	}
 }

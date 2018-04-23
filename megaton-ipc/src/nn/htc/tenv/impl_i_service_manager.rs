@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IServiceManager(Session);
+pub struct IServiceManager<T>(T);
 
-impl IServiceManager {
-	pub fn new() -> Result<Arc<IServiceManager>> {
+impl IServiceManager<Session> {
+	pub fn new() -> Result<Arc<IServiceManager<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IServiceManager>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IServiceManager<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,22 +30,39 @@ impl IServiceManager {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"htc:tenv").map(|s| Arc::new(unsafe { IServiceManager::from_kobject(s) }));
+		let r = sm.get_service(*b"htc:tenv").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IServiceManager<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IServiceManager(domain)),
+			Err((sess, err)) => Err((IServiceManager(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IServiceManager<Session>> {
+		Ok(IServiceManager(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IServiceManager {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IServiceManager<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IServiceManager {
-	pub fn open_service(&self, unk0: u64) -> Result<Session> {
+impl<T> DerefMut for IServiceManager<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IServiceManager<T> {
+	pub fn open_service(&self, unk0: u64) -> Result<T> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(0)
@@ -52,13 +70,13 @@ impl IServiceManager {
 			.send_pid()
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 }
 
-impl FromKObject for IServiceManager {
-	unsafe fn from_kobject(obj: KObject) -> IServiceManager {
-		IServiceManager(Session::from_kobject(obj))
+impl<T: Object> From<T> for IServiceManager<T> {
+	fn from(obj: T) -> IServiceManager<T> {
+		IServiceManager(obj)
 	}
 }

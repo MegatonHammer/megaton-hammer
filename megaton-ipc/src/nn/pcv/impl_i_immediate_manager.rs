@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IImmediateManager(Session);
+pub struct IImmediateManager<T>(T);
 
-impl IImmediateManager {
-	pub fn new() -> Result<Arc<IImmediateManager>> {
+impl IImmediateManager<Session> {
+	pub fn new() -> Result<Arc<IImmediateManager<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IImmediateManager>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IImmediateManager<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IImmediateManager {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"pcv:imm\0").map(|s| Arc::new(unsafe { IImmediateManager::from_kobject(s) }));
+		let r = sm.get_service(*b"pcv:imm\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IImmediateManager<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IImmediateManager(domain)),
+			Err((sess, err)) => Err((IImmediateManager(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IImmediateManager<Session>> {
+		Ok(IImmediateManager(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IImmediateManager {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IImmediateManager<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IImmediateManager {
+impl<T> DerefMut for IImmediateManager<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IImmediateManager<T> {
 	pub fn set_clock_rate(&self, unk0: i32, unk1: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -64,8 +82,8 @@ impl IImmediateManager {
 
 }
 
-impl FromKObject for IImmediateManager {
-	unsafe fn from_kobject(obj: KObject) -> IImmediateManager {
-		IImmediateManager(Session::from_kobject(obj))
+impl<T: Object> From<T> for IImmediateManager<T> {
+	fn from(obj: T) -> IImmediateManager<T> {
+		IImmediateManager(obj)
 	}
 }

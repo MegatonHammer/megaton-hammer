@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IGrcService(Session);
+pub struct IGrcService<T>(T);
 
-impl IGrcService {
-	pub fn new() -> Result<Arc<IGrcService>> {
+impl IGrcService<Session> {
+	pub fn new() -> Result<Arc<IGrcService<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IGrcService>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IGrcService<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IGrcService {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"grc:c\0\0\0").map(|s| Arc::new(unsafe { IGrcService::from_kobject(s) }));
+		let r = sm.get_service(*b"grc:c\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IGrcService<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IGrcService(domain)),
+			Err((sess, err)) => Err((IGrcService(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IGrcService<Session>> {
+		Ok(IGrcService(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IGrcService {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IGrcService<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IGrcService {
+impl<T> DerefMut for IGrcService<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IGrcService<T> {
 	pub fn get_continuous_recorder(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -66,8 +84,8 @@ impl IGrcService {
 
 }
 
-impl FromKObject for IGrcService {
-	unsafe fn from_kobject(obj: KObject) -> IGrcService {
-		IGrcService(Session::from_kobject(obj))
+impl<T: Object> From<T> for IGrcService<T> {
+	fn from(obj: T) -> IGrcService<T> {
+		IGrcService(obj)
 	}
 }

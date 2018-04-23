@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IPowerStateInterface(Session);
+pub struct IPowerStateInterface<T>(T);
 
-impl IPowerStateInterface {
-	pub fn new() -> Result<Arc<IPowerStateInterface>> {
+impl IPowerStateInterface<Session> {
+	pub fn new() -> Result<Arc<IPowerStateInterface<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IPowerStateInterface>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IPowerStateInterface<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IPowerStateInterface {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"spsm\0\0\0\0").map(|s| Arc::new(unsafe { IPowerStateInterface::from_kobject(s) }));
+		let r = sm.get_service(*b"spsm\0\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IPowerStateInterface<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IPowerStateInterface(domain)),
+			Err((sess, err)) => Err((IPowerStateInterface(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IPowerStateInterface<Session>> {
+		Ok(IPowerStateInterface(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IPowerStateInterface {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IPowerStateInterface<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IPowerStateInterface {
+impl<T> DerefMut for IPowerStateInterface<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IPowerStateInterface<T> {
 	pub fn get_state(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -148,8 +166,8 @@ impl IPowerStateInterface {
 
 }
 
-impl FromKObject for IPowerStateInterface {
-	unsafe fn from_kobject(obj: KObject) -> IPowerStateInterface {
-		IPowerStateInterface(Session::from_kobject(obj))
+impl<T: Object> From<T> for IPowerStateInterface<T> {
+	fn from(obj: T) -> IPowerStateInterface<T> {
+		IPowerStateInterface(obj)
 	}
 }

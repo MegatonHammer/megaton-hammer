@@ -1,24 +1,44 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IWindowController(Session);
+pub struct IWindowController<T>(T);
 
-impl AsRef<Session> for IWindowController {
-	fn as_ref(&self) -> &Session {
+impl IWindowController<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IWindowController<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IWindowController(domain)),
+			Err((sess, err)) => Err((IWindowController(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IWindowController<Session>> {
+		Ok(IWindowController(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IWindowController<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IWindowController {
-	pub fn create_window(&self, unk0: ::nn::am::service::WindowCreationOption) -> Result<::nn::am::service::IWindow> {
+impl<T> DerefMut for IWindowController<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IWindowController<T> {
+	pub fn create_window(&self, unk0: ::nn::am::service::WindowCreationOption) -> Result<::nn::am::service::IWindow<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(0)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	pub fn get_applet_resource_user_id(&self, ) -> Result<::nn::applet::AppletResourceUserId> {
@@ -63,8 +83,8 @@ impl IWindowController {
 
 }
 
-impl FromKObject for IWindowController {
-	unsafe fn from_kobject(obj: KObject) -> IWindowController {
-		IWindowController(Session::from_kobject(obj))
+impl<T: Object> From<T> for IWindowController<T> {
+	fn from(obj: T) -> IWindowController<T> {
+		IWindowController(obj)
 	}
 }

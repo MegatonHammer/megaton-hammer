@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct ITransferStorageAccessor(Session);
+pub struct ITransferStorageAccessor<T>(T);
 
-impl AsRef<Session> for ITransferStorageAccessor {
-	fn as_ref(&self) -> &Session {
+impl ITransferStorageAccessor<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<ITransferStorageAccessor<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(ITransferStorageAccessor(domain)),
+			Err((sess, err)) => Err((ITransferStorageAccessor(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<ITransferStorageAccessor<Session>> {
+		Ok(ITransferStorageAccessor(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for ITransferStorageAccessor<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl ITransferStorageAccessor {
+impl<T> DerefMut for ITransferStorageAccessor<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> ITransferStorageAccessor<T> {
 	pub fn get_size(&self, ) -> Result<i64> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -33,8 +53,8 @@ impl ITransferStorageAccessor {
 
 }
 
-impl FromKObject for ITransferStorageAccessor {
-	unsafe fn from_kobject(obj: KObject) -> ITransferStorageAccessor {
-		ITransferStorageAccessor(Session::from_kobject(obj))
+impl<T: Object> From<T> for ITransferStorageAccessor<T> {
+	fn from(obj: T) -> ITransferStorageAccessor<T> {
+		ITransferStorageAccessor(obj)
 	}
 }

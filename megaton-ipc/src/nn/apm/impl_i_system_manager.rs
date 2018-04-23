@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct ISystemManager(Session);
+pub struct ISystemManager<T>(T);
 
-impl ISystemManager {
-	pub fn new() -> Result<Arc<ISystemManager>> {
+impl ISystemManager<Session> {
+	pub fn new() -> Result<Arc<ISystemManager<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<ISystemManager>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<ISystemManager<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl ISystemManager {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"apm:sys\0").map(|s| Arc::new(unsafe { ISystemManager::from_kobject(s) }));
+		let r = sm.get_service(*b"apm:sys\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<ISystemManager<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(ISystemManager(domain)),
+			Err((sess, err)) => Err((ISystemManager(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<ISystemManager<Session>> {
+		Ok(ISystemManager(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for ISystemManager {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for ISystemManager<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl ISystemManager {
+impl<T> DerefMut for ISystemManager<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> ISystemManager<T> {
 	pub fn request_performance_mode(&self, unk0: ::nn::apm::PerformanceMode) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -96,8 +114,8 @@ impl ISystemManager {
 
 }
 
-impl FromKObject for ISystemManager {
-	unsafe fn from_kobject(obj: KObject) -> ISystemManager {
-		ISystemManager(Session::from_kobject(obj))
+impl<T: Object> From<T> for ISystemManager<T> {
+	fn from(obj: T) -> ISystemManager<T> {
+		ISystemManager(obj)
 	}
 }

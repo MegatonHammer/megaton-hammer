@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IPdSession(Session);
+pub struct IPdSession<T>(T);
 
-impl AsRef<Session> for IPdSession {
-	fn as_ref(&self) -> &Session {
+impl IPdSession<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IPdSession<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IPdSession(domain)),
+			Err((sess, err)) => Err((IPdSession(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IPdSession<Session>> {
+		Ok(IPdSession(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IPdSession<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IPdSession {
+impl<T> DerefMut for IPdSession<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IPdSession<T> {
 	pub fn unknown0(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -74,8 +94,8 @@ impl IPdSession {
 
 }
 
-impl FromKObject for IPdSession {
-	unsafe fn from_kobject(obj: KObject) -> IPdSession {
-		IPdSession(Session::from_kobject(obj))
+impl<T: Object> From<T> for IPdSession<T> {
+	fn from(obj: T) -> IPdSession<T> {
+		IPdSession(obj)
 	}
 }

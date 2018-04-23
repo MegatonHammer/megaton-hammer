@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IContext(Session);
+pub struct IContext<T>(T);
 
-impl IContext {
-	pub fn new() -> Result<Arc<IContext>> {
+impl IContext<Session> {
+	pub fn new() -> Result<Arc<IContext<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IContext>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IContext<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IContext {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"erpt:c\0\0").map(|s| Arc::new(unsafe { IContext::from_kobject(s) }));
+		let r = sm.get_service(*b"erpt:c\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IContext<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IContext(domain)),
+			Err((sess, err)) => Err((IContext(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IContext<Session>> {
+		Ok(IContext(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IContext {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IContext<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IContext {
+impl<T> DerefMut for IContext<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IContext<T> {
 	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
@@ -79,8 +97,8 @@ impl IContext {
 
 }
 
-impl FromKObject for IContext {
-	unsafe fn from_kobject(obj: KObject) -> IContext {
-		IContext(Session::from_kobject(obj))
+impl<T: Object> From<T> for IContext<T> {
+	fn from(obj: T) -> IContext<T> {
+		IContext(obj)
 	}
 }

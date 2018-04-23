@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IAudioOut(Session);
+pub struct IAudioOut<T>(T);
 
-impl AsRef<Session> for IAudioOut {
-	fn as_ref(&self) -> &Session {
+impl IAudioOut<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IAudioOut<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IAudioOut(domain)),
+			Err((sess, err)) => Err((IAudioOut(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IAudioOut<Session>> {
+		Ok(IAudioOut(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IAudioOut<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IAudioOut {
+impl<T> DerefMut for IAudioOut<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IAudioOut<T> {
 	pub fn get_audio_out_state(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -100,8 +120,8 @@ impl IAudioOut {
 
 }
 
-impl FromKObject for IAudioOut {
-	unsafe fn from_kobject(obj: KObject) -> IAudioOut {
-		IAudioOut(Session::from_kobject(obj))
+impl<T: Object> From<T> for IAudioOut<T> {
+	fn from(obj: T) -> IAudioOut<T> {
+		IAudioOut(obj)
 	}
 }

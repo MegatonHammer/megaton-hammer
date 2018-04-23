@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IGlobalStateController(Session);
+pub struct IGlobalStateController<T>(T);
 
-impl AsRef<Session> for IGlobalStateController {
-	fn as_ref(&self) -> &Session {
+impl IGlobalStateController<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IGlobalStateController<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IGlobalStateController(domain)),
+			Err((sess, err)) => Err((IGlobalStateController(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IGlobalStateController<Session>> {
+		Ok(IGlobalStateController(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IGlobalStateController<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IGlobalStateController {
+impl<T> DerefMut for IGlobalStateController<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IGlobalStateController<T> {
 	pub fn request_to_enter_sleep(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -113,8 +133,8 @@ impl IGlobalStateController {
 
 }
 
-impl FromKObject for IGlobalStateController {
-	unsafe fn from_kobject(obj: KObject) -> IGlobalStateController {
-		IGlobalStateController(Session::from_kobject(obj))
+impl<T: Object> From<T> for IGlobalStateController<T> {
+	fn from(obj: T) -> IGlobalStateController<T> {
+		IGlobalStateController(obj)
 	}
 }

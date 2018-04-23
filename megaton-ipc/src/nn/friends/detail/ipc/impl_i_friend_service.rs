@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IFriendService(Session);
+pub struct IFriendService<T>(T);
 
-impl AsRef<Session> for IFriendService {
-	fn as_ref(&self) -> &Session {
+impl IFriendService<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IFriendService<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IFriendService(domain)),
+			Err((sess, err)) => Err((IFriendService(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IFriendService<Session>> {
+		Ok(IFriendService(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IFriendService<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IFriendService {
+impl<T> DerefMut for IFriendService<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IFriendService<T> {
 	pub fn get_completion_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -1090,8 +1110,8 @@ impl IFriendService {
 
 }
 
-impl FromKObject for IFriendService {
-	unsafe fn from_kobject(obj: KObject) -> IFriendService {
-		IFriendService(Session::from_kobject(obj))
+impl<T: Object> From<T> for IFriendService<T> {
+	fn from(obj: T) -> IFriendService<T> {
+		IFriendService(obj)
 	}
 }

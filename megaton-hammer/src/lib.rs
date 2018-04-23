@@ -54,6 +54,7 @@ pub mod error {
     use failure;
 
     #[derive(Clone, Copy)]
+    #[repr(transparent)]
     pub struct Error(pub u32);
 
     impl failure::Fail for Error { }

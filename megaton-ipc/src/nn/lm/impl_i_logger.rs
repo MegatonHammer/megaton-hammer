@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct ILogger(Session);
+pub struct ILogger<T>(T);
 
-impl AsRef<Session> for ILogger {
-	fn as_ref(&self) -> &Session {
+impl ILogger<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<ILogger<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(ILogger(domain)),
+			Err((sess, err)) => Err((ILogger(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<ILogger<Session>> {
+		Ok(ILogger(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for ILogger<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl ILogger {
+impl<T> DerefMut for ILogger<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> ILogger<T> {
 	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown1(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
@@ -24,8 +44,8 @@ impl ILogger {
 
 }
 
-impl FromKObject for ILogger {
-	unsafe fn from_kobject(obj: KObject) -> ILogger {
-		ILogger(Session::from_kobject(obj))
+impl<T: Object> From<T> for ILogger<T> {
+	fn from(obj: T) -> ILogger<T> {
+		ILogger(obj)
 	}
 }

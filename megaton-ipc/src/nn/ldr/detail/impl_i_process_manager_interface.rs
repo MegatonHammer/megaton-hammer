@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IProcessManagerInterface(Session);
+pub struct IProcessManagerInterface<T>(T);
 
-impl IProcessManagerInterface {
-	pub fn new() -> Result<Arc<IProcessManagerInterface>> {
+impl IProcessManagerInterface<Session> {
+	pub fn new() -> Result<Arc<IProcessManagerInterface<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IProcessManagerInterface>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IProcessManagerInterface<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IProcessManagerInterface {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"ldr:pm\0\0").map(|s| Arc::new(unsafe { IProcessManagerInterface::from_kobject(s) }));
+		let r = sm.get_service(*b"ldr:pm\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IProcessManagerInterface<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IProcessManagerInterface(domain)),
+			Err((sess, err)) => Err((IProcessManagerInterface(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IProcessManagerInterface<Session>> {
+		Ok(IProcessManagerInterface(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IProcessManagerInterface {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IProcessManagerInterface<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IProcessManagerInterface {
+impl<T> DerefMut for IProcessManagerInterface<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IProcessManagerInterface<T> {
 	pub fn create_process(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -86,8 +104,8 @@ impl IProcessManagerInterface {
 
 }
 
-impl FromKObject for IProcessManagerInterface {
-	unsafe fn from_kobject(obj: KObject) -> IProcessManagerInterface {
-		IProcessManagerInterface(Session::from_kobject(obj))
+impl<T: Object> From<T> for IProcessManagerInterface<T> {
+	fn from(obj: T) -> IProcessManagerInterface<T> {
+		IProcessManagerInterface(obj)
 	}
 }

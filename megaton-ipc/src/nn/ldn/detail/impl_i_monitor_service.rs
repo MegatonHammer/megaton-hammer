@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IMonitorService(Session);
+pub struct IMonitorService<T>(T);
 
-impl AsRef<Session> for IMonitorService {
-	fn as_ref(&self) -> &Session {
+impl IMonitorService<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IMonitorService<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IMonitorService(domain)),
+			Err((sess, err)) => Err((IMonitorService(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IMonitorService<Session>> {
+		Ok(IMonitorService(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IMonitorService<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IMonitorService {
+impl<T> DerefMut for IMonitorService<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IMonitorService<T> {
 	pub fn get_state_for_monitor(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -81,8 +101,8 @@ impl IMonitorService {
 
 }
 
-impl FromKObject for IMonitorService {
-	unsafe fn from_kobject(obj: KObject) -> IMonitorService {
-		IMonitorService(Session::from_kobject(obj))
+impl<T: Object> From<T> for IMonitorService<T> {
+	fn from(obj: T) -> IMonitorService<T> {
+		IMonitorService(obj)
 	}
 }

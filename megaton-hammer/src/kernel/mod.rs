@@ -39,7 +39,6 @@ pub trait FromKObject {
 /// Note: The memory acquired this way is lost *forever*. This is because we
 /// cannot know when the other party is done with it.
 #[derive(Debug)]
-#[repr(transparent)]
 pub struct TransferMemory(KObject);
 
 impl TransferMemory {
@@ -60,7 +59,7 @@ impl TransferMemory {
         if res != 0 {
             return Err(Error(res));
         }
-        Ok(TransferMemory(KObject(out)))
+        Ok(TransferMemory(KObject(out), Some(AllocatedMemory(mem, layout))))
     }
 }
 

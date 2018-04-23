@@ -1,21 +1,41 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct ISaveDataInfoReader(Session);
+pub struct ISaveDataInfoReader<T>(T);
 
-impl AsRef<Session> for ISaveDataInfoReader {
-	fn as_ref(&self) -> &Session {
+impl ISaveDataInfoReader<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<ISaveDataInfoReader<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(ISaveDataInfoReader(domain)),
+			Err((sess, err)) => Err((ISaveDataInfoReader(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<ISaveDataInfoReader<Session>> {
+		Ok(ISaveDataInfoReader(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for ISaveDataInfoReader<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl ISaveDataInfoReader {
+impl<T> DerefMut for ISaveDataInfoReader<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> ISaveDataInfoReader<T> {
 	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
-impl FromKObject for ISaveDataInfoReader {
-	unsafe fn from_kobject(obj: KObject) -> ISaveDataInfoReader {
-		ISaveDataInfoReader(Session::from_kobject(obj))
+impl<T: Object> From<T> for ISaveDataInfoReader<T> {
+	fn from(obj: T) -> ISaveDataInfoReader<T> {
+		ISaveDataInfoReader(obj)
 	}
 }

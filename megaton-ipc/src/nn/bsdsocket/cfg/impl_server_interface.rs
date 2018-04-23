@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct ServerInterface(Session);
+pub struct ServerInterface<T>(T);
 
-impl ServerInterface {
-	pub fn new() -> Result<Arc<ServerInterface>> {
+impl ServerInterface<Session> {
+	pub fn new() -> Result<Arc<ServerInterface<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<ServerInterface>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<ServerInterface<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl ServerInterface {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"bsdcfg\0\0").map(|s| Arc::new(unsafe { ServerInterface::from_kobject(s) }));
+		let r = sm.get_service(*b"bsdcfg\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<ServerInterface<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(ServerInterface(domain)),
+			Err((sess, err)) => Err((ServerInterface(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<ServerInterface<Session>> {
+		Ok(ServerInterface(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for ServerInterface {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for ServerInterface<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl ServerInterface {
+impl<T> DerefMut for ServerInterface<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> ServerInterface<T> {
 	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
@@ -86,8 +104,8 @@ impl ServerInterface {
 
 }
 
-impl FromKObject for ServerInterface {
-	unsafe fn from_kobject(obj: KObject) -> ServerInterface {
-		ServerInterface(Session::from_kobject(obj))
+impl<T: Object> From<T> for ServerInterface<T> {
+	fn from(obj: T) -> ServerInterface<T> {
+		ServerInterface(obj)
 	}
 }

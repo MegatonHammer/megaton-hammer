@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IController(Session);
+pub struct IController<T>(T);
 
-impl AsRef<Session> for IController {
-	fn as_ref(&self) -> &Session {
+impl IController<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IController<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IController(domain)),
+			Err((sess, err)) => Err((IController(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IController<Session>> {
+		Ok(IController(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IController<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IController {
+impl<T> DerefMut for IController<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IController<T> {
 	pub fn unknown0(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -93,8 +113,8 @@ impl IController {
 
 }
 
-impl FromKObject for IController {
-	unsafe fn from_kobject(obj: KObject) -> IController {
-		IController(Session::from_kobject(obj))
+impl<T: Object> From<T> for IController<T> {
+	fn from(obj: T) -> IController<T> {
+		IController(obj)
 	}
 }

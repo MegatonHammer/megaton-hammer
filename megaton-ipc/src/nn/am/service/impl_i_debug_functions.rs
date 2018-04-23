@@ -1,16 +1,36 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 
 #[derive(Debug)]
-pub struct IDebugFunctions(Session);
+pub struct IDebugFunctions<T>(T);
 
-impl AsRef<Session> for IDebugFunctions {
-	fn as_ref(&self) -> &Session {
+impl IDebugFunctions<Session> {
+	pub fn to_domain(self) -> ::core::result::Result<IDebugFunctions<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IDebugFunctions(domain)),
+			Err((sess, err)) => Err((IDebugFunctions(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IDebugFunctions<Session>> {
+		Ok(IDebugFunctions(self.0.duplicate()?))
+	}
+}
+
+impl<T> Deref for IDebugFunctions<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IDebugFunctions {
+impl<T> DerefMut for IDebugFunctions<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IDebugFunctions<T> {
 	pub fn notify_message_to_home_menu_for_debug(&self, unk0: ::nn::am::AppletMessage) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -21,14 +41,14 @@ impl IDebugFunctions {
 		Ok(())
 	}
 
-	pub fn open_main_application(&self, ) -> Result<::nn::am::service::IApplicationAccessor> {
+	pub fn open_main_application(&self, ) -> Result<::nn::am::service::IApplicationAccessor<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(1)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	pub fn emulate_button_event(&self, unk0: ::nn::am::service::EmulatedButtonEvent) -> Result<()> {
@@ -53,8 +73,8 @@ impl IDebugFunctions {
 
 }
 
-impl FromKObject for IDebugFunctions {
-	unsafe fn from_kobject(obj: KObject) -> IDebugFunctions {
-		IDebugFunctions(Session::from_kobject(obj))
+impl<T: Object> From<T> for IDebugFunctions<T> {
+	fn from(obj: T) -> IDebugFunctions<T> {
+		IDebugFunctions(obj)
 	}
 }

@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct ILblController(Session);
+pub struct ILblController<T>(T);
 
-impl ILblController {
-	pub fn new() -> Result<Arc<ILblController>> {
+impl ILblController<Session> {
+	pub fn new() -> Result<Arc<ILblController<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<ILblController>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<ILblController<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl ILblController {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"lbl\0\0\0\0\0").map(|s| Arc::new(unsafe { ILblController::from_kobject(s) }));
+		let r = sm.get_service(*b"lbl\0\0\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<ILblController<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(ILblController(domain)),
+			Err((sess, err)) => Err((ILblController(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<ILblController<Session>> {
+		Ok(ILblController(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for ILblController {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for ILblController<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl ILblController {
+impl<T> DerefMut for ILblController<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> ILblController<T> {
 	pub fn unknown0(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -314,8 +332,8 @@ impl ILblController {
 
 }
 
-impl FromKObject for ILblController {
-	unsafe fn from_kobject(obj: KObject) -> ILblController {
-		ILblController(Session::from_kobject(obj))
+impl<T: Object> From<T> for ILblController<T> {
+	fn from(obj: T) -> ILblController<T> {
+		ILblController(obj)
 	}
 }

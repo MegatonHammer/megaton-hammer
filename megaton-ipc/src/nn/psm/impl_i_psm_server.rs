@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IPsmServer(Session);
+pub struct IPsmServer<T>(T);
 
-impl IPsmServer {
-	pub fn new() -> Result<Arc<IPsmServer>> {
+impl IPsmServer<Session> {
+	pub fn new() -> Result<Arc<IPsmServer<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IPsmServer>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IPsmServer<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IPsmServer {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"psm\0\0\0\0\0").map(|s| Arc::new(unsafe { IPsmServer::from_kobject(s) }));
+		let r = sm.get_service(*b"psm\0\0\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IPsmServer<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IPsmServer(domain)),
+			Err((sess, err)) => Err((IPsmServer(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IPsmServer<Session>> {
+		Ok(IPsmServer(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IPsmServer {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IPsmServer<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IPsmServer {
+impl<T> DerefMut for IPsmServer<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IPsmServer<T> {
 	pub fn get_battery_charge_percentage(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -114,14 +132,14 @@ impl IPsmServer {
 		Ok(())
 	}
 
-	pub fn open_session(&self, ) -> Result<Session> {
+	pub fn open_session(&self, ) -> Result<T> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(7)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	pub fn enable_enough_power_charge_emulation(&self, ) -> Result<()> {
@@ -217,8 +235,8 @@ impl IPsmServer {
 	// fn get_battery_charge_info_fields(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
-impl FromKObject for IPsmServer {
-	unsafe fn from_kobject(obj: KObject) -> IPsmServer {
-		IPsmServer(Session::from_kobject(obj))
+impl<T: Object> From<T> for IPsmServer<T> {
+	fn from(obj: T) -> IPsmServer<T> {
+		IPsmServer(obj)
 	}
 }

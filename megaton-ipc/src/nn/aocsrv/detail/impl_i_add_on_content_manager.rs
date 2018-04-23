@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IAddOnContentManager(Session);
+pub struct IAddOnContentManager<T>(T);
 
-impl IAddOnContentManager {
-	pub fn new() -> Result<Arc<IAddOnContentManager>> {
+impl IAddOnContentManager<Session> {
+	pub fn new() -> Result<Arc<IAddOnContentManager<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IAddOnContentManager>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IAddOnContentManager<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IAddOnContentManager {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"aoc:u\0\0\0").map(|s| Arc::new(unsafe { IAddOnContentManager::from_kobject(s) }));
+		let r = sm.get_service(*b"aoc:u\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IAddOnContentManager<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IAddOnContentManager(domain)),
+			Err((sess, err)) => Err((IAddOnContentManager(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IAddOnContentManager<Session>> {
+		Ok(IAddOnContentManager(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IAddOnContentManager {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IAddOnContentManager<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IAddOnContentManager {
+impl<T> DerefMut for IAddOnContentManager<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IAddOnContentManager<T> {
 	pub fn count_add_on_content_by_application_id(&self, unk0: ::nn::ncm::ApplicationId) -> Result<i32> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -170,8 +188,8 @@ impl IAddOnContentManager {
 
 }
 
-impl FromKObject for IAddOnContentManager {
-	unsafe fn from_kobject(obj: KObject) -> IAddOnContentManager {
-		IAddOnContentManager(Session::from_kobject(obj))
+impl<T: Object> From<T> for IAddOnContentManager<T> {
+	fn from(obj: T) -> IAddOnContentManager<T> {
+		IAddOnContentManager(obj)
 	}
 }

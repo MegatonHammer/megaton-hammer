@@ -1,18 +1,19 @@
 
-use megaton_hammer::kernel::{FromKObject, KObject, Session};
-use megaton_hammer::error::Result;
+use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::error::*;
+use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
 
 #[derive(Debug)]
-pub struct IAccountServiceForApplication(Session);
+pub struct IAccountServiceForApplication<T>(T);
 
-impl IAccountServiceForApplication {
-	pub fn new() -> Result<Arc<IAccountServiceForApplication>> {
+impl IAccountServiceForApplication<Session> {
+	pub fn new() -> Result<Arc<IAccountServiceForApplication<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IAccountServiceForApplication>> = Mutex::new(Weak::new());
+			static ref HANDLE : Mutex<Weak<IAccountServiceForApplication<Session>>> = Mutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -29,21 +30,38 @@ impl IAccountServiceForApplication {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"acc:u0\0\0").map(|s| Arc::new(unsafe { IAccountServiceForApplication::from_kobject(s) }));
+		let r = sm.get_service(*b"acc:u0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
 		if let Ok(service) = r {
 			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
 	}
+
+	pub fn to_domain(self) -> ::core::result::Result<IAccountServiceForApplication<Domain>, (Self, Error)> {
+		match self.0.to_domain() {
+			Ok(domain) => Ok(IAccountServiceForApplication(domain)),
+			Err((sess, err)) => Err((IAccountServiceForApplication(sess), err))
+		}
+	}
+
+	pub fn duplicate(&self) -> Result<IAccountServiceForApplication<Session>> {
+		Ok(IAccountServiceForApplication(self.0.duplicate()?))
+	}
 }
 
-impl AsRef<Session> for IAccountServiceForApplication {
-	fn as_ref(&self) -> &Session {
+impl<T> Deref for IAccountServiceForApplication<T> {
+	type Target = T;
+	fn deref(&self) -> &T {
 		&self.0
 	}
 }
-impl IAccountServiceForApplication {
+impl<T> DerefMut for IAccountServiceForApplication<T> {
+	fn deref_mut(&mut self) -> &mut T {
+		&mut self.0
+	}
+}
+impl<T: Object> IAccountServiceForApplication<T> {
 	pub fn get_user_count(&self, ) -> Result<i32> {
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -98,14 +116,14 @@ impl IAccountServiceForApplication {
 		Ok(*res.get_raw())
 	}
 
-	pub fn get_profile(&self, unk0: ::nn::account::Uid) -> Result<::nn::account::profile::IProfile> {
+	pub fn get_profile(&self, unk0: ::nn::account::Uid) -> Result<::nn::account::profile::IProfile<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(5)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	pub fn get_profile_digest(&self, unk0: ::nn::account::Uid) -> Result<::nn::account::ProfileDigest> {
@@ -150,24 +168,24 @@ impl IAccountServiceForApplication {
 		Ok(())
 	}
 
-	pub fn get_baas_account_manager_for_application(&self, unk0: ::nn::account::Uid) -> Result<::nn::account::baas::IManagerForApplication> {
+	pub fn get_baas_account_manager_for_application(&self, unk0: ::nn::account::Uid) -> Result<::nn::account::baas::IManagerForApplication<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(101)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn authenticate_application_async(&self, ) -> Result<::nn::account::detail::IAsyncContext> {
+	pub fn authenticate_application_async(&self, ) -> Result<::nn::account::detail::IAsyncContext<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(102)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 	// fn store_save_data_thumbnail(&self, UNKNOWN) -> Result<UNKNOWN>;
@@ -181,7 +199,7 @@ impl IAccountServiceForApplication {
 		Ok(())
 	}
 
-	pub fn create_guest_login_request(&self, unk0: u32, unk1: &KObject) -> Result<::nn::account::baas::IGuestLoginRequest> {
+	pub fn create_guest_login_request(&self, unk0: u32, unk1: &KObject) -> Result<::nn::account::baas::IGuestLoginRequest<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req = Request::new(120)
@@ -189,13 +207,13 @@ impl IAccountServiceForApplication {
 			.copy_handle(unk1)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
-		Ok(unsafe { FromKObject::from_kobject(res.pop_handle()) })
+		Ok(T::from_res(&mut res).into())
 	}
 
 }
 
-impl FromKObject for IAccountServiceForApplication {
-	unsafe fn from_kobject(obj: KObject) -> IAccountServiceForApplication {
-		IAccountServiceForApplication(Session::from_kobject(obj))
+impl<T: Object> From<T> for IAccountServiceForApplication<T> {
+	fn from(obj: T) -> IAccountServiceForApplication<T> {
+		IAccountServiceForApplication(obj)
 	}
 }
