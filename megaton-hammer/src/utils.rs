@@ -100,3 +100,37 @@ impl<'a> CursorRead<'a> {
         ret
     }
 }
+
+pub fn hex_print<T: ::core::fmt::Write>(arr: &[u8], f: &mut T) {
+    for (i, chunk) in arr.chunks(16).enumerate() {
+        // Print the current offset (do some padding if necessary so it all
+        // aligns correctly).
+        let log2 = 64 - arr.len().leading_zeros();
+        let log2 = if log2 % 4 == 0 { log2 / 4 } else { (log2 / 4) + 1 };
+        let _ = write!(f, "{:01$x}:", i * 16, log2 as usize);
+
+        // Print the bytes one by one. Put an extra space in the middle
+        for (i, b) in chunk.iter().enumerate() {
+            if i % 2 == 0 {
+                let _ = write!(f, " ");
+            }
+            let _ = write!(f, "{:02x}", b);
+        }
+        // Fill missing with spaces.
+        for _ in 0..16 - chunk.len() {
+            let _ = write!(f, "{}", "   ");
+        }
+
+        // And now show the ASCII representation. Replace unprintable
+        // characters with  a '.'
+        let _ = write!(f, "  ");
+        for b in chunk {
+            let _ = write!(f, "{}", if (*b as char).is_ascii_graphic() { *b as char } else { '.' });
+        }
+        let _ = writeln!(f, "");
+    }
+}
+
+pub fn div_ceil(a: u64, b: u64) -> u64 {
+    1 + ((a - 1) / b)
+}

@@ -14,7 +14,7 @@ use byteorder::{LE};
 use kernel::KObject;
 use bit_field::BitField;
 
-use utils::{CursorWrite, CursorRead};
+use utils::{CursorWrite, CursorRead, div_ceil, hex_print};
 use error::*;
 
 // Fits in a QWORD
@@ -358,8 +358,8 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
                 hdr.set_c_descriptor_flags(2 + self.c_descriptors.len() as u8);
             }
 
-            // 0x10 = padding, 8 = sfci, 8 = cmdid, 12=domain header.
-            hdr.set_raw_section_size(((0x10 + 8 + 8 + if domain_id.is_some() { 12 } else { 0 } + core::mem::size_of::<T>()) / 4) as u16);
+            // 0x10 = padding, 8 = sfci, 8 = cmdid, 0x10=domain header.
+            hdr.set_raw_section_size(div_ceil(0x10 + 8 + 8 + if domain_id.is_some() { 0x10 } else { 0 } + core::mem::size_of::<T>() as u64, 4) as u16);
             let enable_handle_descriptor = self.copy_handles.len() > 0 ||
                 self.move_handles.len() > 0 || self.send_pid;
             hdr.set_enable_handle_descriptor(enable_handle_descriptor);
@@ -440,7 +440,7 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
                 };
                 hdr.set_command(1);
                 hdr.set_input_object_count(0);
-                hdr.set_data_len(core::mem::size_of::<T>() as u16);
+                hdr.set_data_len(core::mem::size_of::<T>() as u16 + 0x10);
             }
             cursor.write_u32::<LE>(obj);
             // Apparently this is some padding. :shrug:
@@ -480,35 +480,7 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
         let mut arr = [0; 0x100];
         other_self.pack(&mut arr, None);
 
-        // Let's emulate what xxd is doing, so we can turn it back to binary
-        // with xxd -r
-        for (i, chunk) in arr.chunks(16).enumerate() {
-            // Print the current offset (do some padding if necessary so it all
-            // aligns correctly).
-            let log2 = 64 - arr.len().leading_zeros();
-            let log2 = if log2 % 4 == 0 { log2 / 4 } else { (log2 / 4) + 1 };
-            let _ = write!(f, "{:01$x}:", i * 16, log2 as usize);
-
-            // Print the bytes one by one. Put an extra space in the middle
-            for (i, b) in chunk.iter().enumerate() {
-                if i % 2 == 0 {
-                    let _ = write!(f, " ");
-                }
-                let _ = write!(f, "{:02x}", b);
-            }
-            // Fill missing with spaces.
-            for _ in 0..16 - chunk.len() {
-                let _ = write!(f, "{}", "   ");
-            }
-
-            // And now show the ASCII representation. Replace unprintable
-            // characters with  a '.'
-            let _ = write!(f, "  ");
-            for b in chunk {
-                let _ = write!(f, "{}", if (*b as char).is_ascii_graphic() { *b as char } else { '.' });
-            }
-            let _ = writeln!(f, "");
-        }
+        hex_print(&arr[..], &mut ::loader::Logger);
         self
     }
 }
