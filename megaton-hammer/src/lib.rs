@@ -17,7 +17,7 @@
 //! however, that proved to be more of a hassle than simply reimplementing
 //! everything myself.
 // TODO: I shouldn't need either of those, in an ideal world.
-#![feature(asm, proc_macro, universal_impl_trait, cfg_target_vendor, global_asm, unicode, ptr_internals, repr_transparent, naked_functions, alloc, allocator_api, core_intrinsics)]
+#![feature(asm, proc_macro, universal_impl_trait, cfg_target_vendor, global_asm, unicode, ptr_internals, repr_transparent, naked_functions, alloc, allocator_api, core_intrinsics, const_fn, align_offset)]
 #![cfg_attr(feature = "crt0", feature(lang_items, compiler_builtins_lib))]
 #![no_std]
 
@@ -45,6 +45,8 @@ extern crate arrayvec;
 pub mod ipc;
 pub mod tls;
 pub mod kernel;
+pub mod allocator;
+
 mod utils;
 
 pub mod loader;
