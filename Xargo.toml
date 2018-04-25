@@ -1,15 +1,15 @@
 [dependencies.core]
 stage = 0
-path = "../rust/src/libcore"
+git = "https://github.com/MegatonHammer/rust"
 
 [dependencies.std_unicode]
 stage = 1
-path = "../rust/src/libstd_unicode"
+git = "https://github.com/MegatonHammer/rust"
 
 [dependencies.alloc]
 stage = 2
-path = "../rust/src/liballoc"
+git = "https://github.com/MegatonHammer/rust"
 
 [dependencies.std]
 stage = 3
-path = "../rust/src/libstd"
+git = "https://github.com/MegatonHammer/rust"
