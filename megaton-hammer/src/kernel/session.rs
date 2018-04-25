@@ -53,7 +53,7 @@ impl Session {
         if err != 0 {
             return Err(Error(err));
         }
-        Response::unpack(&mut ipc_buf[..], false)
+        Response::unpack(&mut ipc_buf[..], None)
     }
 
     pub fn to_domain(self) -> ::core::result::Result<Domain, (Session, Error)> {
@@ -120,20 +120,19 @@ impl Domain {
         if err != 0 {
             return Err(Error(err));
         }
-        Response::unpack(&mut ipc_buf[..], true)
+        Response::unpack(&mut ipc_buf[..], Some(self.0.clone()))
     }
 }
 
 // TODO: impl Drop for Domain
 
 impl Object for Domain {
-    // TODO: This is basically CMIF, instead of being a true low-level Domain.
     fn send<T: Clone, Y: Clone>(&self, req: Request<T>) -> Result<Response<Y>> {
         Domain::send(self, req)
     }
 
     fn from_res<Y: Clone>(res: &mut Response<Y>) -> Domain {
-        unimplemented!()
+        res.pop_domain_object()
     }
 }
 

@@ -11,7 +11,7 @@ use core::mem;
 use core::marker::PhantomData;
 use arrayvec::ArrayVec;
 use byteorder::{LE};
-use kernel::KObject;
+use kernel::{KObject, Domain};
 use bit_field::BitField;
 
 use utils::{CursorWrite, CursorRead, div_ceil, hex_print};
@@ -472,13 +472,13 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
         // TODO: Write c buffers
     }
 
-    pub fn show_packed(self, f: &mut core::fmt::Write) -> Self {
+    pub fn show_packed(self, f: &mut core::fmt::Write, is_domain: bool) -> Self {
         // Let's make a copy. **WE NEED TO FORGET IT**
         // TODO: Maybe there's a cleaner way to unsafely make a copy without
         // transmuting ?
         let other_self : Self = unsafe { core::mem::transmute_copy(&self) };
         let mut arr = [0; 0x100];
-        other_self.pack(&mut arr, None);
+        other_self.pack(&mut arr, if is_domain { Some(0xff) } else { None });
 
         hex_print(&arr[..], &mut ::loader::Logger);
         self
@@ -489,6 +489,7 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
 // buffer's lifetime (somehow).
 #[derive(Debug)]
 pub struct Response<RAW> {
+    domain_obj: Option<Arc<KObject>>,
     error: u64,
     pid: Option<u64>,
     handles: ArrayVec<[KObject; 32]>,
@@ -498,8 +499,9 @@ pub struct Response<RAW> {
 
 impl<T: Clone> Response<T> {
     // TODO: Mark unpack as unsafe (for all the obvious reasons)
-    pub fn unpack(data: &[u8], is_domain: bool) -> Result<Response<T>> {
+    pub fn unpack(data: &[u8], is_domain: Option<Arc<KObject>>) -> Result<Response<T>> {
         let mut this : Response<T> = Response {
+            domain_obj: is_domain,
             error: 0,
             pid: None,
             handles: ArrayVec::new(),
@@ -518,7 +520,7 @@ impl<T: Clone> Response<T> {
         // TODO: What about control messages ?
         // TODO: What about buffers ??
         assert_eq!(hdr.get_ty(), 0);
-        if !is_domain {
+        if this.domain_obj.is_none() {
             assert_eq!(hdr.get_raw_section_size() as usize, (core::mem::size_of::<T>() + 8 + 8 + 0x10) / 4);
         }
 
@@ -573,16 +575,15 @@ impl<T: Clone> Response<T> {
         let before_pad = ((cursor.pos() + (16 - 1)) & !(16 - 1)) - cursor.pos();
         cursor.skip_read(before_pad);
 
-        let domain_hdr = if is_domain {
-            let domain_hdr = cursor.skip_read(core::mem::size_of::<DomainMessageHeader>());
-            let domain_hdr = unsafe {
-                (domain_hdr.as_ptr() as *const DomainMessageHeader).as_ref().unwrap()
-            };
-            assert_eq!(domain_hdr.get_data_len() as usize, core::mem::size_of::<T>() + 8 + 8);
-            assert_eq!(hdr.get_raw_section_size() as usize, 16 + domain_hdr.get_data_len() as usize + domain_hdr.get_input_object_count() as usize * 4, "Invalid raw data size for domain");
+        let input_objects = if this.domain_obj.is_some() {
+            // Response have a "weird" domain header, at least in mephisto.
+            //assert_eq!(domain_hdr.get_data_len() as usize, core::mem::size_of::<T>() + 8 + 8);
+            // raw section size = Padding + domain header + SFCO/errcode + data size
+            let input_objects = cursor.read_u32::<LE>() as usize;
+            assert_eq!(hdr.get_raw_section_size() as u64, div_ceil((0x10 + 0x10 + 0x10 + core::mem::size_of::<T>() as usize + input_objects * 4) as u64, 4), "Invalid raw data size for domain");
             let _domain_id = cursor.read_u32::<LE>();
             cursor.skip_read(8);
-            Some(domain_hdr)
+            Some(input_objects)
         } else { None };
 
         // Find SFCO
@@ -594,8 +595,8 @@ impl<T: Clone> Response<T> {
         };
         this.ret = raw.clone();
 
-        if let Some(domain_hdr) = domain_hdr {
-            for i in 0..domain_hdr.get_input_object_count() {
+        if let Some(input_objects) = input_objects {
+            for i in 0..input_objects {
                 this.objects.push(cursor.read_u32::<LE>());
             }
         }
@@ -615,8 +616,7 @@ impl<T: Clone> Response<T> {
         self.handles.remove(0)
     }
 
-    // TODO: This API smells terrible.
-    pub fn pop_domain_object(&mut self) -> u32 {
-        unimplemented!();
+    pub fn pop_domain_object(&mut self) -> Domain {
+        Domain::new(self.domain_obj.clone().expect("Pop_domain_object called on a non-domain responses"), self.objects.remove(0))
     }
 }
