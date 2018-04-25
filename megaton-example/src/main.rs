@@ -25,6 +25,8 @@ pub fn u8_slice_to_i8_slice(slice: &[u8]) -> &[i8] {
 enum MyError {
     MegatonError(megaton_hammer::error::Error),
     ImageError(image::ImageError),
+    IoctlError(u32),
+    ParcelError(u32)
 }
 
 impl From<image::ImageError> for MyError {
@@ -89,11 +91,12 @@ fn main() -> std::result::Result<(), MyError> {
         let _window_size = disp_svc.open_layer(display, layer_id, 0, parcel.as_bytes_mut())?;
 
         let mut reader = parcel.into_parcel_reader();
-        let fbo = FlatBinderObject::from_parcel(&mut reader);
-        let binder = fbo.inner as i32;
-        relay_svc.adjust_refcount(binder, 1, 0)?;
-        relay_svc.adjust_refcount(binder, 1, 1)?;
-        binder
+        //let fbo = FlatBinderObject::from_parcel(&mut reader);
+        //let binder = fbo.inner as i32;
+        //relay_svc.adjust_refcount(binder, 1, 0)?;
+        //relay_svc.adjust_refcount(binder, 1, 1)?;
+        //binder
+        0
     };
 
     // Connect to the IGBP. Take a look at the following link for reference.
@@ -109,11 +112,17 @@ fn main() -> std::result::Result<(), MyError> {
         relay_svc.transact_parcel(binder_id as i32, CONNECT, 0, parcel.build().as_bytes(), parcel_out.as_bytes_mut())?;
 
         let mut reader = parcel_out.into_parcel_reader();
-        let qbo = QueueBufferOutput::from_parcel(&mut reader);
+        //let qbo = QueueBufferOutput::from_parcel(&mut reader);
         //if reader.read_u32() != 0 {
         //    panic!("Failed to connect to igbp");
         //}
-        qbo
+        //qbo
+        QueueBufferOutput {
+            width: 1280,
+            height: 720,
+            transform_hint: 0,
+            num_pending_buffers: 0
+        }
     };
 
     println!("Allocate framebuffers");
@@ -129,6 +138,7 @@ fn main() -> std::result::Result<(), MyError> {
             size: (mem.len() * std::mem::size_of::<BufferMemory>()) as u32,
             handle: 0
         };
+        println!("NVMAP_IOC_CREATE {:?} ({:?})", create, unsafe { std::mem::transmute::<&NvMapIocCreateArgs, &[u8; std::mem::size_of::<NvMapIocCreateArgs>()]>(&create) });
         let ret = nvdrv.ioctl(nvmap, NVMAP_IOC_CREATE, 0,
                     // TODO: This is unsafe. And illegal. Rust assumes aliasing
                     // doesn't happen with references, which is exactly what we're
@@ -138,7 +148,7 @@ fn main() -> std::result::Result<(), MyError> {
                     unsafe { std::slice::from_raw_parts(&create as *const NvMapIocCreateArgs as *const u8, std::mem::size_of::<NvMapIocCreateArgs>()) },
                     unsafe { std::slice::from_raw_parts_mut(&mut create as *mut NvMapIocCreateArgs as *mut u8, std::mem::size_of::<NvMapIocCreateArgs>()) })?;
         if ret != 0 {
-            panic!("Ioctl failed");
+            return Err(MyError::IoctlError(ret));
         }
         GpuBuffer {
             nvmap_handle: create.handle,
@@ -159,6 +169,7 @@ fn main() -> std::result::Result<(), MyError> {
             addr: mem.as_mut_ptr() as u64
         };
 
+        println!("NVMAP_IOC_ALLOC {:?} ({:?})", alloc, unsafe { std::mem::transmute::<&NvMapIocAllocArgs, &[u8; std::mem::size_of::<NvMapIocAllocArgs>()]>(&alloc) });
         let ret = nvdrv.ioctl(nvmap, NVMAP_IOC_ALLOC, 0,
                     // TODO: This is unsafe. And illegal. Rust assumes aliasing
                     // doesn't happen with references, which is exactly what we're
@@ -169,7 +180,7 @@ fn main() -> std::result::Result<(), MyError> {
                     unsafe { std::slice::from_raw_parts_mut(&mut alloc as *mut NvMapIocAllocArgs as *mut u8, std::mem::size_of::<NvMapIocAllocArgs>()) })?;
 
         if ret != 0 {
-            panic!("Ioctl alloc failed");
+            return Err(MyError::IoctlError(ret));
         }
 
         let mut buffers = Vec::with_capacity(3);
@@ -195,11 +206,12 @@ fn main() -> std::result::Result<(), MyError> {
         parcel.write_interface_token("android.gui.IGraphicBufferProducer");
         parcel.write_u32(i as u32); // slot
         parcel.write_u32(1); // Unknown
-        parcel.write_u32(0x16c); // Flattened GraphicsBuffer
+        parcel.write_u32(0x16c); // Flattened GraphicsBuffer length
         parcel.write_u32(0); // Unknown
         buf.write_to_parcel(&mut parcel);
         let mut parcel_out = RawParcel::default();
         relay_svc.transact_parcel(binder_id as i32, SET_PREALLOCATED_BUFFER, 0, parcel.build().as_bytes(), parcel_out.as_bytes_mut())?;
+        println!("{:?}", parcel_out);
     }
 
     println!("Set scaling mode");
@@ -212,7 +224,6 @@ fn main() -> std::result::Result<(), MyError> {
 
     println!("Set Z layer");
     system_disp_svc.set_layer_z(layer_id, 2)?;
-
 
     println!("Loading image from FERRIS");
     let image = BMPDecoder::new(Cursor::new(&FERRIS[..]));
@@ -234,20 +245,24 @@ fn main() -> std::result::Result<(), MyError> {
             parcel.write_u32(0xb00); // usage
             let mut parcel_out = RawParcel::default();
             relay_svc.transact_parcel(binder_id as i32, DEQUEUE_BUFFER, 0, parcel.build().as_bytes(), parcel_out.as_bytes_mut())?;
+            println!("{:?}", parcel_out);
             let mut parcel_out = parcel_out.into_parcel_reader();
+
             let slot = parcel_out.read_u32();
+
             // Read fence
             parcel_out.0.seek(SeekFrom::Current(44));
+
             let status = parcel_out.read_u32();
-            //if status != 0 {
-            //    panic!("WTF");
-            //}
-            //slot
-            0
+            if status != 0 {
+                println!("WTF: {}", status);
+                return Err(MyError::ParcelError(status));
+            }
+            slot
         };
 
         // Request buffer if it hasn't been requested already.
-        println!("Request buffer");
+        println!("Request buffer {}", slot);
         {
             let mut parcel = OwnedParcel::new();
             parcel.write_interface_token("android.gui.IGraphicBufferProducer");
@@ -257,17 +272,20 @@ fn main() -> std::result::Result<(), MyError> {
             let mut parcel_out = parcel_out.into_parcel_reader();
             let non_null = parcel_out.read_u32() != 0;
             if non_null {
-                //let len = parcel_out.read_u32();
-                //if len != 0x16c {
-                //    panic!("Invalid length");
-                //}
+                let len = parcel_out.read_u32();
+                if len != 0x16c {
+                    println!("Invalid length: {}", len);
+                    return Ok(())
+                }
                 let unk = parcel_out.read_u32();
                 // TODO: Get graphicbuffer.
+                parcel_out.0.seek(SeekFrom::Current(0x16c));
             }
             let status = parcel_out.read_u32();
-            //if status != 0 {
-            //    panic!("WTF");
-            //}
+            if status != 0 {
+                println!("WTF: {}", status);
+                return Err(MyError::ParcelError(status));
+            }
         }
 
 
@@ -343,7 +361,7 @@ fn main() -> std::result::Result<(), MyError> {
             parcel.write_u32(0);
             parcel.write_u32(-1i32 as u32);
             parcel.write_u32(0);
-            //parcel.write_u32(-1i32 as u32);
+            parcel.write_u32(-1i32 as u32);
             parcel.write_u32(0);
             parcel.write_u32(-1i32 as u32);
             parcel.write_u32(0);
@@ -352,11 +370,12 @@ fn main() -> std::result::Result<(), MyError> {
             let res = relay_svc.transact_parcel(binder_id as i32, QUEUE_BUFFER, 0, parcel.build().as_bytes(), parcel_out.as_bytes_mut())?;
             let mut parcel_out = parcel_out.into_parcel_reader();
 
-            let _ = QueueBufferOutput::from_parcel(&mut parcel_out);
+            println!("{:?}", QueueBufferOutput::from_parcel(&mut parcel_out));
 
             let status = parcel_out.read_u32();
             if status != 0 {
-                panic!("WTF");
+                println!("WTF: {}", status);
+                return Err(MyError::ParcelError(status));
             }
         }
         vevent.wait()?;
@@ -379,6 +398,13 @@ static FERRIS: &'static [u8; 153718] = include_bytes!("../img/ferris.bmp");
 //    }
 //}
 
+//struct Display(Arc<IManagerDisplayService>, u64);
+//
+//impl Drop for Display {
+//    fn drop(&mut self) {
+//        self.0.close_display(self.1);
+//    }
+//}
 
 // TODO: Layer trait?
 //struct ManagedLayer(Arc<IManagerDisplayService>, u64);
@@ -412,6 +438,7 @@ impl FlatBinderObject {
 
 // Returned by igbp_connect
 #[repr(C)]
+#[derive(Debug)]
 struct QueueBufferOutput {
     width: u32,
     height: u32,
@@ -483,6 +510,7 @@ const NVMAP_IOC_PARAM: u32 = 0xC00C0109;
 const NVMAP_IOC_GET_ID: u32 = 0xC008010E;
 
 #[repr(C)]
+#[derive(Debug)]
 struct NvMapIocCreateArgs{
     /// In, size of the buffer in bytes
     size: u32,
@@ -491,6 +519,7 @@ struct NvMapIocCreateArgs{
 }
 
 #[repr(C)]
+#[derive(Debug)]
 struct NvMapIocAllocArgs {
     handle: u32,
     heapmask: u32,
@@ -531,9 +560,16 @@ impl OwnedParcel {
         self.0.write_u32::<LE>(data).unwrap();
     }
     pub fn write_string16(&mut self, s: &str) {
-        self.write_u32((s.encode_utf16().count() * 2) as u32);
+        let encoded_s_count = s.encode_utf16().count();
+        self.write_u32(encoded_s_count as u32);
         for c in s.encode_utf16() {
             self.0.write_u16::<LE>(c).unwrap();
+        }
+        // zero-terminated
+        self.0.write_u16::<LE>(0).unwrap();
+        // Padding
+        if (encoded_s_count + 1) % 2 == 1 {
+            self.0.write_u16::<LE>(0).unwrap();
         }
     }
     pub fn write_interface_token(&mut self, token: &str) {
@@ -554,6 +590,7 @@ impl OwnedParcel {
     }
 }
 
+#[derive(Debug)]
 struct ParcelReader(std::io::Cursor<Vec<u8>>);
 
 impl ParcelReader {
@@ -574,6 +611,18 @@ struct RawParcel {
     payload: [u8; 0x200]
 }
 
+impl std::fmt::Debug for RawParcel {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
+        let mut s = f.debug_struct("RawParcel");
+        s.field("data_size", &self.data_size)
+         .field("data_offset", &self.data_offset)
+         .field("objects_size", &self.objects_size)
+         .field("objects_offset", &self.objects_offset)
+         .field("payload", &&self.payload[..])
+         .finish()
+    }
+}
+
 impl Default for RawParcel {
     fn default() -> RawParcel {
         RawParcel {
@@ -588,7 +637,7 @@ impl Default for RawParcel {
 
 impl RawParcel {
     pub fn as_bytes(&self) -> &[u8] {
-        unsafe { std::slice::from_raw_parts(self as *const RawParcel as *const u8, std::mem::size_of::<RawParcel>()) }
+        unsafe { std::slice::from_raw_parts(self as *const RawParcel as *const u8, 0x10 + self.data_size as usize) }
     }
 
     pub fn as_bytes_mut(&mut self) -> &mut [u8] {
@@ -596,6 +645,6 @@ impl RawParcel {
     }
 
     pub fn into_parcel_reader(self) -> ParcelReader {
-        ParcelReader(std::io::Cursor::new(Vec::from(&self.payload[..])))
+        ParcelReader(std::io::Cursor::new(Vec::from(&self.payload[(self.data_offset - 0x10) as usize..(self.data_offset - 0x10 + self.data_size) as usize])))
     }
 }
