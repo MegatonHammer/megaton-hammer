@@ -59,7 +59,7 @@ impl TransferMemory {
         if res != 0 {
             return Err(Error(res));
         }
-        Ok(TransferMemory(KObject(out), Some(AllocatedMemory(mem, layout))))
+        Ok(TransferMemory(KObject(out)))
     }
 }
 
