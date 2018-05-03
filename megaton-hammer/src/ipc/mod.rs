@@ -164,7 +164,7 @@ pub enum MessageType {
     Unknown(u16)
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct IPCBuffer<'a> {
     // Address to the value
     addr: usize,
@@ -208,7 +208,7 @@ impl<'a> IPCBuffer<'a> {
     pub fn from_slice<T>(val: &'a [T], ty: u64) -> IPCBuffer {
         // TODO: Verify type and val mutability
         IPCBuffer {
-            addr: val.as_ptr() as usize,
+            addr: if val.len() == 0 { 0 } else { val.as_ptr() as usize },
             size: core::mem::size_of::<T>() * val.len(),
             ty,
             phantom: PhantomData
@@ -217,8 +217,26 @@ impl<'a> IPCBuffer<'a> {
     pub fn from_mut_slice<T>(val: &'a mut [T], ty: u64) -> IPCBuffer {
         // TODO: Verify type and val mutability
         IPCBuffer {
-            addr: val.as_ptr() as usize,
+            addr: if val.len() == 0 { 0 } else { val.as_ptr() as usize },
             size: core::mem::size_of::<T>() * val.len(),
+            ty,
+            phantom: PhantomData
+        }
+    }
+
+    pub unsafe fn from_ptr_len<T>(val: *const T, len: usize, ty: u64) -> IPCBuffer<'static> {
+        IPCBuffer {
+            addr: val as usize,
+            size: core::mem::size_of::<T>() * len,
+            ty,
+            phantom: PhantomData
+        }
+    }
+
+    pub unsafe fn from_mut_ptr_len<T>(val: *mut T, len: usize, ty: u64) -> IPCBuffer<'static> {
+        IPCBuffer {
+            addr: val as usize,
+            size: core::mem::size_of::<T>() * len,
             ty,
             phantom: PhantomData
         }
@@ -478,7 +496,22 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
         // Let's make a copy. **WE NEED TO FORGET IT**
         // TODO: Maybe there's a cleaner way to unsafely make a copy without
         // transmuting ?
-        let other_self : Self = unsafe { core::mem::transmute_copy(&self) };
+        let other_self : Self = Self {
+            ty: self.ty,
+            send_pid: self.send_pid,
+            x_descriptors: self.x_descriptors.clone(),
+            a_descriptors: self.a_descriptors.clone(),
+            b_descriptors: self.b_descriptors.clone(),
+            c_descriptors: self.c_descriptors.clone(),
+            copy_handles: self.copy_handles.clone(),
+            // This works because it gets forgotten.
+            move_handles: self.move_handles.iter().map(|o| unsafe { KObject::new(o.as_raw_handle()) }).collect(),
+
+            // The data section is built in !
+            cmd_id: self.cmd_id,
+            // TODO: I really feel like this *ought* to be 
+            args: self.args.clone()
+        };
         let mut arr = [0; 0x100];
         other_self.pack(&mut arr, if is_domain { Some(0xff) } else { None });
 
