@@ -10,8 +10,6 @@ use core;
 use core::mem;
 use core::marker::PhantomData;
 use arrayvec::ArrayVec;
-use alloc::arc::Arc;
-use alloc::Vec;
 use byteorder::{LE};
 use kernel::{KObject, Domain};
 use bit_field::BitField;
@@ -259,12 +257,12 @@ impl<'a> IPCBuffer<'a> {
 pub struct Request<'a, 'b, RAW> {
     ty: u16,
     send_pid: bool,
-    x_descriptors: Vec<IPCBuffer<'a>>,
-    a_descriptors: Vec<IPCBuffer<'a>>,
-    b_descriptors: Vec<IPCBuffer<'a>>,
-    c_descriptors: Vec<IPCBuffer<'a>>,
-    copy_handles: Vec<&'b KObject>,
-    move_handles: Vec<KObject>,
+    x_descriptors: ArrayVec<[IPCBuffer<'a>; 16]>,
+    a_descriptors: ArrayVec<[IPCBuffer<'a>; 16]>,
+    b_descriptors: ArrayVec<[IPCBuffer<'a>; 16]>,
+    c_descriptors: ArrayVec<[IPCBuffer<'a>; 16]>,
+    copy_handles: ArrayVec<[&'b KObject; 16]>,
+    move_handles: ArrayVec<[KObject; 16]>,
 
     // The data section is built in !
     cmd_id: u64,
@@ -280,12 +278,12 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
             ty: 4,
             cmd_id: id,
             send_pid: false,
-            x_descriptors: Vec::new(),
-            a_descriptors: Vec::new(),
-            b_descriptors: Vec::new(),
-            c_descriptors: Vec::new(),
-            copy_handles: Vec::new(),
-            move_handles: Vec::new(),
+            x_descriptors: ArrayVec::new(),
+            a_descriptors: ArrayVec::new(),
+            b_descriptors: ArrayVec::new(),
+            c_descriptors: ArrayVec::new(),
+            copy_handles: ArrayVec::new(),
+            move_handles: ArrayVec::new(),
             args: None
         }
     }
@@ -527,8 +525,8 @@ pub struct Response<RAW> {
     domain_obj: Option<Arc<KObject>>,
     error: u64,
     pid: Option<u64>,
-    handles: Vec<KObject>,
-    objects: Vec<u32>, // TODO: Maybe it'd be fine to lower this below the theoretical limit?
+    handles: ArrayVec<[KObject; 32]>,
+    objects: ArrayVec<[u32; 256]>, // TODO: Maybe it'd be fine to lower this below the theoretical limit?
     ret: RAW
 }
 
@@ -539,8 +537,8 @@ impl<T: Clone> Response<T> {
             domain_obj: is_domain,
             error: 0,
             pid: None,
-            handles: Vec::new(),
-            objects: Vec::new(),
+            handles: ArrayVec::new(),
+            objects: ArrayVec::new(),
             ret: unsafe { mem::uninitialized() }
         };
 
