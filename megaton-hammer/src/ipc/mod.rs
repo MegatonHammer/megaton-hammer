@@ -9,9 +9,8 @@
 use core;
 use core::mem;
 use core::marker::PhantomData;
-use arrayvec::ArrayVec;
+use arrayvec::{ArrayVec, Array};
 use alloc::arc::Arc;
-use alloc::Vec;
 use byteorder::{LE};
 use kernel::{KObject, Domain};
 use bit_field::BitField;
@@ -255,40 +254,55 @@ impl<'a> IPCBuffer<'a> {
 
 //}
 
-#[derive(Debug)]
-pub struct Request<'a, 'b, RAW> {
+//#[derive(Debug)]
+pub struct Request<'a, 'b, RAW, BUFF: Array, COPY: Array, MOVE: Array>
+where
+    BUFF: Array<Item=IPCBuffer<'a>>,
+    COPY: Array<Item=&'b KObject>,
+    MOVE: Array<Item=KObject>
+{
     ty: u16,
     send_pid: bool,
-    x_descriptors: Vec<IPCBuffer<'a>>,
-    a_descriptors: Vec<IPCBuffer<'a>>,
-    b_descriptors: Vec<IPCBuffer<'a>>,
-    c_descriptors: Vec<IPCBuffer<'a>>,
-    copy_handles: Vec<&'b KObject>,
-    move_handles: Vec<KObject>,
+    buffers: ArrayVec<BUFF>,
+    // x_descriptors: ArrayVec<[IPCBuffer<'a>; 16]>,
+    // a_descriptors: ArrayVec<[IPCBuffer<'a>; 16]>,
+    // b_descriptors: ArrayVec<[IPCBuffer<'a>; 16]>,
+    // c_descriptors: ArrayVec<[IPCBuffer<'a>; 16]>,
+    copy_handles: ArrayVec<COPY>,
+    move_handles: ArrayVec<MOVE>,
 
     // The data section is built in !
     cmd_id: u64,
-    // TODO: I really feel like this *ought* to be 
-    args: Option<RAW>,
+    // TODO: I really feel like this *ought* to be
+    args: Option<RAW>
 }
 
-// TODO: Figure out a way to avoid T: Clone ?
-// TODO: Maybe I should just store a *pointer* to T ?
-impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
+pub trait IRequest {
+    fn pack(self, data: &mut [u8], domain_id: Option<u32>);
+}
+
+impl<'a, 'b, T: Clone, BUFF, COPY, MOVE> Request<'a, 'b, T, BUFF, COPY, MOVE>
+where
+    BUFF: Array<Item=IPCBuffer<'a>>,
+    COPY: Array<Item=&'b KObject>,
+    MOVE: Array<Item=KObject>
+{
     pub fn new(id: u64) -> Self {
         Request {
             ty: 4,
             cmd_id: id,
             send_pid: false,
-            x_descriptors: Vec::new(),
-            a_descriptors: Vec::new(),
-            b_descriptors: Vec::new(),
-            c_descriptors: Vec::new(),
-            copy_handles: Vec::new(),
-            move_handles: Vec::new(),
+            buffers: ArrayVec::new(),
+            // x_descriptors: ArrayVec::new(),
+            // a_descriptors: ArrayVec::new(),
+            // b_descriptors: ArrayVec::new(),
+            // c_descriptors: ArrayVec::new(),
+            copy_handles: ArrayVec::new(),
+            move_handles: ArrayVec::new(),
             args: None
         }
     }
+
     pub fn ty(mut self, ty: MessageType) -> Self {
         self.ty = match ty {
             MessageType::Request => 4,
@@ -304,33 +318,45 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
     }
 
     pub fn descriptor(mut self, buf: IPCBuffer<'a>) -> Self {
-        enum Direction { In, Out }
-        enum Family { AB, XC }
+        // enum Direction { In, Out }
+        // enum Family { AB, XC }
 
+        // if buf.ty & 0x20 == 0 {
+        //     let direction = if buf.ty & 0b0001 != 0 { Direction::In }
+        //     else if buf.ty & 0b0010 != 0 { Direction::Out }
+        //     else { panic!("Invalid buffer type {}", buf.ty); };
+        //
+        //     let family = if buf.ty & 0b0100 != 0 { Family::AB }
+        //     else if buf.ty & 0b1000 != 0 { Family::XC }
+        //     else { panic!("Invalid buffer type {}", buf.ty); };
+        //
+        //     match (direction, family) {
+        //         (Direction::In, Family::AB) => self.a_descriptors.push(buf),
+        //         (Direction::Out, Family::AB) => self.b_descriptors.push(buf),
+        //         (Direction::In, Family::XC) => self.x_descriptors.push(buf),
+        //         (Direction::Out, Family::XC) => ()
+        //     }
+        // } else if buf.ty == 0x21 {
+        //     self.a_descriptors.push(buf);
+        //     self.x_descriptors.push(IPCBuffer::null());
+        // } else if buf.ty == 0x22 {
+        //     self.b_descriptors.push(buf);
+        //     self.c_descriptors.push(IPCBuffer::null());
+        // } else {
+        //     panic!("Invalid descriptor type: {}", buf.ty);
+        // }
+        // TODO: Move type validation to IPCBuffer, where it belongs.
         if buf.ty & 0x20 == 0 {
-            let direction = if buf.ty & 0b0001 != 0 { Direction::In }
-            else if buf.ty & 0b0010 != 0 { Direction::Out }
-            else { panic!("Invalid buffer type {}", buf.ty); };
-
-            let family = if buf.ty & 0b0100 != 0 { Family::AB }
-            else if buf.ty & 0b1000 != 0 { Family::XC }
-            else { panic!("Invalid buffer type {}", buf.ty); };
-
-            match (direction, family) {
-                (Direction::In, Family::AB) => self.a_descriptors.push(buf),
-                (Direction::Out, Family::AB) => self.b_descriptors.push(buf),
-                (Direction::In, Family::XC) => self.x_descriptors.push(buf),
-                (Direction::Out, Family::XC) => ()
-            }
+            if buf.ty & 0b0011 == 0 { panic!("Invalid buffer type {}", buf.ty); }
+            if buf.ty & 0b1100 == 0 { panic!("Invalid buffer type {}", buf.ty); }
         } else if buf.ty == 0x21 {
-            self.a_descriptors.push(buf);
-            self.x_descriptors.push(IPCBuffer::null());
+
         } else if buf.ty == 0x22 {
-            self.b_descriptors.push(buf);
-            self.c_descriptors.push(IPCBuffer::null());
+
         } else {
             panic!("Invalid descriptor type: {}", buf.ty);
         }
+        self.buffers.push(buf);
         self
     }
 
@@ -346,9 +372,46 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
         self
     }
 
+    pub fn show_packed(self, f: &mut core::fmt::Write, is_domain: bool) -> Self {
+        // Let's make a copy. **WE NEED TO FORGET IT**
+        // TODO: Maybe there's a cleaner way to unsafely make a copy without
+        // transmuting ?
+        let other_self : Self = Self {
+            ty: self.ty,
+            send_pid: self.send_pid,
+            x_descriptors: self.x_descriptors.clone(),
+            a_descriptors: self.a_descriptors.clone(),
+            b_descriptors: self.b_descriptors.clone(),
+            c_descriptors: self.c_descriptors.clone(),
+            copy_handles: self.copy_handles.clone(),
+            // This works because it gets forgotten.
+            move_handles: self.move_handles.iter().map(|o| unsafe { KObject::new(o.as_raw_handle()) }).collect(),
+
+            // The data section is built in !
+            cmd_id: self.cmd_id,
+            // TODO: I really feel like this *ought* to be
+            args: self.args.clone()
+        };
+        let mut arr = [0; 0x100];
+        other_self.pack(&mut arr, if is_domain { Some(0xff) } else { None });
+
+        hex_print(&arr[..], &mut ::loader::Logger);
+        self
+    }
+}
+
+// TODO: Figure out a way to avoid T: Clone ?
+// TODO: Maybe I should just store a *pointer* to T ?
+impl<'a, 'b, T, BUFF, COPY, MOVE> IRequest for Request<'a, 'b, T, BUFF, COPY, MOVE>
+where
+    T: Clone,
+    BUFF: Array<Item=IPCBuffer<'a>>,
+    COPY: Array<Item=&'b KObject>,
+    MOVE: Array<Item=KObject>
+{
     // Write the data to an IPC buffer to be sent to the Switch OS.
     // TODO: If this is not sent, it can leak move handles!
-    pub fn pack(self, data: &mut [u8], domain_id: Option<u32>) {
+    fn pack(self, data: &mut [u8], domain_id: Option<u32>) {
         // TODO: Memset data first
         let mut cursor = CursorWrite::new(data);
 
@@ -470,7 +533,7 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
         cursor.write_u64::<LE>(self.cmd_id);
         // TODO: Should blow up if that's not true. Alternatively: This should
         // not even be possible from an API perspective ?
-        if let Some(ref args) = self.args {
+        if let Some(args) = self.args {
             let raw_data = cursor.skip_write(core::mem::size_of::<T>());
             let raw_data = unsafe {
                 (raw_data.as_mut_ptr() as *mut T).as_mut().unwrap()
@@ -491,33 +554,6 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
 
         // TODO: Write c buffers
     }
-
-    pub fn show_packed(self, f: &mut core::fmt::Write, is_domain: bool) -> Self {
-        // Let's make a copy. **WE NEED TO FORGET IT**
-        // TODO: Maybe there's a cleaner way to unsafely make a copy without
-        // transmuting ?
-        let other_self : Self = Self {
-            ty: self.ty,
-            send_pid: self.send_pid,
-            x_descriptors: self.x_descriptors.clone(),
-            a_descriptors: self.a_descriptors.clone(),
-            b_descriptors: self.b_descriptors.clone(),
-            c_descriptors: self.c_descriptors.clone(),
-            copy_handles: self.copy_handles.clone(),
-            // This works because it gets forgotten.
-            move_handles: self.move_handles.iter().map(|o| unsafe { KObject::new(o.as_raw_handle()) }).collect(),
-
-            // The data section is built in !
-            cmd_id: self.cmd_id,
-            // TODO: I really feel like this *ought* to be 
-            args: self.args.clone()
-        };
-        let mut arr = [0; 0x100];
-        other_self.pack(&mut arr, if is_domain { Some(0xff) } else { None });
-
-        hex_print(&arr[..], &mut ::loader::Logger);
-        self
-    }
 }
 
 // TODO: I could make RAW be a reference, if I'm OK with tying it to the TLS
@@ -527,8 +563,8 @@ pub struct Response<RAW> {
     domain_obj: Option<Arc<KObject>>,
     error: u64,
     pid: Option<u64>,
-    handles: Vec<KObject>,
-    objects: Vec<u32>, // TODO: Maybe it'd be fine to lower this below the theoretical limit?
+    handles: ArrayVec<[KObject; 32]>,
+    objects: ArrayVec<[u32; 256]>, // TODO: Maybe it'd be fine to lower this below the theoretical limit?
     ret: RAW
 }
 
@@ -539,8 +575,8 @@ impl<T: Clone> Response<T> {
             domain_obj: is_domain,
             error: 0,
             pid: None,
-            handles: Vec::new(),
-            objects: Vec::new(),
+            handles: ArrayVec::new(),
+            objects: ArrayVec::new(),
             ret: unsafe { mem::uninitialized() }
         };
 
