@@ -1,9 +1,10 @@
-use ipc::{Request, Response};
+use ipc::{Request, IRequest, Response, IPCBuffer};
 use kernel::svc::send_sync_request;
 use kernel::{KObject};
 use error::*;
 use tls::TlsStruct;
 use alloc::arc::Arc;
+use arrayvec::Array;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Object
@@ -17,7 +18,7 @@ mod private {
 }
 
 pub trait Object : private::Sealed {
-    fn send<T: Clone, Y: Clone>(&self, req: Request<T>) -> Result<Response<Y>>;
+    fn send<REQ: IRequest, Y: Clone>(&self, req: REQ) -> Result<Response<Y>>;
     fn from_res<Y: Clone>(res: &mut Response<Y>) -> Self;
 }
 
@@ -46,7 +47,7 @@ impl Session {
         Ok(Session(res.pop_handle()))
     }
 
-    pub fn send<T: Clone, Y: Clone>(&self, req: Request<T>) -> Result<Response<Y>> {
+    pub fn send<REQ: IRequest, Y: Clone>(&self, req: REQ) -> Result<Response<Y>> {
         let mut ipc_buf = TlsStruct::borrow_ipc_mut();
         req.pack(&mut *ipc_buf, None);
         let err = unsafe { send_sync_request((self.0).0) };
@@ -72,7 +73,7 @@ impl Session {
 
 impl Object for Session {
     // TODO: This is basically CMIF, instead of being a true low-level session.
-    fn send<T: Clone, Y: Clone>(&self, req: Request<T>) -> Result<Response<Y>> {
+    fn send<REQ: IRequest, Y: Clone>(&self, req: REQ) -> Result<Response<Y>> {
         Session::send(self, req)
     }
 
@@ -113,7 +114,7 @@ impl Domain {
     pub fn new(ses: Arc<KObject>, domain_id: u32) -> Domain {
         Domain(ses, domain_id)
     }
-    fn send<T: Clone, Y: Clone>(&self, req: Request<T>) -> Result<Response<Y>> {
+    fn send<REQ: IRequest, Y: Clone>(&self, req: REQ) -> Result<Response<Y>> {
         let mut ipc_buf = TlsStruct::borrow_ipc_mut();
         req.pack(&mut *ipc_buf, Some(self.1));
         let err = unsafe { send_sync_request((self.0).0) };
@@ -127,7 +128,7 @@ impl Domain {
 // TODO: impl Drop for Domain
 
 impl Object for Domain {
-    fn send<T: Clone, Y: Clone>(&self, req: Request<T>) -> Result<Response<Y>> {
+    fn send<REQ: IRequest, Y: Clone>(&self, req: REQ) -> Result<Response<Y>> {
         Domain::send(self, req)
     }
 
