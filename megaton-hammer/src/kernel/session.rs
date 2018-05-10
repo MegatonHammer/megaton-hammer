@@ -40,10 +40,10 @@ impl Session {
     pub fn duplicate(&self) -> Result<Session> {
         use ipc::{Request, MessageType};
 
-        let req = Request::new(2)
+        let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
             .ty(MessageType::Control)
             .args(());
-        let mut res = self.send::<(), ()>(req)?;
+        let mut res = self.send::<_, ()>(req)?;
         Ok(Session(res.pop_handle()))
     }
 
@@ -60,7 +60,7 @@ impl Session {
     pub fn to_domain(self) -> ::core::result::Result<Domain, (Session, Error)> {
         use ipc::{Request, MessageType};
 
-        let req = Request::new(0)
+        let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
             .ty(MessageType::Control)
             .args(());
         let res : Result<Response<u32>> = self.send(req);

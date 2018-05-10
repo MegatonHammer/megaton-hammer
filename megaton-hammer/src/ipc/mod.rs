@@ -255,7 +255,7 @@ impl<'a> IPCBuffer<'a> {
 //}
 
 //#[derive(Debug)]
-pub struct Request<'a, 'b, RAW, BUFF: Array, COPY: Array, MOVE: Array>
+pub struct Request<'a, 'b, RAW, BUFF = [IPCBuffer<'a>; 0], COPY = [&'b KObject; 0], MOVE = [KObject; 0]>
 where
     BUFF: Array<Item=IPCBuffer<'a>>,
     COPY: Array<Item=&'b KObject>,
@@ -318,33 +318,6 @@ where
     }
 
     pub fn descriptor(mut self, buf: IPCBuffer<'a>) -> Self {
-        // enum Direction { In, Out }
-        // enum Family { AB, XC }
-
-        // if buf.ty & 0x20 == 0 {
-        //     let direction = if buf.ty & 0b0001 != 0 { Direction::In }
-        //     else if buf.ty & 0b0010 != 0 { Direction::Out }
-        //     else { panic!("Invalid buffer type {}", buf.ty); };
-        //
-        //     let family = if buf.ty & 0b0100 != 0 { Family::AB }
-        //     else if buf.ty & 0b1000 != 0 { Family::XC }
-        //     else { panic!("Invalid buffer type {}", buf.ty); };
-        //
-        //     match (direction, family) {
-        //         (Direction::In, Family::AB) => self.a_descriptors.push(buf),
-        //         (Direction::Out, Family::AB) => self.b_descriptors.push(buf),
-        //         (Direction::In, Family::XC) => self.x_descriptors.push(buf),
-        //         (Direction::Out, Family::XC) => ()
-        //     }
-        // } else if buf.ty == 0x21 {
-        //     self.a_descriptors.push(buf);
-        //     self.x_descriptors.push(IPCBuffer::null());
-        // } else if buf.ty == 0x22 {
-        //     self.b_descriptors.push(buf);
-        //     self.c_descriptors.push(IPCBuffer::null());
-        // } else {
-        //     panic!("Invalid descriptor type: {}", buf.ty);
-        // }
         // TODO: Move type validation to IPCBuffer, where it belongs.
         if buf.ty & 0x20 == 0 {
             if buf.ty & 0b0011 == 0 { panic!("Invalid buffer type {}", buf.ty); }
@@ -379,10 +352,11 @@ where
         let other_self : Self = Self {
             ty: self.ty,
             send_pid: self.send_pid,
-            x_descriptors: self.x_descriptors.clone(),
-            a_descriptors: self.a_descriptors.clone(),
-            b_descriptors: self.b_descriptors.clone(),
-            c_descriptors: self.c_descriptors.clone(),
+            buffers: self.buffers.clone(),
+            //x_descriptors: self.x_descriptors.clone(),
+            //a_descriptors: self.a_descriptors.clone(),
+            //b_descriptors: self.b_descriptors.clone(),
+            //c_descriptors: self.c_descriptors.clone(),
             copy_handles: self.copy_handles.clone(),
             // This works because it gets forgotten.
             move_handles: self.move_handles.iter().map(|o| unsafe { KObject::new(o.as_raw_handle()) }).collect(),
@@ -400,6 +374,61 @@ where
     }
 }
 
+#[derive(Debug, Clone, Copy)]
+enum KernelBufferType { X, A, B, C }
+#[derive(Debug, Clone, Copy)]
+enum HipcBufferType {
+    X, A, B, C,
+    AX,
+    BC
+}
+
+impl HipcBufferType {
+    fn from_type(ty: u64) -> HipcBufferType {
+        enum Direction { In, Out }
+        enum Family { AB, XC }
+        if ty & 0x20 == 0 {
+             let direction = if ty & 0b0001 != 0 { Direction::In }
+             else if ty & 0b0010 != 0 { Direction::Out }
+             else { panic!("Invalid buffer type {}", ty); };
+
+             let family = if ty & 0b0100 != 0 { Family::AB }
+             else if ty & 0b1000 != 0 { Family::XC }
+             else { panic!("Invalid buffer type {}", ty); };
+
+            match (direction, family) {
+                (Direction::In, Family::AB) => HipcBufferType::X,
+                (Direction::Out, Family::AB) => HipcBufferType::A,
+                (Direction::In, Family::XC) => HipcBufferType::B,
+                (Direction::Out, Family::XC) => HipcBufferType::C /* TODO: Is that right ? */
+            }
+        } else if ty == 0x21 {
+            HipcBufferType::AX
+        } else if ty == 0x22 {
+            HipcBufferType::BC
+        } else {
+            panic!("Invalid descriptor type: {}", ty);
+        }
+    }
+
+    fn map<T>(&self, mut f: T) where T: FnMut(KernelBufferType) {
+        match *self {
+            HipcBufferType::X => f(KernelBufferType::X),
+            HipcBufferType::A => f(KernelBufferType::A),
+            HipcBufferType::B => f(KernelBufferType::B),
+            HipcBufferType::C => f(KernelBufferType::C),
+            HipcBufferType::AX => {
+                f(KernelBufferType::X);
+                f(KernelBufferType::A);
+            },
+            HipcBufferType::BC => {
+                f(KernelBufferType::B);
+                f(KernelBufferType::C);
+            }
+        }
+    }
+}
+
 // TODO: Figure out a way to avoid T: Clone ?
 // TODO: Maybe I should just store a *pointer* to T ?
 impl<'a, 'b, T, BUFF, COPY, MOVE> IRequest for Request<'a, 'b, T, BUFF, COPY, MOVE>
@@ -412,6 +441,18 @@ where
     // Write the data to an IPC buffer to be sent to the Switch OS.
     // TODO: If this is not sent, it can leak move handles!
     fn pack(self, data: &mut [u8], domain_id: Option<u32>) {
+        enum Family { AB, XC }
+
+        let mut descriptor_counts = (/* X */0, /* A */0, /* B */0, /* C */0);
+        for buf in self.buffers.iter() {
+            HipcBufferType::from_type(buf.ty).map(|bufty| match bufty {
+                KernelBufferType::X => descriptor_counts.0 += 1,
+                KernelBufferType::A => descriptor_counts.1 += 1,
+                KernelBufferType::B => descriptor_counts.2 += 1,
+                KernelBufferType::C => descriptor_counts.3 += 1,
+            });
+        }
+
         // TODO: Memset data first
         let mut cursor = CursorWrite::new(data);
 
@@ -429,16 +470,16 @@ where
             };
 
             hdr.set_ty(self.ty);
-            hdr.set_num_x_descriptors(self.x_descriptors.len() as u8);
-            hdr.set_num_a_descriptors(self.a_descriptors.len() as u8);
-            hdr.set_num_b_descriptors(self.b_descriptors.len() as u8);
+            hdr.set_num_x_descriptors(descriptor_counts.0);
+            hdr.set_num_a_descriptors(descriptor_counts.1);
+            hdr.set_num_b_descriptors(descriptor_counts.2);
             hdr.set_num_w_descriptors(0);
-            if self.c_descriptors.len() == 0 {
+            if descriptor_counts.3 == 0 {
                 hdr.set_c_descriptor_flags(0);
-            } else if self.c_descriptors.len() == 1 {
+            } else if descriptor_counts.3 == 1 {
                 hdr.set_c_descriptor_flags(2);
             } else {
-                hdr.set_c_descriptor_flags(2 + self.c_descriptors.len() as u8);
+                hdr.set_c_descriptor_flags(2 + descriptor_counts.3 as u8);
             }
 
             // 0x10 = padding, 8 = sfci, 8 = cmdid, 0x10=domain header.
@@ -483,18 +524,56 @@ where
             }
         }
 
-        for (i, buf) in self.x_descriptors.iter().enumerate() {
-            assert!(buf.addr >> 39 == 0, "Invalid buffer address");
-            assert!(buf.size >> 16 == 0, "Invalid buffer size");
-            let num = i & 0b111000111111
-                | ((buf.addr >> 36) & 0b111) << 6
-                | ((buf.addr >> 32) & 0b1111) << 12
-                | buf.size << 16;
-            cursor.write_u32::<LE>(num as u32);
-            cursor.write_u32::<LE>((buf.addr & 0xFFFFFFFF) as u32)
+        // X descriptors
+        {
+            let mut i = 0;
+            for buf in self.buffers.iter() {
+                let null_buf = IPCBuffer::null();
+                let buf = match HipcBufferType::from_type(buf.ty) {
+                    HipcBufferType::X => buf,
+                    HipcBufferType::AX => &null_buf,
+                    _ => continue
+                };
+
+                assert!(buf.addr >> 39 == 0, "Invalid buffer address");
+                assert!(buf.size >> 16 == 0, "Invalid buffer size");
+                let num = i & 0b111000111111
+                    | ((buf.addr >> 36) & 0b111) << 6
+                    | ((buf.addr >> 32) & 0b1111) << 12
+                    | buf.size << 16;
+                cursor.write_u32::<LE>(num as u32);
+                cursor.write_u32::<LE>((buf.addr & 0xFFFFFFFF) as u32);
+                i += 1;
+            }
         }
 
-        for buf in self.a_descriptors.iter().chain(self.b_descriptors.iter()) {
+        // A descriptors
+        for buf in self.buffers.iter() {
+            let buf = match HipcBufferType::from_type(buf.ty) {
+                HipcBufferType::B | HipcBufferType::BC => buf,
+                _ => continue
+            };
+
+            assert!(buf.addr >> 39 == 0, "Invalid buffer address");
+            assert!(buf.size >> 35 == 0, "Invalid buffer size");
+            assert!(buf.ty >> 8 == 0, "Invalid descriptor permission");
+
+            cursor.write_u32::<LE>((buf.size & 0xFFFFFFFF) as u32);
+            cursor.write_u32::<LE>((buf.addr & 0xFFFFFFFF) as u32);
+
+            let num = buf.ty as usize >> 6 // flags
+                | ((buf.addr >> 36) & 0b111) << 2
+                | ((buf.size >> 32) & 0b1111) << 24
+                | ((buf.addr >> 32) & 0b1111) << 28;
+            cursor.write_u32::<LE>(num as u32);
+        }
+
+        // B descriptors
+        for buf in self.buffers.iter() {
+            let buf = match HipcBufferType::from_type(buf.ty) {
+                HipcBufferType::B | HipcBufferType::BC => buf,
+                _ => continue
+            };
             assert!(buf.addr >> 39 == 0, "Invalid buffer address");
             assert!(buf.size >> 35 == 0, "Invalid buffer size");
             assert!(buf.ty >> 8 == 0, "Invalid descriptor permission");
@@ -667,7 +746,7 @@ impl<T: Clone> Response<T> {
         this.ret = raw.clone();
 
         if let Some(input_objects) = input_objects {
-            for i in 0..input_objects {
+            for _ in 0..input_objects {
                 this.objects.push(cursor.read_u32::<LE>());
             }
         }
