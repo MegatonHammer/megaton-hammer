@@ -163,6 +163,10 @@ pub enum MessageType {
     Unknown(u16)
 }
 
+//pub enum IPCBufferType {
+//    A { flags: u8 }, B { flags: u8 }, X { counter: u16 }, C { has_u16_size: bool }
+//}
+//
 #[derive(Debug, Clone)]
 pub struct IPCBuffer<'a> {
     // Address to the value
@@ -482,8 +486,17 @@ where
                 hdr.set_c_descriptor_flags(2 + descriptor_counts.3 as u8);
             }
 
-            // 0x10 = padding, 8 = sfci, 8 = cmdid, 0x10=domain header.
-            hdr.set_raw_section_size(div_ceil(0x10 + 8 + 8 + if domain_id.is_some() { 0x10 } else { 0 } + core::mem::size_of::<T>() as u64, 4) as u16);
+            // 0x10 = padding, 8 = sfci, 8 = cmdid, data = T
+            let mut raw_section_size = 0x10 + 8 + 8 + core::mem::size_of::<T>();
+            if domain_id.is_some() {
+                // Domain Header.
+                // TODO: Input ObjectIDs
+                raw_section_size += 0x10;
+            }
+            // C descriptor u16 sizes
+            raw_section_size += self.buffers.iter().filter(|v| v.ty & 0xF == 0xA && v.ty & 0x10 != 0).count() * 2;
+
+            hdr.set_raw_section_size(div_ceil(raw_section_size as u64, 4) as u16);
             let enable_handle_descriptor = self.copy_handles.len() > 0 ||
                 self.move_handles.len() > 0 || self.send_pid;
             hdr.set_enable_handle_descriptor(enable_handle_descriptor);
@@ -628,10 +641,47 @@ where
 
         // Total padding should be 0x10
         cursor.skip_write(0x10 - before_pad);
-        // TODO: Buffer 0xA.
 
 
-        // TODO: Write c buffers
+        // C descriptor u16 length list
+        let mut i = 0;
+        for buf in self.buffers.iter() {
+            let nullbuf = IPCBuffer::null();
+            let buf = match HipcBufferType::from_type(buf.ty) {
+                HipcBufferType::C => buf,
+                HipcBufferType::BC => &nullbuf,
+                _ => continue
+            };
+
+            if buf.ty & 0x10 == 0 {
+                if buf.size >> 16 != 0 {
+                    panic!("Invalid buffer size {:x}", buf.size);
+                }
+
+                cursor.write_u16::<LE>((buf.size) as u16);
+                i += 1;
+            }
+        }
+
+        // Align to u32
+        if i % 2 == 1 {
+            cursor.skip_write(2);
+        }
+
+        for buf in self.buffers.iter() {
+            let nullbuf = IPCBuffer::null();
+            let buf = match HipcBufferType::from_type(buf.ty) {
+                HipcBufferType::C => buf,
+                HipcBufferType::BC => &nullbuf,
+                _ => continue
+            };
+
+            assert_eq!(buf.addr >> 48, 0, "Invalid address {:x}", buf.addr);
+            assert_eq!(buf.size >> 16, 0, "Invalid size {:x}", buf.size);
+
+            cursor.write_u32::<LE>(buf.addr as u32);
+            cursor.write_u32::<LE>((buf.addr >> 32) as u32 | (buf.size as u32) << 16);
+        }
     }
 }
 
