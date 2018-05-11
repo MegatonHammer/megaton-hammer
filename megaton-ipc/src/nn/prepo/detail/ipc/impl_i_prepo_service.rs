@@ -15,11 +15,9 @@ impl IPrepoService<Session> {
 
 		let sm = IUserInterface::raw_new()?;
 
-		let r = sm.get_service(*b"prepo:a\0").map(|s: KObject| Session::from(s).into());
-		if let Ok(service) = r {
-			return Ok(service);
-		}
-		r
+		let session = sm.get_service(*b"prepo:a\0")?;
+		let object : Self = Session::from(session).into();
+		Ok(object)
 	}
 
 	pub fn new_prepo_a() -> Result<Arc<IPrepoService<Session>>> {
@@ -51,11 +49,9 @@ impl IPrepoService<Session> {
 
 		let sm = IUserInterface::raw_new()?;
 
-		let r = sm.get_service(*b"prepo:m\0").map(|s: KObject| Session::from(s).into());
-		if let Ok(service) = r {
-			return Ok(service);
-		}
-		r
+		let session = sm.get_service(*b"prepo:m\0")?;
+		let object : Self = Session::from(session).into();
+		Ok(object)
 	}
 
 	pub fn new_prepo_m() -> Result<Arc<IPrepoService<Session>>> {
@@ -87,11 +83,9 @@ impl IPrepoService<Session> {
 
 		let sm = IUserInterface::raw_new()?;
 
-		let r = sm.get_service(*b"prepo:u\0").map(|s: KObject| Session::from(s).into());
-		if let Ok(service) = r {
-			return Ok(service);
-		}
-		r
+		let session = sm.get_service(*b"prepo:u\0")?;
+		let object : Self = Session::from(session).into();
+		Ok(object)
 	}
 
 	pub fn new_prepo_u() -> Result<Arc<IPrepoService<Session>>> {
@@ -123,11 +117,9 @@ impl IPrepoService<Session> {
 
 		let sm = IUserInterface::raw_new()?;
 
-		let r = sm.get_service(*b"prepo:s\0").map(|s: KObject| Session::from(s).into());
-		if let Ok(service) = r {
-			return Ok(service);
-		}
-		r
+		let session = sm.get_service(*b"prepo:s\0")?;
+		let object : Self = Session::from(session).into();
+		Ok(object)
 	}
 
 	pub fn new_prepo_s() -> Result<Arc<IPrepoService<Session>>> {

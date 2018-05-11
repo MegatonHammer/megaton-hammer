@@ -15,11 +15,9 @@ impl IParentalControlServiceFactory<Session> {
 
 		let sm = IUserInterface::raw_new()?;
 
-		let r = sm.get_service(*b"pctl:s\0\0").map(|s: KObject| Session::from(s).into());
-		if let Ok(service) = r {
-			return Ok(service);
-		}
-		r
+		let session = sm.get_service(*b"pctl:s\0\0")?;
+		let object : Self = Session::from(session).into();
+		Ok(object)
 	}
 
 	pub fn new_pctl_s() -> Result<Arc<IParentalControlServiceFactory<Session>>> {
@@ -51,11 +49,9 @@ impl IParentalControlServiceFactory<Session> {
 
 		let sm = IUserInterface::raw_new()?;
 
-		let r = sm.get_service(*b"pctl:r\0\0").map(|s: KObject| Session::from(s).into());
-		if let Ok(service) = r {
-			return Ok(service);
-		}
-		r
+		let session = sm.get_service(*b"pctl:r\0\0")?;
+		let object : Self = Session::from(session).into();
+		Ok(object)
 	}
 
 	pub fn new_pctl_r() -> Result<Arc<IParentalControlServiceFactory<Session>>> {
@@ -87,11 +83,9 @@ impl IParentalControlServiceFactory<Session> {
 
 		let sm = IUserInterface::raw_new()?;
 
-		let r = sm.get_service(*b"pctl:a\0\0").map(|s: KObject| Session::from(s).into());
-		if let Ok(service) = r {
-			return Ok(service);
-		}
-		r
+		let session = sm.get_service(*b"pctl:a\0\0")?;
+		let object : Self = Session::from(session).into();
+		Ok(object)
 	}
 
 	pub fn new_pctl_a() -> Result<Arc<IParentalControlServiceFactory<Session>>> {
@@ -123,11 +117,9 @@ impl IParentalControlServiceFactory<Session> {
 
 		let sm = IUserInterface::raw_new()?;
 
-		let r = sm.get_service(*b"pctl\0\0\0\0").map(|s: KObject| Session::from(s).into());
-		if let Ok(service) = r {
-			return Ok(service);
-		}
-		r
+		let session = sm.get_service(*b"pctl\0\0\0\0")?;
+		let object : Self = Session::from(session).into();
+		Ok(object)
 	}
 
 	pub fn new_pctl() -> Result<Arc<IParentalControlServiceFactory<Session>>> {

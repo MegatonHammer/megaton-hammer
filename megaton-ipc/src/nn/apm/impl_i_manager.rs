@@ -15,11 +15,9 @@ impl IManager<Session> {
 
 		let sm = IUserInterface::raw_new()?;
 
-		let r = sm.get_service(*b"apm\0\0\0\0\0").map(|s: KObject| Session::from(s).into());
-		if let Ok(service) = r {
-			return Ok(service);
-		}
-		r
+		let session = sm.get_service(*b"apm\0\0\0\0\0")?;
+		let object : Self = Session::from(session).into();
+		Ok(object)
 	}
 
 	pub fn new() -> Result<Arc<IManager<Session>>> {

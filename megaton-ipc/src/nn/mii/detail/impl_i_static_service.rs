@@ -15,11 +15,9 @@ impl IStaticService<Session> {
 
 		let sm = IUserInterface::raw_new()?;
 
-		let r = sm.get_service(*b"mii:e\0\0\0").map(|s: KObject| Session::from(s).into());
-		if let Ok(service) = r {
-			return Ok(service);
-		}
-		r
+		let session = sm.get_service(*b"mii:e\0\0\0")?;
+		let object : Self = Session::from(session).into();
+		Ok(object)
 	}
 
 	pub fn new_mii_e() -> Result<Arc<IStaticService<Session>>> {
@@ -51,11 +49,9 @@ impl IStaticService<Session> {
 
 		let sm = IUserInterface::raw_new()?;
 
-		let r = sm.get_service(*b"mii:u\0\0\0").map(|s: KObject| Session::from(s).into());
-		if let Ok(service) = r {
-			return Ok(service);
-		}
-		r
+		let session = sm.get_service(*b"mii:u\0\0\0")?;
+		let object : Self = Session::from(session).into();
+		Ok(object)
 	}
 
 	pub fn new_mii_u() -> Result<Arc<IStaticService<Session>>> {

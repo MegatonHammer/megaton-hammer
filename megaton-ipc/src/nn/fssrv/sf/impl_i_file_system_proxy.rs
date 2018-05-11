@@ -10,19 +10,18 @@ use alloc::arc::Arc;
 pub struct IFileSystemProxy<T>(T);
 
 impl IFileSystemProxy<Session> {
-	pub fn raw_new() -> Result<IFileSystemProxy<Session>> {
+	pub fn raw_new(unk0: u64) -> Result<IFileSystemProxy<Session>> {
 		use nn::sm::detail::IUserInterface;
 
 		let sm = IUserInterface::raw_new()?;
 
-		let r = sm.get_service(*b"fsp-srv\0").map(|s: KObject| Session::from(s).into());
-		if let Ok(service) = r {
-			return Ok(service);
-		}
-		r
+		let session = sm.get_service(*b"fsp-srv\0")?;
+		let object : Self = Session::from(session).into();
+		object.initialize(unk0)?;
+		Ok(object)
 	}
 
-	pub fn new() -> Result<Arc<IFileSystemProxy<Session>>> {
+	pub fn new(unk0: u64) -> Result<Arc<IFileSystemProxy<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
@@ -40,7 +39,7 @@ impl IFileSystemProxy<Session> {
 			return Ok(ret);
 		}
 
-		let hnd = Self::raw_new()?;
+		let hnd = Self::raw_new(unk0)?;
 		let ret = Arc::new(hnd);
 		*HANDLE.lock() = Arc::downgrade(&ret);
 		Ok(ret)

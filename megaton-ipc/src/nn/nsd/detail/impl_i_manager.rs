@@ -15,11 +15,9 @@ impl IManager<Session> {
 
 		let sm = IUserInterface::raw_new()?;
 
-		let r = sm.get_service(*b"nsd:a\0\0\0").map(|s: KObject| Session::from(s).into());
-		if let Ok(service) = r {
-			return Ok(service);
-		}
-		r
+		let session = sm.get_service(*b"nsd:a\0\0\0")?;
+		let object : Self = Session::from(session).into();
+		Ok(object)
 	}
 
 	pub fn new_nsd_a() -> Result<Arc<IManager<Session>>> {
@@ -51,11 +49,9 @@ impl IManager<Session> {
 
 		let sm = IUserInterface::raw_new()?;
 
-		let r = sm.get_service(*b"nsd:u\0\0\0").map(|s: KObject| Session::from(s).into());
-		if let Ok(service) = r {
-			return Ok(service);
-		}
-		r
+		let session = sm.get_service(*b"nsd:u\0\0\0")?;
+		let object : Self = Session::from(session).into();
+		Ok(object)
 	}
 
 	pub fn new_nsd_u() -> Result<Arc<IManager<Session>>> {

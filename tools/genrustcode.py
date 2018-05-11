@@ -154,6 +154,18 @@ def formatArgs(elems, is_output=False, is_arg=True):
 	else:
 		return out
 
+def formatInOutArgs(cmd):
+	for idx, elem in enumerate(cmd['inputs'] + cmd['outputs']):
+		if elem[0] is None:
+			elem[0] = 'unk%s' % idx
+		elem[0] = camelToSnake(elem[0])
+	inputs = formatArgs(cmd['inputs'])
+	# Handle out buffers
+	out_args = formatArgs(filter(lambda x: is_buffer_argument(x[1]), cmd['outputs']), is_output=True)
+	outputs = formatArgs(filter(lambda x: not is_buffer_argument(x[1]), cmd['outputs']), is_arg=False, is_output=True)
+	args = ", ".join(filter(None, [inputs, out_args]))
+	return (args, outputs)
+
 types, ifaces, services = idparser.getAll()
 invServices = {svc : ifname for ifname, svcs in services.items() for svc in svcs}
 returnedBy = {}
@@ -324,7 +336,7 @@ def gen_ipc_method(cmd, f):
 	else:
 		print("\t\tOk(%s)" % args_arr[0], file=f)
 
-def gen_raw_new_method(f, ifacename, servicename):
+def gen_raw_new_method(f, ifacename, servicename, has_initialize_output, initialize_args):
 	s_name = s + ("\\0" * (8 - len(s)))
 	if name == "nn::sm::detail::IUserInterface":
 		# TODO: Call Initialize
@@ -344,13 +356,18 @@ def gen_raw_new_method(f, ifacename, servicename):
 		print("", file=f)
 		print("\t\tlet sm = IUserInterface::raw_new()?;", file=f)
 		print("", file=f)
-		print("\t\tlet r = sm.get_service(*b\"%s\").map(|s: KObject| Session::from(s).into());" % s_name, file=f)
-		print("\t\tif let Ok(service) = r {", file=f)
-		print("\t\t\treturn Ok(service);", file=f)
-		print("\t\t}", file=f)
-		print("\t\tr", file=f)
+		print("\t\tlet session = sm.get_service(*b\"%s\")?;" % s_name, file=f)
+		print("\t\tlet object : Self = Session::from(session).into();", file=f)
+		if has_initialize_output == "()":
+			print("\t\tobject.initialize(%s)?;" % initialize_args, file=f)
+		elif has_initialize_output == "u32":
+			print("\t\tlet errcode = object.initialize(%s)?;" % initialize_args, file=f)
+			print("\t\tif errcode != 0 {", file=f)
+			print("\t\t\treturn Err(Error(1))", file=f)
+			print("\t\t}", file=f)
+		print("\t\tOk(object)", file=f)
 
-def gen_new_method(f, ifacename, servicename, raw_new_name):
+def gen_new_method(f, ifacename, servicename, raw_new_name, has_initialize_output, initialize_args):
 	s_name = s + ("\\0" * (8 - len(s)))
 	print("\t\tuse alloc::arc::Weak;", file=f)
 	print("\t\tuse spin::Mutex;", file=f)
@@ -369,7 +386,7 @@ def gen_new_method(f, ifacename, servicename, raw_new_name):
 	print("\t\t\treturn Ok(ret);", file=f)
 	print("\t\t}", file=f)
 	print("", file=f)
-	print("\t\tlet hnd = Self::%s()?;" % raw_new_name, file=f)
+	print("\t\tlet hnd = Self::%s(%s)?;" % (raw_new_name, initialize_args), file=f)
 	print("\t\tlet ret = Arc::new(hnd);", file=f)
 	print("\t\t*HANDLE.lock() = Arc::downgrade(&ret);", file=f)
 	print("\t\tOk(ret)", file=f)
@@ -443,20 +460,30 @@ for name, cmds in ifaces.items():
 		print("", file=f)
 		print("impl %s<Session> {" % ifacename, file=f)
 		for s in services.get(name, []):
-			if len(services[name]) == 1:
-				print("\tpub fn raw_new() -> Result<%s<Session>> {" % ifacename, file=f)
+			initialize_method = next((cmd for cmd in cmds['cmds'] if cmd['name'] == "Initialize"), None)
+			if s != "sm:" and initialize_method is not None:
+				(args, outputs) = formatInOutArgs(initialize_method)
+				if outputs != "()" and outputs != "u32":
+					(args, outputs) = ("", None)
+				args_names = ", ".join([aname for aname, _ in (filter(lambda x: x[1][0] != "pid", initialize_method['inputs']) + filter(lambda x: is_buffer_argument(x[1]), initialize_method['outputs']))])
 			else:
-				print("\tpub fn raw_new_%s() -> Result<%s<Session>> {" % (s.replace(":", "_").replace("-", "_"), ifacename), file=f)
-			gen_raw_new_method(f, ifacename, s)
+				(args, outputs, args_names) = ("", None, "")
+
+			# Handle out buffers
+			if len(services[name]) == 1:
+				print("\tpub fn raw_new(%s) -> Result<%s<Session>> {" % (args, ifacename), file=f)
+			else:
+				print("\tpub fn raw_new_%s(%s) -> Result<%s<Session>> {" % (s.replace(":", "_").replace("-", "_"), args, ifacename), file=f)
+			gen_raw_new_method(f, ifacename, s, outputs, args_names)
 			print("\t}", file=f)
 			print("", file=f)
 			if len(services[name]) == 1:
 				method_name = "raw_new"
-				print("\tpub fn new() -> Result<Arc<%s<Session>>> {" % ifacename, file=f)
+				print("\tpub fn new(%s) -> Result<Arc<%s<Session>>> {" % (args, ifacename), file=f)
 			else:
 				method_name = "raw_new_%s" % s.replace(":", "_").replace("-", "_")
-				print("\tpub fn new_%s() -> Result<Arc<%s<Session>>> {" % (s.replace(":", "_").replace("-", "_"), ifacename), file=f)
-			gen_new_method(f, ifacename, s, method_name)
+				print("\tpub fn new_%s(%s) -> Result<Arc<%s<Session>>> {" % (s.replace(":", "_").replace("-", "_"), args, ifacename), file=f)
+			gen_new_method(f, ifacename, s, method_name, outputs, args_names)
 			print("\t}", file=f)
 			print("", file=f)
 
@@ -491,20 +518,12 @@ for name, cmds in ifaces.items():
 			fn_io = StringIO()
 			print("    ", cmd['name'])
 			# Let's first give a proper unique name to every input/output
-			for idx, elem in enumerate(cmd['inputs'] + cmd['outputs']):
-				if elem[0] is None:
-					elem[0] = 'unk%s' % idx
-				elem[0] = camelToSnake(elem[0])
 			try:
 				if cmd['undocumented'] == True:
 					# huge hack. i'm tired.
 					raise UnsupportedStructException("")
 
-				inputs = formatArgs(cmd['inputs'])
-				# Handle out buffers
-				out_args = formatArgs(filter(lambda x: is_buffer_argument(x[1]), cmd['outputs']), is_output=True)
-				outputs = formatArgs(filter(lambda x: not is_buffer_argument(x[1]), cmd['outputs']), is_arg=False, is_output=True)
-				args = ", ".join(filter(None, [inputs, out_args]))
+				(args, outputs) = formatInOutArgs(cmd)
 				# Added at version X, never removed
 				if cmd['versionAdded'] != '1.0.0' and cmd['lastVersion'] is None:
 					print("\t#[cfg(feature = \"switch-%s\")]" % cmd['versionAdded'], file=fn_io)

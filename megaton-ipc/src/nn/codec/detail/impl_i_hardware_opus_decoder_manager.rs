@@ -15,11 +15,9 @@ impl IHardwareOpusDecoderManager<Session> {
 
 		let sm = IUserInterface::raw_new()?;
 
-		let r = sm.get_service(*b"hwopus\0\0").map(|s: KObject| Session::from(s).into());
-		if let Ok(service) = r {
-			return Ok(service);
-		}
-		r
+		let session = sm.get_service(*b"hwopus\0\0")?;
+		let object : Self = Session::from(session).into();
+		Ok(object)
 	}
 
 	pub fn new() -> Result<Arc<IHardwareOpusDecoderManager<Session>>> {
@@ -70,7 +68,7 @@ impl<T> DerefMut for IHardwareOpusDecoderManager<T> {
 	}
 }
 impl<T: Object> IHardwareOpusDecoderManager<T> {
-	pub fn initialize(&self, unk0: u64, unk1: u32, unk2: &KObject) -> Result<T> {
+	pub fn get_hardware_opus_decoder(&self, unk0: u64, unk1: u32, unk2: &KObject) -> Result<T> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]

@@ -15,11 +15,9 @@ impl ILogService<Session> {
 
 		let sm = IUserInterface::raw_new()?;
 
-		let r = sm.get_service(*b"lm\0\0\0\0\0\0").map(|s: KObject| Session::from(s).into());
-		if let Ok(service) = r {
-			return Ok(service);
-		}
-		r
+		let session = sm.get_service(*b"lm\0\0\0\0\0\0")?;
+		let object : Self = Session::from(session).into();
+		Ok(object)
 	}
 
 	pub fn new() -> Result<Arc<ILogService<Session>>> {
@@ -70,7 +68,7 @@ impl<T> DerefMut for ILogService<T> {
 	}
 }
 impl<T: Object> ILogService<T> {
-	pub fn initialize(&self, unk0: u64) -> Result<::nn::lm::ILogger<T>> {
+	pub fn open_logger(&self, unk0: u64) -> Result<::nn::lm::ILogger<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)

@@ -10,19 +10,21 @@ use alloc::arc::Arc;
 pub struct INvDrvServices<T>(T);
 
 impl INvDrvServices<Session> {
-	pub fn raw_new_nvdrv_s() -> Result<INvDrvServices<Session>> {
+	pub fn raw_new_nvdrv_s(transfer_memory_size: u32, current_process: &KObject, transfer_memory: &KObject) -> Result<INvDrvServices<Session>> {
 		use nn::sm::detail::IUserInterface;
 
 		let sm = IUserInterface::raw_new()?;
 
-		let r = sm.get_service(*b"nvdrv:s\0").map(|s: KObject| Session::from(s).into());
-		if let Ok(service) = r {
-			return Ok(service);
+		let session = sm.get_service(*b"nvdrv:s\0")?;
+		let object : Self = Session::from(session).into();
+		let errcode = object.initialize(transfer_memory_size, current_process, transfer_memory)?;
+		if errcode != 0 {
+			return Err(Error(1))
 		}
-		r
+		Ok(object)
 	}
 
-	pub fn new_nvdrv_s() -> Result<Arc<INvDrvServices<Session>>> {
+	pub fn new_nvdrv_s(transfer_memory_size: u32, current_process: &KObject, transfer_memory: &KObject) -> Result<Arc<INvDrvServices<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
@@ -40,25 +42,27 @@ impl INvDrvServices<Session> {
 			return Ok(ret);
 		}
 
-		let hnd = Self::raw_new_nvdrv_s()?;
+		let hnd = Self::raw_new_nvdrv_s(transfer_memory_size, current_process, transfer_memory)?;
 		let ret = Arc::new(hnd);
 		*HANDLE.lock() = Arc::downgrade(&ret);
 		Ok(ret)
 	}
 
-	pub fn raw_new_nvdrv_t() -> Result<INvDrvServices<Session>> {
+	pub fn raw_new_nvdrv_t(transfer_memory_size: u32, current_process: &KObject, transfer_memory: &KObject) -> Result<INvDrvServices<Session>> {
 		use nn::sm::detail::IUserInterface;
 
 		let sm = IUserInterface::raw_new()?;
 
-		let r = sm.get_service(*b"nvdrv:t\0").map(|s: KObject| Session::from(s).into());
-		if let Ok(service) = r {
-			return Ok(service);
+		let session = sm.get_service(*b"nvdrv:t\0")?;
+		let object : Self = Session::from(session).into();
+		let errcode = object.initialize(transfer_memory_size, current_process, transfer_memory)?;
+		if errcode != 0 {
+			return Err(Error(1))
 		}
-		r
+		Ok(object)
 	}
 
-	pub fn new_nvdrv_t() -> Result<Arc<INvDrvServices<Session>>> {
+	pub fn new_nvdrv_t(transfer_memory_size: u32, current_process: &KObject, transfer_memory: &KObject) -> Result<Arc<INvDrvServices<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
@@ -76,25 +80,27 @@ impl INvDrvServices<Session> {
 			return Ok(ret);
 		}
 
-		let hnd = Self::raw_new_nvdrv_t()?;
+		let hnd = Self::raw_new_nvdrv_t(transfer_memory_size, current_process, transfer_memory)?;
 		let ret = Arc::new(hnd);
 		*HANDLE.lock() = Arc::downgrade(&ret);
 		Ok(ret)
 	}
 
-	pub fn raw_new_nvdrv_a() -> Result<INvDrvServices<Session>> {
+	pub fn raw_new_nvdrv_a(transfer_memory_size: u32, current_process: &KObject, transfer_memory: &KObject) -> Result<INvDrvServices<Session>> {
 		use nn::sm::detail::IUserInterface;
 
 		let sm = IUserInterface::raw_new()?;
 
-		let r = sm.get_service(*b"nvdrv:a\0").map(|s: KObject| Session::from(s).into());
-		if let Ok(service) = r {
-			return Ok(service);
+		let session = sm.get_service(*b"nvdrv:a\0")?;
+		let object : Self = Session::from(session).into();
+		let errcode = object.initialize(transfer_memory_size, current_process, transfer_memory)?;
+		if errcode != 0 {
+			return Err(Error(1))
 		}
-		r
+		Ok(object)
 	}
 
-	pub fn new_nvdrv_a() -> Result<Arc<INvDrvServices<Session>>> {
+	pub fn new_nvdrv_a(transfer_memory_size: u32, current_process: &KObject, transfer_memory: &KObject) -> Result<Arc<INvDrvServices<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
@@ -112,25 +118,27 @@ impl INvDrvServices<Session> {
 			return Ok(ret);
 		}
 
-		let hnd = Self::raw_new_nvdrv_a()?;
+		let hnd = Self::raw_new_nvdrv_a(transfer_memory_size, current_process, transfer_memory)?;
 		let ret = Arc::new(hnd);
 		*HANDLE.lock() = Arc::downgrade(&ret);
 		Ok(ret)
 	}
 
-	pub fn raw_new_nvdrv() -> Result<INvDrvServices<Session>> {
+	pub fn raw_new_nvdrv(transfer_memory_size: u32, current_process: &KObject, transfer_memory: &KObject) -> Result<INvDrvServices<Session>> {
 		use nn::sm::detail::IUserInterface;
 
 		let sm = IUserInterface::raw_new()?;
 
-		let r = sm.get_service(*b"nvdrv\0\0\0").map(|s: KObject| Session::from(s).into());
-		if let Ok(service) = r {
-			return Ok(service);
+		let session = sm.get_service(*b"nvdrv\0\0\0")?;
+		let object : Self = Session::from(session).into();
+		let errcode = object.initialize(transfer_memory_size, current_process, transfer_memory)?;
+		if errcode != 0 {
+			return Err(Error(1))
 		}
-		r
+		Ok(object)
 	}
 
-	pub fn new_nvdrv() -> Result<Arc<INvDrvServices<Session>>> {
+	pub fn new_nvdrv(transfer_memory_size: u32, current_process: &KObject, transfer_memory: &KObject) -> Result<Arc<INvDrvServices<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
@@ -148,7 +156,7 @@ impl INvDrvServices<Session> {
 			return Ok(ret);
 		}
 
-		let hnd = Self::raw_new_nvdrv()?;
+		let hnd = Self::raw_new_nvdrv(transfer_memory_size, current_process, transfer_memory)?;
 		let ret = Arc::new(hnd);
 		*HANDLE.lock() = Arc::downgrade(&ret);
 		Ok(ret)
