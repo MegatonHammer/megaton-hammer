@@ -13,7 +13,7 @@ impl ISharedFontManager<Session> {
 	pub fn raw_new() -> Result<ISharedFontManager<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"pl:u\0\0\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {

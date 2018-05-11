@@ -13,7 +13,7 @@ impl IServiceCreator<Session> {
 	pub fn raw_new_news_a() -> Result<IServiceCreator<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"news:a\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
@@ -49,7 +49,7 @@ impl IServiceCreator<Session> {
 	pub fn raw_new_news_c() -> Result<IServiceCreator<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"news:c\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
@@ -85,7 +85,7 @@ impl IServiceCreator<Session> {
 	pub fn raw_new_news_m() -> Result<IServiceCreator<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"news:m\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
@@ -121,7 +121,7 @@ impl IServiceCreator<Session> {
 	pub fn raw_new_news_p() -> Result<IServiceCreator<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"news:p\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
@@ -157,7 +157,7 @@ impl IServiceCreator<Session> {
 	pub fn raw_new_news_v() -> Result<IServiceCreator<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"news:v\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {

@@ -339,9 +339,10 @@ def gen_raw_new_method(f, ifacename, servicename):
 		print("\t\t\treturn Ok(ret);", file=f)
 		print("\t\t}", file=f)
 	else:
+                # TODO: Always creating a connection to sm kinda sucks...
 		print("\t\tuse nn::sm::detail::IUserInterface;", file=f)
 		print("", file=f)
-		print("\t\tlet sm = IUserInterface::new()?;", file=f)
+		print("\t\tlet sm = IUserInterface::raw_new()?;", file=f)
 		print("", file=f)
 		print("\t\tlet r = sm.get_service(*b\"%s\").map(|s: KObject| Session::from(s).into());" % s_name, file=f)
 		print("\t\tif let Ok(service) = r {", file=f)

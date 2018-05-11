@@ -13,7 +13,7 @@ impl IReader<Session> {
 	pub fn raw_new() -> Result<IReader<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"arp:r\0\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {

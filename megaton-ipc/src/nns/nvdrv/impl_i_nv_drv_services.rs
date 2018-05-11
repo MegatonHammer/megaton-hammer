@@ -13,7 +13,7 @@ impl INvDrvServices<Session> {
 	pub fn raw_new_nvdrv_s() -> Result<INvDrvServices<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"nvdrv:s\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
@@ -49,7 +49,7 @@ impl INvDrvServices<Session> {
 	pub fn raw_new_nvdrv_t() -> Result<INvDrvServices<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"nvdrv:t\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
@@ -85,7 +85,7 @@ impl INvDrvServices<Session> {
 	pub fn raw_new_nvdrv_a() -> Result<INvDrvServices<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"nvdrv:a\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
@@ -121,7 +121,7 @@ impl INvDrvServices<Session> {
 	pub fn raw_new_nvdrv() -> Result<INvDrvServices<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"nvdrv\0\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {

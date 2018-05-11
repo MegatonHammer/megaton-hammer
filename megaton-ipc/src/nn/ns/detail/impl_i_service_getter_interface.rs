@@ -13,7 +13,7 @@ impl IServiceGetterInterface<Session> {
 	pub fn raw_new_ns_rid() -> Result<IServiceGetterInterface<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"ns:rid\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
@@ -49,7 +49,7 @@ impl IServiceGetterInterface<Session> {
 	pub fn raw_new_ns_web() -> Result<IServiceGetterInterface<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"ns:web\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
@@ -85,7 +85,7 @@ impl IServiceGetterInterface<Session> {
 	pub fn raw_new_ns_ec() -> Result<IServiceGetterInterface<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"ns:ec\0\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
@@ -121,7 +121,7 @@ impl IServiceGetterInterface<Session> {
 	pub fn raw_new_ns_am2() -> Result<IServiceGetterInterface<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"ns:am2\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
@@ -157,7 +157,7 @@ impl IServiceGetterInterface<Session> {
 	pub fn raw_new_ns_rt() -> Result<IServiceGetterInterface<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"ns:rt\0\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {

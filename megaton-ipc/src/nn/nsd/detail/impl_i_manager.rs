@@ -13,7 +13,7 @@ impl IManager<Session> {
 	pub fn raw_new_nsd_a() -> Result<IManager<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"nsd:a\0\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
@@ -49,7 +49,7 @@ impl IManager<Session> {
 	pub fn raw_new_nsd_u() -> Result<IManager<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"nsd:u\0\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {

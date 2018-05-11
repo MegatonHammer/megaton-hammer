@@ -13,7 +13,7 @@ impl IServiceCreator<Session> {
 	pub fn raw_new_bcat_a() -> Result<IServiceCreator<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"bcat:a\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
@@ -49,7 +49,7 @@ impl IServiceCreator<Session> {
 	pub fn raw_new_bcat_m() -> Result<IServiceCreator<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"bcat:m\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
@@ -85,7 +85,7 @@ impl IServiceCreator<Session> {
 	pub fn raw_new_bcat_u() -> Result<IServiceCreator<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"bcat:u\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
@@ -121,7 +121,7 @@ impl IServiceCreator<Session> {
 	pub fn raw_new_bcat_s() -> Result<IServiceCreator<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"bcat:s\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {

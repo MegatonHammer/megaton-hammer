@@ -13,7 +13,7 @@ impl IServiceCreator<Session> {
 	pub fn raw_new_friend_v() -> Result<IServiceCreator<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"friend:v").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
@@ -49,7 +49,7 @@ impl IServiceCreator<Session> {
 	pub fn raw_new_friend_u() -> Result<IServiceCreator<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"friend:u").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
@@ -85,7 +85,7 @@ impl IServiceCreator<Session> {
 	pub fn raw_new_friend_m() -> Result<IServiceCreator<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"friend:m").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
@@ -121,7 +121,7 @@ impl IServiceCreator<Session> {
 	pub fn raw_new_friend_s() -> Result<IServiceCreator<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"friend:s").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
@@ -157,7 +157,7 @@ impl IServiceCreator<Session> {
 	pub fn raw_new_friend_a() -> Result<IServiceCreator<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"friend:a").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {

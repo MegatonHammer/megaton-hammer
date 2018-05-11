@@ -13,7 +13,7 @@ impl IClient<Session> {
 	pub fn raw_new_bsd_u() -> Result<IClient<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"bsd:u\0\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
@@ -49,7 +49,7 @@ impl IClient<Session> {
 	pub fn raw_new_bsd_s() -> Result<IClient<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"bsd:s\0\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {

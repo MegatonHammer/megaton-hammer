@@ -13,7 +13,7 @@ impl IStaticService<Session> {
 	pub fn raw_new_mii_e() -> Result<IStaticService<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"mii:e\0\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
@@ -49,7 +49,7 @@ impl IStaticService<Session> {
 	pub fn raw_new_mii_u() -> Result<IStaticService<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"mii:u\0\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {

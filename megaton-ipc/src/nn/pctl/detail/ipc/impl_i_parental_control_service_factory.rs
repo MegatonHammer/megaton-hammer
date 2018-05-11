@@ -13,7 +13,7 @@ impl IParentalControlServiceFactory<Session> {
 	pub fn raw_new_pctl_s() -> Result<IParentalControlServiceFactory<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"pctl:s\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
@@ -49,7 +49,7 @@ impl IParentalControlServiceFactory<Session> {
 	pub fn raw_new_pctl_r() -> Result<IParentalControlServiceFactory<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"pctl:r\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
@@ -85,7 +85,7 @@ impl IParentalControlServiceFactory<Session> {
 	pub fn raw_new_pctl_a() -> Result<IParentalControlServiceFactory<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"pctl:a\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
@@ -121,7 +121,7 @@ impl IParentalControlServiceFactory<Session> {
 	pub fn raw_new_pctl() -> Result<IParentalControlServiceFactory<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"pctl\0\0\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {

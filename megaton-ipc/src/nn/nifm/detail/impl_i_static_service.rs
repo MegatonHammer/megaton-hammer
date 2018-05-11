@@ -13,7 +13,7 @@ impl IStaticService<Session> {
 	pub fn raw_new_nifm_a() -> Result<IStaticService<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"nifm:a\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
@@ -49,7 +49,7 @@ impl IStaticService<Session> {
 	pub fn raw_new_nifm_s() -> Result<IStaticService<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"nifm:s\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
@@ -85,7 +85,7 @@ impl IStaticService<Session> {
 	pub fn raw_new_nifm_u() -> Result<IStaticService<Session>> {
 		use nn::sm::detail::IUserInterface;
 
-		let sm = IUserInterface::new()?;
+		let sm = IUserInterface::raw_new()?;
 
 		let r = sm.get_service(*b"nifm:u\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
