@@ -205,8 +205,6 @@ unsafe impl<'a> Alloc for &'a Allocator {
     unsafe fn alloc(&mut self, layout: Layout) -> Result<*mut u8, AllocErr> {
         use core::fmt::Write;
         writeln!(&mut ::loader::Logger, "Allocating {:?}", layout);
-		// REMOVEME
-        unsafe { *(0 as *mut u8) = 0; }
         let strategy = self.strategy.call_once(|| loader::acquire_heap_strategy().unwrap());
 
         let base = self.get_base();
