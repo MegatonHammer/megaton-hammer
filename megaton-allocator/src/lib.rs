@@ -1,7 +1,13 @@
+#![no_std]
+#![feature(repr_transparent, const_fn, allocator_api, ptr_internals, alloc, align_offset)]
+
+extern crate alloc;
+extern crate megaton_hammer;
+extern crate bit_field;
+extern crate spin;
+
 use alloc::allocator::{Alloc, Layout, AllocErr};
-use core;
-use loader::{self, HeapStrategy};
-use byteorder::{LE, ByteOrder};
+use megaton_hammer::loader::{self, HeapStrategy};
 use bit_field::BitField;
 use spin::Once;
 use core::fmt::{Debug, Formatter, Error};
@@ -171,7 +177,7 @@ impl Allocator {
                 &HeapStrategy::SetHeapSize => {
                     // Allocate the first block.
                     //TODO: Locking
-                    let (ret, ptr) = unsafe { ::kernel::svc::set_heap_size(0x200_000) };
+                    let (ret, ptr) = unsafe { megaton_hammer::kernel::svc::set_heap_size(0x200_000) };
                     if ret != 0 {
                         panic!("Failed to allocate 2MB: {}", ret);
                     }
@@ -249,7 +255,7 @@ unsafe impl<'a> Alloc for &'a Allocator {
 
 
                 // Allocate moar.
-                let (res, new_addr) = ::kernel::svc::set_heap_size(new_size as u32);
+                let (res, new_addr) = megaton_hammer::kernel::svc::set_heap_size(new_size as u32);
                 self.size.store(new_size, Ordering::SeqCst);
 
                 if last_block.is_free() {
