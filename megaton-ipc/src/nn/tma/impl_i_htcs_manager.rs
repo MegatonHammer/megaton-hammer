@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
@@ -8,6 +10,18 @@ use alloc::arc::Arc;
 pub struct IHtcsManager<T>(T);
 
 impl IHtcsManager<Session> {
+	pub fn raw_new() -> Result<IHtcsManager<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
+
+		let r = sm.get_service(*b"htcs\0\0\0\0").map(|s: KObject| Session::from(s).into());
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+
 	pub fn new() -> Result<Arc<IHtcsManager<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
@@ -19,10 +33,6 @@ impl IHtcsManager<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"htcs\0\0\0\0") {
 			let ret = Arc::new(IHtcsManager(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -30,12 +40,10 @@ impl IHtcsManager<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"htcs\0\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = Self::raw_new()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
 	pub fn to_domain(self) -> ::core::result::Result<IHtcsManager<Domain>, (Self, Error)> {
@@ -65,7 +73,7 @@ impl<T: Object> IHtcsManager<T> {
 	pub fn unknown0(&self, ) -> Result<(u32, u32)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		#[repr(C)] #[derive(Clone)] struct OutRaw {
@@ -79,7 +87,7 @@ impl<T: Object> IHtcsManager<T> {
 	pub fn unknown1(&self, unk0: u32) -> Result<(u32, u32)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(unk0)
 			;
 		#[repr(C)] #[derive(Clone)] struct OutRaw {
@@ -100,7 +108,7 @@ impl<T: Object> IHtcsManager<T> {
 			unk0: u32,
 			unk1: u32,
 		}
-		let req = Request::new(4)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -125,7 +133,7 @@ impl<T: Object> IHtcsManager<T> {
 			unk0: u32,
 			unk1: u32,
 		}
-		let req = Request::new(8)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(8)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -148,7 +156,7 @@ impl<T: Object> IHtcsManager<T> {
 			unk1: u32,
 			unk2: u32,
 		}
-		let req = Request::new(9)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(9)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -168,7 +176,7 @@ impl<T: Object> IHtcsManager<T> {
 	pub fn unknown12(&self, ) -> Result<(u32, T)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(12)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)
 			.args(())
 			;
 		let mut res : Response<u32> = self.0.send(req)?;
@@ -178,7 +186,7 @@ impl<T: Object> IHtcsManager<T> {
 	pub fn create_socket(&self, unk0: u8) -> Result<(u32, T)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(13)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(13)
 			.args(unk0)
 			;
 		let mut res : Response<u32> = self.0.send(req)?;
@@ -188,7 +196,7 @@ impl<T: Object> IHtcsManager<T> {
 	pub fn register_process_id(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(100)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(100)
 			.args(unk0)
 			.send_pid()
 			;
@@ -199,7 +207,7 @@ impl<T: Object> IHtcsManager<T> {
 	pub fn monitor_manager(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(101)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(101)
 			.args(unk0)
 			.send_pid()
 			;

@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
@@ -8,6 +10,18 @@ use alloc::arc::Arc;
 pub struct IManager<T>(T);
 
 impl IManager<Session> {
+	pub fn raw_new_nsd_a() -> Result<IManager<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
+
+		let r = sm.get_service(*b"nsd:a\0\0\0").map(|s: KObject| Session::from(s).into());
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+
 	pub fn new_nsd_a() -> Result<Arc<IManager<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
@@ -19,10 +33,6 @@ impl IManager<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"nsd:a\0\0\0") {
 			let ret = Arc::new(IManager(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -30,9 +40,19 @@ impl IManager<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"nsd:a\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
+		let hnd = Self::raw_new_nsd_a()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
+	}
+
+	pub fn raw_new_nsd_u() -> Result<IManager<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
+
+		let r = sm.get_service(*b"nsd:u\0\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
@@ -49,10 +69,6 @@ impl IManager<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"nsd:u\0\0\0") {
 			let ret = Arc::new(IManager(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -60,12 +76,10 @@ impl IManager<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"nsd:u\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = Self::raw_new_nsd_u()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
 	pub fn to_domain(self) -> ::core::result::Result<IManager<Domain>, (Self, Error)> {
@@ -96,7 +110,7 @@ impl<T: Object> IManager<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(10)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x16))
 			;
@@ -108,7 +122,7 @@ impl<T: Object> IManager<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(11)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(11)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x16))
 			;
@@ -119,7 +133,7 @@ impl<T: Object> IManager<T> {
 	pub fn get_device_id(&self, ) -> Result<u128> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(12)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)
 			.args(())
 			;
 		let res : Response<u128> = self.0.send(req)?;
@@ -129,7 +143,7 @@ impl<T: Object> IManager<T> {
 	pub fn delete_settings(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(13)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(13)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -141,7 +155,7 @@ impl<T: Object> IManager<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(20)
+		let req : Request<_, [_; 2], [_; 0], [_; 0]> = Request::new(20)
 			.args(())
 			.descriptor(IPCBuffer::from_ref(unk0, 0x15))
 			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x16))
@@ -154,7 +168,7 @@ impl<T: Object> IManager<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(21)
+		let req : Request<_, [_; 2], [_; 0], [_; 0]> = Request::new(21)
 			.args(())
 			.descriptor(IPCBuffer::from_ref(unk0, 0x15))
 			.descriptor(IPCBuffer::from_mut_ref(unk2, 0x16))
@@ -167,7 +181,7 @@ impl<T: Object> IManager<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(30)
+		let req : Request<_, [_; 2], [_; 0], [_; 0]> = Request::new(30)
 			.args(())
 			.descriptor(IPCBuffer::from_ref(unk0, 0x15))
 			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x16))
@@ -180,7 +194,7 @@ impl<T: Object> IManager<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(31)
+		let req : Request<_, [_; 2], [_; 0], [_; 0]> = Request::new(31)
 			.args(())
 			.descriptor(IPCBuffer::from_ref(unk0, 0x15))
 			.descriptor(IPCBuffer::from_mut_ref(unk2, 0x16))
@@ -193,7 +207,7 @@ impl<T: Object> IManager<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(40)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(40)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x16))
 			;
@@ -205,7 +219,7 @@ impl<T: Object> IManager<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(41)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(41)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x16))
 			;
@@ -217,7 +231,7 @@ impl<T: Object> IManager<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(42)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(42)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x16))
 			;
@@ -229,7 +243,7 @@ impl<T: Object> IManager<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(43)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(43)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x16))
 			;
@@ -241,7 +255,7 @@ impl<T: Object> IManager<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(50)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(50)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x16))
 			;
@@ -253,7 +267,7 @@ impl<T: Object> IManager<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(60)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(60)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x16))
 			;
@@ -265,7 +279,7 @@ impl<T: Object> IManager<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(61)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(61)
 			.args(())
 			.descriptor(IPCBuffer::from_ref(unk0, 0x15))
 			;
@@ -276,7 +290,7 @@ impl<T: Object> IManager<T> {
 	pub fn delete_save_data_of_fs_for_test(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(62)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(62)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;

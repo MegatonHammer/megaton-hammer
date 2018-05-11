@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
@@ -8,6 +10,18 @@ use alloc::arc::Arc;
 pub struct IHidServer<T>(T);
 
 impl IHidServer<Session> {
+	pub fn raw_new() -> Result<IHidServer<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
+
+		let r = sm.get_service(*b"hid\0\0\0\0\0").map(|s: KObject| Session::from(s).into());
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+
 	pub fn new() -> Result<Arc<IHidServer<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
@@ -19,10 +33,6 @@ impl IHidServer<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"hid\0\0\0\0\0") {
 			let ret = Arc::new(IHidServer(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -30,12 +40,10 @@ impl IHidServer<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"hid\0\0\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = Self::raw_new()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
 	pub fn to_domain(self) -> ::core::result::Result<IHidServer<Domain>, (Self, Error)> {
@@ -65,7 +73,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn create_applet_resource(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<::nn::hid::IAppletResource<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(unk0)
 			.send_pid()
 			;
@@ -76,7 +84,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn activate_debug_pad(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(unk0)
 			.send_pid()
 			;
@@ -87,7 +95,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn activate_touch_screen(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(11)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)
 			.args(unk0)
 			.send_pid()
 			;
@@ -98,7 +106,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn activate_mouse(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(21)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(21)
 			.args(unk0)
 			.send_pid()
 			;
@@ -109,7 +117,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn activate_keyboard(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(31)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(31)
 			.args(unk0)
 			.send_pid()
 			;
@@ -120,7 +128,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn acquire_xpad_id_event_handle(&self, unk0: u64) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(40)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(40)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -130,7 +138,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn release_xpad_id_event_handle(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(41)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(41)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -145,7 +153,7 @@ impl<T: Object> IHidServer<T> {
 			unk0: ::nn::hid::BasicXpadId,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(51)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(51)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -160,7 +168,7 @@ impl<T: Object> IHidServer<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(55)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(55)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_slice(unk1, 0xa))
 			;
@@ -171,7 +179,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn activate_joy_xpad(&self, unk0: ::nn::hid::JoyXpadId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(56)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(56)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -181,7 +189,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn get_joy_xpad_lifo_handle(&self, unk0: ::nn::hid::JoyXpadId) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(58)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(58)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -192,7 +200,7 @@ impl<T: Object> IHidServer<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(59)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(59)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_slice(unk1, 0xa))
 			;
@@ -203,7 +211,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn activate_six_axis_sensor(&self, unk0: ::nn::hid::BasicXpadId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(60)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(60)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -213,7 +221,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn deactivate_six_axis_sensor(&self, unk0: ::nn::hid::BasicXpadId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(61)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(61)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -223,7 +231,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn get_six_axis_sensor_lifo_handle(&self, unk0: ::nn::hid::BasicXpadId) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(62)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(62)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -233,7 +241,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn activate_joy_six_axis_sensor(&self, unk0: ::nn::hid::JoyXpadId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(63)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(63)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -243,7 +251,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn deactivate_joy_six_axis_sensor(&self, unk0: ::nn::hid::JoyXpadId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(64)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(64)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -253,7 +261,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn get_joy_six_axis_sensor_lifo_handle(&self, unk0: ::nn::hid::JoyXpadId) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(65)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(65)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -268,7 +276,7 @@ impl<T: Object> IHidServer<T> {
 			unk0: ::nn::hid::SixAxisSensorHandle,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(66)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(66)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -287,7 +295,7 @@ impl<T: Object> IHidServer<T> {
 			unk0: ::nn::hid::SixAxisSensorHandle,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(67)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(67)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -306,7 +314,7 @@ impl<T: Object> IHidServer<T> {
 			unk0: ::nn::hid::SixAxisSensorHandle,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(68)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(68)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -326,7 +334,7 @@ impl<T: Object> IHidServer<T> {
 			unk1: ::nn::hid::SixAxisSensorHandle,
 			unk2: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(69)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(69)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -348,7 +356,7 @@ impl<T: Object> IHidServer<T> {
 			unk2: f32,
 			unk3: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(70)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(70)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -369,7 +377,7 @@ impl<T: Object> IHidServer<T> {
 			unk0: ::nn::hid::SixAxisSensorHandle,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(71)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(71)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -392,7 +400,7 @@ impl<T: Object> IHidServer<T> {
 			unk0: ::nn::hid::SixAxisSensorHandle,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(72)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(72)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -413,7 +421,7 @@ impl<T: Object> IHidServer<T> {
 			unk2: f32,
 			unk3: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(73)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(73)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -434,7 +442,7 @@ impl<T: Object> IHidServer<T> {
 			unk0: ::nn::hid::SixAxisSensorHandle,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(74)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(74)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -457,7 +465,7 @@ impl<T: Object> IHidServer<T> {
 			unk0: ::nn::hid::SixAxisSensorHandle,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(75)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(75)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -477,7 +485,7 @@ impl<T: Object> IHidServer<T> {
 			unk1: u32,
 			unk2: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(76)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(76)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -497,7 +505,7 @@ impl<T: Object> IHidServer<T> {
 			unk0: ::nn::hid::SixAxisSensorHandle,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(77)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(77)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -516,7 +524,7 @@ impl<T: Object> IHidServer<T> {
 			unk0: ::nn::hid::SixAxisSensorHandle,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(78)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(78)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -536,7 +544,7 @@ impl<T: Object> IHidServer<T> {
 			unk1: u32,
 			unk2: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(79)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(79)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -556,7 +564,7 @@ impl<T: Object> IHidServer<T> {
 			unk0: ::nn::hid::SixAxisSensorHandle,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(80)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(80)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -575,7 +583,7 @@ impl<T: Object> IHidServer<T> {
 			unk0: ::nn::hid::SixAxisSensorHandle,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(81)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(81)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -594,7 +602,7 @@ impl<T: Object> IHidServer<T> {
 			unk0: ::nn::hid::SixAxisSensorHandle,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(82)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(82)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -613,7 +621,7 @@ impl<T: Object> IHidServer<T> {
 			unk0: i32,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(91)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(91)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -632,7 +640,7 @@ impl<T: Object> IHidServer<T> {
 			unk0: ::nn::hid::NpadStyleTag,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(100)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(100)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -646,7 +654,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn get_supported_npad_style_set(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<::nn::hid::NpadStyleTag> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(101)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(101)
 			.args(unk0)
 			.send_pid()
 			;
@@ -658,7 +666,7 @@ impl<T: Object> IHidServer<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(102)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(102)
 			.args(unk0)
 			.send_pid()
 			.descriptor(IPCBuffer::from_slice(unk2, 9))
@@ -670,7 +678,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn activate_npad(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(103)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(103)
 			.args(unk0)
 			.send_pid()
 			;
@@ -681,7 +689,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn deactivate_npad(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(104)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(104)
 			.args(unk0)
 			.send_pid()
 			;
@@ -698,7 +706,7 @@ impl<T: Object> IHidServer<T> {
 			unk1: ::nn::applet::AppletResourceUserId,
 			unk2: u64,
 		}
-		let req = Request::new(106)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(106)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -718,7 +726,7 @@ impl<T: Object> IHidServer<T> {
 			unk0: u32,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(107)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(107)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -732,7 +740,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn get_player_led_pattern(&self, unk0: u32) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(108)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(108)
 			.args(unk0)
 			;
 		let res : Response<u64> = self.0.send(req)?;
@@ -747,7 +755,7 @@ impl<T: Object> IHidServer<T> {
 			unk0: ::nn::applet::AppletResourceUserId,
 			unk1: i64,
 		}
-		let req = Request::new(120)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(120)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -761,7 +769,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn get_npad_joy_hold_type(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<i64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(121)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(121)
 			.args(unk0)
 			.send_pid()
 			;
@@ -777,7 +785,7 @@ impl<T: Object> IHidServer<T> {
 			unk0: u32,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(122)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(122)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -797,7 +805,7 @@ impl<T: Object> IHidServer<T> {
 			unk1: ::nn::applet::AppletResourceUserId,
 			unk2: i64,
 		}
-		let req = Request::new(123)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(123)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -817,7 +825,7 @@ impl<T: Object> IHidServer<T> {
 			unk0: u32,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(124)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(124)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -837,7 +845,7 @@ impl<T: Object> IHidServer<T> {
 			unk1: u32,
 			unk2: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(125)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(125)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -852,7 +860,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn start_lr_assignment_mode(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(126)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(126)
 			.args(unk0)
 			.send_pid()
 			;
@@ -863,7 +871,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn stop_lr_assignment_mode(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(127)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(127)
 			.args(unk0)
 			.send_pid()
 			;
@@ -879,7 +887,7 @@ impl<T: Object> IHidServer<T> {
 			unk0: ::nn::applet::AppletResourceUserId,
 			unk1: i64,
 		}
-		let req = Request::new(128)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(128)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -893,7 +901,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn get_npad_handheld_activation_mode(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<i64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(129)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(129)
 			.args(unk0)
 			.send_pid()
 			;
@@ -910,7 +918,7 @@ impl<T: Object> IHidServer<T> {
 			unk1: u32,
 			unk2: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(130)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(130)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -930,7 +938,7 @@ impl<T: Object> IHidServer<T> {
 			unk0: u32,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(131)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(131)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -950,7 +958,7 @@ impl<T: Object> IHidServer<T> {
 			unk1: u32,
 			unk2: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(132)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(132)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -965,7 +973,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn get_vibration_device_info(&self, unk0: ::nn::hid::VibrationDeviceHandle) -> Result<::nn::hid::VibrationDeviceInfoForIpc> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(200)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(200)
 			.args(unk0)
 			;
 		let res : Response<::nn::hid::VibrationDeviceInfoForIpc> = self.0.send(req)?;
@@ -981,7 +989,7 @@ impl<T: Object> IHidServer<T> {
 			unk0: ::nn::hid::VibrationDeviceHandle,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(202)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(202)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -995,7 +1003,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn create_active_vibration_device_list(&self, ) -> Result<::nn::hid::IActiveVibrationDeviceList<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(203)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(203)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -1005,7 +1013,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn permit_vibration(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(204)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(204)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -1015,7 +1023,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn is_vibration_permitted(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(205)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(205)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -1026,7 +1034,7 @@ impl<T: Object> IHidServer<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(206)
+		let req : Request<_, [_; 2], [_; 0], [_; 0]> = Request::new(206)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_slice(unk1, 9))
 			.descriptor(IPCBuffer::from_slice(unk2, 9))
@@ -1038,7 +1046,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn activate_console_six_axis_sensor(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(300)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(300)
 			.args(unk0)
 			.send_pid()
 			;
@@ -1054,7 +1062,7 @@ impl<T: Object> IHidServer<T> {
 			unk0: ::nn::hid::ConsoleSixAxisSensorHandle,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(301)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(301)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -1073,7 +1081,7 @@ impl<T: Object> IHidServer<T> {
 			unk0: ::nn::hid::ConsoleSixAxisSensorHandle,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(302)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(302)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -1087,7 +1095,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn is_usb_full_key_controller_enabled(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(400)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(400)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -1097,7 +1105,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn enable_usb_full_key_controller(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(401)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(401)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -1107,7 +1115,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn is_usb_full_key_controller_connected(&self, unk0: u32) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(402)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(402)
 			.args(unk0)
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -1122,7 +1130,7 @@ impl<T: Object> IHidServer<T> {
 			unk0: ::nn::applet::AppletResourceUserId,
 			unk1: i64,
 		}
-		let req = Request::new(1000)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1000)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -1136,7 +1144,7 @@ impl<T: Object> IHidServer<T> {
 	pub fn get_npad_communication_mode(&self, ) -> Result<i64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1001)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1001)
 			.args(())
 			;
 		let res : Response<i64> = self.0.send(req)?;

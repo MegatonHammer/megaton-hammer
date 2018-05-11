@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -39,7 +41,7 @@ impl<T: Object> ISslContext<T> {
 			unk0: ::nn::ssl::sf::ContextOption,
 			unk1: i32,
 		}
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -52,7 +54,7 @@ impl<T: Object> ISslContext<T> {
 	pub fn get_option(&self, unk0: ::nn::ssl::sf::ContextOption) -> Result<i32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(unk0)
 			;
 		let res : Response<i32> = self.0.send(req)?;
@@ -62,7 +64,7 @@ impl<T: Object> ISslContext<T> {
 	pub fn create_connection(&self, ) -> Result<::nn::ssl::sf::ISslConnection<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -72,7 +74,7 @@ impl<T: Object> ISslContext<T> {
 	pub fn get_connection_count(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(3)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -84,7 +86,7 @@ impl<T: Object> ISslContext<T> {
 	pub fn remove_server_pki(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(6)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -94,7 +96,7 @@ impl<T: Object> ISslContext<T> {
 	pub fn remove_client_pki(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(7)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(7)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -104,7 +106,7 @@ impl<T: Object> ISslContext<T> {
 	pub fn register_internal_pki(&self, unk0: ::nn::ssl::sf::InternalPki) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(8)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(8)
 			.args(unk0)
 			;
 		let res : Response<u64> = self.0.send(req)?;
@@ -116,7 +118,7 @@ impl<T: Object> ISslContext<T> {
 	pub fn remove_crl(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(11)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;

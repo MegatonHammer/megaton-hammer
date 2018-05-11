@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> IAdministrator<T> {
 	pub fn check_availability(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -44,7 +46,7 @@ impl<T: Object> IAdministrator<T> {
 	pub fn get_account_id(&self, ) -> Result<::nn::account::NetworkServiceAccountId> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let res : Response<::nn::account::NetworkServiceAccountId> = self.0.send(req)?;
@@ -54,7 +56,7 @@ impl<T: Object> IAdministrator<T> {
 	pub fn ensure_id_token_cache_async(&self, ) -> Result<::nn::account::detail::IAsyncContext<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -66,7 +68,7 @@ impl<T: Object> IAdministrator<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(100)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(100)
 			.args(unk0)
 			.send_pid()
 			.descriptor(IPCBuffer::from_ref(unk2, 0x19))
@@ -78,7 +80,7 @@ impl<T: Object> IAdministrator<T> {
 	pub fn get_nintendo_account_id(&self, ) -> Result<::nn::account::NintendoAccountId> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(120)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(120)
 			.args(())
 			;
 		let res : Response<::nn::account::NintendoAccountId> = self.0.send(req)?;
@@ -89,7 +91,7 @@ impl<T: Object> IAdministrator<T> {
 	pub fn refresh_nintendo_account_user_resource_cache_async(&self, ) -> Result<::nn::account::detail::IAsyncContext<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(131)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(131)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -99,7 +101,7 @@ impl<T: Object> IAdministrator<T> {
 	pub fn refresh_nintendo_account_user_resource_cache_async_if_seconds_elapsed(&self, unk0: u32) -> Result<(bool, ::nn::account::detail::IAsyncContext<T>)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(132)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(132)
 			.args(unk0)
 			;
 		let mut res : Response<bool> = self.0.send(req)?;
@@ -110,7 +112,7 @@ impl<T: Object> IAdministrator<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(150)
+		let req : Request<_, [_; 2], [_; 1], [_; 0]> = Request::new(150)
 			.args(unk0)
 			.copy_handle(unk1)
 			.descriptor(IPCBuffer::from_ref(unk2, 0x19))
@@ -123,7 +125,7 @@ impl<T: Object> IAdministrator<T> {
 	pub fn is_registered(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(200)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(200)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -133,7 +135,7 @@ impl<T: Object> IAdministrator<T> {
 	pub fn register_async(&self, ) -> Result<::nn::account::detail::IAsyncContext<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(201)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(201)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -143,7 +145,7 @@ impl<T: Object> IAdministrator<T> {
 	pub fn unregister_async(&self, ) -> Result<::nn::account::detail::IAsyncContext<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(202)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(202)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -153,7 +155,7 @@ impl<T: Object> IAdministrator<T> {
 	pub fn delete_registration_info_locally(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(203)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(203)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -163,7 +165,7 @@ impl<T: Object> IAdministrator<T> {
 	pub fn synchronize_profile_async(&self, ) -> Result<::nn::account::detail::IAsyncContext<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(220)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(220)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -173,7 +175,7 @@ impl<T: Object> IAdministrator<T> {
 	pub fn upload_profile_async(&self, ) -> Result<::nn::account::detail::IAsyncContext<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(221)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(221)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -183,7 +185,7 @@ impl<T: Object> IAdministrator<T> {
 	pub fn synchronize_profile_async_if_seconds_elapsed(&self, unk0: u32) -> Result<(bool, ::nn::account::detail::IAsyncContext<T>)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(222)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(222)
 			.args(unk0)
 			;
 		let mut res : Response<bool> = self.0.send(req)?;
@@ -193,7 +195,7 @@ impl<T: Object> IAdministrator<T> {
 	pub fn is_linked_with_nintendo_account(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(250)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(250)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -203,7 +205,7 @@ impl<T: Object> IAdministrator<T> {
 	pub fn create_procedure_to_link_with_nintendo_account(&self, ) -> Result<::nn::account::nas::IOAuthProcedureForNintendoAccountLinkage<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(251)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(251)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -213,7 +215,7 @@ impl<T: Object> IAdministrator<T> {
 	pub fn resume_procedure_to_link_with_nintendo_account(&self, unk0: ::nn::account::detail::Uuid) -> Result<::nn::account::nas::IOAuthProcedureForNintendoAccountLinkage<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(252)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(252)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -223,7 +225,7 @@ impl<T: Object> IAdministrator<T> {
 	pub fn create_procedure_to_update_linkage_state_of_nintendo_account(&self, ) -> Result<::nn::account::http::IOAuthProcedure<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(255)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(255)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -233,7 +235,7 @@ impl<T: Object> IAdministrator<T> {
 	pub fn resume_procedure_to_update_linkage_state_of_nintendo_account(&self, unk0: ::nn::account::detail::Uuid) -> Result<::nn::account::http::IOAuthProcedure<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(256)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(256)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -243,7 +245,7 @@ impl<T: Object> IAdministrator<T> {
 	pub fn create_procedure_to_link_nnid_with_nintendo_account(&self, ) -> Result<::nn::account::http::IOAuthProcedure<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(260)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(260)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -253,7 +255,7 @@ impl<T: Object> IAdministrator<T> {
 	pub fn resume_procedure_to_link_nnid_with_nintendo_account(&self, unk0: ::nn::account::detail::Uuid) -> Result<::nn::account::http::IOAuthProcedure<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(261)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(261)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -263,7 +265,7 @@ impl<T: Object> IAdministrator<T> {
 	pub fn proxy_procedure_to_acquire_application_authorization_for_nintendo_account(&self, unk0: ::nn::account::detail::Uuid) -> Result<::nn::account::http::IOAuthProcedure<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(280)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(280)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -273,7 +275,7 @@ impl<T: Object> IAdministrator<T> {
 	pub fn debug_unlink_nintendo_account_async(&self, ) -> Result<::nn::account::detail::IAsyncContext<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(997)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(997)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -283,7 +285,7 @@ impl<T: Object> IAdministrator<T> {
 	pub fn debug_set_availability_error_detail(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(998)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(998)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;

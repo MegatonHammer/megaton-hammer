@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> ISystemClock<T> {
 	pub fn get_current_time(&self, ) -> Result<::nn::time::PosixTime> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let res : Response<::nn::time::PosixTime> = self.0.send(req)?;
@@ -44,7 +46,7 @@ impl<T: Object> ISystemClock<T> {
 	pub fn set_current_time(&self, unk0: ::nn::time::PosixTime) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -54,7 +56,7 @@ impl<T: Object> ISystemClock<T> {
 	pub fn get_system_clock_context(&self, ) -> Result<::nn::time::SystemClockContext> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(())
 			;
 		let res : Response<::nn::time::SystemClockContext> = self.0.send(req)?;
@@ -64,7 +66,7 @@ impl<T: Object> ISystemClock<T> {
 	pub fn set_system_clock_context(&self, unk0: ::nn::time::SystemClockContext) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(3)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;

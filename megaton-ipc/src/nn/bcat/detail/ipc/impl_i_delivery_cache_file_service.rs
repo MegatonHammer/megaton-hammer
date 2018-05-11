@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -39,7 +41,7 @@ impl<T: Object> IDeliveryCacheFileService<T> {
 			unk0: ::nn::bcat::DirectoryName,
 			unk1: ::nn::bcat::FileName,
 		}
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -53,7 +55,7 @@ impl<T: Object> IDeliveryCacheFileService<T> {
 	pub fn get_size(&self, ) -> Result<i64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(())
 			;
 		let res : Response<i64> = self.0.send(req)?;
@@ -63,7 +65,7 @@ impl<T: Object> IDeliveryCacheFileService<T> {
 	pub fn get_digest(&self, ) -> Result<::nn::bcat::Digest> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(3)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
 			.args(())
 			;
 		let res : Response<::nn::bcat::Digest> = self.0.send(req)?;

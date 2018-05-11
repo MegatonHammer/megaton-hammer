@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> IPadSession<T> {
 	pub fn set_direction(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -44,7 +46,7 @@ impl<T: Object> IPadSession<T> {
 	pub fn get_direction(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -54,7 +56,7 @@ impl<T: Object> IPadSession<T> {
 	pub fn set_interrupt_mode(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -64,7 +66,7 @@ impl<T: Object> IPadSession<T> {
 	pub fn get_interrupt_mode(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(3)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -74,7 +76,7 @@ impl<T: Object> IPadSession<T> {
 	pub fn set_interrupt_enable(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(4)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -84,7 +86,7 @@ impl<T: Object> IPadSession<T> {
 	pub fn get_interrupt_enable(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(5)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
 			.args(())
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -94,7 +96,7 @@ impl<T: Object> IPadSession<T> {
 	pub fn get_interrupt_status(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(6)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -104,7 +106,7 @@ impl<T: Object> IPadSession<T> {
 	pub fn clear_interrupt_status(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(7)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(7)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -114,7 +116,7 @@ impl<T: Object> IPadSession<T> {
 	pub fn set_value(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(8)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(8)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -124,7 +126,7 @@ impl<T: Object> IPadSession<T> {
 	pub fn get_value(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(9)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(9)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -134,7 +136,7 @@ impl<T: Object> IPadSession<T> {
 	pub fn bind_interrupt(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -144,7 +146,7 @@ impl<T: Object> IPadSession<T> {
 	pub fn unbind_interrupt(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(11)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -154,7 +156,7 @@ impl<T: Object> IPadSession<T> {
 	pub fn set_debounce_enabled(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(12)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -164,7 +166,7 @@ impl<T: Object> IPadSession<T> {
 	pub fn get_debounce_enabled(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(13)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(13)
 			.args(())
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -174,7 +176,7 @@ impl<T: Object> IPadSession<T> {
 	pub fn set_debounce_time(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(14)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(14)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -184,7 +186,7 @@ impl<T: Object> IPadSession<T> {
 	pub fn get_debounce_time(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(15)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(15)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;

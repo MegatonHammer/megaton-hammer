@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
@@ -8,6 +10,18 @@ use alloc::arc::Arc;
 pub struct IHidSystemServer<T>(T);
 
 impl IHidSystemServer<Session> {
+	pub fn raw_new() -> Result<IHidSystemServer<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
+
+		let r = sm.get_service(*b"hid:sys\0").map(|s: KObject| Session::from(s).into());
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+
 	pub fn new() -> Result<Arc<IHidSystemServer<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
@@ -19,10 +33,6 @@ impl IHidSystemServer<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"hid:sys\0") {
 			let ret = Arc::new(IHidSystemServer(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -30,12 +40,10 @@ impl IHidSystemServer<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"hid:sys\0").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = Self::raw_new()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
 	pub fn to_domain(self) -> ::core::result::Result<IHidSystemServer<Domain>, (Self, Error)> {
@@ -65,7 +73,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn send_keyboard_lock_key_event(&self, unk0: ::nn::hid::system::KeyboardLockKeyEvent) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(31)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(31)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -75,7 +83,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn acquire_home_button_event_handle(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(101)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(101)
 			.args(unk0)
 			.send_pid()
 			;
@@ -86,7 +94,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn activate_home_button(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(111)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(111)
 			.args(unk0)
 			.send_pid()
 			;
@@ -97,7 +105,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn acquire_sleep_button_event_handle(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(121)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(121)
 			.args(unk0)
 			.send_pid()
 			;
@@ -108,7 +116,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn activate_sleep_button(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(131)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(131)
 			.args(unk0)
 			.send_pid()
 			;
@@ -119,7 +127,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn acquire_capture_button_event_handle(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(141)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(141)
 			.args(unk0)
 			.send_pid()
 			;
@@ -130,7 +138,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn activate_capture_button(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(151)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(151)
 			.args(unk0)
 			.send_pid()
 			;
@@ -141,7 +149,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn acquire_nfc_device_update_event_handle(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(210)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(210)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -152,7 +160,7 @@ impl<T: Object> IHidSystemServer<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(211)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(211)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_slice(unk1, 0xa))
 			;
@@ -163,7 +171,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn acquire_nfc_activate_event_handle(&self, unk0: u32) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(212)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(212)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -179,7 +187,7 @@ impl<T: Object> IHidSystemServer<T> {
 			unk1: u32,
 			unk2: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(213)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(213)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -194,7 +202,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn acquire_ir_sensor_event_handle(&self, unk0: u32) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(230)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(230)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -210,7 +218,7 @@ impl<T: Object> IHidSystemServer<T> {
 			unk1: u32,
 			unk2: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(231)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(231)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -225,7 +233,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn activate_npad_system(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(301)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(301)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -235,7 +243,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn apply_npad_system_common_policy(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(303)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(303)
 			.args(unk0)
 			.send_pid()
 			;
@@ -246,7 +254,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn enable_assigning_single_on_sl_sr_press(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(304)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(304)
 			.args(unk0)
 			.send_pid()
 			;
@@ -257,7 +265,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn disable_assigning_single_on_sl_sr_press(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(305)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(305)
 			.args(unk0)
 			.send_pid()
 			;
@@ -268,7 +276,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn get_last_active_npad(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(306)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(306)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -278,7 +286,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn get_npad_system_ext_style(&self, unk0: u32) -> Result<(i64, i64)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(307)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(307)
 			.args(unk0)
 			;
 		#[repr(C)] #[derive(Clone)] struct OutRaw {
@@ -298,7 +306,7 @@ impl<T: Object> IHidSystemServer<T> {
 			unk1: ::nn::hid::system::DeviceType,
 			unk2: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(311)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(311)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -314,7 +322,7 @@ impl<T: Object> IHidSystemServer<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(321)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(321)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_mut_slice(unk2, 0xa))
 			;
@@ -330,7 +338,7 @@ impl<T: Object> IHidSystemServer<T> {
 			unk0: u32,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(322)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(322)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -349,7 +357,7 @@ impl<T: Object> IHidSystemServer<T> {
 			unk0: u32,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(323)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(323)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -363,7 +371,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn set_applet_resource_user_id(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(500)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(500)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -378,7 +386,7 @@ impl<T: Object> IHidSystemServer<T> {
 			unk0: bool,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(501)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(501)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -391,7 +399,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn unregister_applet_resource_user_id(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(502)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(502)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -406,7 +414,7 @@ impl<T: Object> IHidSystemServer<T> {
 			unk0: bool,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(503)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(503)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -424,7 +432,7 @@ impl<T: Object> IHidSystemServer<T> {
 			unk0: bool,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(504)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(504)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -442,7 +450,7 @@ impl<T: Object> IHidSystemServer<T> {
 			unk0: bool,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(505)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(505)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -455,7 +463,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn set_vibration_master_volume(&self, unk0: f32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(510)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(510)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -465,7 +473,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn get_vibration_master_volume(&self, ) -> Result<f32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(511)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(511)
 			.args(())
 			;
 		let res : Response<f32> = self.0.send(req)?;
@@ -475,7 +483,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn begin_permit_vibration_session(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(512)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(512)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -485,7 +493,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn end_permit_vibration_session(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(513)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(513)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -495,7 +503,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn enable_handheld_hids(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(520)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(520)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -505,7 +513,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn disable_handheld_hids(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(521)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(521)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -515,7 +523,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn acquire_play_report_controller_usage_update_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(540)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(540)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -526,7 +534,7 @@ impl<T: Object> IHidSystemServer<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(541)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(541)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_slice(unk1, 0xa))
 			;
@@ -537,7 +545,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn acquire_play_report_registered_device_update_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(542)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(542)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -548,7 +556,7 @@ impl<T: Object> IHidSystemServer<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(543)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(543)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_slice(unk1, 0xa))
 			;
@@ -559,7 +567,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn acquire_connection_trigger_timeout_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(544)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(544)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -569,7 +577,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn send_connection_trigger(&self, unk0: ::nn::bluetooth::Address) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(545)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(545)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -579,7 +587,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn acquire_device_registered_event_for_controller_support(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(546)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(546)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -589,7 +597,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn get_allowed_bluetooth_links_count(&self, ) -> Result<i64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(547)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(547)
 			.args(())
 			;
 		let res : Response<i64> = self.0.send(req)?;
@@ -604,7 +612,7 @@ impl<T: Object> IHidSystemServer<T> {
 			unk0: ::nn::applet::AppletResourceUserId,
 			unk1: ::nn::hid::system::UniquePadId,
 		}
-		let req = Request::new(700)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(700)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -618,7 +626,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn acquire_unique_pad_connection_event_handle(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(702)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(702)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -629,7 +637,7 @@ impl<T: Object> IHidSystemServer<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(703)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(703)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_slice(unk1, 0xa))
 			;
@@ -640,7 +648,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn acquire_joy_detach_on_bluetooth_off_event_handle(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(751)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(751)
 			.args(unk0)
 			.send_pid()
 			;
@@ -652,7 +660,7 @@ impl<T: Object> IHidSystemServer<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(800)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(800)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_mut_slice(unk2, 0xa))
 			;
@@ -663,7 +671,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn is_six_axis_sensor_user_calibration_supported(&self, unk0: ::nn::hid::system::UniqueSixAxisSensorHandle) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(801)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(801)
 			.args(unk0)
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -673,7 +681,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn reset_six_axis_sensor_calibration_values(&self, unk0: ::nn::hid::system::UniqueSixAxisSensorHandle) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(802)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(802)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -683,7 +691,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn start_six_axis_sensor_user_calibration(&self, unk0: ::nn::hid::system::UniqueSixAxisSensorHandle) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(803)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(803)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -693,7 +701,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn cancel_six_axis_sensor_user_calibration(&self, unk0: ::nn::hid::system::UniqueSixAxisSensorHandle) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(804)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(804)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -703,7 +711,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn get_unique_pad_bluetooth_address(&self, unk0: ::nn::hid::system::UniquePadId) -> Result<::nn::bluetooth::Address> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(805)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(805)
 			.args(unk0)
 			;
 		let res : Response<::nn::bluetooth::Address> = self.0.send(req)?;
@@ -713,7 +721,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn disconnect_unique_pad(&self, unk0: ::nn::hid::system::UniquePadId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(806)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(806)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -728,7 +736,7 @@ impl<T: Object> IHidSystemServer<T> {
 			unk0: ::nn::hid::system::UniquePadId,
 			unk1: i64,
 		}
-		let req = Request::new(821)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(821)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -746,7 +754,7 @@ impl<T: Object> IHidSystemServer<T> {
 			unk0: ::nn::hid::system::UniquePadId,
 			unk1: i64,
 		}
-		let req = Request::new(822)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(822)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -764,7 +772,7 @@ impl<T: Object> IHidSystemServer<T> {
 			unk0: ::nn::hid::system::UniquePadId,
 			unk1: i64,
 		}
-		let req = Request::new(823)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(823)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -782,7 +790,7 @@ impl<T: Object> IHidSystemServer<T> {
 			unk0: ::nn::hid::system::UniquePadId,
 			unk1: i64,
 		}
-		let req = Request::new(824)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(824)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -795,7 +803,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn is_usb_full_key_controller_enabled(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(850)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(850)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -805,7 +813,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn enable_usb_full_key_controller(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(851)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(851)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -815,7 +823,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn is_usb_connected(&self, unk0: ::nn::hid::system::UniquePadId) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(852)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(852)
 			.args(unk0)
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -825,7 +833,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn activate_input_detector(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(900)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(900)
 			.args(unk0)
 			.send_pid()
 			;
@@ -836,7 +844,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn notify_input_detector(&self, unk0: ::nn::hid::system::InputSourceId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(901)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(901)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -846,7 +854,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn initialize_firmware_update(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1000)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1000)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -856,7 +864,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn get_firmware_version(&self, unk0: ::nn::hid::system::UniquePadId) -> Result<::nn::hid::system::FirmwareVersion> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1001)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1001)
 			.args(unk0)
 			;
 		let res : Response<::nn::hid::system::FirmwareVersion> = self.0.send(req)?;
@@ -866,7 +874,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn get_available_firmware_version(&self, unk0: ::nn::hid::system::UniquePadId) -> Result<::nn::hid::system::FirmwareVersion> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1002)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1002)
 			.args(unk0)
 			;
 		let res : Response<::nn::hid::system::FirmwareVersion> = self.0.send(req)?;
@@ -876,7 +884,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn is_firmware_update_available(&self, unk0: ::nn::hid::system::UniquePadId) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1003)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1003)
 			.args(unk0)
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -886,7 +894,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn check_firmware_update_required(&self, unk0: ::nn::hid::system::UniquePadId) -> Result<i64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1004)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1004)
 			.args(unk0)
 			;
 		let res : Response<i64> = self.0.send(req)?;
@@ -896,7 +904,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn start_firmware_update(&self, unk0: ::nn::hid::system::UniquePadId) -> Result<::nn::hid::system::FirmwareUpdateDeviceHandle> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1005)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1005)
 			.args(unk0)
 			;
 		let res : Response<::nn::hid::system::FirmwareUpdateDeviceHandle> = self.0.send(req)?;
@@ -906,7 +914,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn abort_firmware_update(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1006)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1006)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -916,7 +924,7 @@ impl<T: Object> IHidSystemServer<T> {
 	pub fn get_firmware_update_state(&self, unk0: ::nn::hid::system::FirmwareUpdateDeviceHandle) -> Result<::nn::hid::system::FirmwareUpdateState> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1007)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1007)
 			.args(unk0)
 			;
 		let res : Response<::nn::hid::system::FirmwareUpdateState> = self.0.send(req)?;

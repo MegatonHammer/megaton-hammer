@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
@@ -8,6 +10,18 @@ use alloc::arc::Arc;
 pub struct IStaticService<T>(T);
 
 impl IStaticService<Session> {
+	pub fn raw_new_time_s() -> Result<IStaticService<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
+
+		let r = sm.get_service(*b"time:s\0\0").map(|s: KObject| Session::from(s).into());
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+
 	pub fn new_time_s() -> Result<Arc<IStaticService<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
@@ -19,10 +33,6 @@ impl IStaticService<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"time:s\0\0") {
 			let ret = Arc::new(IStaticService(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -30,9 +40,19 @@ impl IStaticService<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"time:s\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
+		let hnd = Self::raw_new_time_s()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
+	}
+
+	pub fn raw_new_time_u() -> Result<IStaticService<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
+
+		let r = sm.get_service(*b"time:u\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
@@ -49,10 +69,6 @@ impl IStaticService<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"time:u\0\0") {
 			let ret = Arc::new(IStaticService(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -60,9 +76,19 @@ impl IStaticService<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"time:u\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
+		let hnd = Self::raw_new_time_u()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
+	}
+
+	pub fn raw_new_time_r() -> Result<IStaticService<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
+
+		let r = sm.get_service(*b"time:r\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
@@ -79,10 +105,6 @@ impl IStaticService<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"time:r\0\0") {
 			let ret = Arc::new(IStaticService(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -90,9 +112,19 @@ impl IStaticService<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"time:r\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
+		let hnd = Self::raw_new_time_r()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
+	}
+
+	pub fn raw_new_time_a() -> Result<IStaticService<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
+
+		let r = sm.get_service(*b"time:a\0\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
@@ -109,10 +141,6 @@ impl IStaticService<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"time:a\0\0") {
 			let ret = Arc::new(IStaticService(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -120,12 +148,10 @@ impl IStaticService<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"time:a\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = Self::raw_new_time_a()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
 	pub fn to_domain(self) -> ::core::result::Result<IStaticService<Domain>, (Self, Error)> {
@@ -155,7 +181,7 @@ impl<T: Object> IStaticService<T> {
 	pub fn get_standard_user_system_clock(&self, ) -> Result<::nn::timesrv::detail::service::ISystemClock<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -165,7 +191,7 @@ impl<T: Object> IStaticService<T> {
 	pub fn get_standard_network_system_clock(&self, ) -> Result<::nn::timesrv::detail::service::ISystemClock<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -175,7 +201,7 @@ impl<T: Object> IStaticService<T> {
 	pub fn get_standard_steady_clock(&self, ) -> Result<::nn::timesrv::detail::service::ISteadyClock<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -185,7 +211,7 @@ impl<T: Object> IStaticService<T> {
 	pub fn get_time_zone_service(&self, ) -> Result<::nn::timesrv::detail::service::ITimeZoneService<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(3)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -195,7 +221,7 @@ impl<T: Object> IStaticService<T> {
 	pub fn get_standard_local_system_clock(&self, ) -> Result<::nn::timesrv::detail::service::ISystemClock<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(4)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -205,7 +231,7 @@ impl<T: Object> IStaticService<T> {
 	pub fn is_standard_user_system_clock_automatic_correction_enabled(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(100)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(100)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -215,7 +241,7 @@ impl<T: Object> IStaticService<T> {
 	pub fn set_standard_user_system_clock_automatic_correction_enabled(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(101)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(101)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -225,7 +251,7 @@ impl<T: Object> IStaticService<T> {
 	pub fn is_standard_network_system_clock_accuracy_sufficient(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(200)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(200)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;

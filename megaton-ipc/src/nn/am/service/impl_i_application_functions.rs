@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> IApplicationFunctions<T> {
 	pub fn pop_launch_parameter(&self, unk0: u32) -> Result<::nn::am::service::IStorage<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -44,7 +46,7 @@ impl<T: Object> IApplicationFunctions<T> {
 	pub fn create_application_and_push_and_request_to_start(&self, unk0: ::nn::ncm::ApplicationId, unk1: &::nn::am::service::IStorage<Session>) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10)
+		let req : Request<_, [_; 0], [_; 1], [_; 0]> = Request::new(10)
 			.args(unk0)
 			.copy_handle(unk1.as_ref())
 			;
@@ -61,7 +63,7 @@ impl<T: Object> IApplicationFunctions<T> {
 			unk1: u32,
 			unk2: ::nn::ncm::ApplicationId,
 		}
-		let req = Request::new(11)
+		let req : Request<_, [_; 0], [_; 1], [_; 0]> = Request::new(11)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -76,7 +78,7 @@ impl<T: Object> IApplicationFunctions<T> {
 	pub fn ensure_save_data(&self, unk0: ::nn::account::Uid) -> Result<i64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(20)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20)
 			.args(unk0)
 			;
 		let res : Response<i64> = self.0.send(req)?;
@@ -86,7 +88,7 @@ impl<T: Object> IApplicationFunctions<T> {
 	pub fn get_desired_language(&self, ) -> Result<::nn::settings::LanguageCode> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(21)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(21)
 			.args(())
 			;
 		let res : Response<::nn::settings::LanguageCode> = self.0.send(req)?;
@@ -96,7 +98,7 @@ impl<T: Object> IApplicationFunctions<T> {
 	pub fn set_terminate_result(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(22)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(22)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -106,7 +108,7 @@ impl<T: Object> IApplicationFunctions<T> {
 	pub fn get_display_version(&self, ) -> Result<::nn::oe::DisplayVersion> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(23)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(23)
 			.args(())
 			;
 		let res : Response<::nn::oe::DisplayVersion> = self.0.send(req)?;
@@ -116,7 +118,7 @@ impl<T: Object> IApplicationFunctions<T> {
 	pub fn get_launch_storage_info_for_debug(&self, ) -> Result<(::nn::ncm::StorageId, ::nn::ncm::StorageId)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(24)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(24)
 			.args(())
 			;
 		#[repr(C)] #[derive(Clone)] struct OutRaw {
@@ -137,7 +139,7 @@ impl<T: Object> IApplicationFunctions<T> {
 			unk2: i64,
 			unk3: i64,
 		}
-		let req = Request::new(25)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(25)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -157,7 +159,7 @@ impl<T: Object> IApplicationFunctions<T> {
 			unk0: u8,
 			unk1: ::nn::account::Uid,
 		}
-		let req = Request::new(26)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(26)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -174,7 +176,7 @@ impl<T: Object> IApplicationFunctions<T> {
 	pub fn begin_blocking_home_button_short_and_long_pressed(&self, unk0: i64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(30)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -184,7 +186,7 @@ impl<T: Object> IApplicationFunctions<T> {
 	pub fn end_blocking_home_button_short_and_long_pressed(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(31)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(31)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -194,7 +196,7 @@ impl<T: Object> IApplicationFunctions<T> {
 	pub fn begin_blocking_home_button(&self, unk0: i64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(32)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(32)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -204,7 +206,7 @@ impl<T: Object> IApplicationFunctions<T> {
 	pub fn end_blocking_home_button(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(33)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(33)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -214,7 +216,7 @@ impl<T: Object> IApplicationFunctions<T> {
 	pub fn notify_running(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(40)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(40)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -224,7 +226,7 @@ impl<T: Object> IApplicationFunctions<T> {
 	pub fn get_pseudo_device_id(&self, ) -> Result<::nn::util::Uuid> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(50)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(50)
 			.args(())
 			;
 		let res : Response<::nn::util::Uuid> = self.0.send(req)?;
@@ -234,7 +236,7 @@ impl<T: Object> IApplicationFunctions<T> {
 	pub fn set_media_playback_state_for_application(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(60)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(60)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -244,7 +246,7 @@ impl<T: Object> IApplicationFunctions<T> {
 	pub fn is_game_play_recording_supported(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(65)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(65)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -254,7 +256,7 @@ impl<T: Object> IApplicationFunctions<T> {
 	pub fn initialize_game_play_recording(&self, unk0: u64, unk1: &KObject) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(66)
+		let req : Request<_, [_; 0], [_; 1], [_; 0]> = Request::new(66)
 			.args(unk0)
 			.copy_handle(unk1)
 			;
@@ -265,7 +267,7 @@ impl<T: Object> IApplicationFunctions<T> {
 	pub fn set_game_play_recording_state(&self, unk0: i32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(67)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(67)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -275,7 +277,7 @@ impl<T: Object> IApplicationFunctions<T> {
 	pub fn request_to_shutdown(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(70)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(70)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -285,7 +287,7 @@ impl<T: Object> IApplicationFunctions<T> {
 	pub fn request_to_reboot(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(71)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(71)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;

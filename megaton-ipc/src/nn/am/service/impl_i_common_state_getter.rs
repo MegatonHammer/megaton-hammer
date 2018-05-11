@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> ICommonStateGetter<T> {
 	pub fn get_event_handle(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -44,7 +46,7 @@ impl<T: Object> ICommonStateGetter<T> {
 	pub fn receive_message(&self, ) -> Result<::nn::am::AppletMessage> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let res : Response<::nn::am::AppletMessage> = self.0.send(req)?;
@@ -54,7 +56,7 @@ impl<T: Object> ICommonStateGetter<T> {
 	pub fn get_this_applet_kind(&self, ) -> Result<::nn::am::service::AppletKind> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(())
 			;
 		let res : Response<::nn::am::service::AppletKind> = self.0.send(req)?;
@@ -64,7 +66,7 @@ impl<T: Object> ICommonStateGetter<T> {
 	pub fn allow_to_enter_sleep(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(3)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -74,7 +76,7 @@ impl<T: Object> ICommonStateGetter<T> {
 	pub fn disallow_to_enter_sleep(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(4)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -84,7 +86,7 @@ impl<T: Object> ICommonStateGetter<T> {
 	pub fn get_operation_mode(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(5)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
 			.args(())
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -94,7 +96,7 @@ impl<T: Object> ICommonStateGetter<T> {
 	pub fn get_performance_mode(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(6)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -104,7 +106,7 @@ impl<T: Object> ICommonStateGetter<T> {
 	pub fn get_cradle_status(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(7)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(7)
 			.args(())
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -114,7 +116,7 @@ impl<T: Object> ICommonStateGetter<T> {
 	pub fn get_boot_mode(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(8)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(8)
 			.args(())
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -124,7 +126,7 @@ impl<T: Object> ICommonStateGetter<T> {
 	pub fn get_current_focus_state(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(9)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(9)
 			.args(())
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -134,7 +136,7 @@ impl<T: Object> ICommonStateGetter<T> {
 	pub fn request_to_acquire_sleep_lock(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -144,7 +146,7 @@ impl<T: Object> ICommonStateGetter<T> {
 	pub fn release_sleep_lock(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(11)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -154,7 +156,7 @@ impl<T: Object> ICommonStateGetter<T> {
 	pub fn release_sleep_lock_transiently(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(12)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -164,7 +166,7 @@ impl<T: Object> ICommonStateGetter<T> {
 	pub fn get_acquired_sleep_lock_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(13)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(13)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -174,7 +176,7 @@ impl<T: Object> ICommonStateGetter<T> {
 	pub fn push_to_general_channel(&self, unk0: &::nn::am::service::IStorage<Session>) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(20)
+		let req : Request<_, [_; 0], [_; 1], [_; 0]> = Request::new(20)
 			.args(())
 			.copy_handle(unk0.as_ref())
 			;
@@ -185,7 +187,7 @@ impl<T: Object> ICommonStateGetter<T> {
 	pub fn get_home_button_reader_lock_accessor(&self, ) -> Result<::nn::am::service::ILockAccessor<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(30)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -195,7 +197,7 @@ impl<T: Object> ICommonStateGetter<T> {
 	pub fn get_reader_lock_accessor_ex(&self, unk0: i32) -> Result<::nn::am::service::ILockAccessor<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(31)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(31)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -205,7 +207,7 @@ impl<T: Object> ICommonStateGetter<T> {
 	pub fn get_cradle_fw_version(&self, ) -> Result<(u32, u32, u32, u32)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(40)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(40)
 			.args(())
 			;
 		#[repr(C)] #[derive(Clone)] struct OutRaw {
@@ -221,7 +223,7 @@ impl<T: Object> ICommonStateGetter<T> {
 	pub fn is_vr_mode_enabled(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(50)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(50)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -231,7 +233,7 @@ impl<T: Object> ICommonStateGetter<T> {
 	pub fn set_vr_mode_enabled(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(51)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(51)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -241,7 +243,7 @@ impl<T: Object> ICommonStateGetter<T> {
 	pub fn is_in_controller_firmware_update_section(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(55)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(55)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -251,7 +253,7 @@ impl<T: Object> ICommonStateGetter<T> {
 	pub fn get_default_display_resolution(&self, ) -> Result<(i32, i32)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(60)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(60)
 			.args(())
 			;
 		#[repr(C)] #[derive(Clone)] struct OutRaw {
@@ -265,7 +267,7 @@ impl<T: Object> ICommonStateGetter<T> {
 	pub fn get_default_display_resolution_change_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(61)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(61)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;

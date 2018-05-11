@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
@@ -8,6 +10,18 @@ use alloc::arc::Arc;
 pub struct ISystemManager<T>(T);
 
 impl ISystemManager<Session> {
+	pub fn raw_new() -> Result<ISystemManager<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
+
+		let r = sm.get_service(*b"apm:sys\0").map(|s: KObject| Session::from(s).into());
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+
 	pub fn new() -> Result<Arc<ISystemManager<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
@@ -19,10 +33,6 @@ impl ISystemManager<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"apm:sys\0") {
 			let ret = Arc::new(ISystemManager(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -30,12 +40,10 @@ impl ISystemManager<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"apm:sys\0").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = Self::raw_new()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
 	pub fn to_domain(self) -> ::core::result::Result<ISystemManager<Domain>, (Self, Error)> {
@@ -65,7 +73,7 @@ impl<T: Object> ISystemManager<T> {
 	pub fn request_performance_mode(&self, unk0: ::nn::apm::PerformanceMode) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -75,7 +83,7 @@ impl<T: Object> ISystemManager<T> {
 	pub fn get_performance_event(&self, unk0: ::nn::apm::EventTarget) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -85,7 +93,7 @@ impl<T: Object> ISystemManager<T> {
 	pub fn get_throttling_state(&self, ) -> Result<::nn::apm::ThrottlingState> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(())
 			;
 		let res : Response<::nn::apm::ThrottlingState> = self.0.send(req)?;
@@ -95,7 +103,7 @@ impl<T: Object> ISystemManager<T> {
 	pub fn get_last_throttling_state(&self, ) -> Result<::nn::apm::ThrottlingState> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(3)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
 			.args(())
 			;
 		let res : Response<::nn::apm::ThrottlingState> = self.0.send(req)?;
@@ -105,7 +113,7 @@ impl<T: Object> ISystemManager<T> {
 	pub fn clear_last_throttling_state(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(4)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;

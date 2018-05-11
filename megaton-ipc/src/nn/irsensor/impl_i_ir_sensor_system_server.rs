@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
@@ -8,6 +10,18 @@ use alloc::arc::Arc;
 pub struct IIrSensorSystemServer<T>(T);
 
 impl IIrSensorSystemServer<Session> {
+	pub fn raw_new() -> Result<IIrSensorSystemServer<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
+
+		let r = sm.get_service(*b"irs:sys\0").map(|s: KObject| Session::from(s).into());
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+
 	pub fn new() -> Result<Arc<IIrSensorSystemServer<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
@@ -19,10 +33,6 @@ impl IIrSensorSystemServer<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"irs:sys\0") {
 			let ret = Arc::new(IIrSensorSystemServer(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -30,12 +40,10 @@ impl IIrSensorSystemServer<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"irs:sys\0").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = Self::raw_new()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
 	pub fn to_domain(self) -> ::core::result::Result<IIrSensorSystemServer<Domain>, (Self, Error)> {
@@ -65,7 +73,7 @@ impl<T: Object> IIrSensorSystemServer<T> {
 	pub fn set_applet_resource_user_id(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(500)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(500)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -80,7 +88,7 @@ impl<T: Object> IIrSensorSystemServer<T> {
 			unk0: bool,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(501)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(501)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -93,7 +101,7 @@ impl<T: Object> IIrSensorSystemServer<T> {
 	pub fn unregister_applet_resource_user_id(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(502)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(502)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -108,7 +116,7 @@ impl<T: Object> IIrSensorSystemServer<T> {
 			unk0: bool,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(503)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(503)
 			.args(InRaw {
 				unk0,
 				unk1,

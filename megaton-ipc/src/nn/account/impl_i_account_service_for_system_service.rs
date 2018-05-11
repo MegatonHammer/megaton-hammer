@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
@@ -8,6 +10,18 @@ use alloc::arc::Arc;
 pub struct IAccountServiceForSystemService<T>(T);
 
 impl IAccountServiceForSystemService<Session> {
+	pub fn raw_new() -> Result<IAccountServiceForSystemService<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
+
+		let r = sm.get_service(*b"acc:u1\0\0").map(|s: KObject| Session::from(s).into());
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+
 	pub fn new() -> Result<Arc<IAccountServiceForSystemService<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
@@ -19,10 +33,6 @@ impl IAccountServiceForSystemService<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"acc:u1\0\0") {
 			let ret = Arc::new(IAccountServiceForSystemService(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -30,12 +40,10 @@ impl IAccountServiceForSystemService<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"acc:u1\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = Self::raw_new()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
 	pub fn to_domain(self) -> ::core::result::Result<IAccountServiceForSystemService<Domain>, (Self, Error)> {
@@ -65,7 +73,7 @@ impl<T: Object> IAccountServiceForSystemService<T> {
 	pub fn get_user_count(&self, ) -> Result<i32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let res : Response<i32> = self.0.send(req)?;
@@ -75,7 +83,7 @@ impl<T: Object> IAccountServiceForSystemService<T> {
 	pub fn get_user_existence(&self, unk0: ::nn::account::Uid) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(unk0)
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -86,7 +94,7 @@ impl<T: Object> IAccountServiceForSystemService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(2)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_slice(unk0, 0xa))
 			;
@@ -98,7 +106,7 @@ impl<T: Object> IAccountServiceForSystemService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(3)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(3)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_slice(unk0, 0xa))
 			;
@@ -109,7 +117,7 @@ impl<T: Object> IAccountServiceForSystemService<T> {
 	pub fn get_last_opened_user(&self, ) -> Result<::nn::account::Uid> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(4)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
 			.args(())
 			;
 		let res : Response<::nn::account::Uid> = self.0.send(req)?;
@@ -119,7 +127,7 @@ impl<T: Object> IAccountServiceForSystemService<T> {
 	pub fn get_profile(&self, unk0: ::nn::account::Uid) -> Result<::nn::account::profile::IProfile<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(5)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -129,7 +137,7 @@ impl<T: Object> IAccountServiceForSystemService<T> {
 	pub fn get_profile_digest(&self, unk0: ::nn::account::Uid) -> Result<::nn::account::ProfileDigest> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(6)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
 			.args(unk0)
 			;
 		let res : Response<::nn::account::ProfileDigest> = self.0.send(req)?;
@@ -139,7 +147,7 @@ impl<T: Object> IAccountServiceForSystemService<T> {
 	pub fn is_user_registration_request_permitted(&self, unk0: u64) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(50)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(50)
 			.args(unk0)
 			.send_pid()
 			;
@@ -150,7 +158,7 @@ impl<T: Object> IAccountServiceForSystemService<T> {
 	pub fn try_select_user_without_interaction(&self, unk0: bool) -> Result<::nn::account::Uid> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(51)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(51)
 			.args(unk0)
 			;
 		let res : Response<::nn::account::Uid> = self.0.send(req)?;
@@ -160,7 +168,7 @@ impl<T: Object> IAccountServiceForSystemService<T> {
 	pub fn get_user_registration_notifier(&self, ) -> Result<::nn::account::detail::INotifier<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(100)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(100)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -170,7 +178,7 @@ impl<T: Object> IAccountServiceForSystemService<T> {
 	pub fn get_user_state_change_notifier(&self, ) -> Result<::nn::account::detail::INotifier<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(101)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(101)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -180,7 +188,7 @@ impl<T: Object> IAccountServiceForSystemService<T> {
 	pub fn get_baas_account_manager_for_system_service(&self, unk0: ::nn::account::Uid) -> Result<::nn::account::baas::IManagerForSystemService<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(102)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(102)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -190,7 +198,7 @@ impl<T: Object> IAccountServiceForSystemService<T> {
 	pub fn get_baas_user_availability_change_notifier(&self, ) -> Result<::nn::account::detail::INotifier<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(103)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(103)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -200,7 +208,7 @@ impl<T: Object> IAccountServiceForSystemService<T> {
 	pub fn get_profile_update_notifier(&self, ) -> Result<::nn::account::detail::INotifier<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(104)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(104)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -216,7 +224,7 @@ impl<T: Object> IAccountServiceForSystemService<T> {
 			unk0: ::nn::account::Uid,
 			unk1: ::nn::ApplicationId,
 		}
-		let req = Request::new(111)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(111)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -230,7 +238,7 @@ impl<T: Object> IAccountServiceForSystemService<T> {
 	pub fn get_user_last_opened_application(&self, unk0: ::nn::account::Uid) -> Result<(u32, ::nn::ApplicationId)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(190)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(190)
 			.args(unk0)
 			;
 		#[repr(C)] #[derive(Clone)] struct OutRaw {
@@ -244,7 +252,7 @@ impl<T: Object> IAccountServiceForSystemService<T> {
 	pub fn debug_invalidate_token_cache_for_user(&self, unk0: ::nn::account::Uid) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(997)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(997)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -254,7 +262,7 @@ impl<T: Object> IAccountServiceForSystemService<T> {
 	pub fn debug_set_user_state_close(&self, unk0: ::nn::account::Uid) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(998)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(998)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -264,7 +272,7 @@ impl<T: Object> IAccountServiceForSystemService<T> {
 	pub fn debug_set_user_state_open(&self, unk0: ::nn::account::Uid) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(999)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(999)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;

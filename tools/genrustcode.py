@@ -266,7 +266,7 @@ def gen_ipc_method(cmd, f):
 		args += "\t\t\t}"
 
 
-	print("\t\tlet req = Request::new(%d)" % cmd['cmdId'], file=f)
+        print("\t\tlet req : Request<_, [_; %d], [_; %d], [_; 0]> = Request::new(%d)" % (len(buffers), len(objects_arr), cmd['cmdId']), file=f)
 
 	# even if we have none, put () so the type inference is happy
 	print("\t\t\t.args(%s)" % args, file=f)
@@ -324,7 +324,32 @@ def gen_ipc_method(cmd, f):
 	else:
 		print("\t\tOk(%s)" % args_arr[0], file=f)
 
-def gen_new_method(f, ifacename, servicename):
+def gen_raw_new_method(f, ifacename, servicename):
+	s_name = s + ("\\0" * (8 - len(s)))
+	if name == "nn::sm::detail::IUserInterface":
+		# TODO: Call Initialize
+		print("\t\tuse megaton_hammer::kernel::svc;", file=f)
+		print("\t\tuse megaton_hammer::error::Error;", file=f)
+		print("", file=f)
+		print("\t\tlet (r, session) = unsafe { svc::connect_to_named_port(\"sm:\".as_ptr()) };", file=f)
+		print("\t\tif r != 0 {", file=f)
+		print("\t\t\treturn Err(Error(r))", file=f)
+		print("\t\t} else {", file=f)
+		print("\t\t\tlet ret = Session::from(unsafe { KObject::new(session) }).into();", file=f)
+		print("\t\t\treturn Ok(ret);", file=f)
+		print("\t\t}", file=f)
+	else:
+		print("\t\tuse nn::sm::detail::IUserInterface;", file=f)
+		print("", file=f)
+		print("\t\tlet sm = IUserInterface::new()?;", file=f)
+		print("", file=f)
+		print("\t\tlet r = sm.get_service(*b\"%s\").map(|s: KObject| Session::from(s).into());" % s_name, file=f)
+		print("\t\tif let Ok(service) = r {", file=f)
+		print("\t\t\treturn Ok(service);", file=f)
+		print("\t\t}", file=f)
+		print("\t\tr", file=f)
+
+def gen_new_method(f, ifacename, servicename, raw_new_name):
 	s_name = s + ("\\0" * (8 - len(s)))
 	print("\t\tuse alloc::arc::Weak;", file=f)
 	print("\t\tuse spin::Mutex;", file=f)
@@ -336,44 +361,17 @@ def gen_new_method(f, ifacename, servicename):
 	print("\t\t\treturn Ok(hnd)", file=f)
 	print("\t\t}", file=f)
 	print("", file=f)
-	if name == "nn::sm::detail::IUserInterface":
-		# TODO: Call Initialize
-		print("\t\tuse megaton_hammer::kernel::svc;", file=f)
-		print("\t\tuse megaton_hammer::error::Error;", file=f)
-		print("", file=f)
-		print("\t\tif let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b\"%s\") {" % s_name, file=f)
-		print("\t\t\tlet ret = Arc::new(%s(ManuallyDrop::into_inner(hnd)));" % ifacename, file=f)
-		print("\t\t\t::core::mem::forget(ret.clone());", file=f)
-		print("\t\t\t*HANDLE.lock() = Arc::downgrade(&ret);", file=f)
-		print("\t\t\treturn Ok(ret);", file=f)
-		print("\t\t}", file=f)
-		print("", file=f)
-		print("\t\tlet (r, session) = unsafe { svc::connect_to_named_port(\"sm:\".as_ptr()) };", file=f)
-		print("\t\tif r != 0 {", file=f)
-		print("\t\t\treturn Err(Error(r))", file=f)
-		print("\t\t} else {", file=f)
-		print("\t\t\tlet ret = Arc::new(unsafe { Session::from(unsafe { KObject::new(session) }).into() });", file=f)
-		print("\t\t\t*HANDLE.lock() = Arc::downgrade(&ret);", file=f)
-		print("\t\t\treturn Ok(ret);", file=f)
-		print("\t\t}", file=f)
-	else:
-		print("\t\tuse nn::sm::detail::IUserInterface;", file=f)
-		print("", file=f)
-		print("\t\tlet sm = IUserInterface::new()?;", file=f)
-		print("", file=f)
-		print("\t\tif let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b\"%s\") {" % s_name, file=f)
-		print("\t\t\tlet ret = Arc::new(%s(ManuallyDrop::into_inner(hnd)));" % ifacename, file=f)
-		print("\t\t\t::core::mem::forget(ret.clone());", file=f)
-		print("\t\t\t*HANDLE.lock() = Arc::downgrade(&ret);", file=f)
-		print("\t\t\treturn Ok(ret);", file=f)
-		print("\t\t}", file=f)
-		print("", file=f)
-		print("\t\tlet r = sm.get_service(*b\"%s\").map(|s: KObject| Arc::new(Session::from(s).into()));" % s_name, file=f)
-		print("\t\tif let Ok(service) = r {", file=f)
-		print("\t\t\t*HANDLE.lock() = Arc::downgrade(&service);", file=f)
-		print("\t\t\treturn Ok(service);", file=f)
-		print("\t\t}", file=f)
-		print("\t\tr", file=f)
+	print("\t\tif let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b\"%s\") {" % s_name, file=f)
+	print("\t\t\tlet ret = Arc::new(%s(ManuallyDrop::into_inner(hnd)));" % ifacename, file=f)
+	print("\t\t\t::core::mem::forget(ret.clone());", file=f)
+	print("\t\t\t*HANDLE.lock() = Arc::downgrade(&ret);", file=f)
+	print("\t\t\treturn Ok(ret);", file=f)
+	print("\t\t}", file=f)
+	print("", file=f)
+	print("\t\tlet hnd = Self::%s()?;" % raw_new_name, file=f)
+	print("\t\tlet ret = Arc::new(hnd);", file=f)
+	print("\t\t*HANDLE.lock() = Arc::downgrade(&ret);", file=f)
+	print("\t\tOk(ret)", file=f)
 
 levels = dict()
 
@@ -429,7 +427,9 @@ for name, cmds in ifaces.items():
 		# Print module documentation
 		print("", file=f)
 		# Use statements
-		print("use megaton_hammer::kernel::{KObject, Session, Domain, Object};", file=f)
+		print("use megaton_hammer::kernel::{Session, Domain, Object};", file=f)
+		print("#[allow(unused_imports)]", file=f)
+		print("use megaton_hammer::kernel::KObject;", file=f)
 		print("use megaton_hammer::error::*;", file=f)
 		print("use core::ops::{Deref, DerefMut};", file=f)
 		if name in services:
@@ -443,12 +443,22 @@ for name, cmds in ifaces.items():
 		print("impl %s<Session> {" % ifacename, file=f)
 		for s in services.get(name, []):
 			if len(services[name]) == 1:
-				print("\tpub fn new() -> Result<Arc<%s<Session>>> {" % ifacename, file=f)
+				print("\tpub fn raw_new() -> Result<%s<Session>> {" % ifacename, file=f)
 			else:
-				print("\tpub fn new_%s() -> Result<Arc<%s<Session>>> {" % (s.replace(":", "_").replace("-", "_"), ifacename), file=f)
-			gen_new_method(f, ifacename, s)
+				print("\tpub fn raw_new_%s() -> Result<%s<Session>> {" % (s.replace(":", "_").replace("-", "_"), ifacename), file=f)
+			gen_raw_new_method(f, ifacename, s)
 			print("\t}", file=f)
 			print("", file=f)
+			if len(services[name]) == 1:
+				method_name = "raw_new"
+				print("\tpub fn new() -> Result<Arc<%s<Session>>> {" % ifacename, file=f)
+			else:
+				method_name = "raw_new_%s" % s.replace(":", "_").replace("-", "_")
+				print("\tpub fn new_%s() -> Result<Arc<%s<Session>>> {" % (s.replace(":", "_").replace("-", "_"), ifacename), file=f)
+			gen_new_method(f, ifacename, s, method_name)
+			print("\t}", file=f)
+			print("", file=f)
+
 		print("\tpub fn to_domain(self) -> ::core::result::Result<%s<Domain>, (Self, Error)> {" % ifacename, file=f)
 		print("\t\tmatch self.0.to_domain() {", file=f)
 		print("\t\t\tOk(domain) => Ok(%s(domain))," % ifacename, file=f)

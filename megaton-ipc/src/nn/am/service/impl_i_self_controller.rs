@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> ISelfController<T> {
 	pub fn exit(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -44,7 +46,7 @@ impl<T: Object> ISelfController<T> {
 	pub fn lock_exit(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -54,7 +56,7 @@ impl<T: Object> ISelfController<T> {
 	pub fn unlock_exit(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -64,7 +66,7 @@ impl<T: Object> ISelfController<T> {
 	pub fn enter_fatal_section(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(3)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -74,7 +76,7 @@ impl<T: Object> ISelfController<T> {
 	pub fn leave_fatal_section(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(4)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -84,7 +86,7 @@ impl<T: Object> ISelfController<T> {
 	pub fn get_library_applet_launchable_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(9)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(9)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -94,7 +96,7 @@ impl<T: Object> ISelfController<T> {
 	pub fn set_screen_shot_permission(&self, unk0: i32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -104,7 +106,7 @@ impl<T: Object> ISelfController<T> {
 	pub fn set_operation_mode_changed_notification(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(11)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -114,7 +116,7 @@ impl<T: Object> ISelfController<T> {
 	pub fn set_performance_mode_changed_notification(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(12)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -130,7 +132,7 @@ impl<T: Object> ISelfController<T> {
 			unk1: bool,
 			unk2: bool,
 		}
-		let req = Request::new(13)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(13)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -144,7 +146,7 @@ impl<T: Object> ISelfController<T> {
 	pub fn set_restart_message_enabled(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(14)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(14)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -154,7 +156,7 @@ impl<T: Object> ISelfController<T> {
 	pub fn set_screen_shot_applet_identity_info(&self, unk0: ::nn::am::service::AppletIdentityInfo) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(15)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(15)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -164,7 +166,7 @@ impl<T: Object> ISelfController<T> {
 	pub fn set_out_of_focus_suspending_enabled(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(16)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(16)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -174,7 +176,7 @@ impl<T: Object> ISelfController<T> {
 	pub fn set_controller_firmware_update_section(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(17)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(17)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -184,7 +186,7 @@ impl<T: Object> ISelfController<T> {
 	pub fn set_requires_capture_button_short_pressed_message(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(18)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(18)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -194,7 +196,7 @@ impl<T: Object> ISelfController<T> {
 	pub fn set_screen_shot_image_orientation(&self, unk0: i32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(19)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(19)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -204,7 +206,7 @@ impl<T: Object> ISelfController<T> {
 	pub fn create_managed_display_layer(&self, ) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(40)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(40)
 			.args(())
 			;
 		let res : Response<u64> = self.0.send(req)?;
@@ -214,7 +216,7 @@ impl<T: Object> ISelfController<T> {
 	pub fn set_handles_request_to_display(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(50)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(50)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -224,7 +226,7 @@ impl<T: Object> ISelfController<T> {
 	pub fn approve_to_display(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(51)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(51)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -241,7 +243,7 @@ impl<T: Object> ISelfController<T> {
 			unk2: i32,
 			unk3: i32,
 		}
-		let req = Request::new(60)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(60)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -256,7 +258,7 @@ impl<T: Object> ISelfController<T> {
 	pub fn set_media_playback_state(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(61)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(61)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -266,7 +268,7 @@ impl<T: Object> ISelfController<T> {
 	pub fn set_idle_time_detection_extension(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(62)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(62)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -276,7 +278,7 @@ impl<T: Object> ISelfController<T> {
 	pub fn get_idle_time_detection_extension(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(63)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(63)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -286,7 +288,7 @@ impl<T: Object> ISelfController<T> {
 	pub fn set_input_detection_source_set(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(64)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(64)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -296,7 +298,7 @@ impl<T: Object> ISelfController<T> {
 	pub fn report_user_is_active(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(65)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(65)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -306,7 +308,7 @@ impl<T: Object> ISelfController<T> {
 	pub fn get_current_illuminance(&self, ) -> Result<f32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(66)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(66)
 			.args(())
 			;
 		let res : Response<f32> = self.0.send(req)?;
@@ -316,7 +318,7 @@ impl<T: Object> ISelfController<T> {
 	pub fn is_illuminance_available(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(67)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(67)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;

@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
@@ -8,6 +10,18 @@ use alloc::arc::Arc;
 pub struct IBluetoothDriver<T>(T);
 
 impl IBluetoothDriver<Session> {
+	pub fn raw_new() -> Result<IBluetoothDriver<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
+
+		let r = sm.get_service(*b"btdrv\0\0\0").map(|s: KObject| Session::from(s).into());
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+
 	pub fn new() -> Result<Arc<IBluetoothDriver<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
@@ -19,10 +33,6 @@ impl IBluetoothDriver<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"btdrv\0\0\0") {
 			let ret = Arc::new(IBluetoothDriver(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -30,12 +40,10 @@ impl IBluetoothDriver<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"btdrv\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = Self::raw_new()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
 	pub fn to_domain(self) -> ::core::result::Result<IBluetoothDriver<Domain>, (Self, Error)> {
@@ -65,7 +73,7 @@ impl<T: Object> IBluetoothDriver<T> {
 	pub fn unknown0(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -75,7 +83,7 @@ impl<T: Object> IBluetoothDriver<T> {
 	pub fn init(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -85,7 +93,7 @@ impl<T: Object> IBluetoothDriver<T> {
 	pub fn enable(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -95,7 +103,7 @@ impl<T: Object> IBluetoothDriver<T> {
 	pub fn disable(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(3)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -105,7 +113,7 @@ impl<T: Object> IBluetoothDriver<T> {
 	pub fn cleanup_and_shutdown(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(4)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -118,7 +126,7 @@ impl<T: Object> IBluetoothDriver<T> {
 	pub fn start_discovery(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(8)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(8)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -128,7 +136,7 @@ impl<T: Object> IBluetoothDriver<T> {
 	pub fn cancel_discovery(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(9)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(9)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -154,7 +162,7 @@ impl<T: Object> IBluetoothDriver<T> {
 	pub fn hid_host_interface_cleanup_and_shutdown(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(26)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(26)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -168,7 +176,7 @@ impl<T: Object> IBluetoothDriver<T> {
 	pub fn ext_interface_set_mc_mode(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(31)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(31)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -178,7 +186,7 @@ impl<T: Object> IBluetoothDriver<T> {
 	pub fn ext_interface_start_llr_mode(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(32)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(32)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -188,7 +196,7 @@ impl<T: Object> IBluetoothDriver<T> {
 	pub fn ext_interface_exit_llr_mode(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(33)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(33)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -198,7 +206,7 @@ impl<T: Object> IBluetoothDriver<T> {
 	pub fn ext_interface_set_radio(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(34)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(34)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -209,7 +217,7 @@ impl<T: Object> IBluetoothDriver<T> {
 	pub fn unknown36(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(36)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(36)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -221,7 +229,7 @@ impl<T: Object> IBluetoothDriver<T> {
 	pub fn ext_interface_get_pending_connections(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(39)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(39)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -232,7 +240,7 @@ impl<T: Object> IBluetoothDriver<T> {
 	pub fn set_is_bluetooth_boost_enabled(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(41)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(41)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -242,7 +250,7 @@ impl<T: Object> IBluetoothDriver<T> {
 	pub fn get_is_bluetooth_boost_enabled(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(42)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(42)
 			.args(())
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -252,7 +260,7 @@ impl<T: Object> IBluetoothDriver<T> {
 	pub fn set_is_bluetooth_afh_enabled(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(43)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(43)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -262,7 +270,7 @@ impl<T: Object> IBluetoothDriver<T> {
 	pub fn get_is_bluetooth_afh_enabled(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(44)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(44)
 			.args(())
 			;
 		let res : Response<u8> = self.0.send(req)?;

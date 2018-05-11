@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
@@ -8,6 +10,18 @@ use alloc::arc::Arc;
 pub struct ISystemServer<T>(T);
 
 impl ISystemServer<Session> {
+	pub fn raw_new() -> Result<ISystemServer<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
+
+		let r = sm.get_service(*b"xcd:sys\0").map(|s: KObject| Session::from(s).into());
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+
 	pub fn new() -> Result<Arc<ISystemServer<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
@@ -19,10 +33,6 @@ impl ISystemServer<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"xcd:sys\0") {
 			let ret = Arc::new(ISystemServer(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -30,12 +40,10 @@ impl ISystemServer<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"xcd:sys\0").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = Self::raw_new()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
 	pub fn to_domain(self) -> ::core::result::Result<ISystemServer<Domain>, (Self, Error)> {
@@ -65,7 +73,7 @@ impl<T: Object> ISystemServer<T> {
 	pub fn unknown0(&self, unk0: u64) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(unk0)
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -76,7 +84,7 @@ impl<T: Object> ISystemServer<T> {
 	pub fn unknown2(&self, unk0: u64) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(unk0)
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -88,7 +96,7 @@ impl<T: Object> ISystemServer<T> {
 	pub fn unknown5(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(5)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -101,7 +109,7 @@ impl<T: Object> ISystemServer<T> {
 	pub fn unknown13(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(13)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(13)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -118,7 +126,7 @@ impl<T: Object> ISystemServer<T> {
 	pub fn unknown101(&self, ) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(101)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(101)
 			.args(())
 			;
 		let res : Response<u64> = self.0.send(req)?;
@@ -128,7 +136,7 @@ impl<T: Object> ISystemServer<T> {
 	pub fn unknown102(&self, ) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(102)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(102)
 			.args(())
 			;
 		let res : Response<u64> = self.0.send(req)?;

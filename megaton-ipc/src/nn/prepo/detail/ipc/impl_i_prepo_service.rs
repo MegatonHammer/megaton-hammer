@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
@@ -8,6 +10,18 @@ use alloc::arc::Arc;
 pub struct IPrepoService<T>(T);
 
 impl IPrepoService<Session> {
+	pub fn raw_new_prepo_a() -> Result<IPrepoService<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
+
+		let r = sm.get_service(*b"prepo:a\0").map(|s: KObject| Session::from(s).into());
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+
 	pub fn new_prepo_a() -> Result<Arc<IPrepoService<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
@@ -19,10 +33,6 @@ impl IPrepoService<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"prepo:a\0") {
 			let ret = Arc::new(IPrepoService(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -30,9 +40,19 @@ impl IPrepoService<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"prepo:a\0").map(|s: KObject| Arc::new(Session::from(s).into()));
+		let hnd = Self::raw_new_prepo_a()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
+	}
+
+	pub fn raw_new_prepo_m() -> Result<IPrepoService<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
+
+		let r = sm.get_service(*b"prepo:m\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
@@ -49,10 +69,6 @@ impl IPrepoService<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"prepo:m\0") {
 			let ret = Arc::new(IPrepoService(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -60,9 +76,19 @@ impl IPrepoService<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"prepo:m\0").map(|s: KObject| Arc::new(Session::from(s).into()));
+		let hnd = Self::raw_new_prepo_m()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
+	}
+
+	pub fn raw_new_prepo_u() -> Result<IPrepoService<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
+
+		let r = sm.get_service(*b"prepo:u\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
@@ -79,10 +105,6 @@ impl IPrepoService<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"prepo:u\0") {
 			let ret = Arc::new(IPrepoService(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -90,9 +112,19 @@ impl IPrepoService<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"prepo:u\0").map(|s: KObject| Arc::new(Session::from(s).into()));
+		let hnd = Self::raw_new_prepo_u()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
+	}
+
+	pub fn raw_new_prepo_s() -> Result<IPrepoService<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
+
+		let r = sm.get_service(*b"prepo:s\0").map(|s: KObject| Session::from(s).into());
 		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
 			return Ok(service);
 		}
 		r
@@ -109,10 +141,6 @@ impl IPrepoService<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"prepo:s\0") {
 			let ret = Arc::new(IPrepoService(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -120,12 +148,10 @@ impl IPrepoService<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"prepo:s\0").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = Self::raw_new_prepo_s()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
 	pub fn to_domain(self) -> ::core::result::Result<IPrepoService<Domain>, (Self, Error)> {
@@ -157,7 +183,7 @@ impl<T: Object> IPrepoService<T> {
 	pub fn request_immediate_transmission(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10200)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10200)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -167,7 +193,7 @@ impl<T: Object> IPrepoService<T> {
 	pub fn get_transmission_status(&self, ) -> Result<i32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10300)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10300)
 			.args(())
 			;
 		let res : Response<i32> = self.0.send(req)?;
@@ -179,7 +205,7 @@ impl<T: Object> IPrepoService<T> {
 	pub fn clear_storage(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(30100)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30100)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -189,7 +215,7 @@ impl<T: Object> IPrepoService<T> {
 	pub fn is_user_agreement_check_enabled(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(40100)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(40100)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -199,7 +225,7 @@ impl<T: Object> IPrepoService<T> {
 	pub fn set_user_agreement_check_enabled(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(40101)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(40101)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -209,7 +235,7 @@ impl<T: Object> IPrepoService<T> {
 	pub fn get_storage_usage(&self, ) -> Result<(i64, i64)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(90100)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(90100)
 			.args(())
 			;
 		#[repr(C)] #[derive(Clone)] struct OutRaw {

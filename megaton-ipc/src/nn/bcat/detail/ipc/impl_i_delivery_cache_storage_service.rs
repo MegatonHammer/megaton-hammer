@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> IDeliveryCacheStorageService<T> {
 	pub fn create_file_service(&self, ) -> Result<::nn::bcat::detail::ipc::IDeliveryCacheFileService<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -44,7 +46,7 @@ impl<T: Object> IDeliveryCacheStorageService<T> {
 	pub fn create_directory_service(&self, ) -> Result<::nn::bcat::detail::ipc::IDeliveryCacheDirectoryService<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -55,7 +57,7 @@ impl<T: Object> IDeliveryCacheStorageService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(10)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_slice(unk1, 6))
 			;

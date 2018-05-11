@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> ISystemUpdateControl<T> {
 	pub fn unknown0(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -46,7 +48,7 @@ impl<T: Object> ISystemUpdateControl<T> {
 	pub fn unknown3(&self, ) -> Result<u128> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(3)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
 			.args(())
 			;
 		let res : Response<u128> = self.0.send(req)?;
@@ -56,7 +58,7 @@ impl<T: Object> ISystemUpdateControl<T> {
 	pub fn unknown4(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(4)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -67,7 +69,7 @@ impl<T: Object> ISystemUpdateControl<T> {
 	pub fn unknown6(&self, ) -> Result<u128> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(6)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
 			.args(())
 			;
 		let res : Response<u128> = self.0.send(req)?;
@@ -77,7 +79,7 @@ impl<T: Object> ISystemUpdateControl<T> {
 	pub fn unknown7(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(7)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(7)
 			.args(())
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -87,7 +89,7 @@ impl<T: Object> ISystemUpdateControl<T> {
 	pub fn unknown8(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(8)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(8)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;

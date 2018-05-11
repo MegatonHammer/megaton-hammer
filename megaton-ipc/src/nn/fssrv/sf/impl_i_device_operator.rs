@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> IDeviceOperator<T> {
 	pub fn is_sd_card_inserted(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -44,7 +46,7 @@ impl<T: Object> IDeviceOperator<T> {
 	pub fn get_sd_card_speed_mode(&self, ) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let res : Response<u64> = self.0.send(req)?;
@@ -56,7 +58,7 @@ impl<T: Object> IDeviceOperator<T> {
 	pub fn get_sd_card_user_area_size(&self, ) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(3)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
 			.args(())
 			;
 		let res : Response<u64> = self.0.send(req)?;
@@ -67,7 +69,7 @@ impl<T: Object> IDeviceOperator<T> {
 	pub fn get_sd_card_protected_area_size(&self, ) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(4)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
 			.args(())
 			;
 		let res : Response<u64> = self.0.send(req)?;
@@ -79,7 +81,7 @@ impl<T: Object> IDeviceOperator<T> {
 	pub fn get_mmc_speed_mode(&self, ) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(101)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(101)
 			.args(())
 			;
 		let res : Response<u64> = self.0.send(req)?;
@@ -89,7 +91,7 @@ impl<T: Object> IDeviceOperator<T> {
 	pub fn erase_mmc(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(110)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(110)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -99,7 +101,7 @@ impl<T: Object> IDeviceOperator<T> {
 	pub fn get_mmc_partition_size(&self, unk0: u32) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(111)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(111)
 			.args(unk0)
 			;
 		let res : Response<u64> = self.0.send(req)?;
@@ -110,7 +112,7 @@ impl<T: Object> IDeviceOperator<T> {
 	pub fn get_mmc_patrol_count(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(112)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(112)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -122,7 +124,7 @@ impl<T: Object> IDeviceOperator<T> {
 	pub fn is_game_card_inserted(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(200)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(200)
 			.args(())
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -137,7 +139,7 @@ impl<T: Object> IDeviceOperator<T> {
 			unk0: u32,
 			unk1: u64,
 		}
-		let req = Request::new(201)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(201)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -150,7 +152,7 @@ impl<T: Object> IDeviceOperator<T> {
 	pub fn get_game_card_handle(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(202)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(202)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -160,7 +162,7 @@ impl<T: Object> IDeviceOperator<T> {
 	pub fn get_game_card_update_partition_info(&self, unk0: u32) -> Result<(u32, ::nn::ApplicationId)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(203)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(203)
 			.args(unk0)
 			;
 		#[repr(C)] #[derive(Clone)] struct OutRaw {
@@ -174,7 +176,7 @@ impl<T: Object> IDeviceOperator<T> {
 	pub fn finalize_game_card_driver(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(204)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(204)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -184,7 +186,7 @@ impl<T: Object> IDeviceOperator<T> {
 	pub fn get_game_card_attribute(&self, unk0: u32) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(205)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(205)
 			.args(unk0)
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -198,7 +200,7 @@ impl<T: Object> IDeviceOperator<T> {
 	pub fn set_verify_write_enalble_flag(&self, flag: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(210)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(210)
 			.args(flag)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -213,7 +215,7 @@ impl<T: Object> IDeviceOperator<T> {
 	pub fn force_erase_game_card(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(215)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(215)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -224,7 +226,7 @@ impl<T: Object> IDeviceOperator<T> {
 	pub fn get_game_card_error_info(&self, ) -> Result<u128> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(216)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(216)
 			.args(())
 			;
 		let res : Response<u128> = self.0.send(req)?;
@@ -236,7 +238,7 @@ impl<T: Object> IDeviceOperator<T> {
 	pub fn set_speed_emulation_mode(&self, mode: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(300)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(300)
 			.args(mode)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -246,7 +248,7 @@ impl<T: Object> IDeviceOperator<T> {
 	pub fn get_speed_emulation_mode(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(301)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(301)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;

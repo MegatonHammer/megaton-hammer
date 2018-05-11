@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> IOAuthProcedureForNintendoAccountLinkage<T> {
 	pub fn prepare_async(&self, ) -> Result<::nn::account::detail::IAsyncContext<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -45,7 +47,7 @@ impl<T: Object> IOAuthProcedureForNintendoAccountLinkage<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 2], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x1a))
 			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x1a))
@@ -58,7 +60,7 @@ impl<T: Object> IOAuthProcedureForNintendoAccountLinkage<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(2)
 			.args(())
 			.descriptor(IPCBuffer::from_slice(unk0, 9))
 			;
@@ -70,7 +72,7 @@ impl<T: Object> IOAuthProcedureForNintendoAccountLinkage<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(3)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(3)
 			.args(())
 			.descriptor(IPCBuffer::from_slice(unk0, 9))
 			;
@@ -81,7 +83,7 @@ impl<T: Object> IOAuthProcedureForNintendoAccountLinkage<T> {
 	pub fn suspend(&self, ) -> Result<::nn::account::detail::Uuid> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
 			.args(())
 			;
 		let res : Response<::nn::account::detail::Uuid> = self.0.send(req)?;
@@ -92,7 +94,7 @@ impl<T: Object> IOAuthProcedureForNintendoAccountLinkage<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(100)
+		let req : Request<_, [_; 2], [_; 0], [_; 0]> = Request::new(100)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x1a))
 			.descriptor(IPCBuffer::from_mut_ref(unk2, 0x1a))
@@ -104,7 +106,7 @@ impl<T: Object> IOAuthProcedureForNintendoAccountLinkage<T> {
 	pub fn is_network_service_account_replaced(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(101)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(101)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -115,7 +117,7 @@ impl<T: Object> IOAuthProcedureForNintendoAccountLinkage<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(199)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(199)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x1a))
 			;

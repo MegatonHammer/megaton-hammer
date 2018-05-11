@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
@@ -8,6 +10,18 @@ use alloc::arc::Arc;
 pub struct IIrSensorServer<T>(T);
 
 impl IIrSensorServer<Session> {
+	pub fn raw_new() -> Result<IIrSensorServer<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
+
+		let r = sm.get_service(*b"irs\0\0\0\0\0").map(|s: KObject| Session::from(s).into());
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+
 	pub fn new() -> Result<Arc<IIrSensorServer<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
@@ -19,10 +33,6 @@ impl IIrSensorServer<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"irs\0\0\0\0\0") {
 			let ret = Arc::new(IIrSensorServer(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -30,12 +40,10 @@ impl IIrSensorServer<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"irs\0\0\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = Self::raw_new()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
 	pub fn to_domain(self) -> ::core::result::Result<IIrSensorServer<Domain>, (Self, Error)> {
@@ -65,7 +73,7 @@ impl<T: Object> IIrSensorServer<T> {
 	pub fn activate_irsensor(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(302)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(302)
 			.args(unk0)
 			.send_pid()
 			;
@@ -76,7 +84,7 @@ impl<T: Object> IIrSensorServer<T> {
 	pub fn deactivate_irsensor(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(303)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(303)
 			.args(unk0)
 			.send_pid()
 			;
@@ -87,7 +95,7 @@ impl<T: Object> IIrSensorServer<T> {
 	pub fn get_irsensor_shared_memory_handle(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(304)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(304)
 			.args(unk0)
 			.send_pid()
 			;
@@ -103,7 +111,7 @@ impl<T: Object> IIrSensorServer<T> {
 			unk0: ::nn::irsensor::IrCameraHandle,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(305)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(305)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -123,7 +131,7 @@ impl<T: Object> IIrSensorServer<T> {
 			unk1: ::nn::applet::AppletResourceUserId,
 			unk2: ::nn::irsensor::PackedMomentProcessorConfig,
 		}
-		let req = Request::new(306)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(306)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -144,7 +152,7 @@ impl<T: Object> IIrSensorServer<T> {
 			unk1: ::nn::applet::AppletResourceUserId,
 			unk2: ::nn::irsensor::PackedClusteringProcessorConfig,
 		}
-		let req = Request::new(307)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(307)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -166,7 +174,7 @@ impl<T: Object> IIrSensorServer<T> {
 			unk2: ::nn::irsensor::PackedImageTransferProcessorConfig,
 			unk3: u64,
 		}
-		let req = Request::new(308)
+		let req : Request<_, [_; 0], [_; 1], [_; 0]> = Request::new(308)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -185,7 +193,7 @@ impl<T: Object> IIrSensorServer<T> {
 	pub fn get_npad_ir_camera_handle(&self, unk0: u32) -> Result<::nn::irsensor::IrCameraHandle> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(311)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(311)
 			.args(unk0)
 			;
 		let res : Response<::nn::irsensor::IrCameraHandle> = self.0.send(req)?;
@@ -201,7 +209,7 @@ impl<T: Object> IIrSensorServer<T> {
 			unk0: ::nn::irsensor::IrCameraHandle,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(313)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(313)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -222,7 +230,7 @@ impl<T: Object> IIrSensorServer<T> {
 			unk1: ::nn::irsensor::PackedMcuVersion,
 			unk2: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(314)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(314)
 			.args(InRaw {
 				unk0,
 				unk1,

@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -40,7 +42,7 @@ impl<T: Object> IFileSystem<T> {
 			mode: u32,
 			size: u64,
 		}
-		let req = Request::new(0)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(0)
 			.args(InRaw {
 				mode,
 				size,
@@ -55,7 +57,7 @@ impl<T: Object> IFileSystem<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			.descriptor(IPCBuffer::from_ref(path, 0x19))
 			;
@@ -67,7 +69,7 @@ impl<T: Object> IFileSystem<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(2)
 			.args(())
 			.descriptor(IPCBuffer::from_ref(path, 0x19))
 			;
@@ -79,7 +81,7 @@ impl<T: Object> IFileSystem<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(3)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(3)
 			.args(())
 			.descriptor(IPCBuffer::from_ref(path, 0x19))
 			;
@@ -91,7 +93,7 @@ impl<T: Object> IFileSystem<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(4)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(4)
 			.args(())
 			.descriptor(IPCBuffer::from_ref(path, 0x19))
 			;
@@ -103,7 +105,7 @@ impl<T: Object> IFileSystem<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(5)
+		let req : Request<_, [_; 2], [_; 0], [_; 0]> = Request::new(5)
 			.args(())
 			.descriptor(IPCBuffer::from_ref(old_path, 0x19))
 			.descriptor(IPCBuffer::from_ref(new_path, 0x19))
@@ -116,7 +118,7 @@ impl<T: Object> IFileSystem<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(6)
+		let req : Request<_, [_; 2], [_; 0], [_; 0]> = Request::new(6)
 			.args(())
 			.descriptor(IPCBuffer::from_ref(old_path, 0x19))
 			.descriptor(IPCBuffer::from_ref(new_path, 0x19))
@@ -129,7 +131,7 @@ impl<T: Object> IFileSystem<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(7)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(7)
 			.args(())
 			.descriptor(IPCBuffer::from_ref(path, 0x19))
 			;
@@ -141,7 +143,7 @@ impl<T: Object> IFileSystem<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(8)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(8)
 			.args(mode)
 			.descriptor(IPCBuffer::from_ref(path, 0x19))
 			;
@@ -153,7 +155,7 @@ impl<T: Object> IFileSystem<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(9)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(9)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_ref(path, 0x19))
 			;
@@ -164,7 +166,7 @@ impl<T: Object> IFileSystem<T> {
 	pub fn commit(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -175,7 +177,7 @@ impl<T: Object> IFileSystem<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(11)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(11)
 			.args(())
 			.descriptor(IPCBuffer::from_ref(path, 0x19))
 			;
@@ -187,7 +189,7 @@ impl<T: Object> IFileSystem<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(12)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(12)
 			.args(())
 			.descriptor(IPCBuffer::from_ref(path, 0x19))
 			;
@@ -200,7 +202,7 @@ impl<T: Object> IFileSystem<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(13)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(13)
 			.args(())
 			.descriptor(IPCBuffer::from_ref(path, 0x19))
 			;

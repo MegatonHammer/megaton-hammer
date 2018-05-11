@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -35,7 +37,7 @@ impl<T: Object> IDisplayController<T> {
 	pub fn update_last_foreground_capture_image(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -47,7 +49,7 @@ impl<T: Object> IDisplayController<T> {
 	pub fn update_caller_applet_capture_image(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(4)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -65,7 +67,7 @@ impl<T: Object> IDisplayController<T> {
 			unk0: bool,
 			unk1: i32,
 		}
-		let req = Request::new(8)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(8)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -78,7 +80,7 @@ impl<T: Object> IDisplayController<T> {
 	pub fn acquire_last_application_capture_buffer(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -88,7 +90,7 @@ impl<T: Object> IDisplayController<T> {
 	pub fn release_last_application_capture_buffer(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(11)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -98,7 +100,7 @@ impl<T: Object> IDisplayController<T> {
 	pub fn acquire_last_foreground_capture_buffer(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(12)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -108,7 +110,7 @@ impl<T: Object> IDisplayController<T> {
 	pub fn release_last_foreground_capture_buffer(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(13)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(13)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -118,7 +120,7 @@ impl<T: Object> IDisplayController<T> {
 	pub fn acquire_caller_applet_capture_buffer(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(14)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(14)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -128,7 +130,7 @@ impl<T: Object> IDisplayController<T> {
 	pub fn release_caller_applet_capture_buffer(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(15)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(15)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -138,7 +140,7 @@ impl<T: Object> IDisplayController<T> {
 	pub fn acquire_last_application_capture_buffer_ex(&self, ) -> Result<(bool, KObject)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(16)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(16)
 			.args(())
 			;
 		let mut res : Response<bool> = self.0.send(req)?;
@@ -148,7 +150,7 @@ impl<T: Object> IDisplayController<T> {
 	pub fn acquire_last_foreground_capture_buffer_ex(&self, ) -> Result<(bool, KObject)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(17)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(17)
 			.args(())
 			;
 		let mut res : Response<bool> = self.0.send(req)?;
@@ -158,7 +160,7 @@ impl<T: Object> IDisplayController<T> {
 	pub fn acquire_caller_applet_capture_buffer_ex(&self, ) -> Result<(bool, KObject)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(18)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(18)
 			.args(())
 			;
 		let mut res : Response<bool> = self.0.send(req)?;
@@ -174,7 +176,7 @@ impl<T: Object> IDisplayController<T> {
 			unk1: i32,
 			unk2: u32,
 		}
-		let req = Request::new(20)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -188,7 +190,7 @@ impl<T: Object> IDisplayController<T> {
 	pub fn clear_applet_transition_buffer(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(21)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(21)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;

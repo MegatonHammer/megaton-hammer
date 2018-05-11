@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> ILibraryAppletAccessor<T> {
 	pub fn get_applet_state_changed_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -44,7 +46,7 @@ impl<T: Object> ILibraryAppletAccessor<T> {
 	pub fn is_completed(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -54,7 +56,7 @@ impl<T: Object> ILibraryAppletAccessor<T> {
 	pub fn start(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -64,7 +66,7 @@ impl<T: Object> ILibraryAppletAccessor<T> {
 	pub fn request_exit(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(20)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -74,7 +76,7 @@ impl<T: Object> ILibraryAppletAccessor<T> {
 	pub fn terminate(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(25)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(25)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -84,7 +86,7 @@ impl<T: Object> ILibraryAppletAccessor<T> {
 	pub fn get_result(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(30)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -94,7 +96,7 @@ impl<T: Object> ILibraryAppletAccessor<T> {
 	pub fn set_out_of_focus_application_suspending_enabled(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(50)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(50)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -104,7 +106,7 @@ impl<T: Object> ILibraryAppletAccessor<T> {
 	pub fn push_in_data(&self, unk0: &::nn::am::service::IStorage<Session>) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(100)
+		let req : Request<_, [_; 0], [_; 1], [_; 0]> = Request::new(100)
 			.args(())
 			.copy_handle(unk0.as_ref())
 			;
@@ -115,7 +117,7 @@ impl<T: Object> ILibraryAppletAccessor<T> {
 	pub fn pop_out_data(&self, ) -> Result<::nn::am::service::IStorage<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(101)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(101)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -125,7 +127,7 @@ impl<T: Object> ILibraryAppletAccessor<T> {
 	pub fn push_extra_storage(&self, unk0: &::nn::am::service::IStorage<Session>) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(102)
+		let req : Request<_, [_; 0], [_; 1], [_; 0]> = Request::new(102)
 			.args(())
 			.copy_handle(unk0.as_ref())
 			;
@@ -136,7 +138,7 @@ impl<T: Object> ILibraryAppletAccessor<T> {
 	pub fn push_interactive_in_data(&self, unk0: &::nn::am::service::IStorage<Session>) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(103)
+		let req : Request<_, [_; 0], [_; 1], [_; 0]> = Request::new(103)
 			.args(())
 			.copy_handle(unk0.as_ref())
 			;
@@ -147,7 +149,7 @@ impl<T: Object> ILibraryAppletAccessor<T> {
 	pub fn pop_interactive_out_data(&self, ) -> Result<::nn::am::service::IStorage<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(104)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(104)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -157,7 +159,7 @@ impl<T: Object> ILibraryAppletAccessor<T> {
 	pub fn get_pop_out_data_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(105)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(105)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -167,7 +169,7 @@ impl<T: Object> ILibraryAppletAccessor<T> {
 	pub fn get_pop_interactive_out_data_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(106)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(106)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -177,7 +179,7 @@ impl<T: Object> ILibraryAppletAccessor<T> {
 	pub fn needs_to_exit_process(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(110)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(110)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -187,7 +189,7 @@ impl<T: Object> ILibraryAppletAccessor<T> {
 	pub fn get_library_applet_info(&self, ) -> Result<::nn::am::service::LibraryAppletInfo> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(120)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(120)
 			.args(())
 			;
 		let res : Response<::nn::am::service::LibraryAppletInfo> = self.0.send(req)?;
@@ -197,7 +199,7 @@ impl<T: Object> ILibraryAppletAccessor<T> {
 	pub fn request_for_applet_to_get_foreground(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(150)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(150)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -207,7 +209,7 @@ impl<T: Object> ILibraryAppletAccessor<T> {
 	pub fn get_indirect_layer_consumer_handle(&self, unk0: ::nn::applet::AppletResourceUserId) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(160)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(160)
 			.args(unk0)
 			.send_pid()
 			;

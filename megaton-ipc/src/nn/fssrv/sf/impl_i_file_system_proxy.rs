@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
@@ -8,6 +10,18 @@ use alloc::arc::Arc;
 pub struct IFileSystemProxy<T>(T);
 
 impl IFileSystemProxy<Session> {
+	pub fn raw_new() -> Result<IFileSystemProxy<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
+
+		let r = sm.get_service(*b"fsp-srv\0").map(|s: KObject| Session::from(s).into());
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+
 	pub fn new() -> Result<Arc<IFileSystemProxy<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
@@ -19,10 +33,6 @@ impl IFileSystemProxy<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"fsp-srv\0") {
 			let ret = Arc::new(IFileSystemProxy(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -30,12 +40,10 @@ impl IFileSystemProxy<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"fsp-srv\0").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = Self::raw_new()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
 	pub fn to_domain(self) -> ::core::result::Result<IFileSystemProxy<Domain>, (Self, Error)> {
@@ -72,7 +80,7 @@ impl<T: Object> IFileSystemProxy<T> {
 			tid: ::nn::ApplicationId,
 			flag: u32,
 		}
-		let req = Request::new(0)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(0)
 			.args(InRaw {
 				tid,
 				flag,
@@ -86,7 +94,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	pub fn initialize(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(unk0)
 			.send_pid()
 			;
@@ -97,7 +105,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	pub fn open_data_file_system_by_current_process(&self, ) -> Result<::nn::fssrv::sf::IFileSystem<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -113,7 +121,7 @@ impl<T: Object> IFileSystemProxy<T> {
 			tid: ::nn::ApplicationId,
 			nca_type: u32,
 		}
-		let req = Request::new(7)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(7)
 			.args(InRaw {
 				tid,
 				nca_type,
@@ -133,7 +141,7 @@ impl<T: Object> IFileSystemProxy<T> {
 			tid: ::nn::ApplicationId,
 			flag: u32,
 		}
-		let req = Request::new(8)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(8)
 			.args(InRaw {
 				tid,
 				flag,
@@ -148,7 +156,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	pub fn open_data_file_system_by_application_id(&self, tid: ::nn::ApplicationId) -> Result<::nn::fssrv::sf::IFileSystem<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(9)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(9)
 			.args(tid)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -159,7 +167,7 @@ impl<T: Object> IFileSystemProxy<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(11)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(11)
 			.args(partition_id)
 			.descriptor(IPCBuffer::from_ref(path, 0x19))
 			;
@@ -170,7 +178,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	pub fn open_bis_partition(&self, partition_id: ::nn::fssrv::sf::Partition) -> Result<::nn::fssrv::sf::IStorage<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(12)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)
 			.args(partition_id)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -180,7 +188,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	pub fn invalidate_bis_cache(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(13)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(13)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -191,7 +199,7 @@ impl<T: Object> IFileSystemProxy<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(17)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(17)
 			.args(())
 			.descriptor(IPCBuffer::from_ref(path, 0x19))
 			;
@@ -202,7 +210,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	pub fn mount_sd_card(&self, ) -> Result<::nn::fssrv::sf::IFileSystem<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(18)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(18)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -213,7 +221,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	pub fn format_sd_card(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(19)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(19)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -223,7 +231,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	pub fn delete_save_data(&self, tid: ::nn::ApplicationId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(21)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(21)
 			.args(tid)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -239,7 +247,7 @@ impl<T: Object> IFileSystemProxy<T> {
 			save_create: ::nn::fssrv::sf::SaveCreateStruct,
 			input: u128,
 		}
-		let req = Request::new(22)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(22)
 			.args(InRaw {
 				save_struct,
 				save_create,
@@ -258,7 +266,7 @@ impl<T: Object> IFileSystemProxy<T> {
 			save_struct: ::nn::fssrv::sf::SaveStruct,
 			save_create: ::nn::fssrv::sf::SaveCreateStruct,
 		}
-		let req = Request::new(23)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(23)
 			.args(InRaw {
 				save_struct,
 				save_create,
@@ -278,7 +286,7 @@ impl<T: Object> IFileSystemProxy<T> {
 			unk0: u8,
 			unk1: u64,
 		}
-		let req = Request::new(25)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(25)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -292,7 +300,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	pub fn format_sd_card_dry_run(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(26)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(26)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -303,7 +311,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	pub fn is_ex_fat_supported(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(27)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(27)
 			.args(())
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -318,7 +326,7 @@ impl<T: Object> IFileSystemProxy<T> {
 			partition_id: ::nn::fssrv::sf::Partition,
 			unk1: u32,
 		}
-		let req = Request::new(30)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30)
 			.args(InRaw {
 				partition_id,
 				unk1,
@@ -336,7 +344,7 @@ impl<T: Object> IFileSystemProxy<T> {
 			unk0: u32,
 			unk1: u32,
 		}
-		let req = Request::new(31)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(31)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -357,7 +365,7 @@ impl<T: Object> IFileSystemProxy<T> {
 			unk2: u64,
 			unk3: u64,
 		}
-		let req = Request::new(32)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(32)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -377,7 +385,7 @@ impl<T: Object> IFileSystemProxy<T> {
 			input: u8,
 			save_struct: ::nn::fssrv::sf::SaveStruct,
 		}
-		let req = Request::new(51)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(51)
 			.args(InRaw {
 				input,
 				save_struct,
@@ -395,7 +403,7 @@ impl<T: Object> IFileSystemProxy<T> {
 			input: u8,
 			save_struct: ::nn::fssrv::sf::SaveStruct,
 		}
-		let req = Request::new(52)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(52)
 			.args(InRaw {
 				input,
 				save_struct,
@@ -414,7 +422,7 @@ impl<T: Object> IFileSystemProxy<T> {
 			input: u8,
 			save_struct: ::nn::fssrv::sf::SaveStruct,
 		}
-		let req = Request::new(53)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(53)
 			.args(InRaw {
 				input,
 				save_struct,
@@ -430,7 +438,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	pub fn open_save_data_info_reader(&self, ) -> Result<::nn::fssrv::sf::ISaveDataInfoReader<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(60)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(60)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -440,7 +448,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	pub fn open_save_data_iterator(&self, unk0: u8) -> Result<T> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(61)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(61)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -451,7 +459,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	pub fn mount_image_directory(&self, unk0: u32) -> Result<::nn::fssrv::sf::IFileSystem<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(100)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(100)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -461,7 +469,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	pub fn mount_content_storage(&self, content_storage_id: u32) -> Result<::nn::fssrv::sf::IFileSystem<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(110)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(110)
 			.args(content_storage_id)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -471,7 +479,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	pub fn open_data_storage_by_current_process(&self, ) -> Result<::nn::fssrv::sf::IStorage<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(200)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(200)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -482,7 +490,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	pub fn open_data_storage_by_application_id(&self, tid: ::nn::ApplicationId) -> Result<::nn::fssrv::sf::IStorage<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(201)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(201)
 			.args(tid)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -497,7 +505,7 @@ impl<T: Object> IFileSystemProxy<T> {
 			tid: ::nn::ApplicationId,
 			storage_id: u8,
 		}
-		let req = Request::new(202)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(202)
 			.args(InRaw {
 				tid,
 				storage_id,
@@ -510,7 +518,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	pub fn open_rom_storage(&self, ) -> Result<::nn::fssrv::sf::IStorage<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(203)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(203)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -520,7 +528,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	pub fn open_device_operator(&self, ) -> Result<::nn::fssrv::sf::IDeviceOperator<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(400)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(400)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -530,7 +538,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	pub fn open_sd_card_detection_event_notifier(&self, ) -> Result<::nn::fssrv::sf::IEventNotifier<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(500)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(500)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -540,7 +548,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	pub fn open_game_card_detection_event_notifier(&self, ) -> Result<::nn::fssrv::sf::IEventNotifier<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(501)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(501)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -551,7 +559,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	pub fn set_current_posix_time(&self, time: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(600)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(600)
 			.args(time)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -566,7 +574,7 @@ impl<T: Object> IFileSystemProxy<T> {
 			unk0: u64,
 			unk1: u64,
 		}
-		let req = Request::new(601)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(601)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -580,7 +588,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	pub fn corrupt_save_data_for_debug(&self, tid: ::nn::ApplicationId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(603)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(603)
 			.args(tid)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -590,7 +598,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	pub fn create_padding_file(&self, size: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(604)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(604)
 			.args(size)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -600,7 +608,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	pub fn delete_all_padding_files(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(605)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(605)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -616,7 +624,7 @@ impl<T: Object> IFileSystemProxy<T> {
 			unk0: u64,
 			unk1: u8,
 		}
-		let req = Request::new(606)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(606)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -635,7 +643,7 @@ impl<T: Object> IFileSystemProxy<T> {
 			unk0: u128,
 			unk1: u128,
 		}
-		let req = Request::new(607)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(607)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -649,7 +657,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	pub fn unregister_external_key(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(608)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(608)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -661,7 +669,7 @@ impl<T: Object> IFileSystemProxy<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(609)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(609)
 			.args(())
 			.descriptor(IPCBuffer::from_ref(path, 0x19))
 			;
@@ -674,7 +682,7 @@ impl<T: Object> IFileSystemProxy<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(610)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(610)
 			.args(())
 			.descriptor(IPCBuffer::from_ref(path, 0x19))
 			;
@@ -690,7 +698,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	pub fn set_sd_card_encryption_seed(&self, seedmaybe: u128) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(620)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(620)
 			.args(seedmaybe)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -702,7 +710,7 @@ impl<T: Object> IFileSystemProxy<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1000)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(1000)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_ref(path, 0x19))
 			;
@@ -718,7 +726,7 @@ impl<T: Object> IFileSystemProxy<T> {
 			unk0: u64,
 			unk1: u64,
 		}
-		let req = Request::new(1001)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1001)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -732,7 +740,7 @@ impl<T: Object> IFileSystemProxy<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1002)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(1002)
 			.args(())
 			.descriptor(IPCBuffer::from_ref(path, 0x19))
 			;
@@ -743,7 +751,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	pub fn disable_auto_save_data_creation(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1003)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1003)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -753,7 +761,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	pub fn set_global_access_log_mode(&self, mode: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1004)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1004)
 			.args(mode)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -763,7 +771,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	pub fn get_global_access_log_mode(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1005)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1005)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;

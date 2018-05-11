@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> IRequest<T> {
 	pub fn get_request_state(&self, ) -> Result<i32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let res : Response<i32> = self.0.send(req)?;
@@ -44,7 +46,7 @@ impl<T: Object> IRequest<T> {
 	pub fn get_result(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -54,7 +56,7 @@ impl<T: Object> IRequest<T> {
 	pub fn get_system_event_readable_handles(&self, ) -> Result<(KObject, KObject)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -64,7 +66,7 @@ impl<T: Object> IRequest<T> {
 	pub fn cancel(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(3)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -74,7 +76,7 @@ impl<T: Object> IRequest<T> {
 	pub fn submit(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(4)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -84,7 +86,7 @@ impl<T: Object> IRequest<T> {
 	pub fn set_requirement(&self, unk0: ::nn::nifm::Requirement) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(5)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -94,7 +96,7 @@ impl<T: Object> IRequest<T> {
 	pub fn set_requirement_preset(&self, unk0: i32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(6)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -104,7 +106,7 @@ impl<T: Object> IRequest<T> {
 	pub fn set_priority(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(8)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(8)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -114,7 +116,7 @@ impl<T: Object> IRequest<T> {
 	pub fn set_network_profile_id(&self, unk0: ::nn::util::Uuid) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(9)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(9)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -124,7 +126,7 @@ impl<T: Object> IRequest<T> {
 	pub fn set_rejectable(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -134,7 +136,7 @@ impl<T: Object> IRequest<T> {
 	pub fn set_connection_confirmation_option(&self, unk0: i8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(11)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -144,7 +146,7 @@ impl<T: Object> IRequest<T> {
 	pub fn set_persistent(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(12)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -154,7 +156,7 @@ impl<T: Object> IRequest<T> {
 	pub fn set_instant(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(13)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(13)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -169,7 +171,7 @@ impl<T: Object> IRequest<T> {
 			unk0: bool,
 			unk1: u8,
 		}
-		let req = Request::new(14)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(14)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -182,7 +184,7 @@ impl<T: Object> IRequest<T> {
 	pub fn set_raw_priority(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(15)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(15)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -192,7 +194,7 @@ impl<T: Object> IRequest<T> {
 	pub fn set_greedy(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(16)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(16)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -202,7 +204,7 @@ impl<T: Object> IRequest<T> {
 	pub fn set_sharable(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(17)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(17)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -212,7 +214,7 @@ impl<T: Object> IRequest<T> {
 	pub fn set_requirement_by_revision(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(18)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(18)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -222,7 +224,7 @@ impl<T: Object> IRequest<T> {
 	pub fn get_requirement(&self, ) -> Result<::nn::nifm::Requirement> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(19)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(19)
 			.args(())
 			;
 		let res : Response<::nn::nifm::Requirement> = self.0.send(req)?;
@@ -232,7 +234,7 @@ impl<T: Object> IRequest<T> {
 	pub fn get_revision(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(20)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -244,7 +246,7 @@ impl<T: Object> IRequest<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(22)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(22)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x16))
 			;
@@ -255,7 +257,7 @@ impl<T: Object> IRequest<T> {
 	pub fn set_kept_in_sleep(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(23)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(23)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -265,7 +267,7 @@ impl<T: Object> IRequest<T> {
 	pub fn register_socket_descriptor(&self, unk0: i32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(24)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(24)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -275,7 +277,7 @@ impl<T: Object> IRequest<T> {
 	pub fn unregister_socket_descriptor(&self, unk0: i32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(25)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(25)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;

@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
@@ -8,6 +10,18 @@ use alloc::arc::Arc;
 pub struct ITaskService<T>(T);
 
 impl ITaskService<Session> {
+	pub fn raw_new() -> Result<ITaskService<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::new()?;
+
+		let r = sm.get_service(*b"bgtc:t\0\0").map(|s: KObject| Session::from(s).into());
+		if let Ok(service) = r {
+			return Ok(service);
+		}
+		r
+	}
+
 	pub fn new() -> Result<Arc<ITaskService<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
@@ -19,10 +33,6 @@ impl ITaskService<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"bgtc:t\0\0") {
 			let ret = Arc::new(ITaskService(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -30,12 +40,10 @@ impl ITaskService<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"bgtc:t\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = Self::raw_new()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
 	pub fn to_domain(self) -> ::core::result::Result<ITaskService<Domain>, (Self, Error)> {
@@ -65,7 +73,7 @@ impl<T: Object> ITaskService<T> {
 	pub fn unknown1(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -75,7 +83,7 @@ impl<T: Object> ITaskService<T> {
 	pub fn unknown2(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -85,7 +93,7 @@ impl<T: Object> ITaskService<T> {
 	pub fn unknown3(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(3)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -95,7 +103,7 @@ impl<T: Object> ITaskService<T> {
 	pub fn unknown4(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(4)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
 			.args(())
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -106,7 +114,7 @@ impl<T: Object> ITaskService<T> {
 	pub fn unknown6(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(6)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
 			.args(())
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -116,7 +124,7 @@ impl<T: Object> ITaskService<T> {
 	pub fn unknown11(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(11)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -126,7 +134,7 @@ impl<T: Object> ITaskService<T> {
 	pub fn unknown12(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(12)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -136,7 +144,7 @@ impl<T: Object> ITaskService<T> {
 	pub fn unknown13(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(13)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(13)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -146,7 +154,7 @@ impl<T: Object> ITaskService<T> {
 	pub fn unknown14(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(14)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(14)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -161,7 +169,7 @@ impl<T: Object> ITaskService<T> {
 			unk0: u32,
 			unk1: u32,
 		}
-		let req = Request::new(15)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(15)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -174,7 +182,7 @@ impl<T: Object> ITaskService<T> {
 	pub fn unknown101(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(101)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(101)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -184,7 +192,7 @@ impl<T: Object> ITaskService<T> {
 	pub fn unknown102(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(102)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(102)
 			.args(())
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -194,7 +202,7 @@ impl<T: Object> ITaskService<T> {
 	pub fn unknown103(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(103)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(103)
 			.args(())
 			;
 		let res : Response<u8> = self.0.send(req)?;

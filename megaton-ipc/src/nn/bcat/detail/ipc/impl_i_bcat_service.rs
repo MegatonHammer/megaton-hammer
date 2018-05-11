@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> IBcatService<T> {
 	pub fn request_sync_delivery_cache(&self, ) -> Result<::nn::bcat::detail::ipc::IDeliveryCacheProgressService<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10100)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10100)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -49,7 +51,7 @@ impl<T: Object> IBcatService<T> {
 			unk0: u32,
 			unk1: ::nn::ApplicationId,
 		}
-		let req = Request::new(20100)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20100)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -63,7 +65,7 @@ impl<T: Object> IBcatService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(30100)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(30100)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_slice(unk1, 9))
 			;
@@ -79,7 +81,7 @@ impl<T: Object> IBcatService<T> {
 			unk0: u32,
 			unk1: ::nn::ApplicationId,
 		}
-		let req = Request::new(30200)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30200)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -92,7 +94,7 @@ impl<T: Object> IBcatService<T> {
 	pub fn unregister_background_delivery_task(&self, unk0: ::nn::ApplicationId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(30201)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30201)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -102,7 +104,7 @@ impl<T: Object> IBcatService<T> {
 	pub fn block_delivery_task(&self, unk0: ::nn::ApplicationId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(30202)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30202)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -112,7 +114,7 @@ impl<T: Object> IBcatService<T> {
 	pub fn unblock_delivery_task(&self, unk0: ::nn::ApplicationId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(30203)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30203)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -123,7 +125,7 @@ impl<T: Object> IBcatService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(90100)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(90100)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_slice(unk1, 6))
 			;
@@ -135,7 +137,7 @@ impl<T: Object> IBcatService<T> {
 	pub fn clear_delivery_cache_storage(&self, unk0: ::nn::ApplicationId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(90201)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(90201)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -146,7 +148,7 @@ impl<T: Object> IBcatService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(90300)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(90300)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_slice(unk1, 6))
 			;

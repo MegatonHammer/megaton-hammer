@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -39,7 +41,7 @@ impl<T: Object> ILibraryAppletCreator<T> {
 			unk0: u32,
 			unk1: u32,
 		}
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -52,7 +54,7 @@ impl<T: Object> ILibraryAppletCreator<T> {
 	pub fn terminate_all_library_applets(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -62,7 +64,7 @@ impl<T: Object> ILibraryAppletCreator<T> {
 	pub fn are_any_library_applets_left(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -72,7 +74,7 @@ impl<T: Object> ILibraryAppletCreator<T> {
 	pub fn create_storage(&self, unk0: i64) -> Result<::nn::am::service::IStorage<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -87,7 +89,7 @@ impl<T: Object> ILibraryAppletCreator<T> {
 			unk0: bool,
 			unk1: i64,
 		}
-		let req = Request::new(11)
+		let req : Request<_, [_; 0], [_; 1], [_; 0]> = Request::new(11)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -101,7 +103,7 @@ impl<T: Object> ILibraryAppletCreator<T> {
 	pub fn create_handle_storage(&self, unk0: i64, unk1: &KObject) -> Result<::nn::am::service::IStorage<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(12)
+		let req : Request<_, [_; 0], [_; 1], [_; 0]> = Request::new(12)
 			.args(unk0)
 			.copy_handle(unk1)
 			;

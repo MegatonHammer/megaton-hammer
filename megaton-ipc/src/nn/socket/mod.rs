@@ -1,13 +1,15 @@
 pub mod sf;
 pub mod resolver;
+pub type FdSet = u128;
 #[repr(C)]
 #[derive(Debug, Clone)]
-pub struct Sockaddr {
-	pub sa_len: u8,
-	pub sa_family: u8,
-	pub sa_data: [u8; 0xe],
+pub struct SockaddrIn {
+	pub sin_len: u8,
+	pub sin_family: u8,
+	pub sin_port: u16,
+	pub sin_addr: u32,
+	pub sin_zero: [u8; 8],
 }
-pub type FdSet = u128;
 #[repr(C)]
 #[derive(Debug, Clone)]
 pub struct Timeout {
