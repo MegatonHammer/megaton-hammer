@@ -167,6 +167,14 @@ pub enum MessageType {
 //    A { flags: u8 }, B { flags: u8 }, X { counter: u16 }, C { has_u16_size: bool }
 //}
 //
+// #[derive(Debug, Clone, Copy)]
+// enum KernelBufferType { X, A, B, C }
+#[derive(Debug, Clone, Copy)]
+enum HipcBufferType {
+    X, A, B, C,
+    AX,
+    BC
+}
 #[derive(Debug, Clone)]
 pub struct IPCBuffer<'a> {
     // Address to the value
@@ -242,6 +250,33 @@ impl<'a> IPCBuffer<'a> {
             size: core::mem::size_of::<T>() * len,
             ty,
             phantom: PhantomData
+        }
+    }
+
+    fn buftype(&self) -> HipcBufferType {
+        enum Direction { In, Out }
+        enum Family { AB, XC }
+        if self.ty & 0x20 == 0 {
+            let direction = if self.ty & 0b0001 != 0 { Direction::In }
+            else if self.ty & 0b0010 != 0 { Direction::Out }
+            else { panic!("Invalid buffer type {}", self.ty); };
+
+            let family = if self.ty & 0b0100 != 0 { Family::AB }
+            else if self.ty & 0b1000 != 0 { Family::XC }
+            else { panic!("Invalid buffer type {}", self.ty); };
+
+            match (direction, family) {
+                (Direction::In, Family::AB) => HipcBufferType::X,
+                (Direction::Out, Family::AB) => HipcBufferType::A,
+                (Direction::In, Family::XC) => HipcBufferType::B,
+                (Direction::Out, Family::XC) => HipcBufferType::C /* TODO: Is that right ? */
+            }
+        } else if self.ty == 0x21 {
+            HipcBufferType::AX
+        } else if self.ty == 0x22 {
+            HipcBufferType::BC
+        } else {
+            panic!("Invalid descriptor type: {}", self.ty);
         }
     }
 }
@@ -378,61 +413,6 @@ where
     }
 }
 
-#[derive(Debug, Clone, Copy)]
-enum KernelBufferType { X, A, B, C }
-#[derive(Debug, Clone, Copy)]
-enum HipcBufferType {
-    X, A, B, C,
-    AX,
-    BC
-}
-
-impl HipcBufferType {
-    fn from_type(ty: u64) -> HipcBufferType {
-        enum Direction { In, Out }
-        enum Family { AB, XC }
-        if ty & 0x20 == 0 {
-             let direction = if ty & 0b0001 != 0 { Direction::In }
-             else if ty & 0b0010 != 0 { Direction::Out }
-             else { panic!("Invalid buffer type {}", ty); };
-
-             let family = if ty & 0b0100 != 0 { Family::AB }
-             else if ty & 0b1000 != 0 { Family::XC }
-             else { panic!("Invalid buffer type {}", ty); };
-
-            match (direction, family) {
-                (Direction::In, Family::AB) => HipcBufferType::X,
-                (Direction::Out, Family::AB) => HipcBufferType::A,
-                (Direction::In, Family::XC) => HipcBufferType::B,
-                (Direction::Out, Family::XC) => HipcBufferType::C /* TODO: Is that right ? */
-            }
-        } else if ty == 0x21 {
-            HipcBufferType::AX
-        } else if ty == 0x22 {
-            HipcBufferType::BC
-        } else {
-            panic!("Invalid descriptor type: {}", ty);
-        }
-    }
-
-    fn map<T>(&self, mut f: T) where T: FnMut(KernelBufferType) {
-        match *self {
-            HipcBufferType::X => f(KernelBufferType::X),
-            HipcBufferType::A => f(KernelBufferType::A),
-            HipcBufferType::B => f(KernelBufferType::B),
-            HipcBufferType::C => f(KernelBufferType::C),
-            HipcBufferType::AX => {
-                f(KernelBufferType::X);
-                f(KernelBufferType::A);
-            },
-            HipcBufferType::BC => {
-                f(KernelBufferType::B);
-                f(KernelBufferType::C);
-            }
-        }
-    }
-}
-
 // TODO: Figure out a way to avoid T: Clone ?
 // TODO: Maybe I should just store a *pointer* to T ?
 impl<'a, 'b, T, BUFF, COPY, MOVE> IRequest for Request<'a, 'b, T, BUFF, COPY, MOVE>
@@ -448,13 +428,21 @@ where
         enum Family { AB, XC }
 
         let mut descriptor_counts = (/* X */0, /* A */0, /* B */0, /* C */0);
-        for buf in self.buffers.iter() {
-            HipcBufferType::from_type(buf.ty).map(|bufty| match bufty {
-                KernelBufferType::X => descriptor_counts.0 += 1,
-                KernelBufferType::A => descriptor_counts.1 += 1,
-                KernelBufferType::B => descriptor_counts.2 += 1,
-                KernelBufferType::C => descriptor_counts.3 += 1,
-            });
+        for bufty in self.buffers.iter().map(|b| b.buftype()) {
+            match bufty {
+                HipcBufferType::X => descriptor_counts.0 += 1,
+                HipcBufferType::A => descriptor_counts.1 += 1,
+                HipcBufferType::B => descriptor_counts.2 += 1,
+                HipcBufferType::C => descriptor_counts.3 += 1,
+                HipcBufferType::AX => {
+                    descriptor_counts.0 += 1; // X
+                    descriptor_counts.1 += 1; // A
+                },
+                HipcBufferType::BC => {
+                    descriptor_counts.2 += 1; // B
+                    descriptor_counts.3 += 1; // C
+                }
+            }
         }
 
         // TODO: Memset data first
@@ -542,7 +530,7 @@ where
             let mut i = 0;
             for buf in self.buffers.iter() {
                 let null_buf = IPCBuffer::null();
-                let buf = match HipcBufferType::from_type(buf.ty) {
+                let buf = match buf.buftype() {
                     HipcBufferType::X => buf,
                     HipcBufferType::AX => &null_buf,
                     _ => continue
@@ -562,8 +550,8 @@ where
 
         // A descriptors
         for buf in self.buffers.iter() {
-            let buf = match HipcBufferType::from_type(buf.ty) {
-                HipcBufferType::B | HipcBufferType::BC => buf,
+            let buf = match buf.buftype() {
+                HipcBufferType::A | HipcBufferType::AX => buf,
                 _ => continue
             };
 
@@ -583,7 +571,7 @@ where
 
         // B descriptors
         for buf in self.buffers.iter() {
-            let buf = match HipcBufferType::from_type(buf.ty) {
+            let buf = match buf.buftype() {
                 HipcBufferType::B | HipcBufferType::BC => buf,
                 _ => continue
             };
@@ -647,7 +635,7 @@ where
         let mut i = 0;
         for buf in self.buffers.iter() {
             let nullbuf = IPCBuffer::null();
-            let buf = match HipcBufferType::from_type(buf.ty) {
+            let buf = match buf.buftype() {
                 HipcBufferType::C => buf,
                 HipcBufferType::BC => &nullbuf,
                 _ => continue
@@ -670,7 +658,7 @@ where
 
         for buf in self.buffers.iter() {
             let nullbuf = IPCBuffer::null();
-            let buf = match HipcBufferType::from_type(buf.ty) {
+            let buf = match buf.buftype() {
                 HipcBufferType::C => buf,
                 HipcBufferType::BC => &nullbuf,
                 _ => continue
