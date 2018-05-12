@@ -21,7 +21,7 @@ impl IFileSystemProxy<Session> {
 		Ok(object)
 	}
 
-	pub fn new(unk0: u64) -> Result<Arc<IFileSystemProxy<Session>>> {
+	pub fn new<T: FnOnce(fn(u64) -> Result<IFileSystemProxy<Session>>) -> Result<IFileSystemProxy<Session>>>(f: T) -> Result<Arc<IFileSystemProxy<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
@@ -39,7 +39,7 @@ impl IFileSystemProxy<Session> {
 			return Ok(ret);
 		}
 
-		let hnd = Self::raw_new(unk0)?;
+		let hnd = f(Self::raw_new)?;
 		let ret = Arc::new(hnd);
 		*HANDLE.lock() = Arc::downgrade(&ret);
 		Ok(ret)

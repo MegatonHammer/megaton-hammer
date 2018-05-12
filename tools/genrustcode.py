@@ -123,10 +123,17 @@ def getType(output, ty):
 	else:
 		raise Exception("Unknown type %s" % ty[0])
  
-def formatArgs(elems, is_output=False, is_arg=True):
+
+IS_NAME = 1
+IS_NAME_PARENS = 4
+IS_TYPE = 2
+IS_TYPE_PARENS = 5
+IS_TYPE_NAME = 3
+
+def formatArgs(elems, is_output=False, format_ty=IS_TYPE_NAME):
 	from functools import partial
 
-	def sub(output, is_arg, elem):
+	def sub(output, format_ty, elem):
 		idx, elem = elem
 		name, ty = elem
 
@@ -143,28 +150,36 @@ def formatArgs(elems, is_output=False, is_arg=True):
 
 		assert ty is not None
 
-		if is_arg:
+		if format_ty == IS_TYPE_NAME:
 			return '%s: %s' % (name, ty)
+		elif format_ty == IS_NAME:
+			return '%s' % name
 		else:
 			return '%s' % ty
 
-	out = ', '.join(filter(None, map(partial(sub, is_output, is_arg), enumerate(elems))))
-	if not is_arg and len(list(elems)) != 1:
-		return '(%s)' % out
-	else:
-		return out
+	return ', '.join(filter(None, map(partial(sub, is_output, format_ty), enumerate(elems))))
 
-def formatInOutArgs(cmd):
+def formatInputs(cmd, format_ty=IS_TYPE_NAME):
 	for idx, elem in enumerate(cmd['inputs'] + cmd['outputs']):
 		if elem[0] is None:
 			elem[0] = 'unk%s' % idx
 		elem[0] = camelToSnake(elem[0])
-	inputs = formatArgs(cmd['inputs'])
+	inputs = formatArgs(cmd['inputs'], format_ty=format_ty)
 	# Handle out buffers
-	out_args = formatArgs(filter(lambda x: is_buffer_argument(x[1]), cmd['outputs']), is_output=True)
-	outputs = formatArgs(filter(lambda x: not is_buffer_argument(x[1]), cmd['outputs']), is_arg=False, is_output=True)
+	out_args = formatArgs(filter(lambda x: is_buffer_argument(x[1]), cmd['outputs']), is_output=True, format_ty=format_ty)
 	args = ", ".join(filter(None, [inputs, out_args]))
-	return (args, outputs)
+
+	if format_ty == IS_NAME_PARENS or format_ty == IS_TYPE_PARENS:
+		return '(%s)' % args
+	else:
+		return args
+
+def formatOutputs(cmd):
+	outputs = formatArgs(filter(lambda x: not is_buffer_argument(x[1]), cmd), is_output=True, format_ty=IS_TYPE)
+	if outputs == "" or "," in outputs:
+		return "(%s)" % outputs
+	else:
+		return outputs
 
 types, ifaces, services = idparser.getAll()
 invServices = {svc : ifname for ifname, svcs in services.items() for svc in svcs}
@@ -386,7 +401,10 @@ def gen_new_method(f, ifacename, servicename, raw_new_name, has_initialize_outpu
 	print("\t\t\treturn Ok(ret);", file=f)
 	print("\t\t}", file=f)
 	print("", file=f)
-	print("\t\tlet hnd = Self::%s(%s)?;" % (raw_new_name, initialize_args), file=f)
+	if has_initialize_output == "u32" or has_initialize_output == "()" and initialize_args != "":
+		print("\t\tlet hnd = f(Self::%s)?;" % raw_new_name, file=f)
+	else:
+		print("\t\tlet hnd = Self::%s(%s)?;" % (raw_new_name, initialize_args), file=f)
 	print("\t\tlet ret = Arc::new(hnd);", file=f)
 	print("\t\t*HANDLE.lock() = Arc::downgrade(&ret);", file=f)
 	print("\t\tOk(ret)", file=f)
@@ -462,28 +480,41 @@ for name, cmds in ifaces.items():
 		for s in services.get(name, []):
 			initialize_method = next((cmd for cmd in cmds['cmds'] if cmd['name'] == "Initialize"), None)
 			if s != "sm:" and initialize_method is not None:
-				(args, outputs) = formatInOutArgs(initialize_method)
+				args = formatInputs(initialize_method)
+				args_names = formatInputs(initialize_method, format_ty=IS_NAME)
+				args_ty = formatInputs(initialize_method, format_ty=IS_TYPE)
+				outputs = formatOutputs(initialize_method['outputs'])
 				if outputs != "()" and outputs != "u32":
 					(args, outputs) = ("", None)
-				args_names = ", ".join([aname for aname, _ in (filter(lambda x: x[1][0] != "pid", initialize_method['inputs']) + filter(lambda x: is_buffer_argument(x[1]), initialize_method['outputs']))])
 			else:
-				(args, outputs, args_names) = ("", None, "")
+				(args, outputs, args_names, args_ty) = ("", None, "", "")
 
+			new_method_name = "new" if len(services[name]) == 1 else "new_%s" % s.replace(":", "_").replace("-", "_")
 			# Handle out buffers
-			if len(services[name]) == 1:
-				print("\tpub fn raw_new(%s) -> Result<%s<Session>> {" % (args, ifacename), file=f)
-			else:
-				print("\tpub fn raw_new_%s(%s) -> Result<%s<Session>> {" % (s.replace(":", "_").replace("-", "_"), args, ifacename), file=f)
+			print("\tpub fn raw_%s(%s) -> Result<%s<Session>> {" % (new_method_name, args, ifacename), file=f)
 			gen_raw_new_method(f, ifacename, s, outputs, args_names)
 			print("\t}", file=f)
 			print("", file=f)
-			if len(services[name]) == 1:
-				method_name = "raw_new"
-				print("\tpub fn new(%s) -> Result<Arc<%s<Session>>> {" % (args, ifacename), file=f)
+			if args != "":
+				args_ty_new = []
+				# TODO: Lifetimes are going to be a giant pain...
+				fn_params = []
+				#for i in args.split(", "):
+				#	(arg_name, ty) = i.split(": ")
+				#	if ty == "&KObject":
+				#		fn_params.append("'" + arg_name)
+				#		args_ty_new.append("&%s KObject" % ("'" + arg_name))
+				#	else:
+				#		args_ty_new.append("%s" % ty)
+				#if len(args_ty_new) == 1:
+				#	args_ty_new = args_ty_new[0]
+				#else:
+				#	args_ty_new = "(" + ", ".join(args_ty_new) + ")"
+				fn_params.append("T: FnOnce(fn(%s) -> Result<%s<Session>>) -> Result<%s<Session>>" % (args_ty, ifacename, ifacename))
+				print("\tpub fn %s<%s>(f: T) -> Result<Arc<%s<Session>>> {" % (new_method_name, ", ".join(fn_params), ifacename), file=f)
 			else:
-				method_name = "raw_new_%s" % s.replace(":", "_").replace("-", "_")
-				print("\tpub fn new_%s(%s) -> Result<Arc<%s<Session>>> {" % (s.replace(":", "_").replace("-", "_"), args, ifacename), file=f)
-			gen_new_method(f, ifacename, s, method_name, outputs, args_names)
+				print("\tpub fn %s() -> Result<Arc<%s<Session>>> {" % (new_method_name, ifacename), file=f)
+			gen_new_method(f, ifacename, s, "raw_" + new_method_name, outputs, args_names)
 			print("\t}", file=f)
 			print("", file=f)
 
@@ -523,7 +554,8 @@ for name, cmds in ifaces.items():
 					# huge hack. i'm tired.
 					raise UnsupportedStructException("")
 
-				(args, outputs) = formatInOutArgs(cmd)
+				args = formatInputs(cmd)
+				outputs = formatOutputs(cmd['outputs'])
 				# Added at version X, never removed
 				if cmd['versionAdded'] != '1.0.0' and cmd['lastVersion'] is None:
 					print("\t#[cfg(feature = \"switch-%s\")]" % cmd['versionAdded'], file=fn_io)

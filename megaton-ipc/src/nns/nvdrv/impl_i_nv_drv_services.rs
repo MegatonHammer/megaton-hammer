@@ -24,7 +24,7 @@ impl INvDrvServices<Session> {
 		Ok(object)
 	}
 
-	pub fn new_nvdrv_s(transfer_memory_size: u32, current_process: &KObject, transfer_memory: &KObject) -> Result<Arc<INvDrvServices<Session>>> {
+	pub fn new_nvdrv_s<T: FnOnce(fn(u32, &KObject, &KObject) -> Result<INvDrvServices<Session>>) -> Result<INvDrvServices<Session>>>(f: T) -> Result<Arc<INvDrvServices<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
@@ -42,7 +42,7 @@ impl INvDrvServices<Session> {
 			return Ok(ret);
 		}
 
-		let hnd = Self::raw_new_nvdrv_s(transfer_memory_size, current_process, transfer_memory)?;
+		let hnd = f(Self::raw_new_nvdrv_s)?;
 		let ret = Arc::new(hnd);
 		*HANDLE.lock() = Arc::downgrade(&ret);
 		Ok(ret)
@@ -62,7 +62,7 @@ impl INvDrvServices<Session> {
 		Ok(object)
 	}
 
-	pub fn new_nvdrv_t(transfer_memory_size: u32, current_process: &KObject, transfer_memory: &KObject) -> Result<Arc<INvDrvServices<Session>>> {
+	pub fn new_nvdrv_t<T: FnOnce(fn(u32, &KObject, &KObject) -> Result<INvDrvServices<Session>>) -> Result<INvDrvServices<Session>>>(f: T) -> Result<Arc<INvDrvServices<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
@@ -80,7 +80,7 @@ impl INvDrvServices<Session> {
 			return Ok(ret);
 		}
 
-		let hnd = Self::raw_new_nvdrv_t(transfer_memory_size, current_process, transfer_memory)?;
+		let hnd = f(Self::raw_new_nvdrv_t)?;
 		let ret = Arc::new(hnd);
 		*HANDLE.lock() = Arc::downgrade(&ret);
 		Ok(ret)
@@ -100,7 +100,7 @@ impl INvDrvServices<Session> {
 		Ok(object)
 	}
 
-	pub fn new_nvdrv_a(transfer_memory_size: u32, current_process: &KObject, transfer_memory: &KObject) -> Result<Arc<INvDrvServices<Session>>> {
+	pub fn new_nvdrv_a<T: FnOnce(fn(u32, &KObject, &KObject) -> Result<INvDrvServices<Session>>) -> Result<INvDrvServices<Session>>>(f: T) -> Result<Arc<INvDrvServices<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
@@ -118,7 +118,7 @@ impl INvDrvServices<Session> {
 			return Ok(ret);
 		}
 
-		let hnd = Self::raw_new_nvdrv_a(transfer_memory_size, current_process, transfer_memory)?;
+		let hnd = f(Self::raw_new_nvdrv_a)?;
 		let ret = Arc::new(hnd);
 		*HANDLE.lock() = Arc::downgrade(&ret);
 		Ok(ret)
@@ -138,7 +138,7 @@ impl INvDrvServices<Session> {
 		Ok(object)
 	}
 
-	pub fn new_nvdrv(transfer_memory_size: u32, current_process: &KObject, transfer_memory: &KObject) -> Result<Arc<INvDrvServices<Session>>> {
+	pub fn new_nvdrv<T: FnOnce(fn(u32, &KObject, &KObject) -> Result<INvDrvServices<Session>>) -> Result<INvDrvServices<Session>>>(f: T) -> Result<Arc<INvDrvServices<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
@@ -156,7 +156,7 @@ impl INvDrvServices<Session> {
 			return Ok(ret);
 		}
 
-		let hnd = Self::raw_new_nvdrv(transfer_memory_size, current_process, transfer_memory)?;
+		let hnd = f(Self::raw_new_nvdrv)?;
 		let ret = Arc::new(hnd);
 		*HANDLE.lock() = Arc::downgrade(&ret);
 		Ok(ret)

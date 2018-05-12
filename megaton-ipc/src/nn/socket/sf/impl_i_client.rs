@@ -24,7 +24,7 @@ impl IClient<Session> {
 		Ok(object)
 	}
 
-	pub fn new_bsd_u(config: ::nn::socket::BsdBufferConfig, pid: u64, transfer_memory_size: u64, unk3: &KObject) -> Result<Arc<IClient<Session>>> {
+	pub fn new_bsd_u<T: FnOnce(fn(::nn::socket::BsdBufferConfig, u64, u64, &KObject) -> Result<IClient<Session>>) -> Result<IClient<Session>>>(f: T) -> Result<Arc<IClient<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
@@ -42,7 +42,7 @@ impl IClient<Session> {
 			return Ok(ret);
 		}
 
-		let hnd = Self::raw_new_bsd_u(config, pid, transfer_memory_size, unk3)?;
+		let hnd = f(Self::raw_new_bsd_u)?;
 		let ret = Arc::new(hnd);
 		*HANDLE.lock() = Arc::downgrade(&ret);
 		Ok(ret)
@@ -62,7 +62,7 @@ impl IClient<Session> {
 		Ok(object)
 	}
 
-	pub fn new_bsd_s(config: ::nn::socket::BsdBufferConfig, pid: u64, transfer_memory_size: u64, unk3: &KObject) -> Result<Arc<IClient<Session>>> {
+	pub fn new_bsd_s<T: FnOnce(fn(::nn::socket::BsdBufferConfig, u64, u64, &KObject) -> Result<IClient<Session>>) -> Result<IClient<Session>>>(f: T) -> Result<Arc<IClient<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
@@ -80,7 +80,7 @@ impl IClient<Session> {
 			return Ok(ret);
 		}
 
-		let hnd = Self::raw_new_bsd_s(config, pid, transfer_memory_size, unk3)?;
+		let hnd = f(Self::raw_new_bsd_s)?;
 		let ret = Arc::new(hnd);
 		*HANDLE.lock() = Arc::downgrade(&ret);
 		Ok(ret)
