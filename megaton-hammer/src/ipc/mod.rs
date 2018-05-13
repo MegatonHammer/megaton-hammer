@@ -9,9 +9,8 @@
 use core;
 use core::mem;
 use core::marker::PhantomData;
-use arrayvec::ArrayVec;
+use arrayvec::{ArrayVec, Array};
 use alloc::arc::Arc;
-use alloc::Vec;
 use byteorder::{LE};
 use kernel::{KObject, Domain};
 use bit_field::BitField;
@@ -164,6 +163,10 @@ pub enum MessageType {
     Unknown(u16)
 }
 
+//pub enum IPCBufferType {
+//    A { flags: u8 }, B { flags: u8 }, X { counter: u16 }, C { has_u16_size: bool }
+//}
+//
 #[derive(Debug, Clone)]
 pub struct IPCBuffer<'a> {
     // Address to the value
@@ -255,40 +258,55 @@ impl<'a> IPCBuffer<'a> {
 
 //}
 
-#[derive(Debug)]
-pub struct Request<'a, 'b, RAW> {
+//#[derive(Debug)]
+pub struct Request<'a, 'b, RAW, BUFF = [IPCBuffer<'a>; 0], COPY = [&'b KObject; 0], MOVE = [KObject; 0]>
+where
+    BUFF: Array<Item=IPCBuffer<'a>>,
+    COPY: Array<Item=&'b KObject>,
+    MOVE: Array<Item=KObject>
+{
     ty: u16,
     send_pid: bool,
-    x_descriptors: Vec<IPCBuffer<'a>>,
-    a_descriptors: Vec<IPCBuffer<'a>>,
-    b_descriptors: Vec<IPCBuffer<'a>>,
-    c_descriptors: Vec<IPCBuffer<'a>>,
-    copy_handles: Vec<&'b KObject>,
-    move_handles: Vec<KObject>,
+    buffers: ArrayVec<BUFF>,
+    // x_descriptors: ArrayVec<[IPCBuffer<'a>; 16]>,
+    // a_descriptors: ArrayVec<[IPCBuffer<'a>; 16]>,
+    // b_descriptors: ArrayVec<[IPCBuffer<'a>; 16]>,
+    // c_descriptors: ArrayVec<[IPCBuffer<'a>; 16]>,
+    copy_handles: ArrayVec<COPY>,
+    move_handles: ArrayVec<MOVE>,
 
     // The data section is built in !
     cmd_id: u64,
-    // TODO: I really feel like this *ought* to be 
-    args: Option<RAW>,
+    // TODO: I really feel like this *ought* to be
+    args: Option<RAW>
 }
 
-// TODO: Figure out a way to avoid T: Clone ?
-// TODO: Maybe I should just store a *pointer* to T ?
-impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
+pub trait IRequest {
+    fn pack(self, data: &mut [u8], domain_id: Option<u32>);
+}
+
+impl<'a, 'b, T: Clone, BUFF, COPY, MOVE> Request<'a, 'b, T, BUFF, COPY, MOVE>
+where
+    BUFF: Array<Item=IPCBuffer<'a>>,
+    COPY: Array<Item=&'b KObject>,
+    MOVE: Array<Item=KObject>
+{
     pub fn new(id: u64) -> Self {
         Request {
             ty: 4,
             cmd_id: id,
             send_pid: false,
-            x_descriptors: Vec::new(),
-            a_descriptors: Vec::new(),
-            b_descriptors: Vec::new(),
-            c_descriptors: Vec::new(),
-            copy_handles: Vec::new(),
-            move_handles: Vec::new(),
+            buffers: ArrayVec::new(),
+            // x_descriptors: ArrayVec::new(),
+            // a_descriptors: ArrayVec::new(),
+            // b_descriptors: ArrayVec::new(),
+            // c_descriptors: ArrayVec::new(),
+            copy_handles: ArrayVec::new(),
+            move_handles: ArrayVec::new(),
             args: None
         }
     }
+
     pub fn ty(mut self, ty: MessageType) -> Self {
         self.ty = match ty {
             MessageType::Request => 4,
@@ -304,33 +322,18 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
     }
 
     pub fn descriptor(mut self, buf: IPCBuffer<'a>) -> Self {
-        enum Direction { In, Out }
-        enum Family { AB, XC }
-
+        // TODO: Move type validation to IPCBuffer, where it belongs.
         if buf.ty & 0x20 == 0 {
-            let direction = if buf.ty & 0b0001 != 0 { Direction::In }
-            else if buf.ty & 0b0010 != 0 { Direction::Out }
-            else { panic!("Invalid buffer type {}", buf.ty); };
-
-            let family = if buf.ty & 0b0100 != 0 { Family::AB }
-            else if buf.ty & 0b1000 != 0 { Family::XC }
-            else { panic!("Invalid buffer type {}", buf.ty); };
-
-            match (direction, family) {
-                (Direction::In, Family::AB) => self.a_descriptors.push(buf),
-                (Direction::Out, Family::AB) => self.b_descriptors.push(buf),
-                (Direction::In, Family::XC) => self.x_descriptors.push(buf),
-                (Direction::Out, Family::XC) => ()
-            }
+            if buf.ty & 0b0011 == 0 { panic!("Invalid buffer type {}", buf.ty); }
+            if buf.ty & 0b1100 == 0 { panic!("Invalid buffer type {}", buf.ty); }
         } else if buf.ty == 0x21 {
-            self.a_descriptors.push(buf);
-            self.x_descriptors.push(IPCBuffer::null());
+
         } else if buf.ty == 0x22 {
-            self.b_descriptors.push(buf);
-            self.c_descriptors.push(IPCBuffer::null());
+
         } else {
             panic!("Invalid descriptor type: {}", buf.ty);
         }
+        self.buffers.push(buf);
         self
     }
 
@@ -346,9 +349,114 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
         self
     }
 
+    pub fn show_packed(self, f: &mut core::fmt::Write, is_domain: bool) -> Self {
+        // Let's make a copy. **WE NEED TO FORGET IT**
+        // TODO: Maybe there's a cleaner way to unsafely make a copy without
+        // transmuting ?
+        let other_self : Self = Self {
+            ty: self.ty,
+            send_pid: self.send_pid,
+            buffers: self.buffers.clone(),
+            //x_descriptors: self.x_descriptors.clone(),
+            //a_descriptors: self.a_descriptors.clone(),
+            //b_descriptors: self.b_descriptors.clone(),
+            //c_descriptors: self.c_descriptors.clone(),
+            copy_handles: self.copy_handles.clone(),
+            // This works because it gets forgotten.
+            move_handles: self.move_handles.iter().map(|o| unsafe { KObject::new(o.as_raw_handle()) }).collect(),
+
+            // The data section is built in !
+            cmd_id: self.cmd_id,
+            // TODO: I really feel like this *ought* to be
+            args: self.args.clone()
+        };
+        let mut arr = [0; 0x100];
+        other_self.pack(&mut arr, if is_domain { Some(0xff) } else { None });
+
+        hex_print(&arr[..], &mut ::loader::Logger);
+        self
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+enum KernelBufferType { X, A, B, C }
+#[derive(Debug, Clone, Copy)]
+enum HipcBufferType {
+    X, A, B, C,
+    AX,
+    BC
+}
+
+impl HipcBufferType {
+    fn from_type(ty: u64) -> HipcBufferType {
+        enum Direction { In, Out }
+        enum Family { AB, XC }
+        if ty & 0x20 == 0 {
+             let direction = if ty & 0b0001 != 0 { Direction::In }
+             else if ty & 0b0010 != 0 { Direction::Out }
+             else { panic!("Invalid buffer type {}", ty); };
+
+             let family = if ty & 0b0100 != 0 { Family::AB }
+             else if ty & 0b1000 != 0 { Family::XC }
+             else { panic!("Invalid buffer type {}", ty); };
+
+            match (direction, family) {
+                (Direction::In, Family::AB) => HipcBufferType::X,
+                (Direction::Out, Family::AB) => HipcBufferType::A,
+                (Direction::In, Family::XC) => HipcBufferType::B,
+                (Direction::Out, Family::XC) => HipcBufferType::C /* TODO: Is that right ? */
+            }
+        } else if ty == 0x21 {
+            HipcBufferType::AX
+        } else if ty == 0x22 {
+            HipcBufferType::BC
+        } else {
+            panic!("Invalid descriptor type: {}", ty);
+        }
+    }
+
+    fn map<T>(&self, mut f: T) where T: FnMut(KernelBufferType) {
+        match *self {
+            HipcBufferType::X => f(KernelBufferType::X),
+            HipcBufferType::A => f(KernelBufferType::A),
+            HipcBufferType::B => f(KernelBufferType::B),
+            HipcBufferType::C => f(KernelBufferType::C),
+            HipcBufferType::AX => {
+                f(KernelBufferType::X);
+                f(KernelBufferType::A);
+            },
+            HipcBufferType::BC => {
+                f(KernelBufferType::B);
+                f(KernelBufferType::C);
+            }
+        }
+    }
+}
+
+// TODO: Figure out a way to avoid T: Clone ?
+// TODO: Maybe I should just store a *pointer* to T ?
+impl<'a, 'b, T, BUFF, COPY, MOVE> IRequest for Request<'a, 'b, T, BUFF, COPY, MOVE>
+where
+    T: Clone,
+    BUFF: Array<Item=IPCBuffer<'a>>,
+    COPY: Array<Item=&'b KObject>,
+    MOVE: Array<Item=KObject>
+{
     // Write the data to an IPC buffer to be sent to the Switch OS.
     // TODO: If this is not sent, it can leak move handles!
-    pub fn pack(self, data: &mut [u8], domain_id: Option<u32>) {
+    fn pack(self, data: &mut [u8], domain_id: Option<u32>) {
+        enum Family { AB, XC }
+
+        let mut descriptor_counts = (/* X */0, /* A */0, /* B */0, /* C */0);
+        for buf in self.buffers.iter() {
+            HipcBufferType::from_type(buf.ty).map(|bufty| match bufty {
+                KernelBufferType::X => descriptor_counts.0 += 1,
+                KernelBufferType::A => descriptor_counts.1 += 1,
+                KernelBufferType::B => descriptor_counts.2 += 1,
+                KernelBufferType::C => descriptor_counts.3 += 1,
+            });
+        }
+
         // TODO: Memset data first
         let mut cursor = CursorWrite::new(data);
 
@@ -366,20 +474,29 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
             };
 
             hdr.set_ty(self.ty);
-            hdr.set_num_x_descriptors(self.x_descriptors.len() as u8);
-            hdr.set_num_a_descriptors(self.a_descriptors.len() as u8);
-            hdr.set_num_b_descriptors(self.b_descriptors.len() as u8);
+            hdr.set_num_x_descriptors(descriptor_counts.0);
+            hdr.set_num_a_descriptors(descriptor_counts.1);
+            hdr.set_num_b_descriptors(descriptor_counts.2);
             hdr.set_num_w_descriptors(0);
-            if self.c_descriptors.len() == 0 {
+            if descriptor_counts.3 == 0 {
                 hdr.set_c_descriptor_flags(0);
-            } else if self.c_descriptors.len() == 1 {
+            } else if descriptor_counts.3 == 1 {
                 hdr.set_c_descriptor_flags(2);
             } else {
-                hdr.set_c_descriptor_flags(2 + self.c_descriptors.len() as u8);
+                hdr.set_c_descriptor_flags(2 + descriptor_counts.3 as u8);
             }
 
-            // 0x10 = padding, 8 = sfci, 8 = cmdid, 0x10=domain header.
-            hdr.set_raw_section_size(div_ceil(0x10 + 8 + 8 + if domain_id.is_some() { 0x10 } else { 0 } + core::mem::size_of::<T>() as u64, 4) as u16);
+            // 0x10 = padding, 8 = sfci, 8 = cmdid, data = T
+            let mut raw_section_size = 0x10 + 8 + 8 + core::mem::size_of::<T>();
+            if domain_id.is_some() {
+                // Domain Header.
+                // TODO: Input ObjectIDs
+                raw_section_size += 0x10;
+            }
+            // C descriptor u16 sizes
+            raw_section_size += self.buffers.iter().filter(|v| v.ty & 0xF == 0xA && v.ty & 0x10 != 0).count() * 2;
+
+            hdr.set_raw_section_size(div_ceil(raw_section_size as u64, 4) as u16);
             let enable_handle_descriptor = self.copy_handles.len() > 0 ||
                 self.move_handles.len() > 0 || self.send_pid;
             hdr.set_enable_handle_descriptor(enable_handle_descriptor);
@@ -420,18 +537,56 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
             }
         }
 
-        for (i, buf) in self.x_descriptors.iter().enumerate() {
-            assert!(buf.addr >> 39 == 0, "Invalid buffer address");
-            assert!(buf.size >> 16 == 0, "Invalid buffer size");
-            let num = i & 0b111000111111
-                | ((buf.addr >> 36) & 0b111) << 6
-                | ((buf.addr >> 32) & 0b1111) << 12
-                | buf.size << 16;
-            cursor.write_u32::<LE>(num as u32);
-            cursor.write_u32::<LE>((buf.addr & 0xFFFFFFFF) as u32)
+        // X descriptors
+        {
+            let mut i = 0;
+            for buf in self.buffers.iter() {
+                let null_buf = IPCBuffer::null();
+                let buf = match HipcBufferType::from_type(buf.ty) {
+                    HipcBufferType::X => buf,
+                    HipcBufferType::AX => &null_buf,
+                    _ => continue
+                };
+
+                assert!(buf.addr >> 39 == 0, "Invalid buffer address");
+                assert!(buf.size >> 16 == 0, "Invalid buffer size");
+                let num = i & 0b111000111111
+                    | ((buf.addr >> 36) & 0b111) << 6
+                    | ((buf.addr >> 32) & 0b1111) << 12
+                    | buf.size << 16;
+                cursor.write_u32::<LE>(num as u32);
+                cursor.write_u32::<LE>((buf.addr & 0xFFFFFFFF) as u32);
+                i += 1;
+            }
         }
 
-        for buf in self.a_descriptors.iter().chain(self.b_descriptors.iter()) {
+        // A descriptors
+        for buf in self.buffers.iter() {
+            let buf = match HipcBufferType::from_type(buf.ty) {
+                HipcBufferType::B | HipcBufferType::BC => buf,
+                _ => continue
+            };
+
+            assert!(buf.addr >> 39 == 0, "Invalid buffer address");
+            assert!(buf.size >> 35 == 0, "Invalid buffer size");
+            assert!(buf.ty >> 8 == 0, "Invalid descriptor permission");
+
+            cursor.write_u32::<LE>((buf.size & 0xFFFFFFFF) as u32);
+            cursor.write_u32::<LE>((buf.addr & 0xFFFFFFFF) as u32);
+
+            let num = buf.ty as usize >> 6 // flags
+                | ((buf.addr >> 36) & 0b111) << 2
+                | ((buf.size >> 32) & 0b1111) << 24
+                | ((buf.addr >> 32) & 0b1111) << 28;
+            cursor.write_u32::<LE>(num as u32);
+        }
+
+        // B descriptors
+        for buf in self.buffers.iter() {
+            let buf = match HipcBufferType::from_type(buf.ty) {
+                HipcBufferType::B | HipcBufferType::BC => buf,
+                _ => continue
+            };
             assert!(buf.addr >> 39 == 0, "Invalid buffer address");
             assert!(buf.size >> 35 == 0, "Invalid buffer size");
             assert!(buf.ty >> 8 == 0, "Invalid descriptor permission");
@@ -470,7 +625,7 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
         cursor.write_u64::<LE>(self.cmd_id);
         // TODO: Should blow up if that's not true. Alternatively: This should
         // not even be possible from an API perspective ?
-        if let Some(ref args) = self.args {
+        if let Some(args) = self.args {
             let raw_data = cursor.skip_write(core::mem::size_of::<T>());
             let raw_data = unsafe {
                 (raw_data.as_mut_ptr() as *mut T).as_mut().unwrap()
@@ -486,37 +641,47 @@ impl<'a, 'b, T: Clone> Request<'a, 'b, T> {
 
         // Total padding should be 0x10
         cursor.skip_write(0x10 - before_pad);
-        // TODO: Buffer 0xA.
 
 
-        // TODO: Write c buffers
-    }
+        // C descriptor u16 length list
+        let mut i = 0;
+        for buf in self.buffers.iter() {
+            let nullbuf = IPCBuffer::null();
+            let buf = match HipcBufferType::from_type(buf.ty) {
+                HipcBufferType::C => buf,
+                HipcBufferType::BC => &nullbuf,
+                _ => continue
+            };
 
-    pub fn show_packed(self, f: &mut core::fmt::Write, is_domain: bool) -> Self {
-        // Let's make a copy. **WE NEED TO FORGET IT**
-        // TODO: Maybe there's a cleaner way to unsafely make a copy without
-        // transmuting ?
-        let other_self : Self = Self {
-            ty: self.ty,
-            send_pid: self.send_pid,
-            x_descriptors: self.x_descriptors.clone(),
-            a_descriptors: self.a_descriptors.clone(),
-            b_descriptors: self.b_descriptors.clone(),
-            c_descriptors: self.c_descriptors.clone(),
-            copy_handles: self.copy_handles.clone(),
-            // This works because it gets forgotten.
-            move_handles: self.move_handles.iter().map(|o| unsafe { KObject::new(o.as_raw_handle()) }).collect(),
+            if buf.ty & 0x10 == 0 {
+                if buf.size >> 16 != 0 {
+                    panic!("Invalid buffer size {:x}", buf.size);
+                }
 
-            // The data section is built in !
-            cmd_id: self.cmd_id,
-            // TODO: I really feel like this *ought* to be 
-            args: self.args.clone()
-        };
-        let mut arr = [0; 0x100];
-        other_self.pack(&mut arr, if is_domain { Some(0xff) } else { None });
+                cursor.write_u16::<LE>((buf.size) as u16);
+                i += 1;
+            }
+        }
 
-        hex_print(&arr[..], &mut ::loader::Logger);
-        self
+        // Align to u32
+        if i % 2 == 1 {
+            cursor.skip_write(2);
+        }
+
+        for buf in self.buffers.iter() {
+            let nullbuf = IPCBuffer::null();
+            let buf = match HipcBufferType::from_type(buf.ty) {
+                HipcBufferType::C => buf,
+                HipcBufferType::BC => &nullbuf,
+                _ => continue
+            };
+
+            assert_eq!(buf.addr >> 48, 0, "Invalid address {:x}", buf.addr);
+            assert_eq!(buf.size >> 16, 0, "Invalid size {:x}", buf.size);
+
+            cursor.write_u32::<LE>(buf.addr as u32);
+            cursor.write_u32::<LE>((buf.addr >> 32) as u32 | (buf.size as u32) << 16);
+        }
     }
 }
 
@@ -527,8 +692,8 @@ pub struct Response<RAW> {
     domain_obj: Option<Arc<KObject>>,
     error: u64,
     pid: Option<u64>,
-    handles: Vec<KObject>,
-    objects: Vec<u32>, // TODO: Maybe it'd be fine to lower this below the theoretical limit?
+    handles: ArrayVec<[KObject; 32]>,
+    objects: ArrayVec<[u32; 256]>, // TODO: Maybe it'd be fine to lower this below the theoretical limit?
     ret: RAW
 }
 
@@ -539,8 +704,8 @@ impl<T: Clone> Response<T> {
             domain_obj: is_domain,
             error: 0,
             pid: None,
-            handles: Vec::new(),
-            objects: Vec::new(),
+            handles: ArrayVec::new(),
+            objects: ArrayVec::new(),
             ret: unsafe { mem::uninitialized() }
         };
 
@@ -631,7 +796,7 @@ impl<T: Clone> Response<T> {
         this.ret = raw.clone();
 
         if let Some(input_objects) = input_objects {
-            for i in 0..input_objects {
+            for _ in 0..input_objects {
                 this.objects.push(cursor.read_u32::<LE>());
             }
         }

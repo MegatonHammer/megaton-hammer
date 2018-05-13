@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -39,7 +41,7 @@ impl<T: Object> IAudioController<T> {
 			unk0: f32,
 			unk1: f32,
 		}
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -52,7 +54,7 @@ impl<T: Object> IAudioController<T> {
 	pub fn get_main_applet_expected_master_volume(&self, ) -> Result<f32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let res : Response<f32> = self.0.send(req)?;
@@ -62,7 +64,7 @@ impl<T: Object> IAudioController<T> {
 	pub fn get_library_applet_expected_master_volume(&self, ) -> Result<f32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(())
 			;
 		let res : Response<f32> = self.0.send(req)?;
@@ -77,7 +79,7 @@ impl<T: Object> IAudioController<T> {
 			unk0: f32,
 			unk1: i64,
 		}
-		let req = Request::new(3)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -90,7 +92,7 @@ impl<T: Object> IAudioController<T> {
 	pub fn set_transparent_volume_rate(&self, unk0: f32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(4)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;

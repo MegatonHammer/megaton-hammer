@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -38,7 +40,7 @@ impl<T: Object> INewsService<T> {
 	pub fn unknown30200(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(30200)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30200)
 			.args(())
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -51,7 +53,7 @@ impl<T: Object> INewsService<T> {
 	pub fn unknown40101(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(40101)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(40101)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -61,7 +63,7 @@ impl<T: Object> INewsService<T> {
 	pub fn unknown40200(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(40200)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(40200)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -71,7 +73,7 @@ impl<T: Object> INewsService<T> {
 	pub fn unknown40201(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(40201)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(40201)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;

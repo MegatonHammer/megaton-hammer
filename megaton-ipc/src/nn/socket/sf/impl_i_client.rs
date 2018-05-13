@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
@@ -8,7 +10,21 @@ use alloc::arc::Arc;
 pub struct IClient<T>(T);
 
 impl IClient<Session> {
-	pub fn new_bsd_u() -> Result<Arc<IClient<Session>>> {
+	pub fn raw_new_bsd_u(config: ::nn::socket::BsdBufferConfig, pid: u64, transfer_memory_size: u64, unk3: &KObject) -> Result<IClient<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::raw_new()?;
+
+		let session = sm.get_service(*b"bsd:u\0\0\0")?;
+		let object : Self = Session::from(session).into();
+		let errcode = object.initialize(config, pid, transfer_memory_size, unk3)?;
+		if errcode != 0 {
+			return Err(Error(1))
+		}
+		Ok(object)
+	}
+
+	pub fn new_bsd_u<T: FnOnce(fn(::nn::socket::BsdBufferConfig, u64, u64, &KObject) -> Result<IClient<Session>>) -> Result<IClient<Session>>>(f: T) -> Result<Arc<IClient<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
@@ -18,10 +34,6 @@ impl IClient<Session> {
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
 		}
-
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
 
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"bsd:u\0\0\0") {
 			let ret = Arc::new(IClient(ManuallyDrop::into_inner(hnd)));
@@ -30,15 +42,27 @@ impl IClient<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"bsd:u\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = f(Self::raw_new_bsd_u)?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
-	pub fn new_bsd_s() -> Result<Arc<IClient<Session>>> {
+	pub fn raw_new_bsd_s(config: ::nn::socket::BsdBufferConfig, pid: u64, transfer_memory_size: u64, unk3: &KObject) -> Result<IClient<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::raw_new()?;
+
+		let session = sm.get_service(*b"bsd:s\0\0\0")?;
+		let object : Self = Session::from(session).into();
+		let errcode = object.initialize(config, pid, transfer_memory_size, unk3)?;
+		if errcode != 0 {
+			return Err(Error(1))
+		}
+		Ok(object)
+	}
+
+	pub fn new_bsd_s<T: FnOnce(fn(::nn::socket::BsdBufferConfig, u64, u64, &KObject) -> Result<IClient<Session>>) -> Result<IClient<Session>>>(f: T) -> Result<Arc<IClient<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
@@ -49,10 +73,6 @@ impl IClient<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"bsd:s\0\0\0") {
 			let ret = Arc::new(IClient(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -60,12 +80,10 @@ impl IClient<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"bsd:s\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = f(Self::raw_new_bsd_s)?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
 	pub fn to_domain(self) -> ::core::result::Result<IClient<Domain>, (Self, Error)> {
@@ -101,7 +119,7 @@ impl<T: Object> IClient<T> {
 			pid: u64,
 			transfer_memory_size: u64,
 		}
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 1], [_; 0]> = Request::new(0)
 			.args(InRaw {
 				config,
 				pid,
@@ -117,7 +135,7 @@ impl<T: Object> IClient<T> {
 	pub fn start_monitoring(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(unk0)
 			.send_pid()
 			;
@@ -134,7 +152,7 @@ impl<T: Object> IClient<T> {
 			ty: u32,
 			protocol: u32,
 		}
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(InRaw {
 				domain,
 				ty,
@@ -158,7 +176,7 @@ impl<T: Object> IClient<T> {
 			unk1: u32,
 			unk2: u32,
 		}
-		let req = Request::new(3)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -183,7 +201,7 @@ impl<T: Object> IClient<T> {
 			nfds: u32,
 			timeout: ::nn::socket::Timeout,
 		}
-		let req = Request::new(5)
+		let req : Request<_, [_; 6], [_; 0], [_; 0]> = Request::new(5)
 			.args(InRaw {
 				nfds,
 				timeout,
@@ -214,7 +232,7 @@ impl<T: Object> IClient<T> {
 			socket: u32,
 			flags: u32,
 		}
-		let req = Request::new(8)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(8)
 			.args(InRaw {
 				socket,
 				flags,
@@ -229,7 +247,7 @@ impl<T: Object> IClient<T> {
 		Ok((res.get_raw().ret.clone(),res.get_raw().bsd_errno.clone()))
 	}
 
-	pub fn recv_from(&self, sock: u32, flags: u32, message: &mut [i8], unk6: &mut ::nn::socket::Sockaddr) -> Result<(i32, u32, u32)> {
+	pub fn recv_from(&self, sock: u32, flags: u32, message: &mut [i8], unk6: &mut ::nn::socket::SockaddrIn) -> Result<(i32, u32, u32)> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -238,7 +256,7 @@ impl<T: Object> IClient<T> {
 			sock: u32,
 			flags: u32,
 		}
-		let req = Request::new(9)
+		let req : Request<_, [_; 2], [_; 0], [_; 0]> = Request::new(9)
 			.args(InRaw {
 				sock,
 				flags,
@@ -264,7 +282,7 @@ impl<T: Object> IClient<T> {
 			socket: u32,
 			flags: u32,
 		}
-		let req = Request::new(10)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(10)
 			.args(InRaw {
 				socket,
 				flags,
@@ -279,7 +297,7 @@ impl<T: Object> IClient<T> {
 		Ok((res.get_raw().ret.clone(),res.get_raw().bsd_errno.clone()))
 	}
 
-	pub fn send_to(&self, socket: u32, flags: u32, unk2: &[i8], unk3: &::nn::socket::Sockaddr) -> Result<(i32, u32)> {
+	pub fn send_to(&self, socket: u32, flags: u32, unk2: &[i8], unk3: &::nn::socket::SockaddrIn) -> Result<(i32, u32)> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
@@ -288,7 +306,7 @@ impl<T: Object> IClient<T> {
 			socket: u32,
 			flags: u32,
 		}
-		let req = Request::new(11)
+		let req : Request<_, [_; 2], [_; 0], [_; 0]> = Request::new(11)
 			.args(InRaw {
 				socket,
 				flags,
@@ -304,11 +322,11 @@ impl<T: Object> IClient<T> {
 		Ok((res.get_raw().ret.clone(),res.get_raw().bsd_errno.clone()))
 	}
 
-	pub fn accept(&self, socket: u32, addr: &mut ::nn::socket::Sockaddr) -> Result<(i32, u32, u32)> {
+	pub fn accept(&self, socket: u32, addr: &mut ::nn::socket::SockaddrIn) -> Result<(i32, u32, u32)> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(12)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(12)
 			.args(socket)
 			.descriptor(IPCBuffer::from_mut_ref(addr, 0x22))
 			;
@@ -321,11 +339,11 @@ impl<T: Object> IClient<T> {
 		Ok((res.get_raw().ret.clone(),res.get_raw().bsd_errno.clone(),res.get_raw().addrlen.clone()))
 	}
 
-	pub fn bind(&self, socket: u32, unk1: &::nn::socket::Sockaddr) -> Result<(i32, u32)> {
+	pub fn bind(&self, socket: u32, unk1: &::nn::socket::SockaddrIn) -> Result<(i32, u32)> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(13)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(13)
 			.args(socket)
 			.descriptor(IPCBuffer::from_ref(unk1, 0x21))
 			;
@@ -337,11 +355,11 @@ impl<T: Object> IClient<T> {
 		Ok((res.get_raw().ret.clone(),res.get_raw().bsd_errno.clone()))
 	}
 
-	pub fn connect(&self, socket: u32, unk1: &::nn::socket::Sockaddr) -> Result<(i32, u32)> {
+	pub fn connect(&self, socket: u32, unk1: &::nn::socket::SockaddrIn) -> Result<(i32, u32)> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(14)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(14)
 			.args(socket)
 			.descriptor(IPCBuffer::from_ref(unk1, 0x21))
 			;
@@ -353,11 +371,11 @@ impl<T: Object> IClient<T> {
 		Ok((res.get_raw().ret.clone(),res.get_raw().bsd_errno.clone()))
 	}
 
-	pub fn get_peer_name(&self, socket: u32, addr: &mut ::nn::socket::Sockaddr) -> Result<(i32, u32, u32)> {
+	pub fn get_peer_name(&self, socket: u32, addr: &mut ::nn::socket::SockaddrIn) -> Result<(i32, u32, u32)> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(15)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(15)
 			.args(socket)
 			.descriptor(IPCBuffer::from_mut_ref(addr, 0x22))
 			;
@@ -370,11 +388,11 @@ impl<T: Object> IClient<T> {
 		Ok((res.get_raw().ret.clone(),res.get_raw().bsd_errno.clone(),res.get_raw().addrlen.clone()))
 	}
 
-	pub fn get_sock_name(&self, socket: u32, addr: &mut ::nn::socket::Sockaddr) -> Result<(i32, u32, u32)> {
+	pub fn get_sock_name(&self, socket: u32, addr: &mut ::nn::socket::SockaddrIn) -> Result<(i32, u32, u32)> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(16)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(16)
 			.args(socket)
 			.descriptor(IPCBuffer::from_mut_ref(addr, 0x22))
 			;
@@ -396,7 +414,7 @@ impl<T: Object> IClient<T> {
 			socket: u32,
 			backlog: u32,
 		}
-		let req = Request::new(18)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(18)
 			.args(InRaw {
 				socket,
 				backlog,
@@ -420,7 +438,7 @@ impl<T: Object> IClient<T> {
 			unk1: u32,
 			unk2: u32,
 		}
-		let req = Request::new(20)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -444,7 +462,7 @@ impl<T: Object> IClient<T> {
 			socket: u32,
 			how: u32,
 		}
-		let req = Request::new(22)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(22)
 			.args(InRaw {
 				socket,
 				how,
@@ -461,7 +479,7 @@ impl<T: Object> IClient<T> {
 	pub fn shutdown_all_sockets(&self, how: u32) -> Result<(i32, u32)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(23)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(23)
 			.args(how)
 			;
 		#[repr(C)] #[derive(Clone)] struct OutRaw {
@@ -476,7 +494,7 @@ impl<T: Object> IClient<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(24)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(24)
 			.args(socket)
 			.descriptor(IPCBuffer::from_slice(message, 0x21))
 			;
@@ -492,7 +510,7 @@ impl<T: Object> IClient<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(25)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(25)
 			.args(socket)
 			.descriptor(IPCBuffer::from_mut_slice(message, 0x22))
 			;
@@ -507,7 +525,7 @@ impl<T: Object> IClient<T> {
 	pub fn close(&self, socket: u32) -> Result<(i32, u32)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(26)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(26)
 			.args(socket)
 			;
 		#[repr(C)] #[derive(Clone)] struct OutRaw {
@@ -526,7 +544,7 @@ impl<T: Object> IClient<T> {
 			unk0: u32,
 			unk1: u64,
 		}
-		let req = Request::new(27)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(27)
 			.args(InRaw {
 				unk0,
 				unk1,

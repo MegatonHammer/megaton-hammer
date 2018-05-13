@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> IAppletAccessor<T> {
 	pub fn get_applet_state_changed_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -44,7 +46,7 @@ impl<T: Object> IAppletAccessor<T> {
 	pub fn is_completed(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -54,7 +56,7 @@ impl<T: Object> IAppletAccessor<T> {
 	pub fn start(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -64,7 +66,7 @@ impl<T: Object> IAppletAccessor<T> {
 	pub fn request_exit(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(20)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -74,7 +76,7 @@ impl<T: Object> IAppletAccessor<T> {
 	pub fn terminate(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(25)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(25)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -84,7 +86,7 @@ impl<T: Object> IAppletAccessor<T> {
 	pub fn get_result(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(30)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;

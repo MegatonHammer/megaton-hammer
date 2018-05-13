@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> IUserLocalCommunicationService<T> {
 	pub fn get_state(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -45,7 +47,7 @@ impl<T: Object> IUserLocalCommunicationService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x1a))
 			;
@@ -56,7 +58,7 @@ impl<T: Object> IUserLocalCommunicationService<T> {
 	pub fn get_ipv4_address(&self, ) -> Result<(u32, u32)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(())
 			;
 		#[repr(C)] #[derive(Clone)] struct OutRaw {
@@ -70,7 +72,7 @@ impl<T: Object> IUserLocalCommunicationService<T> {
 	pub fn get_disconnect_reason(&self, ) -> Result<u16> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(3)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
 			.args(())
 			;
 		let res : Response<u16> = self.0.send(req)?;
@@ -82,7 +84,7 @@ impl<T: Object> IUserLocalCommunicationService<T> {
 	pub fn attach_state_change_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(100)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(100)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -95,7 +97,7 @@ impl<T: Object> IUserLocalCommunicationService<T> {
 	pub fn open_access_point(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(200)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(200)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -105,7 +107,7 @@ impl<T: Object> IUserLocalCommunicationService<T> {
 	pub fn close_access_point(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(201)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(201)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -117,7 +119,7 @@ impl<T: Object> IUserLocalCommunicationService<T> {
 	pub fn destroy_network(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(204)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(204)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -127,7 +129,7 @@ impl<T: Object> IUserLocalCommunicationService<T> {
 	pub fn reject(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(205)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(205)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -138,7 +140,7 @@ impl<T: Object> IUserLocalCommunicationService<T> {
 	pub fn set_station_accept_policy(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(207)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(207)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -149,7 +151,7 @@ impl<T: Object> IUserLocalCommunicationService<T> {
 	pub fn clear_accept_filter(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(209)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(209)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -159,7 +161,7 @@ impl<T: Object> IUserLocalCommunicationService<T> {
 	pub fn open_station(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(300)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(300)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -169,7 +171,7 @@ impl<T: Object> IUserLocalCommunicationService<T> {
 	pub fn close_station(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(301)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(301)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -181,7 +183,7 @@ impl<T: Object> IUserLocalCommunicationService<T> {
 	pub fn disconnect(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(304)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(304)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -191,7 +193,7 @@ impl<T: Object> IUserLocalCommunicationService<T> {
 	pub fn initialize(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(400)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(400)
 			.args(unk0)
 			.send_pid()
 			;
@@ -202,7 +204,7 @@ impl<T: Object> IUserLocalCommunicationService<T> {
 	pub fn finalize(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(401)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(401)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;

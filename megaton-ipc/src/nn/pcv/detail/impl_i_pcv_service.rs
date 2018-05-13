@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
@@ -8,6 +10,17 @@ use alloc::arc::Arc;
 pub struct IPcvService<T>(T);
 
 impl IPcvService<Session> {
+	pub fn raw_new() -> Result<IPcvService<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::raw_new()?;
+
+		let session = sm.get_service(*b"pcv\0\0\0\0\0")?;
+		let object : Self = Session::from(session).into();
+		object.initialize()?;
+		Ok(object)
+	}
+
 	pub fn new() -> Result<Arc<IPcvService<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
@@ -19,10 +32,6 @@ impl IPcvService<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"pcv\0\0\0\0\0") {
 			let ret = Arc::new(IPcvService(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -30,12 +39,10 @@ impl IPcvService<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"pcv\0\0\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = Self::raw_new()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
 	pub fn to_domain(self) -> ::core::result::Result<IPcvService<Domain>, (Self, Error)> {
@@ -70,7 +77,7 @@ impl<T: Object> IPcvService<T> {
 			unk0: bool,
 			unk1: i32,
 		}
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -88,7 +95,7 @@ impl<T: Object> IPcvService<T> {
 			unk0: bool,
 			unk1: i32,
 		}
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -106,7 +113,7 @@ impl<T: Object> IPcvService<T> {
 			unk0: i32,
 			unk1: u32,
 		}
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -119,7 +126,7 @@ impl<T: Object> IPcvService<T> {
 	pub fn get_clock_rate(&self, unk0: i32) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(3)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
 			.args(unk0)
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -129,7 +136,7 @@ impl<T: Object> IPcvService<T> {
 	pub fn get_state(&self, unk0: i32) -> Result<::nn::pcv::ModuleState> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(4)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
 			.args(unk0)
 			;
 		let res : Response<::nn::pcv::ModuleState> = self.0.send(req)?;
@@ -145,7 +152,7 @@ impl<T: Object> IPcvService<T> {
 			unk0: i32,
 			unk1: i32,
 		}
-		let req = Request::new(5)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(5)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -168,7 +175,7 @@ impl<T: Object> IPcvService<T> {
 			unk0: i32,
 			unk1: u32,
 		}
-		let req = Request::new(6)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -186,7 +193,7 @@ impl<T: Object> IPcvService<T> {
 			unk0: bool,
 			unk1: i32,
 		}
-		let req = Request::new(7)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(7)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -204,7 +211,7 @@ impl<T: Object> IPcvService<T> {
 			unk0: bool,
 			unk1: i32,
 		}
-		let req = Request::new(8)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(8)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -217,7 +224,7 @@ impl<T: Object> IPcvService<T> {
 	pub fn get_voltage_enabled(&self, unk0: i32) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(9)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(9)
 			.args(unk0)
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -227,7 +234,7 @@ impl<T: Object> IPcvService<T> {
 	pub fn get_voltage_range(&self, unk0: i32) -> Result<(i32, i32, i32)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
 			.args(unk0)
 			;
 		#[repr(C)] #[derive(Clone)] struct OutRaw {
@@ -247,7 +254,7 @@ impl<T: Object> IPcvService<T> {
 			unk0: i32,
 			unk1: i32,
 		}
-		let req = Request::new(11)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -260,7 +267,7 @@ impl<T: Object> IPcvService<T> {
 	pub fn get_voltage_value(&self, unk0: i32) -> Result<i32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(12)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)
 			.args(unk0)
 			;
 		let res : Response<i32> = self.0.send(req)?;
@@ -271,7 +278,7 @@ impl<T: Object> IPcvService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(13)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(13)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_mut_slice(unk2, 0xa))
 			;
@@ -282,7 +289,7 @@ impl<T: Object> IPcvService<T> {
 	pub fn set_temperature(&self, unk0: i32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(14)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(14)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -292,7 +299,7 @@ impl<T: Object> IPcvService<T> {
 	pub fn initialize(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(15)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(15)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -302,7 +309,7 @@ impl<T: Object> IPcvService<T> {
 	pub fn is_initialized(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(16)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(16)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -312,7 +319,7 @@ impl<T: Object> IPcvService<T> {
 	pub fn finalize(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(17)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(17)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -327,7 +334,7 @@ impl<T: Object> IPcvService<T> {
 			unk0: ::nn::pcv::PowerControlTarget,
 			unk1: i32,
 		}
-		let req = Request::new(18)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(18)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -340,7 +347,7 @@ impl<T: Object> IPcvService<T> {
 	pub fn power_off(&self, unk0: ::nn::pcv::PowerControlTarget) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(19)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(19)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -355,7 +362,7 @@ impl<T: Object> IPcvService<T> {
 			unk0: ::nn::pcv::PowerControlTarget,
 			unk1: i32,
 		}
-		let req = Request::new(20)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -368,7 +375,7 @@ impl<T: Object> IPcvService<T> {
 	pub fn get_power_clock_info_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(21)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(21)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -378,7 +385,7 @@ impl<T: Object> IPcvService<T> {
 	pub fn get_oscillator_clock(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(22)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(22)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -394,7 +401,7 @@ impl<T: Object> IPcvService<T> {
 			unk0: i32,
 			unk1: i32,
 		}
-		let req = Request::new(23)
+		let req : Request<_, [_; 2], [_; 0], [_; 0]> = Request::new(23)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -410,7 +417,7 @@ impl<T: Object> IPcvService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(24)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(24)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_mut_slice(unk2, 0xa))
 			;
@@ -422,7 +429,7 @@ impl<T: Object> IPcvService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(25)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(25)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_mut_slice(unk2, 0xa))
 			;
@@ -434,7 +441,7 @@ impl<T: Object> IPcvService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(26)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(26)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_mut_slice(unk2, 0xa))
 			;

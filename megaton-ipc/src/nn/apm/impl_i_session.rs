@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -39,7 +41,7 @@ impl<T: Object> ISession<T> {
 			unk0: ::nn::apm::PerformanceMode,
 			unk1: ::nn::apm::PerformanceConfiguration,
 		}
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -52,7 +54,7 @@ impl<T: Object> ISession<T> {
 	pub fn get_performance_configuration(&self, unk0: ::nn::apm::PerformanceMode) -> Result<::nn::apm::PerformanceConfiguration> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(unk0)
 			;
 		let res : Response<::nn::apm::PerformanceConfiguration> = self.0.send(req)?;

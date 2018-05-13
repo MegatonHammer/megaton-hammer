@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
@@ -8,6 +10,16 @@ use alloc::arc::Arc;
 pub struct IHidDebugServer<T>(T);
 
 impl IHidDebugServer<Session> {
+	pub fn raw_new() -> Result<IHidDebugServer<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::raw_new()?;
+
+		let session = sm.get_service(*b"hid:dbg\0")?;
+		let object : Self = Session::from(session).into();
+		Ok(object)
+	}
+
 	pub fn new() -> Result<Arc<IHidDebugServer<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
@@ -19,10 +31,6 @@ impl IHidDebugServer<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"hid:dbg\0") {
 			let ret = Arc::new(IHidDebugServer(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -30,12 +38,10 @@ impl IHidDebugServer<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"hid:dbg\0").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = Self::raw_new()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
 	pub fn to_domain(self) -> ::core::result::Result<IHidDebugServer<Domain>, (Self, Error)> {
@@ -65,7 +71,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn deactivate_debug_pad(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -75,7 +81,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn set_debug_pad_auto_pilot_state(&self, unk0: ::nn::hid::debug::DebugPadAutoPilotState) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -85,7 +91,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn unset_debug_pad_auto_pilot_state(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -95,7 +101,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn deactivate_touch_screen(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -106,7 +112,7 @@ impl<T: Object> IHidDebugServer<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(11)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(11)
 			.args(())
 			.descriptor(IPCBuffer::from_slice(unk0, 5))
 			;
@@ -117,7 +123,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn unset_touch_screen_auto_pilot_state(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(12)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -127,7 +133,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn deactivate_mouse(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(20)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -137,7 +143,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn set_mouse_auto_pilot_state(&self, unk0: ::nn::hid::debug::MouseAutoPilotState) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(21)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(21)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -147,7 +153,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn unset_mouse_auto_pilot_state(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(22)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(22)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -157,7 +163,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn deactivate_keyboard(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(30)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -167,7 +173,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn set_keyboard_auto_pilot_state(&self, unk0: ::nn::hid::debug::KeyboardAutoPilotState) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(31)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(31)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -177,7 +183,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn unset_keyboard_auto_pilot_state(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(32)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(32)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -187,7 +193,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn deactivate_xpad(&self, unk0: ::nn::hid::BasicXpadId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(50)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(50)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -198,7 +204,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn unset_xpad_auto_pilot_state(&self, unk0: ::nn::hid::BasicXpadId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(52)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(52)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -208,7 +214,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn deactivate_joy_xpad(&self, unk0: ::nn::hid::JoyXpadId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(60)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(60)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -218,7 +224,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn deactivate_gesture(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(91)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(91)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -228,7 +234,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn deactivate_home_button(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(110)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(110)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -238,7 +244,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn set_home_button_auto_pilot_state(&self, unk0: ::nn::hid::debug::HomeButtonAutoPilotState) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(111)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(111)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -248,7 +254,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn unset_home_button_auto_pilot_state(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(112)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(112)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -258,7 +264,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn deactivate_sleep_button(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(120)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(120)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -268,7 +274,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn set_sleep_button_auto_pilot_state(&self, unk0: ::nn::hid::debug::SleepButtonAutoPilotState) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(121)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(121)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -278,7 +284,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn unset_sleep_button_auto_pilot_state(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(122)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(122)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -288,7 +294,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn deactivate_input_detector(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(123)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(123)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -298,7 +304,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn deactivate_capture_button(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(130)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(130)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -308,7 +314,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn set_capture_button_auto_pilot_state(&self, unk0: ::nn::hid::debug::CaptureButtonAutoPilotState) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(131)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(131)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -318,7 +324,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn unset_capture_button_auto_pilot_state(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(132)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(132)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -335,7 +341,7 @@ impl<T: Object> IHidDebugServer<T> {
 			unk2: f32,
 			unk3: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(133)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(133)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -356,7 +362,7 @@ impl<T: Object> IHidDebugServer<T> {
 			unk0: ::nn::hid::SixAxisSensorHandle,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(134)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(134)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -381,7 +387,7 @@ impl<T: Object> IHidDebugServer<T> {
 			unk2: f32,
 			unk3: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(135)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(135)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -402,7 +408,7 @@ impl<T: Object> IHidDebugServer<T> {
 			unk0: ::nn::hid::SixAxisSensorHandle,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(136)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(136)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -420,7 +426,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn deactivate_console_six_axis_sensor(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(140)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(140)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -430,7 +436,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn activate_firmware_update(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(201)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(201)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -440,7 +446,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn deactivate_firmware_update(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(202)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(202)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -450,7 +456,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn start_firmware_update(&self, unk0: ::nn::hid::system::UniquePadId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(203)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(203)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -460,7 +466,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn get_firmware_update_stage(&self, ) -> Result<(i64, i64)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(204)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(204)
 			.args(())
 			;
 		#[repr(C)] #[derive(Clone)] struct OutRaw {
@@ -479,7 +485,7 @@ impl<T: Object> IHidDebugServer<T> {
 			unk0: u32,
 			unk1: ::nn::hid::system::DeviceType,
 		}
-		let req = Request::new(205)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(205)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -497,7 +503,7 @@ impl<T: Object> IHidDebugServer<T> {
 			unk0: u32,
 			unk1: ::nn::hid::system::DeviceType,
 		}
-		let req = Request::new(206)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(206)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -510,7 +516,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn discard_firmware_info_cache_for_revert(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(207)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(207)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -520,7 +526,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn start_firmware_update_for_revert(&self, unk0: ::nn::hid::system::UniquePadId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(208)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(208)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -530,7 +536,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn get_available_firmware_version_for_revert(&self, unk0: ::nn::hid::system::UniquePadId) -> Result<::nn::hid::system::FirmwareVersion> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(209)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(209)
 			.args(unk0)
 			;
 		let res : Response<::nn::hid::system::FirmwareVersion> = self.0.send(req)?;
@@ -540,7 +546,7 @@ impl<T: Object> IHidDebugServer<T> {
 	pub fn update_controller_color(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(211)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(211)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;

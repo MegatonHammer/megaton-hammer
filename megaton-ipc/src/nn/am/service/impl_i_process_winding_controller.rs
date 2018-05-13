@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> IProcessWindingController<T> {
 	pub fn get_launch_reason(&self, ) -> Result<::nn::am::service::AppletProcessLaunchReason> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let res : Response<::nn::am::service::AppletProcessLaunchReason> = self.0.send(req)?;
@@ -44,7 +46,7 @@ impl<T: Object> IProcessWindingController<T> {
 	pub fn open_calling_library_applet(&self, ) -> Result<::nn::am::service::ILibraryAppletAccessor<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(11)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -54,7 +56,7 @@ impl<T: Object> IProcessWindingController<T> {
 	pub fn push_context(&self, unk0: &::nn::am::service::IStorage<Session>) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(21)
+		let req : Request<_, [_; 0], [_; 1], [_; 0]> = Request::new(21)
 			.args(())
 			.copy_handle(unk0.as_ref())
 			;
@@ -65,7 +67,7 @@ impl<T: Object> IProcessWindingController<T> {
 	pub fn pop_context(&self, ) -> Result<::nn::am::service::IStorage<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(22)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(22)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -75,7 +77,7 @@ impl<T: Object> IProcessWindingController<T> {
 	pub fn cancel_winding_reservation(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(23)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(23)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -85,7 +87,7 @@ impl<T: Object> IProcessWindingController<T> {
 	pub fn wind_and_do_reserved(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(30)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -95,7 +97,7 @@ impl<T: Object> IProcessWindingController<T> {
 	pub fn reserve_to_start_and_wait_and_unwind_this(&self, unk0: &::nn::am::service::ILibraryAppletAccessor<Session>) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(40)
+		let req : Request<_, [_; 0], [_; 1], [_; 0]> = Request::new(40)
 			.args(())
 			.copy_handle(unk0.as_ref())
 			;

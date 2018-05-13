@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -36,7 +38,7 @@ impl<T: Object> ISession<T> {
 	pub fn unknown2(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -64,7 +66,7 @@ impl<T: Object> ISession<T> {
 			unk0: u8,
 			unk1: u32,
 		}
-		let req = Request::new(16)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(16)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -78,7 +80,7 @@ impl<T: Object> ISession<T> {
 	pub fn unknown18(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(18)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(18)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -94,7 +96,7 @@ impl<T: Object> ISession<T> {
 			unk0: u8,
 			unk1: u32,
 		}
-		let req = Request::new(20)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20)
 			.args(InRaw {
 				unk0,
 				unk1,

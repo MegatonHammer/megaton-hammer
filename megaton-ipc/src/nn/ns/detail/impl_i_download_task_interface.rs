@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> IDownloadTaskInterface<T> {
 	pub fn clear_task_status_list(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(701)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(701)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -44,7 +46,7 @@ impl<T: Object> IDownloadTaskInterface<T> {
 	pub fn request_download_task_list(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(702)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(702)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -57,7 +59,7 @@ impl<T: Object> IDownloadTaskInterface<T> {
 	pub fn try_commit_current_application_download_task(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(706)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(706)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -67,7 +69,7 @@ impl<T: Object> IDownloadTaskInterface<T> {
 	pub fn enable_auto_commit(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(707)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(707)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -77,7 +79,7 @@ impl<T: Object> IDownloadTaskInterface<T> {
 	pub fn disable_auto_commit(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(708)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(708)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -87,7 +89,7 @@ impl<T: Object> IDownloadTaskInterface<T> {
 	pub fn trigger_dynamic_commit_event(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(709)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(709)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;

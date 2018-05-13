@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> IMonitorService<T> {
 	pub fn get_state_for_monitor(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -45,7 +47,7 @@ impl<T: Object> IMonitorService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x1a))
 			;
@@ -56,7 +58,7 @@ impl<T: Object> IMonitorService<T> {
 	pub fn get_ipv4_address_for_monitor(&self, ) -> Result<(u32, u32)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(())
 			;
 		#[repr(C)] #[derive(Clone)] struct OutRaw {
@@ -70,7 +72,7 @@ impl<T: Object> IMonitorService<T> {
 	pub fn get_disconnect_reason_for_monitor(&self, ) -> Result<u16> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(3)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
 			.args(())
 			;
 		let res : Response<u16> = self.0.send(req)?;
@@ -82,7 +84,7 @@ impl<T: Object> IMonitorService<T> {
 	pub fn initialize_monitor(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(100)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(100)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -92,7 +94,7 @@ impl<T: Object> IMonitorService<T> {
 	pub fn finalize_monitor(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(101)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(101)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;

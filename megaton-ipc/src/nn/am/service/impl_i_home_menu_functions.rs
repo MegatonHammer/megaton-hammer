@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> IHomeMenuFunctions<T> {
 	pub fn request_to_get_foreground(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -44,7 +46,7 @@ impl<T: Object> IHomeMenuFunctions<T> {
 	pub fn lock_foreground(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(11)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -54,7 +56,7 @@ impl<T: Object> IHomeMenuFunctions<T> {
 	pub fn unlock_foreground(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(12)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -64,7 +66,7 @@ impl<T: Object> IHomeMenuFunctions<T> {
 	pub fn pop_from_general_channel(&self, ) -> Result<::nn::am::service::IStorage<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(20)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -74,7 +76,7 @@ impl<T: Object> IHomeMenuFunctions<T> {
 	pub fn get_pop_from_general_channel_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(21)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(21)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -84,7 +86,7 @@ impl<T: Object> IHomeMenuFunctions<T> {
 	pub fn get_home_button_writer_lock_accessor(&self, ) -> Result<::nn::am::service::ILockAccessor<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(30)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -94,7 +96,7 @@ impl<T: Object> IHomeMenuFunctions<T> {
 	pub fn get_writer_lock_accessor_ex(&self, unk0: i32) -> Result<::nn::am::service::ILockAccessor<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(31)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(31)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;

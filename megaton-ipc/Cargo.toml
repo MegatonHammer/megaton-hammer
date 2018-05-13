@@ -20,3 +20,6 @@ spin = "0.4.7"
 "switch-4.0.0" = ["switch-3.0.2"]
 "switch-4.0.1" = ["switch-4.0.0"]
 "switch-4.1.0" = ["switch-4.0.1"]
+"switch-5.0.0" = ["switch-4.1.0"]
+"switch-5.0.1" = ["switch-5.0.0"]
+"switch-5.0.2" = ["switch-5.0.1"]

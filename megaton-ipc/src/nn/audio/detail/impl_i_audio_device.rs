@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -38,7 +40,7 @@ impl<T: Object> IAudioDevice<T> {
 	pub fn unknown4(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(4)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -48,7 +50,7 @@ impl<T: Object> IAudioDevice<T> {
 	pub fn unknown5(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(5)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -62,7 +64,7 @@ impl<T: Object> IAudioDevice<T> {
 	pub fn unknown11(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(11)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -72,7 +74,7 @@ impl<T: Object> IAudioDevice<T> {
 	pub fn unknown12(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(12)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;

@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -35,7 +37,7 @@ impl<T: Object> IDsInterface<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			.descriptor(IPCBuffer::from_slice(unk0, 5))
 			;
@@ -46,7 +48,7 @@ impl<T: Object> IDsInterface<T> {
 	pub fn get_setup_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -57,7 +59,7 @@ impl<T: Object> IDsInterface<T> {
 	pub fn enable_interface(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(3)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -67,7 +69,7 @@ impl<T: Object> IDsInterface<T> {
 	pub fn disable_interface(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(4)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -82,7 +84,7 @@ impl<T: Object> IDsInterface<T> {
 			size: u32,
 			buffer: u64,
 		}
-		let req = Request::new(5)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
 			.args(InRaw {
 				size,
 				buffer,
@@ -100,7 +102,7 @@ impl<T: Object> IDsInterface<T> {
 			size: u32,
 			buffer: u64,
 		}
-		let req = Request::new(6)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
 			.args(InRaw {
 				size,
 				buffer,
@@ -113,7 +115,7 @@ impl<T: Object> IDsInterface<T> {
 	pub fn get_ctrl_in_completion_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(7)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(7)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -124,7 +126,7 @@ impl<T: Object> IDsInterface<T> {
 	pub fn get_ctrl_out_completion_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(9)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(9)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -135,7 +137,7 @@ impl<T: Object> IDsInterface<T> {
 	pub fn stall_ctrl(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(11)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;

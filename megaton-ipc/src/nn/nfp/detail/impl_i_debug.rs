@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -35,7 +37,7 @@ impl<T: Object> IDebug<T> {
 	pub fn unknown1(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -46,7 +48,7 @@ impl<T: Object> IDebug<T> {
 	pub fn unknown3(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(3)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -56,7 +58,7 @@ impl<T: Object> IDebug<T> {
 	pub fn unknown4(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(4)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -72,7 +74,7 @@ impl<T: Object> IDebug<T> {
 			unk1: u32,
 			unk2: u32,
 		}
-		let req = Request::new(5)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -86,7 +88,7 @@ impl<T: Object> IDebug<T> {
 	pub fn unknown6(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(6)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -101,7 +103,7 @@ impl<T: Object> IDebug<T> {
 			unk0: u64,
 			unk1: u32,
 		}
-		let req = Request::new(7)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(7)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -116,7 +118,7 @@ impl<T: Object> IDebug<T> {
 	pub fn unknown10(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -126,7 +128,7 @@ impl<T: Object> IDebug<T> {
 	pub fn unknown11(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(11)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -138,7 +140,7 @@ impl<T: Object> IDebug<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(13)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(13)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x1a))
 			;
@@ -150,7 +152,7 @@ impl<T: Object> IDebug<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(14)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(14)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x1a))
 			;
@@ -162,7 +164,7 @@ impl<T: Object> IDebug<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(15)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(15)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x1a))
 			;
@@ -174,7 +176,7 @@ impl<T: Object> IDebug<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(16)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(16)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x1a))
 			;
@@ -185,7 +187,7 @@ impl<T: Object> IDebug<T> {
 	pub fn unknown17(&self, unk0: u64) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(17)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(17)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -195,7 +197,7 @@ impl<T: Object> IDebug<T> {
 	pub fn unknown18(&self, unk0: u64) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(18)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(18)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -205,7 +207,7 @@ impl<T: Object> IDebug<T> {
 	pub fn unknown19(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(19)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(19)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -215,7 +217,7 @@ impl<T: Object> IDebug<T> {
 	pub fn unknown20(&self, unk0: u64) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(20)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20)
 			.args(unk0)
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -225,7 +227,7 @@ impl<T: Object> IDebug<T> {
 	pub fn unknown21(&self, unk0: u64) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(21)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(21)
 			.args(unk0)
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -235,7 +237,7 @@ impl<T: Object> IDebug<T> {
 	pub fn unknown22(&self, unk0: u64) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(22)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(22)
 			.args(unk0)
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -245,7 +247,7 @@ impl<T: Object> IDebug<T> {
 	pub fn unknown23(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(23)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(23)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -256,7 +258,7 @@ impl<T: Object> IDebug<T> {
 	pub fn unknown100(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(100)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(100)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -267,7 +269,7 @@ impl<T: Object> IDebug<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(101)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(101)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x1a))
 			;
@@ -279,7 +281,7 @@ impl<T: Object> IDebug<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(102)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(102)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x1a))
 			;
@@ -291,7 +293,7 @@ impl<T: Object> IDebug<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(103)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(103)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_ref(unk1, 0x19))
 			;
@@ -302,7 +304,7 @@ impl<T: Object> IDebug<T> {
 	pub fn unknown104(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(104)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(104)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -312,7 +314,7 @@ impl<T: Object> IDebug<T> {
 	pub fn unknown105(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(105)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(105)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -322,7 +324,7 @@ impl<T: Object> IDebug<T> {
 	pub fn unknown106(&self, unk0: u64) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(106)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(106)
 			.args(unk0)
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -333,7 +335,7 @@ impl<T: Object> IDebug<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(200)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(200)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x1a))
 			;
@@ -345,7 +347,7 @@ impl<T: Object> IDebug<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(201)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(201)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_ref(unk1, 0x19))
 			;
@@ -356,7 +358,7 @@ impl<T: Object> IDebug<T> {
 	pub fn unknown202(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(202)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(202)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -371,7 +373,7 @@ impl<T: Object> IDebug<T> {
 			unk0: u64,
 			unk1: u32,
 		}
-		let req = Request::new(203)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(203)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -388,7 +390,7 @@ impl<T: Object> IDebug<T> {
 	pub fn unknown301(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(301)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(301)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -404,7 +406,7 @@ impl<T: Object> IDebug<T> {
 			unk0: u64,
 			unk1: u32,
 		}
-		let req = Request::new(303)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(303)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -417,7 +419,7 @@ impl<T: Object> IDebug<T> {
 	pub fn unknown304(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(304)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(304)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -429,7 +431,7 @@ impl<T: Object> IDebug<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(306)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(306)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x1a))
 			;
@@ -440,7 +442,7 @@ impl<T: Object> IDebug<T> {
 	pub fn unknown307(&self, unk0: u64) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(307)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(307)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -450,7 +452,7 @@ impl<T: Object> IDebug<T> {
 	pub fn unknown308(&self, unk0: u64) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(308)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(308)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -460,7 +462,7 @@ impl<T: Object> IDebug<T> {
 	pub fn unknown309(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(309)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(309)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -470,7 +472,7 @@ impl<T: Object> IDebug<T> {
 	pub fn unknown310(&self, unk0: u64) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(310)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(310)
 			.args(unk0)
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -480,7 +482,7 @@ impl<T: Object> IDebug<T> {
 	pub fn unknown311(&self, unk0: u64) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(311)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(311)
 			.args(unk0)
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -490,7 +492,7 @@ impl<T: Object> IDebug<T> {
 	pub fn unknown312(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(312)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(312)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -500,7 +502,7 @@ impl<T: Object> IDebug<T> {
 	pub fn unknown313(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(313)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(313)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -510,7 +512,7 @@ impl<T: Object> IDebug<T> {
 	pub fn unknown314(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(314)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(314)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;

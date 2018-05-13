@@ -123,10 +123,17 @@ def getType(output, ty):
 	else:
 		raise Exception("Unknown type %s" % ty[0])
  
-def formatArgs(elems, is_output=False, is_arg=True):
+
+IS_NAME = 1
+IS_NAME_PARENS = 4
+IS_TYPE = 2
+IS_TYPE_PARENS = 5
+IS_TYPE_NAME = 3
+
+def formatArgs(elems, is_output=False, format_ty=IS_TYPE_NAME):
 	from functools import partial
 
-	def sub(output, is_arg, elem):
+	def sub(output, format_ty, elem):
 		idx, elem = elem
 		name, ty = elem
 
@@ -143,16 +150,36 @@ def formatArgs(elems, is_output=False, is_arg=True):
 
 		assert ty is not None
 
-		if is_arg:
+		if format_ty == IS_TYPE_NAME:
 			return '%s: %s' % (name, ty)
+		elif format_ty == IS_NAME:
+			return '%s' % name
 		else:
 			return '%s' % ty
 
-	out = ', '.join(filter(None, map(partial(sub, is_output, is_arg), enumerate(elems))))
-	if not is_arg and len(list(elems)) != 1:
-		return '(%s)' % out
+	return ', '.join(filter(None, map(partial(sub, is_output, format_ty), enumerate(elems))))
+
+def formatInputs(cmd, format_ty=IS_TYPE_NAME):
+	for idx, elem in enumerate(cmd['inputs'] + cmd['outputs']):
+		if elem[0] is None:
+			elem[0] = 'unk%s' % idx
+		elem[0] = camelToSnake(elem[0])
+	inputs = formatArgs(cmd['inputs'], format_ty=format_ty)
+	# Handle out buffers
+	out_args = formatArgs(filter(lambda x: is_buffer_argument(x[1]), cmd['outputs']), is_output=True, format_ty=format_ty)
+	args = ", ".join(filter(None, [inputs, out_args]))
+
+	if format_ty == IS_NAME_PARENS or format_ty == IS_TYPE_PARENS:
+		return '(%s)' % args
 	else:
-		return out
+		return args
+
+def formatOutputs(cmd):
+	outputs = formatArgs(filter(lambda x: not is_buffer_argument(x[1]), cmd), is_output=True, format_ty=IS_TYPE)
+	if outputs == "" or "," in outputs:
+		return "(%s)" % outputs
+	else:
+		return outputs
 
 types, ifaces, services = idparser.getAll()
 invServices = {svc : ifname for ifname, svcs in services.items() for svc in svcs}
@@ -266,7 +293,7 @@ def gen_ipc_method(cmd, f):
 		args += "\t\t\t}"
 
 
-	print("\t\tlet req = Request::new(%d)" % cmd['cmdId'], file=f)
+        print("\t\tlet req : Request<_, [_; %d], [_; %d], [_; 0]> = Request::new(%d)" % (len(buffers), len(objects_arr), cmd['cmdId']), file=f)
 
 	# even if we have none, put () so the type inference is happy
 	print("\t\t\t.args(%s)" % args, file=f)
@@ -324,7 +351,38 @@ def gen_ipc_method(cmd, f):
 	else:
 		print("\t\tOk(%s)" % args_arr[0], file=f)
 
-def gen_new_method(f, ifacename, servicename):
+def gen_raw_new_method(f, ifacename, servicename, has_initialize_output, initialize_args):
+	s_name = s + ("\\0" * (8 - len(s)))
+	if name == "nn::sm::detail::IUserInterface":
+		# TODO: Call Initialize
+		print("\t\tuse megaton_hammer::kernel::svc;", file=f)
+		print("\t\tuse megaton_hammer::error::Error;", file=f)
+		print("", file=f)
+		print("\t\tlet (r, session) = unsafe { svc::connect_to_named_port(\"sm:\".as_ptr()) };", file=f)
+		print("\t\tif r != 0 {", file=f)
+		print("\t\t\treturn Err(Error(r))", file=f)
+		print("\t\t} else {", file=f)
+		print("\t\t\tlet ret = Session::from(unsafe { KObject::new(session) }).into();", file=f)
+		print("\t\t\treturn Ok(ret);", file=f)
+		print("\t\t}", file=f)
+	else:
+                # TODO: Always creating a connection to sm kinda sucks...
+		print("\t\tuse nn::sm::detail::IUserInterface;", file=f)
+		print("", file=f)
+		print("\t\tlet sm = IUserInterface::raw_new()?;", file=f)
+		print("", file=f)
+		print("\t\tlet session = sm.get_service(*b\"%s\")?;" % s_name, file=f)
+		print("\t\tlet object : Self = Session::from(session).into();", file=f)
+		if has_initialize_output == "()":
+			print("\t\tobject.initialize(%s)?;" % initialize_args, file=f)
+		elif has_initialize_output == "u32":
+			print("\t\tlet errcode = object.initialize(%s)?;" % initialize_args, file=f)
+			print("\t\tif errcode != 0 {", file=f)
+			print("\t\t\treturn Err(Error(1))", file=f)
+			print("\t\t}", file=f)
+		print("\t\tOk(object)", file=f)
+
+def gen_new_method(f, ifacename, servicename, raw_new_name, has_initialize_output, initialize_args):
 	s_name = s + ("\\0" * (8 - len(s)))
 	print("\t\tuse alloc::arc::Weak;", file=f)
 	print("\t\tuse spin::Mutex;", file=f)
@@ -336,44 +394,20 @@ def gen_new_method(f, ifacename, servicename):
 	print("\t\t\treturn Ok(hnd)", file=f)
 	print("\t\t}", file=f)
 	print("", file=f)
-	if name == "nn::sm::detail::IUserInterface":
-		# TODO: Call Initialize
-		print("\t\tuse megaton_hammer::kernel::svc;", file=f)
-		print("\t\tuse megaton_hammer::error::Error;", file=f)
-		print("", file=f)
-		print("\t\tif let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b\"%s\") {" % s_name, file=f)
-		print("\t\t\tlet ret = Arc::new(%s(ManuallyDrop::into_inner(hnd)));" % ifacename, file=f)
-		print("\t\t\t::core::mem::forget(ret.clone());", file=f)
-		print("\t\t\t*HANDLE.lock() = Arc::downgrade(&ret);", file=f)
-		print("\t\t\treturn Ok(ret);", file=f)
-		print("\t\t}", file=f)
-		print("", file=f)
-		print("\t\tlet (r, session) = unsafe { svc::connect_to_named_port(\"sm:\".as_ptr()) };", file=f)
-		print("\t\tif r != 0 {", file=f)
-		print("\t\t\treturn Err(Error(r))", file=f)
-		print("\t\t} else {", file=f)
-		print("\t\t\tlet ret = Arc::new(unsafe { Session::from(unsafe { KObject::new(session) }).into() });", file=f)
-		print("\t\t\t*HANDLE.lock() = Arc::downgrade(&ret);", file=f)
-		print("\t\t\treturn Ok(ret);", file=f)
-		print("\t\t}", file=f)
+	print("\t\tif let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b\"%s\") {" % s_name, file=f)
+	print("\t\t\tlet ret = Arc::new(%s(ManuallyDrop::into_inner(hnd)));" % ifacename, file=f)
+	print("\t\t\t::core::mem::forget(ret.clone());", file=f)
+	print("\t\t\t*HANDLE.lock() = Arc::downgrade(&ret);", file=f)
+	print("\t\t\treturn Ok(ret);", file=f)
+	print("\t\t}", file=f)
+	print("", file=f)
+	if has_initialize_output == "u32" or has_initialize_output == "()" and initialize_args != "":
+		print("\t\tlet hnd = f(Self::%s)?;" % raw_new_name, file=f)
 	else:
-		print("\t\tuse nn::sm::detail::IUserInterface;", file=f)
-		print("", file=f)
-		print("\t\tlet sm = IUserInterface::new()?;", file=f)
-		print("", file=f)
-		print("\t\tif let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b\"%s\") {" % s_name, file=f)
-		print("\t\t\tlet ret = Arc::new(%s(ManuallyDrop::into_inner(hnd)));" % ifacename, file=f)
-		print("\t\t\t::core::mem::forget(ret.clone());", file=f)
-		print("\t\t\t*HANDLE.lock() = Arc::downgrade(&ret);", file=f)
-		print("\t\t\treturn Ok(ret);", file=f)
-		print("\t\t}", file=f)
-		print("", file=f)
-		print("\t\tlet r = sm.get_service(*b\"%s\").map(|s: KObject| Arc::new(Session::from(s).into()));" % s_name, file=f)
-		print("\t\tif let Ok(service) = r {", file=f)
-		print("\t\t\t*HANDLE.lock() = Arc::downgrade(&service);", file=f)
-		print("\t\t\treturn Ok(service);", file=f)
-		print("\t\t}", file=f)
-		print("\t\tr", file=f)
+		print("\t\tlet hnd = Self::%s(%s)?;" % (raw_new_name, initialize_args), file=f)
+	print("\t\tlet ret = Arc::new(hnd);", file=f)
+	print("\t\t*HANDLE.lock() = Arc::downgrade(&ret);", file=f)
+	print("\t\tOk(ret)", file=f)
 
 levels = dict()
 
@@ -429,7 +463,9 @@ for name, cmds in ifaces.items():
 		# Print module documentation
 		print("", file=f)
 		# Use statements
-		print("use megaton_hammer::kernel::{KObject, Session, Domain, Object};", file=f)
+		print("use megaton_hammer::kernel::{Session, Domain, Object};", file=f)
+		print("#[allow(unused_imports)]", file=f)
+		print("use megaton_hammer::kernel::KObject;", file=f)
 		print("use megaton_hammer::error::*;", file=f)
 		print("use core::ops::{Deref, DerefMut};", file=f)
 		if name in services:
@@ -442,13 +478,46 @@ for name, cmds in ifaces.items():
 		print("", file=f)
 		print("impl %s<Session> {" % ifacename, file=f)
 		for s in services.get(name, []):
-			if len(services[name]) == 1:
-				print("\tpub fn new() -> Result<Arc<%s<Session>>> {" % ifacename, file=f)
+			initialize_method = next((cmd for cmd in cmds['cmds'] if cmd['name'] == "Initialize"), None)
+			if s != "sm:" and initialize_method is not None:
+				args = formatInputs(initialize_method)
+				args_names = formatInputs(initialize_method, format_ty=IS_NAME)
+				args_ty = formatInputs(initialize_method, format_ty=IS_TYPE)
+				outputs = formatOutputs(initialize_method['outputs'])
+				if outputs != "()" and outputs != "u32":
+					(args, outputs) = ("", None)
 			else:
-				print("\tpub fn new_%s() -> Result<Arc<%s<Session>>> {" % (s.replace(":", "_").replace("-", "_"), ifacename), file=f)
-			gen_new_method(f, ifacename, s)
+				(args, outputs, args_names, args_ty) = ("", None, "", "")
+
+			new_method_name = "new" if len(services[name]) == 1 else "new_%s" % s.replace(":", "_").replace("-", "_")
+			# Handle out buffers
+			print("\tpub fn raw_%s(%s) -> Result<%s<Session>> {" % (new_method_name, args, ifacename), file=f)
+			gen_raw_new_method(f, ifacename, s, outputs, args_names)
 			print("\t}", file=f)
 			print("", file=f)
+			if args != "":
+				args_ty_new = []
+				# TODO: Lifetimes are going to be a giant pain...
+				fn_params = []
+				#for i in args.split(", "):
+				#	(arg_name, ty) = i.split(": ")
+				#	if ty == "&KObject":
+				#		fn_params.append("'" + arg_name)
+				#		args_ty_new.append("&%s KObject" % ("'" + arg_name))
+				#	else:
+				#		args_ty_new.append("%s" % ty)
+				#if len(args_ty_new) == 1:
+				#	args_ty_new = args_ty_new[0]
+				#else:
+				#	args_ty_new = "(" + ", ".join(args_ty_new) + ")"
+				fn_params.append("T: FnOnce(fn(%s) -> Result<%s<Session>>) -> Result<%s<Session>>" % (args_ty, ifacename, ifacename))
+				print("\tpub fn %s<%s>(f: T) -> Result<Arc<%s<Session>>> {" % (new_method_name, ", ".join(fn_params), ifacename), file=f)
+			else:
+				print("\tpub fn %s() -> Result<Arc<%s<Session>>> {" % (new_method_name, ifacename), file=f)
+			gen_new_method(f, ifacename, s, "raw_" + new_method_name, outputs, args_names)
+			print("\t}", file=f)
+			print("", file=f)
+
 		print("\tpub fn to_domain(self) -> ::core::result::Result<%s<Domain>, (Self, Error)> {" % ifacename, file=f)
 		print("\t\tmatch self.0.to_domain() {", file=f)
 		print("\t\t\tOk(domain) => Ok(%s(domain))," % ifacename, file=f)
@@ -480,20 +549,13 @@ for name, cmds in ifaces.items():
 			fn_io = StringIO()
 			print("    ", cmd['name'])
 			# Let's first give a proper unique name to every input/output
-			for idx, elem in enumerate(cmd['inputs'] + cmd['outputs']):
-				if elem[0] is None:
-					elem[0] = 'unk%s' % idx
-				elem[0] = camelToSnake(elem[0])
 			try:
 				if cmd['undocumented'] == True:
 					# huge hack. i'm tired.
 					raise UnsupportedStructException("")
 
-				inputs = formatArgs(cmd['inputs'])
-				# Handle out buffers
-				out_args = formatArgs(filter(lambda x: is_buffer_argument(x[1]), cmd['outputs']), is_output=True)
-				outputs = formatArgs(filter(lambda x: not is_buffer_argument(x[1]), cmd['outputs']), is_arg=False, is_output=True)
-				args = ", ".join(filter(None, [inputs, out_args]))
+				args = formatInputs(cmd)
+				outputs = formatOutputs(cmd['outputs'])
 				# Added at version X, never removed
 				if cmd['versionAdded'] != '1.0.0' and cmd['lastVersion'] is None:
 					print("\t#[cfg(feature = \"switch-%s\")]" % cmd['versionAdded'], file=fn_io)

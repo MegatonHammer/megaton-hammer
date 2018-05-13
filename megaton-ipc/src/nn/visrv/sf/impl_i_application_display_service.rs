@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> IApplicationDisplayService<T> {
 	pub fn get_relay_service(&self, ) -> Result<::nns::hosbinder::IHOSBinderDriver<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(100)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(100)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -44,7 +46,7 @@ impl<T: Object> IApplicationDisplayService<T> {
 	pub fn get_system_display_service(&self, ) -> Result<::nn::visrv::sf::ISystemDisplayService<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(101)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(101)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -54,7 +56,7 @@ impl<T: Object> IApplicationDisplayService<T> {
 	pub fn get_manager_display_service(&self, ) -> Result<::nn::visrv::sf::IManagerDisplayService<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(102)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(102)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -65,7 +67,7 @@ impl<T: Object> IApplicationDisplayService<T> {
 	pub fn get_indirect_display_transaction_service(&self, ) -> Result<::nns::hosbinder::IHOSBinderDriver<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(103)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(103)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -76,7 +78,7 @@ impl<T: Object> IApplicationDisplayService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1000)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(1000)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_slice(unk1, 6))
 			;
@@ -87,7 +89,7 @@ impl<T: Object> IApplicationDisplayService<T> {
 	pub fn open_display(&self, unk0: ::nn::vi::DisplayName) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1010)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1010)
 			.args(unk0)
 			;
 		let res : Response<u64> = self.0.send(req)?;
@@ -97,7 +99,7 @@ impl<T: Object> IApplicationDisplayService<T> {
 	pub fn open_default_display(&self, ) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1011)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1011)
 			.args(())
 			;
 		let res : Response<u64> = self.0.send(req)?;
@@ -107,7 +109,7 @@ impl<T: Object> IApplicationDisplayService<T> {
 	pub fn close_display(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1020)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1020)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -122,7 +124,7 @@ impl<T: Object> IApplicationDisplayService<T> {
 			unk0: bool,
 			unk1: u64,
 		}
-		let req = Request::new(1101)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1101)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -135,7 +137,7 @@ impl<T: Object> IApplicationDisplayService<T> {
 	pub fn get_display_resolution(&self, unk0: u64) -> Result<(i64, i64)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1102)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1102)
 			.args(unk0)
 			;
 		#[repr(C)] #[derive(Clone)] struct OutRaw {
@@ -156,7 +158,7 @@ impl<T: Object> IApplicationDisplayService<T> {
 			unk1: u64,
 			unk2: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(2020)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(2020)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -172,7 +174,7 @@ impl<T: Object> IApplicationDisplayService<T> {
 	pub fn close_layer(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2021)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2021)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -183,7 +185,7 @@ impl<T: Object> IApplicationDisplayService<T> {
 	pub fn destroy_stray_layer(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2031)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2031)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -198,7 +200,7 @@ impl<T: Object> IApplicationDisplayService<T> {
 			unk0: u32,
 			unk1: u64,
 		}
-		let req = Request::new(2101)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2101)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -218,7 +220,7 @@ impl<T: Object> IApplicationDisplayService<T> {
 			unk0: i64,
 			unk1: i64,
 		}
-		let req = Request::new(2460)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2460)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -235,7 +237,7 @@ impl<T: Object> IApplicationDisplayService<T> {
 	pub fn get_display_vsync_event(&self, unk0: u64) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(5202)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5202)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -245,7 +247,7 @@ impl<T: Object> IApplicationDisplayService<T> {
 	pub fn get_display_vsync_event_for_debug(&self, unk0: u64) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(5203)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5203)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;

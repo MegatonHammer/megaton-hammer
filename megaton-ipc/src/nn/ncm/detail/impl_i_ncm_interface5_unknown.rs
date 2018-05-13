@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> INcmInterface5Unknown<T> {
 	pub fn unknown5(&self, ) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(5)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
 			.args(())
 			;
 		let res : Response<u64> = self.0.send(req)?;
@@ -44,7 +46,7 @@ impl<T: Object> INcmInterface5Unknown<T> {
 	pub fn unknown7(&self, ) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(7)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(7)
 			.args(())
 			;
 		let res : Response<u64> = self.0.send(req)?;
@@ -54,7 +56,7 @@ impl<T: Object> INcmInterface5Unknown<T> {
 	pub fn unknown8(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(8)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(8)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -64,7 +66,7 @@ impl<T: Object> INcmInterface5Unknown<T> {
 	pub fn unknown15(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(15)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(15)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;

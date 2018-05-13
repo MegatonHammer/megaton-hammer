@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> IGlobalStateController<T> {
 	pub fn request_to_enter_sleep(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -44,7 +46,7 @@ impl<T: Object> IGlobalStateController<T> {
 	pub fn enter_sleep(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -54,7 +56,7 @@ impl<T: Object> IGlobalStateController<T> {
 	pub fn start_sleep_sequence(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -64,7 +66,7 @@ impl<T: Object> IGlobalStateController<T> {
 	pub fn start_shutdown_sequence(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(3)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -74,7 +76,7 @@ impl<T: Object> IGlobalStateController<T> {
 	pub fn start_reboot_sequence(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(4)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -84,7 +86,7 @@ impl<T: Object> IGlobalStateController<T> {
 	pub fn load_and_apply_idle_policy_settings(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -94,7 +96,7 @@ impl<T: Object> IGlobalStateController<T> {
 	pub fn notify_cec_settings_changed(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(11)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -104,7 +106,7 @@ impl<T: Object> IGlobalStateController<T> {
 	pub fn set_default_home_button_long_press_time(&self, unk0: i64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(12)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -114,7 +116,7 @@ impl<T: Object> IGlobalStateController<T> {
 	pub fn update_default_display_resolution(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(13)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(13)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -124,7 +126,7 @@ impl<T: Object> IGlobalStateController<T> {
 	pub fn should_sleep_on_boot(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(14)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(14)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;

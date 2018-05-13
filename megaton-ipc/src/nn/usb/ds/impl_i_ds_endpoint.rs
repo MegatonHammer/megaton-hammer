@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -39,7 +41,7 @@ impl<T: Object> IDsEndpoint<T> {
 			size: u32,
 			buffer: u64,
 		}
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(InRaw {
 				size,
 				buffer,
@@ -52,7 +54,7 @@ impl<T: Object> IDsEndpoint<T> {
 	pub fn unknown1(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -62,29 +64,18 @@ impl<T: Object> IDsEndpoint<T> {
 	pub fn get_completion_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(res.pop_handle())
 	}
 
-	pub fn get_report_data(&self, entries: &mut [::nn::usb::UsbReportEntry]) -> Result<u32> {
-		use megaton_hammer::ipc::IPCBuffer;
-		use megaton_hammer::ipc::{Request, Response};
-
-		let req = Request::new(3)
-			.args(())
-			.descriptor(IPCBuffer::from_mut_slice(entries, 8))
-			;
-		let res : Response<u32> = self.0.send(req)?;
-		Ok(*res.get_raw())
-	}
-
+	// fn get_report_data(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn stall(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(4)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -94,7 +85,7 @@ impl<T: Object> IDsEndpoint<T> {
 	pub fn unknown5(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(5)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;

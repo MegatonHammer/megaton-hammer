@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn check_free_communication_permission(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1001)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1001)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -50,7 +52,7 @@ impl<T: Object> IParentalControlService<T> {
 			unk0: bool,
 			unk1: ::nn::ncm::ApplicationId,
 		}
-		let req = Request::new(1002)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(1002)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -70,7 +72,7 @@ impl<T: Object> IParentalControlService<T> {
 			unk0: bool,
 			unk1: ::nn::ncm::ApplicationId,
 		}
-		let req = Request::new(1003)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(1003)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -84,7 +86,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn confirm_sns_post_permission(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1004)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1004)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -94,7 +96,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn confirm_system_settings_permission(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1005)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1005)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -104,7 +106,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn is_restriction_temporary_unlocked(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1006)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1006)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -114,7 +116,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn revert_restriction_temporary_unlocked(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1007)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1007)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -124,7 +126,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn enter_restricted_system_settings(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1008)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1008)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -134,7 +136,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn leave_restricted_system_settings(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1009)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1009)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -144,7 +146,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn is_restricted_system_settings_entered(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1010)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1010)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -154,7 +156,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn revert_restricted_system_settings_entered(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1011)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1011)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -164,7 +166,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn get_restricted_features(&self, ) -> Result<i32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1012)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1012)
 			.args(())
 			;
 		let res : Response<i32> = self.0.send(req)?;
@@ -174,7 +176,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn is_restriction_enabled(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1031)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1031)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -184,7 +186,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn get_safety_level(&self, ) -> Result<i32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1032)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1032)
 			.args(())
 			;
 		let res : Response<i32> = self.0.send(req)?;
@@ -194,7 +196,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn set_safety_level(&self, unk0: i32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1033)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1033)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -204,7 +206,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn get_safety_level_settings(&self, unk0: i32) -> Result<::nn::pctl::SafetyLevelSettings> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1034)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1034)
 			.args(unk0)
 			;
 		let res : Response<::nn::pctl::SafetyLevelSettings> = self.0.send(req)?;
@@ -214,7 +216,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn get_current_settings(&self, ) -> Result<::nn::pctl::SafetyLevelSettings> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1035)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1035)
 			.args(())
 			;
 		let res : Response<::nn::pctl::SafetyLevelSettings> = self.0.send(req)?;
@@ -224,7 +226,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn set_custom_safety_level_settings(&self, unk0: ::nn::pctl::SafetyLevelSettings) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1036)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1036)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -234,7 +236,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn get_default_rating_organization(&self, ) -> Result<i32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1037)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1037)
 			.args(())
 			;
 		let res : Response<i32> = self.0.send(req)?;
@@ -244,7 +246,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn set_default_rating_organization(&self, unk0: i32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1038)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1038)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -254,7 +256,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn get_free_communication_application_list_count(&self, ) -> Result<i32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1039)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1039)
 			.args(())
 			;
 		let res : Response<i32> = self.0.send(req)?;
@@ -264,7 +266,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn add_to_free_communication_application_list(&self, unk0: ::nn::ncm::ApplicationId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1042)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1042)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -274,7 +276,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn delete_settings(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1043)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1043)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -285,7 +287,7 @@ impl<T: Object> IParentalControlService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1044)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(1044)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_mut_slice(unk2, 6))
 			;
@@ -297,7 +299,7 @@ impl<T: Object> IParentalControlService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1045)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(1045)
 			.args(())
 			.descriptor(IPCBuffer::from_slice(unk0, 5))
 			;
@@ -308,7 +310,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn disable_features_for_reset(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1046)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1046)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -318,7 +320,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn notify_application_download_started(&self, unk0: ::nn::ncm::ApplicationId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1047)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1047)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -329,7 +331,7 @@ impl<T: Object> IParentalControlService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1201)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(1201)
 			.args(())
 			.descriptor(IPCBuffer::from_slice(unk0, 9))
 			;
@@ -341,7 +343,7 @@ impl<T: Object> IParentalControlService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1202)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(1202)
 			.args(())
 			.descriptor(IPCBuffer::from_slice(unk0, 9))
 			;
@@ -353,7 +355,7 @@ impl<T: Object> IParentalControlService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1203)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(1203)
 			.args(())
 			.descriptor(IPCBuffer::from_slice(unk0, 9))
 			;
@@ -364,7 +366,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn generate_inquiry_code(&self, ) -> Result<::nn::pctl::InquiryCode> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1204)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1204)
 			.args(())
 			;
 		let res : Response<::nn::pctl::InquiryCode> = self.0.send(req)?;
@@ -375,7 +377,7 @@ impl<T: Object> IParentalControlService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1205)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(1205)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_slice(unk1, 9))
 			;
@@ -386,7 +388,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn get_pin_code_length(&self, ) -> Result<i32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1206)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1206)
 			.args(())
 			;
 		let res : Response<i32> = self.0.send(req)?;
@@ -396,7 +398,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn get_pin_code_changed_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1207)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1207)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -406,7 +408,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn is_pairing_active(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1403)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1403)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -416,7 +418,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn get_settings_last_updated(&self, ) -> Result<::nn::time::PosixTime> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1406)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1406)
 			.args(())
 			;
 		let res : Response<::nn::time::PosixTime> = self.0.send(req)?;
@@ -426,7 +428,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn get_pairing_account_info(&self, unk0: ::nn::pctl::detail::PairingInfoBase) -> Result<::nn::pctl::detail::PairingAccountInfoBase> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1411)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1411)
 			.args(unk0)
 			;
 		let res : Response<::nn::pctl::detail::PairingAccountInfoBase> = self.0.send(req)?;
@@ -437,7 +439,7 @@ impl<T: Object> IParentalControlService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1421)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(1421)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_mut_slice(unk2, 0xa))
 			;
@@ -448,7 +450,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn get_account_state(&self, unk0: ::nn::pctl::detail::PairingAccountInfoBase) -> Result<i32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1424)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1424)
 			.args(unk0)
 			;
 		let res : Response<i32> = self.0.send(req)?;
@@ -458,7 +460,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn get_synchronization_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1432)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1432)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -468,7 +470,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn start_play_timer(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1451)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1451)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -478,7 +480,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn stop_play_timer(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1452)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1452)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -488,7 +490,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn is_play_timer_enabled(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1453)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1453)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -498,7 +500,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn get_play_timer_remaining_time(&self, ) -> Result<::nn::TimeSpanType> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1454)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1454)
 			.args(())
 			;
 		let res : Response<::nn::TimeSpanType> = self.0.send(req)?;
@@ -508,7 +510,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn is_restricted_by_play_timer(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1455)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1455)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -518,7 +520,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn get_play_timer_settings(&self, ) -> Result<::nn::pctl::PlayTimerSettings> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1456)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1456)
 			.args(())
 			;
 		let res : Response<::nn::pctl::PlayTimerSettings> = self.0.send(req)?;
@@ -528,7 +530,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn get_play_timer_event_to_request_suspension(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1457)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1457)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -538,7 +540,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn notify_wrong_pin_code_input_many_times(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1471)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1471)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -548,7 +550,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn cancel_network_request(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1472)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1472)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -558,7 +560,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn get_unlinked_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1473)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1473)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -568,7 +570,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn clear_unlinked_event(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1474)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1474)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -578,7 +580,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn disable_all_features(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1601)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1601)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -588,7 +590,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn post_enable_all_features(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1602)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1602)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -598,7 +600,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn is_all_features_disabled(&self, ) -> Result<(bool, bool)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1603)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1603)
 			.args(())
 			;
 		#[repr(C)] #[derive(Clone)] struct OutRaw {
@@ -612,7 +614,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn delete_from_free_communication_application_list_for_debug(&self, unk0: ::nn::ncm::ApplicationId) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1901)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1901)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -622,7 +624,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn clear_free_communication_application_list_for_debug(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1902)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1902)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -632,7 +634,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn delete_pairing(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1941)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1941)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -642,7 +644,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn set_play_timer_settings_for_debug(&self, unk0: ::nn::pctl::PlayTimerSettings) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1951)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1951)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -652,7 +654,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn get_play_timer_spent_time_for_test(&self, ) -> Result<::nn::TimeSpanType> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1952)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1952)
 			.args(())
 			;
 		let res : Response<::nn::TimeSpanType> = self.0.send(req)?;
@@ -663,7 +665,7 @@ impl<T: Object> IParentalControlService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2001)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(2001)
 			.args(())
 			.descriptor(IPCBuffer::from_slice(unk0, 9))
 			;
@@ -674,7 +676,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn finish_request_pairing(&self, unk0: ::nn::pctl::detail::AsyncData) -> Result<::nn::pctl::detail::PairingInfoBase> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2002)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2002)
 			.args(unk0)
 			;
 		let res : Response<::nn::pctl::detail::PairingInfoBase> = self.0.send(req)?;
@@ -684,7 +686,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn authorize_pairing_async(&self, unk0: ::nn::pctl::detail::PairingInfoBase) -> Result<(::nn::pctl::detail::AsyncData, KObject)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2003)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2003)
 			.args(unk0)
 			;
 		let mut res : Response<::nn::pctl::detail::AsyncData> = self.0.send(req)?;
@@ -694,7 +696,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn finish_authorize_pairing(&self, unk0: ::nn::pctl::detail::AsyncData) -> Result<::nn::pctl::detail::PairingInfoBase> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2004)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2004)
 			.args(unk0)
 			;
 		let res : Response<::nn::pctl::detail::PairingInfoBase> = self.0.send(req)?;
@@ -704,7 +706,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn retrieve_pairing_info_async(&self, ) -> Result<(::nn::pctl::detail::AsyncData, KObject)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2005)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2005)
 			.args(())
 			;
 		let mut res : Response<::nn::pctl::detail::AsyncData> = self.0.send(req)?;
@@ -714,7 +716,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn finish_retrieve_pairing_info(&self, unk0: ::nn::pctl::detail::AsyncData) -> Result<::nn::pctl::detail::PairingInfoBase> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2006)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2006)
 			.args(unk0)
 			;
 		let res : Response<::nn::pctl::detail::PairingInfoBase> = self.0.send(req)?;
@@ -724,7 +726,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn unlink_pairing_async(&self, unk0: bool) -> Result<(::nn::pctl::detail::AsyncData, KObject)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2007)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2007)
 			.args(unk0)
 			;
 		let mut res : Response<::nn::pctl::detail::AsyncData> = self.0.send(req)?;
@@ -738,7 +740,7 @@ impl<T: Object> IParentalControlService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2011)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(2011)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_mut_slice(unk4, 0xa))
 			;
@@ -754,7 +756,7 @@ impl<T: Object> IParentalControlService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2012)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(2012)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_mut_slice(unk2, 0xa))
 			;
@@ -765,7 +767,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn synchronize_parental_control_settings_async(&self, ) -> Result<(::nn::pctl::detail::AsyncData, KObject)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2013)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2013)
 			.args(())
 			;
 		let mut res : Response<::nn::pctl::detail::AsyncData> = self.0.send(req)?;
@@ -775,7 +777,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn finish_synchronize_parental_control_settings(&self, unk0: ::nn::pctl::detail::AsyncData) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2014)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2014)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -785,7 +787,7 @@ impl<T: Object> IParentalControlService<T> {
 	pub fn finish_synchronize_parental_control_settings_with_last_updated(&self, unk0: ::nn::pctl::detail::AsyncData) -> Result<::nn::time::PosixTime> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2015)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2015)
 			.args(unk0)
 			;
 		let res : Response<::nn::time::PosixTime> = self.0.send(req)?;

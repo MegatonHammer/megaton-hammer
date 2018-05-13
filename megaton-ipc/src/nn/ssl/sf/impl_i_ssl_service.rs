@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
@@ -8,6 +10,16 @@ use alloc::arc::Arc;
 pub struct ISslService<T>(T);
 
 impl ISslService<Session> {
+	pub fn raw_new() -> Result<ISslService<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::raw_new()?;
+
+		let session = sm.get_service(*b"ssl\0\0\0\0\0")?;
+		let object : Self = Session::from(session).into();
+		Ok(object)
+	}
+
 	pub fn new() -> Result<Arc<ISslService<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
@@ -19,10 +31,6 @@ impl ISslService<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"ssl\0\0\0\0\0") {
 			let ret = Arc::new(ISslService(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -30,12 +38,10 @@ impl ISslService<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"ssl\0\0\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = Self::raw_new()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
 	pub fn to_domain(self) -> ::core::result::Result<ISslService<Domain>, (Self, Error)> {
@@ -70,7 +76,7 @@ impl<T: Object> ISslService<T> {
 			unk0: ::nn::ssl::sf::SslVersion,
 			unk1: u64,
 		}
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -84,7 +90,7 @@ impl<T: Object> ISslService<T> {
 	pub fn get_context_count(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -97,7 +103,7 @@ impl<T: Object> ISslService<T> {
 	pub fn set_interface_version(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(5)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;

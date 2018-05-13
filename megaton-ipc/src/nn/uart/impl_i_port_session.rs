@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -36,7 +38,7 @@ impl<T: Object> IPortSession<T> {
 	pub fn unknown2(&self, ) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(())
 			;
 		let res : Response<u64> = self.0.send(req)?;
@@ -47,7 +49,7 @@ impl<T: Object> IPortSession<T> {
 	pub fn unknown4(&self, ) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(4)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
 			.args(())
 			;
 		let res : Response<u64> = self.0.send(req)?;
@@ -59,7 +61,7 @@ impl<T: Object> IPortSession<T> {
 	pub fn unknown7(&self, unk0: u32) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(7)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(7)
 			.args(unk0)
 			;
 		let res : Response<u8> = self.0.send(req)?;

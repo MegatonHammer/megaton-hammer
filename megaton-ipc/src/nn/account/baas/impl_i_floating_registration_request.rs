@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> IFloatingRegistrationRequest<T> {
 	pub fn get_session_id(&self, ) -> Result<::nn::account::detail::Uuid> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let res : Response<::nn::account::detail::Uuid> = self.0.send(req)?;
@@ -44,7 +46,7 @@ impl<T: Object> IFloatingRegistrationRequest<T> {
 	pub fn get_account_id(&self, ) -> Result<::nn::account::NetworkServiceAccountId> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(12)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)
 			.args(())
 			;
 		let res : Response<::nn::account::NetworkServiceAccountId> = self.0.send(req)?;
@@ -54,7 +56,7 @@ impl<T: Object> IFloatingRegistrationRequest<T> {
 	pub fn get_linked_nintendo_account_id(&self, ) -> Result<::nn::account::NintendoAccountId> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(13)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(13)
 			.args(())
 			;
 		let res : Response<::nn::account::NintendoAccountId> = self.0.send(req)?;
@@ -65,7 +67,7 @@ impl<T: Object> IFloatingRegistrationRequest<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(14)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(14)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_slice(unk0, 0xa))
 			;
@@ -78,7 +80,7 @@ impl<T: Object> IFloatingRegistrationRequest<T> {
 	pub fn register_async(&self, ) -> Result<(::nn::account::Uid, ::nn::account::detail::IAsyncContext<T>)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(100)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(100)
 			.args(())
 			;
 		let mut res : Response<::nn::account::Uid> = self.0.send(req)?;
@@ -88,7 +90,7 @@ impl<T: Object> IFloatingRegistrationRequest<T> {
 	pub fn register_with_uid_async(&self, unk0: ::nn::account::Uid) -> Result<::nn::account::detail::IAsyncContext<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(101)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(101)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -99,7 +101,7 @@ impl<T: Object> IFloatingRegistrationRequest<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(110)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(110)
 			.args(unk0)
 			.send_pid()
 			.descriptor(IPCBuffer::from_ref(unk2, 0x19))
@@ -111,7 +113,7 @@ impl<T: Object> IFloatingRegistrationRequest<T> {
 	pub fn ensure_id_token_cache_async(&self, ) -> Result<::nn::account::detail::IAsyncContext<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(111)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(111)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;

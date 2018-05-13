@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
@@ -8,6 +10,16 @@ use alloc::arc::Arc;
 pub struct IStaticService<T>(T);
 
 impl IStaticService<Session> {
+	pub fn raw_new_mii_e() -> Result<IStaticService<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::raw_new()?;
+
+		let session = sm.get_service(*b"mii:e\0\0\0")?;
+		let object : Self = Session::from(session).into();
+		Ok(object)
+	}
+
 	pub fn new_mii_e() -> Result<Arc<IStaticService<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
@@ -19,10 +31,6 @@ impl IStaticService<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"mii:e\0\0\0") {
 			let ret = Arc::new(IStaticService(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -30,12 +38,20 @@ impl IStaticService<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"mii:e\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = Self::raw_new_mii_e()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
+	}
+
+	pub fn raw_new_mii_u() -> Result<IStaticService<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::raw_new()?;
+
+		let session = sm.get_service(*b"mii:u\0\0\0")?;
+		let object : Self = Session::from(session).into();
+		Ok(object)
 	}
 
 	pub fn new_mii_u() -> Result<Arc<IStaticService<Session>>> {
@@ -49,10 +65,6 @@ impl IStaticService<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"mii:u\0\0\0") {
 			let ret = Arc::new(IStaticService(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -60,12 +72,10 @@ impl IStaticService<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"mii:u\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = Self::raw_new_mii_u()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
 	pub fn to_domain(self) -> ::core::result::Result<IStaticService<Domain>, (Self, Error)> {
@@ -95,7 +105,7 @@ impl<T: Object> IStaticService<T> {
 	pub fn get_database_service_shared_pointer(&self, unk0: i32) -> Result<::nn::mii::detail::IDatabaseService<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;

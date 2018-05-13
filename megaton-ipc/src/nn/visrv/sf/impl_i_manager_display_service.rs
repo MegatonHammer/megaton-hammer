@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> IManagerDisplayService<T> {
 	pub fn get_display_resolution(&self, unk0: u64) -> Result<(i64, i64)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1102)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1102)
 			.args(unk0)
 			;
 		#[repr(C)] #[derive(Clone)] struct OutRaw {
@@ -54,7 +56,7 @@ impl<T: Object> IManagerDisplayService<T> {
 			unk1: u64,
 			unk2: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(2010)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2010)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -68,7 +70,7 @@ impl<T: Object> IManagerDisplayService<T> {
 	pub fn destroy_managed_layer(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2011)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2011)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -78,7 +80,7 @@ impl<T: Object> IManagerDisplayService<T> {
 	pub fn create_indirect_layer(&self, ) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2050)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2050)
 			.args(())
 			;
 		let res : Response<u64> = self.0.send(req)?;
@@ -88,7 +90,7 @@ impl<T: Object> IManagerDisplayService<T> {
 	pub fn destroy_indirect_layer(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2051)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2051)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -103,7 +105,7 @@ impl<T: Object> IManagerDisplayService<T> {
 			unk0: u64,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(2052)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2052)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -116,7 +118,7 @@ impl<T: Object> IManagerDisplayService<T> {
 	pub fn destroy_indirect_producer_end_point(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2053)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2053)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -131,7 +133,7 @@ impl<T: Object> IManagerDisplayService<T> {
 			unk0: u64,
 			unk1: ::nn::applet::AppletResourceUserId,
 		}
-		let req = Request::new(2054)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2054)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -144,7 +146,7 @@ impl<T: Object> IManagerDisplayService<T> {
 	pub fn destroy_indirect_consumer_end_point(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2055)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2055)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -154,7 +156,7 @@ impl<T: Object> IManagerDisplayService<T> {
 	pub fn acquire_layer_texture_presenting_event(&self, unk0: u64) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2300)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2300)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -164,7 +166,7 @@ impl<T: Object> IManagerDisplayService<T> {
 	pub fn release_layer_texture_presenting_event(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2301)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2301)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -174,7 +176,7 @@ impl<T: Object> IManagerDisplayService<T> {
 	pub fn get_display_hotplug_event(&self, unk0: u64) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2302)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2302)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -184,7 +186,7 @@ impl<T: Object> IManagerDisplayService<T> {
 	pub fn get_display_hotplug_state(&self, unk0: u64) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2402)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2402)
 			.args(unk0)
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -199,7 +201,7 @@ impl<T: Object> IManagerDisplayService<T> {
 			unk0: f32,
 			unk1: u64,
 		}
-		let req = Request::new(4201)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4201)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -217,7 +219,7 @@ impl<T: Object> IManagerDisplayService<T> {
 			unk0: u32,
 			unk1: u64,
 		}
-		let req = Request::new(4203)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4203)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -235,7 +237,7 @@ impl<T: Object> IManagerDisplayService<T> {
 			unk0: u32,
 			unk1: u64,
 		}
-		let req = Request::new(4205)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4205)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -253,7 +255,7 @@ impl<T: Object> IManagerDisplayService<T> {
 			unk0: u32,
 			unk1: u64,
 		}
-		let req = Request::new(6000)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6000)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -271,7 +273,7 @@ impl<T: Object> IManagerDisplayService<T> {
 			unk0: u32,
 			unk1: u64,
 		}
-		let req = Request::new(6001)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6001)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -289,7 +291,7 @@ impl<T: Object> IManagerDisplayService<T> {
 			unk0: bool,
 			unk1: u64,
 		}
-		let req = Request::new(6002)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6002)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -302,7 +304,7 @@ impl<T: Object> IManagerDisplayService<T> {
 	pub fn set_content_visibility(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(7000)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(7000)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -317,7 +319,7 @@ impl<T: Object> IManagerDisplayService<T> {
 			unk0: bool,
 			unk1: u64,
 		}
-		let req = Request::new(8000)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(8000)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -336,7 +338,7 @@ impl<T: Object> IManagerDisplayService<T> {
 			unk1: u64,
 			unk2: ::nn::TimeSpan,
 		}
-		let req = Request::new(8100)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(8100)
 			.args(InRaw {
 				unk0,
 				unk1,

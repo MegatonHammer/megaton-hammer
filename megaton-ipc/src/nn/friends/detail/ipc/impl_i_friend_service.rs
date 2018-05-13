@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> IFriendService<T> {
 	pub fn get_completion_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -44,7 +46,7 @@ impl<T: Object> IFriendService<T> {
 	pub fn cancel(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -62,7 +64,7 @@ impl<T: Object> IFriendService<T> {
 			unk2: ::nn::friends::detail::ipc::SizedFriendFilter,
 			unk3: u64,
 		}
-		let req = Request::new(10100)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(10100)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -87,7 +89,7 @@ impl<T: Object> IFriendService<T> {
 			unk2: ::nn::friends::detail::ipc::SizedFriendFilter,
 			unk3: u64,
 		}
-		let req = Request::new(10101)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(10101)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -110,7 +112,7 @@ impl<T: Object> IFriendService<T> {
 			unk0: ::nn::account::Uid,
 			unk1: u64,
 		}
-		let req = Request::new(10102)
+		let req : Request<_, [_; 2], [_; 0], [_; 0]> = Request::new(10102)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -134,7 +136,7 @@ impl<T: Object> IFriendService<T> {
 			unk1: ::nn::account::NetworkServiceAccountId,
 			unk2: u64,
 		}
-		let req = Request::new(10200)
+		let req : Request<_, [_; 2], [_; 0], [_; 0]> = Request::new(10200)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -158,7 +160,7 @@ impl<T: Object> IFriendService<T> {
 			unk0: i32,
 			unk1: ::nn::account::Uid,
 		}
-		let req = Request::new(10400)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(10400)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -173,7 +175,7 @@ impl<T: Object> IFriendService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10500)
+		let req : Request<_, [_; 2], [_; 0], [_; 0]> = Request::new(10500)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_slice(unk1, 9))
 			.descriptor(IPCBuffer::from_mut_slice(unk2, 6))
@@ -185,7 +187,7 @@ impl<T: Object> IFriendService<T> {
 	pub fn declare_open_online_play_session(&self, unk0: ::nn::account::Uid) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10600)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10600)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -195,7 +197,7 @@ impl<T: Object> IFriendService<T> {
 	pub fn declare_close_online_play_session(&self, unk0: ::nn::account::Uid) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10601)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10601)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -211,7 +213,7 @@ impl<T: Object> IFriendService<T> {
 			unk0: ::nn::account::Uid,
 			unk1: u64,
 		}
-		let req = Request::new(10610)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(10610)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -232,7 +234,7 @@ impl<T: Object> IFriendService<T> {
 			unk0: bool,
 			unk1: ::nn::account::Uid,
 		}
-		let req = Request::new(10700)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(10700)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -252,7 +254,7 @@ impl<T: Object> IFriendService<T> {
 			unk0: bool,
 			unk1: ::nn::account::NetworkServiceAccountId,
 		}
-		let req = Request::new(10701)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(10701)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -272,7 +274,7 @@ impl<T: Object> IFriendService<T> {
 			unk0: ::nn::account::Uid,
 			unk1: u64,
 		}
-		let req = Request::new(10702)
+		let req : Request<_, [_; 3], [_; 0], [_; 0]> = Request::new(10702)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -294,7 +296,7 @@ impl<T: Object> IFriendService<T> {
 			unk0: ::nn::friends::Url,
 			unk1: i32,
 		}
-		let req = Request::new(11000)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11000)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -313,7 +315,7 @@ impl<T: Object> IFriendService<T> {
 			unk1: ::nn::friends::detail::ipc::SizedFriendFilter,
 			unk2: u64,
 		}
-		let req = Request::new(20100)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20100)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -328,7 +330,7 @@ impl<T: Object> IFriendService<T> {
 	pub fn get_newly_friend_count(&self, unk0: ::nn::account::Uid) -> Result<i32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(20101)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20101)
 			.args(unk0)
 			;
 		let res : Response<i32> = self.0.send(req)?;
@@ -344,7 +346,7 @@ impl<T: Object> IFriendService<T> {
 			unk0: ::nn::account::Uid,
 			unk1: ::nn::account::NetworkServiceAccountId,
 		}
-		let req = Request::new(20102)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(20102)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -358,7 +360,7 @@ impl<T: Object> IFriendService<T> {
 	pub fn sync_friend_list(&self, unk0: ::nn::account::Uid) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(20103)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20103)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -368,7 +370,7 @@ impl<T: Object> IFriendService<T> {
 	pub fn request_sync_friend_list(&self, unk0: ::nn::account::Uid) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(20104)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20104)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -384,7 +386,7 @@ impl<T: Object> IFriendService<T> {
 			unk0: ::nn::account::Uid,
 			unk1: ::nn::account::NetworkServiceAccountId,
 		}
-		let req = Request::new(20110)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(20110)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -398,7 +400,7 @@ impl<T: Object> IFriendService<T> {
 	pub fn get_received_friend_request_count(&self, unk0: ::nn::account::Uid) -> Result<(i32, i32)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(20200)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20200)
 			.args(unk0)
 			;
 		#[repr(C)] #[derive(Clone)] struct OutRaw {
@@ -419,7 +421,7 @@ impl<T: Object> IFriendService<T> {
 			unk1: i32,
 			unk2: ::nn::account::Uid,
 		}
-		let req = Request::new(20201)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(20201)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -440,7 +442,7 @@ impl<T: Object> IFriendService<T> {
 			unk0: i32,
 			unk1: ::nn::account::Uid,
 		}
-		let req = Request::new(20300)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(20300)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -460,7 +462,7 @@ impl<T: Object> IFriendService<T> {
 			unk0: i32,
 			unk1: ::nn::account::Uid,
 		}
-		let req = Request::new(20301)
+		let req : Request<_, [_; 2], [_; 0], [_; 0]> = Request::new(20301)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -481,7 +483,7 @@ impl<T: Object> IFriendService<T> {
 			unk0: i32,
 			unk1: ::nn::account::Uid,
 		}
-		let req = Request::new(20400)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(20400)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -495,7 +497,7 @@ impl<T: Object> IFriendService<T> {
 	pub fn sync_blocked_user_list(&self, unk0: ::nn::account::Uid) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(20401)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20401)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -506,7 +508,7 @@ impl<T: Object> IFriendService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(20500)
+		let req : Request<_, [_; 2], [_; 0], [_; 0]> = Request::new(20500)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_slice(unk1, 9))
 			.descriptor(IPCBuffer::from_mut_slice(unk2, 6))
@@ -523,7 +525,7 @@ impl<T: Object> IFriendService<T> {
 			unk0: ::nn::account::Uid,
 			unk1: ::nn::account::NetworkServiceAccountId,
 		}
-		let req = Request::new(20501)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20501)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -537,7 +539,7 @@ impl<T: Object> IFriendService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(20600)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(20600)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x1a))
 			;
@@ -554,7 +556,7 @@ impl<T: Object> IFriendService<T> {
 			unk0: i32,
 			unk1: ::nn::account::Uid,
 		}
-		let req = Request::new(20700)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(20700)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -568,7 +570,7 @@ impl<T: Object> IFriendService<T> {
 	pub fn get_play_history_statistics(&self, unk0: ::nn::account::Uid) -> Result<::nn::friends::PlayHistoryStatistics> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(20701)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20701)
 			.args(unk0)
 			;
 		let res : Response<::nn::friends::PlayHistoryStatistics> = self.0.send(req)?;
@@ -579,7 +581,7 @@ impl<T: Object> IFriendService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(20800)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(20800)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x1a))
 			;
@@ -590,7 +592,7 @@ impl<T: Object> IFriendService<T> {
 	pub fn sync_user_setting(&self, unk0: ::nn::account::Uid) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(20801)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20801)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -600,7 +602,7 @@ impl<T: Object> IFriendService<T> {
 	pub fn request_list_summary_overlay_notification(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(20900)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20900)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -616,7 +618,7 @@ impl<T: Object> IFriendService<T> {
 			unk0: ::nn::settings::LanguageCode,
 			unk1: ::nn::friends::ExternalApplicationCatalogId,
 		}
-		let req = Request::new(21000)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(21000)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -630,7 +632,7 @@ impl<T: Object> IFriendService<T> {
 	pub fn drop_friend_newly_flags(&self, unk0: ::nn::account::Uid) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(30100)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30100)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -645,7 +647,7 @@ impl<T: Object> IFriendService<T> {
 			unk0: ::nn::account::Uid,
 			unk1: ::nn::account::NetworkServiceAccountId,
 		}
-		let req = Request::new(30101)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30101)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -663,7 +665,7 @@ impl<T: Object> IFriendService<T> {
 			unk0: ::nn::account::Uid,
 			unk1: ::nn::account::NetworkServiceAccountId,
 		}
-		let req = Request::new(30110)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30110)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -682,7 +684,7 @@ impl<T: Object> IFriendService<T> {
 			unk1: ::nn::account::Uid,
 			unk2: ::nn::account::NetworkServiceAccountId,
 		}
-		let req = Request::new(30120)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30120)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -702,7 +704,7 @@ impl<T: Object> IFriendService<T> {
 			unk1: ::nn::account::Uid,
 			unk2: ::nn::account::NetworkServiceAccountId,
 		}
-		let req = Request::new(30121)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30121)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -722,7 +724,7 @@ impl<T: Object> IFriendService<T> {
 			unk1: ::nn::account::Uid,
 			unk2: ::nn::account::NetworkServiceAccountId,
 		}
-		let req = Request::new(30200)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30200)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -744,7 +746,7 @@ impl<T: Object> IFriendService<T> {
 			unk2: ::nn::account::NetworkServiceAccountId,
 			unk3: ::nn::friends::ApplicationInfo,
 		}
-		let req = Request::new(30201)
+		let req : Request<_, [_; 2], [_; 0], [_; 0]> = Request::new(30201)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -766,7 +768,7 @@ impl<T: Object> IFriendService<T> {
 			unk0: ::nn::account::Uid,
 			unk1: ::nn::friends::RequestId,
 		}
-		let req = Request::new(30202)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30202)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -784,7 +786,7 @@ impl<T: Object> IFriendService<T> {
 			unk0: ::nn::account::Uid,
 			unk1: ::nn::friends::RequestId,
 		}
-		let req = Request::new(30203)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30203)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -802,7 +804,7 @@ impl<T: Object> IFriendService<T> {
 			unk0: ::nn::account::Uid,
 			unk1: ::nn::friends::RequestId,
 		}
-		let req = Request::new(30204)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30204)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -820,7 +822,7 @@ impl<T: Object> IFriendService<T> {
 			unk0: ::nn::account::Uid,
 			unk1: ::nn::friends::RequestId,
 		}
-		let req = Request::new(30205)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30205)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -833,7 +835,7 @@ impl<T: Object> IFriendService<T> {
 	pub fn get_faced_friend_request_registration_key(&self, unk0: ::nn::account::Uid) -> Result<::nn::friends::FacedFriendRequestRegistrationKey> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(30210)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30210)
 			.args(unk0)
 			;
 		let res : Response<::nn::friends::FacedFriendRequestRegistrationKey> = self.0.send(req)?;
@@ -849,7 +851,7 @@ impl<T: Object> IFriendService<T> {
 			unk0: ::nn::account::Uid,
 			unk1: ::nn::account::NetworkServiceAccountId,
 		}
-		let req = Request::new(30212)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30212)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -872,7 +874,7 @@ impl<T: Object> IFriendService<T> {
 			unk2: ::nn::account::NetworkServiceAccountId,
 			unk3: ::nn::friends::ExternalApplicationCatalogId,
 		}
-		let req = Request::new(30215)
+		let req : Request<_, [_; 2], [_; 0], [_; 0]> = Request::new(30215)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -894,7 +896,7 @@ impl<T: Object> IFriendService<T> {
 			unk0: ::nn::account::Uid,
 			unk1: ::nn::account::NetworkServiceAccountId,
 		}
-		let req = Request::new(30216)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30216)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -917,7 +919,7 @@ impl<T: Object> IFriendService<T> {
 			unk5: ::nn::account::Uid,
 			unk6: ::nn::account::NetworkServiceAccountId,
 		}
-		let req = Request::new(30217)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30217)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -941,7 +943,7 @@ impl<T: Object> IFriendService<T> {
 			unk1: ::nn::account::Uid,
 			unk2: ::nn::account::NetworkServiceAccountId,
 		}
-		let req = Request::new(30400)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30400)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -963,7 +965,7 @@ impl<T: Object> IFriendService<T> {
 			unk2: ::nn::account::NetworkServiceAccountId,
 			unk3: ::nn::friends::ApplicationInfo,
 		}
-		let req = Request::new(30401)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(30401)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -984,7 +986,7 @@ impl<T: Object> IFriendService<T> {
 			unk0: ::nn::account::Uid,
 			unk1: ::nn::account::NetworkServiceAccountId,
 		}
-		let req = Request::new(30402)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30402)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -1003,7 +1005,7 @@ impl<T: Object> IFriendService<T> {
 			unk0: ::nn::friends::FriendCode,
 			unk1: ::nn::account::Uid,
 		}
-		let req = Request::new(30500)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(30500)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -1017,7 +1019,7 @@ impl<T: Object> IFriendService<T> {
 	pub fn delete_play_history(&self, unk0: ::nn::account::Uid) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(30700)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30700)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -1032,7 +1034,7 @@ impl<T: Object> IFriendService<T> {
 			unk0: i32,
 			unk1: ::nn::account::Uid,
 		}
-		let req = Request::new(30810)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30810)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -1050,7 +1052,7 @@ impl<T: Object> IFriendService<T> {
 			unk0: bool,
 			unk1: ::nn::account::Uid,
 		}
-		let req = Request::new(30811)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30811)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -1068,7 +1070,7 @@ impl<T: Object> IFriendService<T> {
 			unk0: i32,
 			unk1: ::nn::account::Uid,
 		}
-		let req = Request::new(30812)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30812)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -1081,7 +1083,7 @@ impl<T: Object> IFriendService<T> {
 	pub fn issue_friend_code(&self, unk0: ::nn::account::Uid) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(30820)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30820)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -1091,7 +1093,7 @@ impl<T: Object> IFriendService<T> {
 	pub fn clear_play_log(&self, unk0: ::nn::account::Uid) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(30830)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30830)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -1101,7 +1103,7 @@ impl<T: Object> IFriendService<T> {
 	pub fn delete_network_service_account_cache(&self, unk0: ::nn::account::Uid) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(49900)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(49900)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;

@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -35,7 +37,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn generate_application_record_count(&self, ) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let res : Response<u64> = self.0.send(req)?;
@@ -45,7 +47,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn get_application_record_update_system_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -56,7 +58,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn delete_application_entity(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(4)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -66,7 +68,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn delete_application_completely(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(5)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -76,7 +78,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn is_any_application_entity_redundant(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(6)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
 			.args(())
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -86,7 +88,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn delete_redundant_application_entity(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(7)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(7)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -102,7 +104,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 			unk0: u8,
 			unk1: u64,
 		}
-		let req = Request::new(9)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(9)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -118,7 +120,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn launch_application(&self, unk0: u64) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(19)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(19)
 			.args(unk0)
 			;
 		let res : Response<u64> = self.0.send(req)?;
@@ -129,7 +131,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn terminate_application(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(22)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(22)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -144,7 +146,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 			unk0: u8,
 			unk1: u64,
 		}
-		let req = Request::new(23)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(23)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -158,7 +160,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn delete_application_record(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(27)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(27)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -169,7 +171,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn cancel_application_download(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(32)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(32)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -179,7 +181,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn resume_application_download(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(33)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(33)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -195,7 +197,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 			unk0: u32,
 			unk1: u64,
 		}
-		let req = Request::new(36)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(36)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -209,7 +211,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn check_application_launch_version(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(38)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(38)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -219,7 +221,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn check_application_launch_rights(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(39)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(39)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -231,7 +233,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn cleanup_sd_card(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(42)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(42)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -241,7 +243,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn check_sd_card_mount_status(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(43)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(43)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -251,7 +253,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn get_sd_card_mount_status_changed_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(44)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(44)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -261,7 +263,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn get_game_card_attachment_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(45)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(45)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -271,7 +273,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn get_game_card_attachment_info(&self, ) -> Result<u128> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(46)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(46)
 			.args(())
 			;
 		let res : Response<u128> = self.0.send(req)?;
@@ -283,7 +285,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn get_sd_card_removed_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(49)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(49)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -293,7 +295,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn get_game_card_update_detection_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(52)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(52)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -303,7 +305,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn disable_application_auto_delete(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(53)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(53)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -313,7 +315,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn enable_application_auto_delete(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(54)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(54)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -323,7 +325,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn get_application_desired_language(&self, unk0: u32) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(55)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(55)
 			.args(unk0)
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -338,7 +340,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 			unk0: u32,
 			unk1: u64,
 		}
-		let req = Request::new(56)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(56)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -351,7 +353,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn clear_application_terminate_result(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(57)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(57)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -361,7 +363,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn get_last_sd_card_mount_unexpected_result(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(58)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(58)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -373,7 +375,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn get_background_download_stress_task_info(&self, ) -> Result<u128> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(61)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(61)
 			.args(())
 			;
 		let res : Response<u128> = self.0.send(req)?;
@@ -383,7 +385,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn get_game_card_stopper(&self, ) -> Result<T> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(62)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(62)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -393,7 +395,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn is_system_program_installed(&self, unk0: u64) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(63)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(63)
 			.args(unk0)
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -403,7 +405,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn start_apply_delta_task(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(64)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(64)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -413,7 +415,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn get_request_server_stopper(&self, ) -> Result<T> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(65)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(65)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -423,7 +425,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn get_background_apply_delta_stress_task_info(&self, ) -> Result<u128> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(66)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(66)
 			.args(())
 			;
 		let res : Response<u128> = self.0.send(req)?;
@@ -433,7 +435,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn cancel_application_apply_delta(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(67)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(67)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -443,7 +445,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn resume_application_apply_delta(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(68)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(68)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -454,7 +456,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn resume_all(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(70)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(70)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -468,7 +470,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn check_application_resume_rights(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(83)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(83)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -478,7 +480,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn get_dynamic_commit_event(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(84)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(84)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -488,7 +490,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn request_update_application2(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(85)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(85)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -498,7 +500,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn enable_application_crash_report(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(86)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(86)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -508,7 +510,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn is_application_crash_report_enabled(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(87)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(87)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -518,7 +520,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn boost_system_memory_resource_limit(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(90)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(90)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -528,7 +530,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn reset_to_factory_settings(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(100)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(100)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -538,7 +540,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn reset_to_factory_settings_without_user_save_data(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(101)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(101)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -548,7 +550,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn reset_to_factory_settings_for_refurbishment(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(102)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(102)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -562,7 +564,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn get_application_shell_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(300)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(300)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -573,7 +575,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn launch_library_applet(&self, unk0: u64) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(302)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(302)
 			.args(unk0)
 			;
 		let res : Response<u64> = self.0.send(req)?;
@@ -583,7 +585,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn terminate_library_applet(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(303)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(303)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -593,7 +595,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn launch_system_applet(&self, ) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(304)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(304)
 			.args(())
 			;
 		let res : Response<u64> = self.0.send(req)?;
@@ -603,7 +605,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn terminate_system_applet(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(305)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(305)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -613,7 +615,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn launch_overlay_applet(&self, ) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(306)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(306)
 			.args(())
 			;
 		let res : Response<u64> = self.0.send(req)?;
@@ -623,7 +625,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn terminate_overlay_applet(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(307)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(307)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -634,7 +636,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn invalidate_all_application_control_cache(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(401)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(401)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -645,7 +647,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn get_max_application_control_cache_count(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(403)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(403)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -655,7 +657,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn invalidate_application_control_cache(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(404)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(404)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -669,7 +671,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn get_game_card_mount_failure_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(505)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(505)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -679,7 +681,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn is_game_card_inserted(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(506)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(506)
 			.args(())
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -689,7 +691,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn ensure_game_card_access(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(507)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(507)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -699,7 +701,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn get_last_game_card_mount_failure_result(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(508)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(508)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -709,7 +711,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn list_application_id_on_game_card(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(509)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(509)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -719,7 +721,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn count_application_content_meta(&self, unk0: u64) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(600)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(600)
 			.args(unk0)
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -737,7 +739,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 			unk0: u64,
 			unk1: u64,
 		}
-		let req = Request::new(604)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(604)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -753,7 +755,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn clear_task_status_list(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(701)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(701)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -763,7 +765,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn request_download_task_list(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(702)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(702)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -776,7 +778,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn request_version_list(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(800)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(800)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -790,7 +792,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn enable_application_auto_update(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(902)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(902)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -800,7 +802,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn disable_application_auto_update(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(903)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(903)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -810,7 +812,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn touch_application(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(904)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(904)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -825,7 +827,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 			unk0: u32,
 			unk1: u64,
 		}
-		let req = Request::new(905)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(905)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -839,7 +841,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn withdraw_application_update_request(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(907)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(907)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -850,7 +852,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn withdraw_cleanup_add_on_contents_with_no_rights_recommendation(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(909)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(909)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -863,7 +865,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn request_verify_application(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1003)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1003)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -873,7 +875,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn corrupt_content_for_debug(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1004)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1004)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -883,7 +885,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn needs_update_vulnerability(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1200)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1200)
 			.args(())
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -893,7 +895,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn is_any_application_entity_installed(&self, unk0: u64) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1300)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1300)
 			.args(unk0)
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -904,7 +906,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn cleanup_unrecorded_application_entity(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1302)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1302)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -914,7 +916,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn cleanup_add_on_contents_with_no_rights(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1303)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1303)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -925,7 +927,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn try_delete_running_application_entity(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1305)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1305)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -935,7 +937,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn try_delete_running_application_completely(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1306)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1306)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -945,7 +947,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn try_delete_running_application_content_entities(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1307)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1307)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -955,7 +957,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn prepare_shutdown(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1400)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1400)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -965,7 +967,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn format_sd_card(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1500)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1500)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -975,7 +977,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn needs_system_update_to_format_sd_card(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1501)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1501)
 			.args(())
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -985,7 +987,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn get_last_sd_card_format_unexpected_result(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1502)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1502)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -995,7 +997,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn insert_sd_card(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1504)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1504)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -1005,7 +1007,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn remove_sd_card(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1505)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1505)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -1016,7 +1018,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn reset_system_seed_for_pseudo_device_id(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1601)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1601)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -1028,7 +1030,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn get_application_download_task_status(&self, unk0: u64) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1702)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1702)
 			.args(unk0)
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -1038,7 +1040,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn get_application_view_download_error_context(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1703)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1703)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -1048,7 +1050,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn is_notification_setup_completed(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1800)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1800)
 			.args(())
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -1058,7 +1060,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn get_last_notification_info_count(&self, ) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1801)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1801)
 			.args(())
 			;
 		let res : Response<u64> = self.0.send(req)?;
@@ -1070,7 +1072,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn is_active_account(&self, unk0: u32) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1900)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1900)
 			.args(unk0)
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -1080,7 +1082,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn request_download_application_prepurchased_rights(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1901)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1901)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -1090,7 +1092,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn get_application_ticket_info(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1902)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1902)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -1100,7 +1102,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn get_system_delivery_info(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2000)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2000)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -1110,7 +1112,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn select_latest_system_delivery_info(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2001)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2001)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -1120,7 +1122,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn verify_delivery_protocol_version(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2002)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2002)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -1130,7 +1132,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn get_application_delivery_info(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2003)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2003)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -1140,7 +1142,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn has_all_contents_to_deliver(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2004)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2004)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -1150,7 +1152,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn compare_application_delivery_info(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2005)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2005)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -1160,7 +1162,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn can_deliver_application(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2006)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2006)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -1170,7 +1172,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn list_content_meta_key_to_deliver_application(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2007)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2007)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -1180,7 +1182,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn needs_system_update_to_deliver_application(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2008)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2008)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -1190,7 +1192,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn estimate_required_size(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2009)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2009)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -1200,7 +1202,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn request_receive_application(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2010)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2010)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -1210,7 +1212,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn commit_receive_application(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2011)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2011)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -1220,7 +1222,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn get_receive_application_progress(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2012)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2012)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -1230,7 +1232,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn request_send_application(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2013)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2013)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -1240,7 +1242,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn get_send_application_progress(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2014)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2014)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -1250,7 +1252,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn compare_system_delivery_info(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2015)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2015)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -1260,7 +1262,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn list_not_committed_content_meta(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2016)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2016)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -1270,7 +1272,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	pub fn create_download_task(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2017)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2017)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;

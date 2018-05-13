@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> ITimeZoneService<T> {
 	pub fn get_device_location_name(&self, ) -> Result<::nn::time::LocationName> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let res : Response<::nn::time::LocationName> = self.0.send(req)?;
@@ -44,7 +46,7 @@ impl<T: Object> ITimeZoneService<T> {
 	pub fn set_device_location_name(&self, unk0: ::nn::time::LocationName) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -54,7 +56,7 @@ impl<T: Object> ITimeZoneService<T> {
 	pub fn get_total_location_name_count(&self, ) -> Result<i32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(())
 			;
 		let res : Response<i32> = self.0.send(req)?;
@@ -65,7 +67,7 @@ impl<T: Object> ITimeZoneService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(3)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(3)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_mut_slice(unk2, 6))
 			;
@@ -77,7 +79,7 @@ impl<T: Object> ITimeZoneService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(4)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(4)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x16))
 			;
@@ -88,7 +90,7 @@ impl<T: Object> ITimeZoneService<T> {
 	pub fn get_time_zone_rule_version(&self, ) -> Result<::nn::time::TimeZoneRuleVersion> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(5)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
 			.args(())
 			;
 		let res : Response<::nn::time::TimeZoneRuleVersion> = self.0.send(req)?;
@@ -99,7 +101,7 @@ impl<T: Object> ITimeZoneService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(100)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(100)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_ref(unk1, 0x15))
 			;
@@ -114,7 +116,7 @@ impl<T: Object> ITimeZoneService<T> {
 	pub fn to_calendar_time_with_my_rule(&self, unk0: ::nn::time::PosixTime) -> Result<(::nn::time::CalendarTime, ::nn::time::sf::CalendarAdditionalInfo)> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(101)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(101)
 			.args(unk0)
 			;
 		#[repr(C)] #[derive(Clone)] struct OutRaw {
@@ -129,7 +131,7 @@ impl<T: Object> ITimeZoneService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(201)
+		let req : Request<_, [_; 2], [_; 0], [_; 0]> = Request::new(201)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_ref(unk1, 0x15))
 			.descriptor(IPCBuffer::from_mut_slice(unk3, 0xa))
@@ -142,7 +144,7 @@ impl<T: Object> ITimeZoneService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(202)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(202)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_mut_slice(unk2, 0xa))
 			;

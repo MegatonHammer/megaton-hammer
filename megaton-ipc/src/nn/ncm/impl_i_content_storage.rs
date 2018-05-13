@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> IContentStorage<T> {
 	pub fn generate_place_holder_id(&self, ) -> Result<u128> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let res : Response<u128> = self.0.send(req)?;
@@ -45,7 +47,7 @@ impl<T: Object> IContentStorage<T> {
 	pub fn delete_placeholder_entry(&self, unk0: u128) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -58,7 +60,7 @@ impl<T: Object> IContentStorage<T> {
 	pub fn delete_registered_entry(&self, unk0: u128) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(6)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -71,7 +73,7 @@ impl<T: Object> IContentStorage<T> {
 	pub fn clean_placeholder_directory(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -82,7 +84,7 @@ impl<T: Object> IContentStorage<T> {
 	pub fn get_number_of_registered_entries(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(12)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -94,7 +96,7 @@ impl<T: Object> IContentStorage<T> {
 	pub fn close_and_flush_storage(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(15)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(15)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -110,7 +112,7 @@ impl<T: Object> IContentStorage<T> {
 	pub fn get_free_space(&self, ) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(22)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(22)
 			.args(())
 			;
 		let res : Response<u64> = self.0.send(req)?;
@@ -120,7 +122,7 @@ impl<T: Object> IContentStorage<T> {
 	pub fn get_total_space(&self, ) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(23)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(23)
 			.args(())
 			;
 		let res : Response<u64> = self.0.send(req)?;
@@ -130,7 +132,7 @@ impl<T: Object> IContentStorage<T> {
 	pub fn flush_storage(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(24)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(24)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;

@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -35,7 +37,7 @@ impl<T: Object> IProfile<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x1a))
 			;
@@ -46,7 +48,7 @@ impl<T: Object> IProfile<T> {
 	pub fn get_base(&self, ) -> Result<::nn::account::profile::ProfileBase> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let res : Response<::nn::account::profile::ProfileBase> = self.0.send(req)?;
@@ -56,7 +58,7 @@ impl<T: Object> IProfile<T> {
 	pub fn get_image_size(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;

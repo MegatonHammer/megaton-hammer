@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> IChannelSession<T> {
 	pub fn set_period(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -44,7 +46,7 @@ impl<T: Object> IChannelSession<T> {
 	pub fn get_period(&self, ) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let res : Response<u64> = self.0.send(req)?;
@@ -54,7 +56,7 @@ impl<T: Object> IChannelSession<T> {
 	pub fn set_duty(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -64,7 +66,7 @@ impl<T: Object> IChannelSession<T> {
 	pub fn get_duty(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(3)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -74,7 +76,7 @@ impl<T: Object> IChannelSession<T> {
 	pub fn set_enabled(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(4)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -84,7 +86,7 @@ impl<T: Object> IChannelSession<T> {
 	pub fn get_enabled(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(5)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
 			.args(())
 			;
 		let res : Response<u8> = self.0.send(req)?;

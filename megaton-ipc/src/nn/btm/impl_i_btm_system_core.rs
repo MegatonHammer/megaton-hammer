@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> IBtmSystemCore<T> {
 	pub fn start_gamepad_pairing_impl(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -44,7 +46,7 @@ impl<T: Object> IBtmSystemCore<T> {
 	pub fn cancel_gamepad_pairing_impl(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -54,7 +56,7 @@ impl<T: Object> IBtmSystemCore<T> {
 	pub fn clear_gamepad_pairing_database_impl(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -64,7 +66,7 @@ impl<T: Object> IBtmSystemCore<T> {
 	pub fn get_paired_gamepad_count_impl(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(3)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
 			.args(())
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -74,7 +76,7 @@ impl<T: Object> IBtmSystemCore<T> {
 	pub fn enable_radio_impl(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(4)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -84,7 +86,7 @@ impl<T: Object> IBtmSystemCore<T> {
 	pub fn disable_radio_impl(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(5)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -94,7 +96,7 @@ impl<T: Object> IBtmSystemCore<T> {
 	pub fn get_radio_on_off_impl(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(6)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
 			.args(())
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -106,7 +108,7 @@ impl<T: Object> IBtmSystemCore<T> {
 	pub fn is_gamepad_pairing_started_impl(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(9)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(9)
 			.args(())
 			;
 		let res : Response<u8> = self.0.send(req)?;

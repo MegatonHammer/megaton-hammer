@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
@@ -8,6 +10,16 @@ use alloc::arc::Arc;
 pub struct IInfraManager<T>(T);
 
 impl IInfraManager<Session> {
+	pub fn raw_new() -> Result<IInfraManager<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::raw_new()?;
+
+		let session = sm.get_service(*b"wlan:inf")?;
+		let object : Self = Session::from(session).into();
+		Ok(object)
+	}
+
 	pub fn new() -> Result<Arc<IInfraManager<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
@@ -19,10 +31,6 @@ impl IInfraManager<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"wlan:inf") {
 			let ret = Arc::new(IInfraManager(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -30,12 +38,10 @@ impl IInfraManager<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"wlan:inf").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = Self::raw_new()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
 	pub fn to_domain(self) -> ::core::result::Result<IInfraManager<Domain>, (Self, Error)> {
@@ -65,7 +71,7 @@ impl<T: Object> IInfraManager<T> {
 	pub fn unknown0(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -75,7 +81,7 @@ impl<T: Object> IInfraManager<T> {
 	pub fn unknown1(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -87,7 +93,7 @@ impl<T: Object> IInfraManager<T> {
 	pub fn unknown4(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(4)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -98,7 +104,7 @@ impl<T: Object> IInfraManager<T> {
 	pub fn unknown6(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(6)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -108,7 +114,7 @@ impl<T: Object> IInfraManager<T> {
 	pub fn unknown7(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(7)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(7)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -120,7 +126,7 @@ impl<T: Object> IInfraManager<T> {
 	pub fn unknown10(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -131,7 +137,7 @@ impl<T: Object> IInfraManager<T> {
 	pub fn unknown12(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(12)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -141,7 +147,7 @@ impl<T: Object> IInfraManager<T> {
 	pub fn unknown13(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(13)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(13)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -152,7 +158,7 @@ impl<T: Object> IInfraManager<T> {
 	pub fn unknown15(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(15)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(15)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -162,7 +168,7 @@ impl<T: Object> IInfraManager<T> {
 	pub fn unknown16(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(16)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(16)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -173,7 +179,7 @@ impl<T: Object> IInfraManager<T> {
 	pub fn unknown18(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(18)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(18)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -184,7 +190,7 @@ impl<T: Object> IInfraManager<T> {
 	pub fn unknown20(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(20)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -194,7 +200,7 @@ impl<T: Object> IInfraManager<T> {
 	pub fn unknown21(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(21)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(21)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -204,7 +210,7 @@ impl<T: Object> IInfraManager<T> {
 	pub fn unknown22(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(22)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(22)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -214,7 +220,7 @@ impl<T: Object> IInfraManager<T> {
 	pub fn unknown23(&self, unk0: u32) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(23)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(23)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;

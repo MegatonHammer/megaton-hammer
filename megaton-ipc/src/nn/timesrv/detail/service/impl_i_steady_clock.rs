@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> ISteadyClock<T> {
 	pub fn get_current_time_point(&self, ) -> Result<::nn::time::SteadyClockTimePoint> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let res : Response<::nn::time::SteadyClockTimePoint> = self.0.send(req)?;
@@ -44,7 +46,7 @@ impl<T: Object> ISteadyClock<T> {
 	pub fn get_test_offset(&self, ) -> Result<::nn::TimeSpanType> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(())
 			;
 		let res : Response<::nn::TimeSpanType> = self.0.send(req)?;
@@ -54,7 +56,7 @@ impl<T: Object> ISteadyClock<T> {
 	pub fn set_test_offset(&self, unk0: ::nn::TimeSpanType) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(3)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -64,7 +66,7 @@ impl<T: Object> ISteadyClock<T> {
 	pub fn get_rtc_value(&self, ) -> Result<i64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(100)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(100)
 			.args(())
 			;
 		let res : Response<i64> = self.0.send(req)?;
@@ -74,7 +76,7 @@ impl<T: Object> ISteadyClock<T> {
 	pub fn is_rtc_reset_detected(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(101)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(101)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -84,7 +86,7 @@ impl<T: Object> ISteadyClock<T> {
 	pub fn get_setup_resutlt_value(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(102)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(102)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -94,7 +96,7 @@ impl<T: Object> ISteadyClock<T> {
 	pub fn get_internal_offset(&self, ) -> Result<::nn::TimeSpanType> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(200)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(200)
 			.args(())
 			;
 		let res : Response<::nn::TimeSpanType> = self.0.send(req)?;
@@ -104,7 +106,7 @@ impl<T: Object> ISteadyClock<T> {
 	pub fn set_internal_offset(&self, unk0: ::nn::TimeSpanType) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(201)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(201)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;

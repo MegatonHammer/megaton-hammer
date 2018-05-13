@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> IClient<T> {
 	pub fn get_client_profile(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -44,7 +46,7 @@ impl<T: Object> IClient<T> {
 	pub fn create_login_session(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -54,7 +56,7 @@ impl<T: Object> IClient<T> {
 	pub fn get_network_service_account_id(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(11)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -64,7 +66,7 @@ impl<T: Object> IClient<T> {
 	pub fn get_user_nickname(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(12)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -74,7 +76,7 @@ impl<T: Object> IClient<T> {
 	pub fn get_user_profile_image(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(13)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(13)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -84,7 +86,7 @@ impl<T: Object> IClient<T> {
 	pub fn prepare_async(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(100)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(100)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -94,7 +96,7 @@ impl<T: Object> IClient<T> {
 	pub fn get_connection_requirement(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(101)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(101)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -104,7 +106,7 @@ impl<T: Object> IClient<T> {
 	pub fn scan_servers_async(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(200)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(200)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -114,7 +116,7 @@ impl<T: Object> IClient<T> {
 	pub fn list_servers(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(201)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(201)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -124,7 +126,7 @@ impl<T: Object> IClient<T> {
 	pub fn connect_by_server_id_async(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(210)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(210)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -134,7 +136,7 @@ impl<T: Object> IClient<T> {
 	pub fn get_storage_shortfall(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(300)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(300)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -144,7 +146,7 @@ impl<T: Object> IClient<T> {
 	pub fn get_total_transfer_info(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(301)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(301)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -154,7 +156,7 @@ impl<T: Object> IClient<T> {
 	pub fn get_immigrant_uid(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(302)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(302)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -164,7 +166,7 @@ impl<T: Object> IClient<T> {
 	pub fn get_current_transfer_info(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(310)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(310)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -174,7 +176,7 @@ impl<T: Object> IClient<T> {
 	pub fn get_current_related_applications(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(311)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(311)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -184,7 +186,7 @@ impl<T: Object> IClient<T> {
 	pub fn transfer_next_async(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(320)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(320)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -194,7 +196,7 @@ impl<T: Object> IClient<T> {
 	pub fn suspend_async(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(350)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(350)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -204,7 +206,7 @@ impl<T: Object> IClient<T> {
 	pub fn complete_async(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(400)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(400)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -214,7 +216,7 @@ impl<T: Object> IClient<T> {
 	pub fn abort(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(500)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(500)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -224,7 +226,7 @@ impl<T: Object> IClient<T> {
 	pub fn debug_synchronize_state_in_finalization_async(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(999)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(999)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;

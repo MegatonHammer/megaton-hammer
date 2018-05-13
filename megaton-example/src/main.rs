@@ -45,13 +45,15 @@ fn main() -> std::result::Result<(), MyError> {
     // Let's get ferris to show up on my switch.
 
     println!("Initialize NV");
-    let nvdrv = nns::nvdrv::INvDrvServices::new_nvdrv_a()?;
-    println!("Create transfer memory");
-    let transfer_mem = TransferMemory::new(0x30000)?;
-    let temporary_process = unsafe { KObject::new(megaton_hammer::kernel::svc::CURRENT_PROCESS) };
-    println!("Initialize nv");
-    nvdrv.initialize(0x30000, &temporary_process, transfer_mem.as_ref())?;
-    std::mem::drop(temporary_process);
+    let nvdrv = nns::nvdrv::INvDrvServices::new_nvdrv_a(|cb| {
+        println!("Create transfer memory");
+        let transfer_mem = TransferMemory::new(0x30000)?;
+        // TODO: Find a better way.
+        let temporary_process = unsafe { KObject::new(megaton_hammer::kernel::svc::CURRENT_PROCESS) };
+        let ret = cb(0x30000, &temporary_process, transfer_mem.as_ref());
+        unsafe { std::mem::forget(temporary_process); }
+        ret
+    })?;
 
     println!("Open /dev/nvhost-as-gpu");
     let (nvasgpu, err) = nvdrv.open(u8_slice_to_i8_slice(&b"/dev/nvhost-as-gpu"[..]))?;
@@ -91,12 +93,11 @@ fn main() -> std::result::Result<(), MyError> {
         let _window_size = disp_svc.open_layer(display, layer_id, 0, parcel.as_bytes_mut())?;
 
         let mut reader = parcel.into_parcel_reader();
-        //let fbo = FlatBinderObject::from_parcel(&mut reader);
-        //let binder = fbo.inner as i32;
-        //relay_svc.adjust_refcount(binder, 1, 0)?;
-        //relay_svc.adjust_refcount(binder, 1, 1)?;
-        //binder
-        0
+        let fbo = FlatBinderObject::from_parcel(&mut reader);
+        let binder = fbo.inner as i32;
+        relay_svc.adjust_refcount(binder, 1, 0)?;
+        relay_svc.adjust_refcount(binder, 1, 1)?;
+        binder
     };
 
     // Connect to the IGBP. Take a look at the following link for reference.
@@ -112,17 +113,12 @@ fn main() -> std::result::Result<(), MyError> {
         relay_svc.transact_parcel(binder_id as i32, CONNECT, 0, parcel.build().as_bytes(), parcel_out.as_bytes_mut())?;
 
         let mut reader = parcel_out.into_parcel_reader();
-        //let qbo = QueueBufferOutput::from_parcel(&mut reader);
-        //if reader.read_u32() != 0 {
-        //    panic!("Failed to connect to igbp");
-        //}
-        //qbo
-        QueueBufferOutput {
-            width: 1280,
-            height: 720,
-            transform_hint: 0,
-            num_pending_buffers: 0
+        let qbo = QueueBufferOutput::from_parcel(&mut reader);
+        if reader.read_u32() != 0 {
+            println!("Failed to connect to igbp");
+            return Ok(());
         }
+        qbo
     };
 
     println!("Allocate framebuffers");

@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
@@ -8,6 +10,16 @@ use alloc::arc::Arc;
 pub struct IReader<T>(T);
 
 impl IReader<Session> {
+	pub fn raw_new() -> Result<IReader<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::raw_new()?;
+
+		let session = sm.get_service(*b"arp:r\0\0\0")?;
+		let object : Self = Session::from(session).into();
+		Ok(object)
+	}
+
 	pub fn new() -> Result<Arc<IReader<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
@@ -19,10 +31,6 @@ impl IReader<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"arp:r\0\0\0") {
 			let ret = Arc::new(IReader(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -30,12 +38,10 @@ impl IReader<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"arp:r\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = Self::raw_new()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
 	pub fn to_domain(self) -> ::core::result::Result<IReader<Domain>, (Self, Error)> {

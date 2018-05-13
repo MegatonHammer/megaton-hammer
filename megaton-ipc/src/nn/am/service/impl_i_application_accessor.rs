@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> IApplicationAccessor<T> {
 	pub fn get_applet_state_changed_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -44,7 +46,7 @@ impl<T: Object> IApplicationAccessor<T> {
 	pub fn is_completed(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -54,7 +56,7 @@ impl<T: Object> IApplicationAccessor<T> {
 	pub fn start(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -64,7 +66,7 @@ impl<T: Object> IApplicationAccessor<T> {
 	pub fn request_exit(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(20)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -74,7 +76,7 @@ impl<T: Object> IApplicationAccessor<T> {
 	pub fn terminate(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(25)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(25)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -84,7 +86,7 @@ impl<T: Object> IApplicationAccessor<T> {
 	pub fn get_result(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(30)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -94,7 +96,7 @@ impl<T: Object> IApplicationAccessor<T> {
 	pub fn request_for_application_to_get_foreground(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(101)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(101)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -104,7 +106,7 @@ impl<T: Object> IApplicationAccessor<T> {
 	pub fn terminate_all_library_applets(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(110)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(110)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -114,7 +116,7 @@ impl<T: Object> IApplicationAccessor<T> {
 	pub fn are_any_library_applets_left(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(111)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(111)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -124,7 +126,7 @@ impl<T: Object> IApplicationAccessor<T> {
 	pub fn get_current_library_applet(&self, ) -> Result<::nn::am::service::IAppletAccessor<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(112)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(112)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -134,7 +136,7 @@ impl<T: Object> IApplicationAccessor<T> {
 	pub fn get_application_id(&self, ) -> Result<::nn::ncm::ApplicationId> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(120)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(120)
 			.args(())
 			;
 		let res : Response<::nn::ncm::ApplicationId> = self.0.send(req)?;
@@ -144,7 +146,7 @@ impl<T: Object> IApplicationAccessor<T> {
 	pub fn push_launch_parameter(&self, unk0: u32, unk1: &::nn::am::service::IStorage<Session>) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(121)
+		let req : Request<_, [_; 0], [_; 1], [_; 0]> = Request::new(121)
 			.args(unk0)
 			.copy_handle(unk1.as_ref())
 			;

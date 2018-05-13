@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
@@ -8,6 +10,16 @@ use alloc::arc::Arc;
 pub struct IHardwareOpusDecoderManager<T>(T);
 
 impl IHardwareOpusDecoderManager<Session> {
+	pub fn raw_new() -> Result<IHardwareOpusDecoderManager<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::raw_new()?;
+
+		let session = sm.get_service(*b"hwopus\0\0")?;
+		let object : Self = Session::from(session).into();
+		Ok(object)
+	}
+
 	pub fn new() -> Result<Arc<IHardwareOpusDecoderManager<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
@@ -19,10 +31,6 @@ impl IHardwareOpusDecoderManager<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"hwopus\0\0") {
 			let ret = Arc::new(IHardwareOpusDecoderManager(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -30,12 +38,10 @@ impl IHardwareOpusDecoderManager<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"hwopus\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = Self::raw_new()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
 	pub fn to_domain(self) -> ::core::result::Result<IHardwareOpusDecoderManager<Domain>, (Self, Error)> {
@@ -62,7 +68,7 @@ impl<T> DerefMut for IHardwareOpusDecoderManager<T> {
 	}
 }
 impl<T: Object> IHardwareOpusDecoderManager<T> {
-	pub fn initialize(&self, unk0: u64, unk1: u32, unk2: &KObject) -> Result<T> {
+	pub fn get_hardware_opus_decoder(&self, unk0: u64, unk1: u32, unk2: &KObject) -> Result<T> {
 		use megaton_hammer::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -70,7 +76,7 @@ impl<T: Object> IHardwareOpusDecoderManager<T> {
 			unk0: u64,
 			unk1: u32,
 		}
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 1], [_; 0]> = Request::new(0)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -84,7 +90,7 @@ impl<T: Object> IHardwareOpusDecoderManager<T> {
 	pub fn get_work_buffer_size(&self, unk0: u64) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(unk0)
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -96,7 +102,7 @@ impl<T: Object> IHardwareOpusDecoderManager<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 1], [_; 1], [_; 0]> = Request::new(2)
 			.args(unk0)
 			.copy_handle(unk1)
 			.descriptor(IPCBuffer::from_ref(unk2, 0x19))
@@ -110,7 +116,7 @@ impl<T: Object> IHardwareOpusDecoderManager<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(3)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(3)
 			.args(())
 			.descriptor(IPCBuffer::from_ref(unk0, 0x19))
 			;

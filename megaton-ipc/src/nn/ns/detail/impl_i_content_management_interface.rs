@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -35,7 +37,7 @@ impl<T: Object> IContentManagementInterface<T> {
 	pub fn check_sd_card_mount_status(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(43)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(43)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -47,7 +49,7 @@ impl<T: Object> IContentManagementInterface<T> {
 	pub fn count_application_content_meta(&self, unk0: u64) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(600)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(600)
 			.args(unk0)
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -59,7 +61,7 @@ impl<T: Object> IContentManagementInterface<T> {
 	pub fn is_any_application_running(&self, ) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(607)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(607)
 			.args(())
 			;
 		let res : Response<u8> = self.0.send(req)?;

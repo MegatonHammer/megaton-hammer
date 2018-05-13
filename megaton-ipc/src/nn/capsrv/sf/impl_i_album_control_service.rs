@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
@@ -8,6 +10,16 @@ use alloc::arc::Arc;
 pub struct IAlbumControlService<T>(T);
 
 impl IAlbumControlService<Session> {
+	pub fn raw_new() -> Result<IAlbumControlService<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::raw_new()?;
+
+		let session = sm.get_service(*b"caps:c\0\0")?;
+		let object : Self = Session::from(session).into();
+		Ok(object)
+	}
+
 	pub fn new() -> Result<Arc<IAlbumControlService<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
@@ -19,10 +31,6 @@ impl IAlbumControlService<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"caps:c\0\0") {
 			let ret = Arc::new(IAlbumControlService(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -30,12 +38,10 @@ impl IAlbumControlService<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"caps:c\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = Self::raw_new()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
 	pub fn to_domain(self) -> ::core::result::Result<IAlbumControlService<Domain>, (Self, Error)> {
@@ -65,7 +71,7 @@ impl<T: Object> IAlbumControlService<T> {
 	pub fn unknown2001(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2001)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2001)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -75,7 +81,7 @@ impl<T: Object> IAlbumControlService<T> {
 	pub fn unknown2002(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2002)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2002)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -90,7 +96,7 @@ impl<T: Object> IAlbumControlService<T> {
 			unk0: u64,
 			unk1: u64,
 		}
-		let req = Request::new(2011)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2011)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -108,7 +114,7 @@ impl<T: Object> IAlbumControlService<T> {
 			unk0: u64,
 			unk1: u64,
 		}
-		let req = Request::new(2012)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2012)
 			.args(InRaw {
 				unk0,
 				unk1,
@@ -121,7 +127,7 @@ impl<T: Object> IAlbumControlService<T> {
 	pub fn unknown2013(&self, unk0: u64) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2013)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2013)
 			.args(unk0)
 			;
 		let res : Response<u64> = self.0.send(req)?;
@@ -131,7 +137,7 @@ impl<T: Object> IAlbumControlService<T> {
 	pub fn unknown2014(&self, unk0: u64) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2014)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2014)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;

@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
@@ -8,7 +10,21 @@ use alloc::arc::Arc;
 pub struct INvDrvServices<T>(T);
 
 impl INvDrvServices<Session> {
-	pub fn new_nvdrv_s() -> Result<Arc<INvDrvServices<Session>>> {
+	pub fn raw_new_nvdrv_s(transfer_memory_size: u32, current_process: &KObject, transfer_memory: &KObject) -> Result<INvDrvServices<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::raw_new()?;
+
+		let session = sm.get_service(*b"nvdrv:s\0")?;
+		let object : Self = Session::from(session).into();
+		let errcode = object.initialize(transfer_memory_size, current_process, transfer_memory)?;
+		if errcode != 0 {
+			return Err(Error(1))
+		}
+		Ok(object)
+	}
+
+	pub fn new_nvdrv_s<T: FnOnce(fn(u32, &KObject, &KObject) -> Result<INvDrvServices<Session>>) -> Result<INvDrvServices<Session>>>(f: T) -> Result<Arc<INvDrvServices<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
@@ -18,10 +34,6 @@ impl INvDrvServices<Session> {
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
 		}
-
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
 
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"nvdrv:s\0") {
 			let ret = Arc::new(INvDrvServices(ManuallyDrop::into_inner(hnd)));
@@ -30,15 +42,27 @@ impl INvDrvServices<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"nvdrv:s\0").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = f(Self::raw_new_nvdrv_s)?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
-	pub fn new_nvdrv_t() -> Result<Arc<INvDrvServices<Session>>> {
+	pub fn raw_new_nvdrv_t(transfer_memory_size: u32, current_process: &KObject, transfer_memory: &KObject) -> Result<INvDrvServices<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::raw_new()?;
+
+		let session = sm.get_service(*b"nvdrv:t\0")?;
+		let object : Self = Session::from(session).into();
+		let errcode = object.initialize(transfer_memory_size, current_process, transfer_memory)?;
+		if errcode != 0 {
+			return Err(Error(1))
+		}
+		Ok(object)
+	}
+
+	pub fn new_nvdrv_t<T: FnOnce(fn(u32, &KObject, &KObject) -> Result<INvDrvServices<Session>>) -> Result<INvDrvServices<Session>>>(f: T) -> Result<Arc<INvDrvServices<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
@@ -48,10 +72,6 @@ impl INvDrvServices<Session> {
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
 		}
-
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
 
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"nvdrv:t\0") {
 			let ret = Arc::new(INvDrvServices(ManuallyDrop::into_inner(hnd)));
@@ -60,15 +80,27 @@ impl INvDrvServices<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"nvdrv:t\0").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = f(Self::raw_new_nvdrv_t)?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
-	pub fn new_nvdrv_a() -> Result<Arc<INvDrvServices<Session>>> {
+	pub fn raw_new_nvdrv_a(transfer_memory_size: u32, current_process: &KObject, transfer_memory: &KObject) -> Result<INvDrvServices<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::raw_new()?;
+
+		let session = sm.get_service(*b"nvdrv:a\0")?;
+		let object : Self = Session::from(session).into();
+		let errcode = object.initialize(transfer_memory_size, current_process, transfer_memory)?;
+		if errcode != 0 {
+			return Err(Error(1))
+		}
+		Ok(object)
+	}
+
+	pub fn new_nvdrv_a<T: FnOnce(fn(u32, &KObject, &KObject) -> Result<INvDrvServices<Session>>) -> Result<INvDrvServices<Session>>>(f: T) -> Result<Arc<INvDrvServices<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
@@ -78,10 +110,6 @@ impl INvDrvServices<Session> {
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
 		}
-
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
 
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"nvdrv:a\0") {
 			let ret = Arc::new(INvDrvServices(ManuallyDrop::into_inner(hnd)));
@@ -90,15 +118,27 @@ impl INvDrvServices<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"nvdrv:a\0").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = f(Self::raw_new_nvdrv_a)?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
-	pub fn new_nvdrv() -> Result<Arc<INvDrvServices<Session>>> {
+	pub fn raw_new_nvdrv(transfer_memory_size: u32, current_process: &KObject, transfer_memory: &KObject) -> Result<INvDrvServices<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::raw_new()?;
+
+		let session = sm.get_service(*b"nvdrv\0\0\0")?;
+		let object : Self = Session::from(session).into();
+		let errcode = object.initialize(transfer_memory_size, current_process, transfer_memory)?;
+		if errcode != 0 {
+			return Err(Error(1))
+		}
+		Ok(object)
+	}
+
+	pub fn new_nvdrv<T: FnOnce(fn(u32, &KObject, &KObject) -> Result<INvDrvServices<Session>>) -> Result<INvDrvServices<Session>>>(f: T) -> Result<Arc<INvDrvServices<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
 		use core::mem::ManuallyDrop;
@@ -109,10 +149,6 @@ impl INvDrvServices<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"nvdrv\0\0\0") {
 			let ret = Arc::new(INvDrvServices(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -120,12 +156,10 @@ impl INvDrvServices<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"nvdrv\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = f(Self::raw_new_nvdrv)?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
 	pub fn to_domain(self) -> ::core::result::Result<INvDrvServices<Domain>, (Self, Error)> {
@@ -156,7 +190,7 @@ impl<T: Object> INvDrvServices<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			.descriptor(IPCBuffer::from_slice(path, 5))
 			;
@@ -178,7 +212,7 @@ impl<T: Object> INvDrvServices<T> {
 			rq_id: u32,
 			unk1: u64,
 		}
-		let req = Request::new(1)
+		let req : Request<_, [_; 2], [_; 0], [_; 0]> = Request::new(1)
 			.args(InRaw {
 				fd,
 				rq_id,
@@ -194,7 +228,7 @@ impl<T: Object> INvDrvServices<T> {
 	pub fn close(&self, fd: u32) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(fd)
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -204,7 +238,7 @@ impl<T: Object> INvDrvServices<T> {
 	pub fn initialize(&self, transfer_memory_size: u32, current_process: &KObject, transfer_memory: &KObject) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(3)
+		let req : Request<_, [_; 0], [_; 2], [_; 0]> = Request::new(3)
 			.args(transfer_memory_size)
 			.copy_handle(current_process)
 			.copy_handle(transfer_memory)

@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
@@ -8,6 +10,16 @@ use alloc::arc::Arc;
 pub struct IAllSystemAppletProxiesService<T>(T);
 
 impl IAllSystemAppletProxiesService<Session> {
+	pub fn raw_new() -> Result<IAllSystemAppletProxiesService<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::raw_new()?;
+
+		let session = sm.get_service(*b"appletAE")?;
+		let object : Self = Session::from(session).into();
+		Ok(object)
+	}
+
 	pub fn new() -> Result<Arc<IAllSystemAppletProxiesService<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
@@ -19,10 +31,6 @@ impl IAllSystemAppletProxiesService<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"appletAE") {
 			let ret = Arc::new(IAllSystemAppletProxiesService(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -30,12 +38,10 @@ impl IAllSystemAppletProxiesService<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"appletAE").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = Self::raw_new()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
 	pub fn to_domain(self) -> ::core::result::Result<IAllSystemAppletProxiesService<Domain>, (Self, Error)> {
@@ -65,7 +71,7 @@ impl<T: Object> IAllSystemAppletProxiesService<T> {
 	pub fn open_system_applet_proxy(&self, unk0: u64, unk2: &KObject) -> Result<::nn::am::service::ISystemAppletProxy<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(100)
+		let req : Request<_, [_; 0], [_; 1], [_; 0]> = Request::new(100)
 			.args(unk0)
 			.send_pid()
 			.copy_handle(unk2)
@@ -78,7 +84,7 @@ impl<T: Object> IAllSystemAppletProxiesService<T> {
 	pub fn open_library_applet_proxy_old(&self, unk0: u64, unk2: &KObject) -> Result<::nn::am::service::ILibraryAppletProxy<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(200)
+		let req : Request<_, [_; 0], [_; 1], [_; 0]> = Request::new(200)
 			.args(unk0)
 			.send_pid()
 			.copy_handle(unk2)
@@ -92,7 +98,7 @@ impl<T: Object> IAllSystemAppletProxiesService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(201)
+		let req : Request<_, [_; 1], [_; 1], [_; 0]> = Request::new(201)
 			.args(unk0)
 			.send_pid()
 			.copy_handle(unk2)
@@ -105,7 +111,7 @@ impl<T: Object> IAllSystemAppletProxiesService<T> {
 	pub fn open_overlay_applet_proxy(&self, unk0: u64, unk2: &KObject) -> Result<::nn::am::service::IOverlayAppletProxy<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(300)
+		let req : Request<_, [_; 0], [_; 1], [_; 0]> = Request::new(300)
 			.args(unk0)
 			.send_pid()
 			.copy_handle(unk2)
@@ -117,7 +123,7 @@ impl<T: Object> IAllSystemAppletProxiesService<T> {
 	pub fn open_system_application_proxy(&self, unk0: u64, unk2: &KObject) -> Result<::nn::am::service::IApplicationProxy<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(350)
+		let req : Request<_, [_; 0], [_; 1], [_; 0]> = Request::new(350)
 			.args(unk0)
 			.send_pid()
 			.copy_handle(unk2)
@@ -129,7 +135,7 @@ impl<T: Object> IAllSystemAppletProxiesService<T> {
 	pub fn create_self_library_applet_creator_for_develop(&self, unk0: u64) -> Result<::nn::am::service::ILibraryAppletCreator<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(400)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(400)
 			.args(unk0)
 			.send_pid()
 			;

@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> IApplicationCreator<T> {
 	pub fn create_application(&self, unk0: ::nn::ncm::ApplicationId) -> Result<::nn::am::service::IApplicationAccessor<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -44,7 +46,7 @@ impl<T: Object> IApplicationCreator<T> {
 	pub fn pop_launch_requested_application(&self, ) -> Result<::nn::am::service::IApplicationAccessor<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -54,7 +56,7 @@ impl<T: Object> IApplicationCreator<T> {
 	pub fn create_system_application(&self, unk0: ::nn::ncm::SystemApplicationId) -> Result<::nn::am::service::IApplicationAccessor<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -64,7 +66,7 @@ impl<T: Object> IApplicationCreator<T> {
 	pub fn pop_floating_application_for_development(&self, ) -> Result<::nn::am::service::IApplicationAccessor<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(100)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(100)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;

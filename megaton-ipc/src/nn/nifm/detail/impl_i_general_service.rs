@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -35,7 +37,7 @@ impl<T: Object> IGeneralService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x1a))
 			;
@@ -46,7 +48,7 @@ impl<T: Object> IGeneralService<T> {
 	pub fn create_scan_request(&self, ) -> Result<::nn::nifm::detail::IScanRequest<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -56,7 +58,7 @@ impl<T: Object> IGeneralService<T> {
 	pub fn create_request(&self, unk0: i32) -> Result<::nn::nifm::detail::IRequest<T>> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(4)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
 			.args(unk0)
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -67,7 +69,7 @@ impl<T: Object> IGeneralService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(5)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(5)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x1a))
 			;
@@ -79,7 +81,7 @@ impl<T: Object> IGeneralService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(6)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(6)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_mut_slice(unk2, 0xa))
 			;
@@ -91,7 +93,7 @@ impl<T: Object> IGeneralService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(7)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(7)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_mut_slice(unk2, 6))
 			;
@@ -103,7 +105,7 @@ impl<T: Object> IGeneralService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(8)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(8)
 			.args(unk0)
 			.descriptor(IPCBuffer::from_mut_ref(unk1, 0x1a))
 			;
@@ -115,7 +117,7 @@ impl<T: Object> IGeneralService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(9)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(9)
 			.args(())
 			.descriptor(IPCBuffer::from_ref(unk0, 0x19))
 			;
@@ -126,7 +128,7 @@ impl<T: Object> IGeneralService<T> {
 	pub fn remove_network_profile(&self, unk0: ::nn::util::Uuid) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -137,7 +139,7 @@ impl<T: Object> IGeneralService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(11)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(11)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_slice(unk1, 6))
 			;
@@ -148,7 +150,7 @@ impl<T: Object> IGeneralService<T> {
 	pub fn get_current_ip_address(&self, ) -> Result<::nn::nifm::IpV4Address> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(12)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)
 			.args(())
 			;
 		let res : Response<::nn::nifm::IpV4Address> = self.0.send(req)?;
@@ -159,7 +161,7 @@ impl<T: Object> IGeneralService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(13)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(13)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x1a))
 			;
@@ -171,7 +173,7 @@ impl<T: Object> IGeneralService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(14)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(14)
 			.args(())
 			.descriptor(IPCBuffer::from_ref(unk0, 0x19))
 			;
@@ -183,7 +185,7 @@ impl<T: Object> IGeneralService<T> {
 	pub fn set_wireless_communication_enabled(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(16)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(16)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -193,7 +195,7 @@ impl<T: Object> IGeneralService<T> {
 	pub fn is_wireless_communication_enabled(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(17)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(17)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -203,7 +205,7 @@ impl<T: Object> IGeneralService<T> {
 	pub fn get_internet_connection_status(&self, ) -> Result<::nn::nifm::detail::sf::InternetConnectionStatus> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(18)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(18)
 			.args(())
 			;
 		let res : Response<::nn::nifm::detail::sf::InternetConnectionStatus> = self.0.send(req)?;
@@ -213,7 +215,7 @@ impl<T: Object> IGeneralService<T> {
 	pub fn set_ethernet_communication_enabled(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(19)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(19)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -223,7 +225,7 @@ impl<T: Object> IGeneralService<T> {
 	pub fn is_ethernet_communication_enabled(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(20)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -234,7 +236,7 @@ impl<T: Object> IGeneralService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(21)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(21)
 			.args(())
 			.descriptor(IPCBuffer::from_ref(unk0, 0x19))
 			;
@@ -245,7 +247,7 @@ impl<T: Object> IGeneralService<T> {
 	pub fn is_any_foreground_request_accepted(&self, ) -> Result<bool> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(22)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(22)
 			.args(())
 			;
 		let res : Response<bool> = self.0.send(req)?;
@@ -255,7 +257,7 @@ impl<T: Object> IGeneralService<T> {
 	pub fn put_to_sleep(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(23)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(23)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -265,7 +267,7 @@ impl<T: Object> IGeneralService<T> {
 	pub fn wake_up(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(24)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(24)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -275,7 +277,7 @@ impl<T: Object> IGeneralService<T> {
 	pub fn get_ssid_list_version(&self, ) -> Result<::nn::nifm::SsidListVersion> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(25)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(25)
 			.args(())
 			;
 		let res : Response<::nn::nifm::SsidListVersion> = self.0.send(req)?;
@@ -286,7 +288,7 @@ impl<T: Object> IGeneralService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(26)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(26)
 			.args(())
 			.descriptor(IPCBuffer::from_ref(unk0, 0x19))
 			;
@@ -298,7 +300,7 @@ impl<T: Object> IGeneralService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(27)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(27)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x1a))
 			;
@@ -310,7 +312,7 @@ impl<T: Object> IGeneralService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(28)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(28)
 			.args(())
 			.descriptor(IPCBuffer::from_ref(unk0, 0x19))
 			;
@@ -321,7 +323,7 @@ impl<T: Object> IGeneralService<T> {
 	pub fn set_wireless_communication_enabled_for_test(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(29)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(29)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -331,7 +333,7 @@ impl<T: Object> IGeneralService<T> {
 	pub fn set_ethernet_communication_enabled_for_test(&self, unk0: bool) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(30)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -341,7 +343,7 @@ impl<T: Object> IGeneralService<T> {
 	pub fn get_telemetory_system_event_readable_handle(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(31)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(31)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -352,7 +354,7 @@ impl<T: Object> IGeneralService<T> {
 		use megaton_hammer::ipc::IPCBuffer;
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(32)
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(32)
 			.args(())
 			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x16))
 			;
@@ -363,7 +365,7 @@ impl<T: Object> IGeneralService<T> {
 	pub fn confirm_system_availability(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(33)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(33)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;

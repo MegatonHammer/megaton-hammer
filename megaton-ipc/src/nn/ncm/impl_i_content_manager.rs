@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 use alloc::arc::Arc;
@@ -8,6 +10,16 @@ use alloc::arc::Arc;
 pub struct IContentManager<T>(T);
 
 impl IContentManager<Session> {
+	pub fn raw_new() -> Result<IContentManager<Session>> {
+		use nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::raw_new()?;
+
+		let session = sm.get_service(*b"ncm\0\0\0\0\0")?;
+		let object : Self = Session::from(session).into();
+		Ok(object)
+	}
+
 	pub fn new() -> Result<Arc<IContentManager<Session>>> {
 		use alloc::arc::Weak;
 		use spin::Mutex;
@@ -19,10 +31,6 @@ impl IContentManager<Session> {
 			return Ok(hnd)
 		}
 
-		use nn::sm::detail::IUserInterface;
-
-		let sm = IUserInterface::new()?;
-
 		if let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b"ncm\0\0\0\0\0") {
 			let ret = Arc::new(IContentManager(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
@@ -30,12 +38,10 @@ impl IContentManager<Session> {
 			return Ok(ret);
 		}
 
-		let r = sm.get_service(*b"ncm\0\0\0\0\0").map(|s: KObject| Arc::new(Session::from(s).into()));
-		if let Ok(service) = r {
-			*HANDLE.lock() = Arc::downgrade(&service);
-			return Ok(service);
-		}
-		r
+		let hnd = Self::raw_new()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
 	}
 
 	pub fn to_domain(self) -> ::core::result::Result<IContentManager<Domain>, (Self, Error)> {
@@ -65,7 +71,7 @@ impl<T: Object> IContentManager<T> {
 	pub fn create_placeholder_and_registered_directories_for_media_id(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -75,7 +81,7 @@ impl<T: Object> IContentManager<T> {
 	pub fn create_save_data_directory_for_media_id(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -85,7 +91,7 @@ impl<T: Object> IContentManager<T> {
 	pub fn get_exists_placeholder_and_registered_directories_for_media_id(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -95,7 +101,7 @@ impl<T: Object> IContentManager<T> {
 	pub fn get_exists_save_data_directory_for_media_id(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(3)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -108,7 +114,7 @@ impl<T: Object> IContentManager<T> {
 	pub fn close_content_storage_forcibly(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(6)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -119,7 +125,7 @@ impl<T: Object> IContentManager<T> {
 	pub fn close_content_meta_database_forcibly(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(7)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(7)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -129,7 +135,7 @@ impl<T: Object> IContentManager<T> {
 	pub fn delete_save_data_for_media_id(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(8)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(8)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -140,7 +146,7 @@ impl<T: Object> IContentManager<T> {
 	pub fn open_i_content_storage(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(9)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(9)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -151,7 +157,7 @@ impl<T: Object> IContentManager<T> {
 	pub fn close_i_content_storage(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(10)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -162,7 +168,7 @@ impl<T: Object> IContentManager<T> {
 	pub fn open_i_content_meta_database(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(11)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -173,7 +179,7 @@ impl<T: Object> IContentManager<T> {
 	pub fn close_i_content_meta_database(&self, unk0: u8) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(12)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)
 			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;

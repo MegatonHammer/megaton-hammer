@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> IServer<T> {
 	pub fn get_uid(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -44,7 +46,7 @@ impl<T: Object> IServer<T> {
 	pub fn get_server_profile(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -54,7 +56,7 @@ impl<T: Object> IServer<T> {
 	pub fn prepare_async(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(100)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(100)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -64,7 +66,7 @@ impl<T: Object> IServer<T> {
 	pub fn get_connection_requirement(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(101)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(101)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -74,7 +76,7 @@ impl<T: Object> IServer<T> {
 	pub fn wait_connection_async(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(200)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(200)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -84,7 +86,7 @@ impl<T: Object> IServer<T> {
 	pub fn get_client_profile(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(201)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(201)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -94,7 +96,7 @@ impl<T: Object> IServer<T> {
 	pub fn accept_connection_async(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(202)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(202)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -104,7 +106,7 @@ impl<T: Object> IServer<T> {
 	pub fn decline_connection_async(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(203)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(203)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -114,7 +116,7 @@ impl<T: Object> IServer<T> {
 	pub fn process_transfer_async(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(300)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(300)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -124,7 +126,7 @@ impl<T: Object> IServer<T> {
 	pub fn complete_async(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(400)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(400)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -134,7 +136,7 @@ impl<T: Object> IServer<T> {
 	pub fn abort(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(500)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(500)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;

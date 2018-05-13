@@ -1,5 +1,7 @@
 
-use megaton_hammer::kernel::{KObject, Session, Domain, Object};
+use megaton_hammer::kernel::{Session, Domain, Object};
+#[allow(unused_imports)]
+use megaton_hammer::kernel::KObject;
 use megaton_hammer::error::*;
 use core::ops::{Deref, DerefMut};
 
@@ -34,7 +36,7 @@ impl<T: Object> IFinalOutputRecorder<T> {
 	pub fn get_final_output_recorder_state(&self, ) -> Result<u32> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(0)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
 			;
 		let res : Response<u32> = self.0.send(req)?;
@@ -44,7 +46,7 @@ impl<T: Object> IFinalOutputRecorder<T> {
 	pub fn start_final_output_recorder(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(1)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -54,7 +56,7 @@ impl<T: Object> IFinalOutputRecorder<T> {
 	pub fn stop_final_output_recorder(&self, ) -> Result<()> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(2)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
@@ -65,7 +67,7 @@ impl<T: Object> IFinalOutputRecorder<T> {
 	pub fn register_buffer_event(&self, ) -> Result<KObject> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(4)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
 			.args(())
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -76,7 +78,7 @@ impl<T: Object> IFinalOutputRecorder<T> {
 	pub fn contains_final_output_recorder_buffer(&self, unk0: u64) -> Result<u8> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(6)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
 			.args(unk0)
 			;
 		let res : Response<u8> = self.0.send(req)?;
@@ -86,7 +88,7 @@ impl<T: Object> IFinalOutputRecorder<T> {
 	pub fn unknown7(&self, unk0: u64) -> Result<u64> {
 		use megaton_hammer::ipc::{Request, Response};
 
-		let req = Request::new(7)
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(7)
 			.args(unk0)
 			;
 		let res : Response<u64> = self.0.send(req)?;
