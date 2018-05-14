@@ -16,14 +16,13 @@
 #[doc(hidden)]
 pub mod crt0;
 
-extern crate core_io as io;
-
 use arrayvec::ArrayVec;
 use spin::Mutex;
 use core::ptr::Unique;
 use core::mem::ManuallyDrop;
 use kernel::{FromKObject, Session, KObject};
 use bit_field::BitField;
+use utils::CursorWrite;
 
 #[doc(hidden)]
 pub struct LoaderConfig {
@@ -31,7 +30,7 @@ pub struct LoaderConfig {
     heap_strategy: Mutex<Option<HeapStrategy>>,
     override_services: ArrayVec<[(u64, u32); 32]>,
     stdio_sockets: Option<(u32, u32, u32, SocketKind)>,
-    log: Option<Mutex<io::Cursor<&'static mut [u8]>>>,
+    log: Option<Mutex<CursorWrite<'static>>>,
     exit: extern fn(u64) -> !
 }
 
@@ -108,7 +107,6 @@ lazy_static! {
 impl Logger {
     pub fn write(&self, data: &[u8]) {
         use kernel::svc;
-        use loader::io::Write;
 
         {
             let mut svc_log_space = SVC_LOG_SPACE.lock();
@@ -224,7 +222,7 @@ pub unsafe fn init_loader(entry: *mut LoaderConfigEntry, exit: extern fn(u64) ->
         match entry.tag {
             LoaderConfigTag::END_OF_LIST => break,
             LoaderConfigTag::LOG => {
-                config.log = Some(Mutex::new(io::Cursor::new(slice::from_raw_parts_mut((*entry).data.0 as _, (*entry).data.1 as _))));
+                config.log = Some(Mutex::new(CursorWrite::new(slice::from_raw_parts_mut((*entry).data.0 as _, (*entry).data.1 as _))));
             },
             LoaderConfigTag::STDIO_SOCKET => {
                 let stdin = (*entry).data.0.get_bits(0..32);

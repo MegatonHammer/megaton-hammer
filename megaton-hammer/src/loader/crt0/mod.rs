@@ -7,10 +7,7 @@
 //! Note that this module is only required if you wish to not use libstd (which
 //! naturally includes its own runtime).
 
-extern crate core_io as io;
-use core;
-
-use core::intrinsics;
+use core::{self, intrinsics};
 use loader::LoaderConfigEntry;
 
 #[naked]
