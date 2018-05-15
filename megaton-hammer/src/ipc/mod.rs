@@ -401,9 +401,9 @@ impl HipcBufferType {
              else { panic!("Invalid buffer type {}", ty); };
 
             match (direction, family) {
-                (Direction::In, Family::AB) => HipcBufferType::X,
-                (Direction::Out, Family::AB) => HipcBufferType::A,
-                (Direction::In, Family::XC) => HipcBufferType::B,
+                (Direction::In, Family::AB) => HipcBufferType::A,
+                (Direction::Out, Family::AB) => HipcBufferType::B,
+                (Direction::In, Family::XC) => HipcBufferType::X,
                 (Direction::Out, Family::XC) => HipcBufferType::C /* TODO: Is that right ? */
             }
         } else if ty == 0x21 {
@@ -563,7 +563,7 @@ where
         // A descriptors
         for buf in self.buffers.iter() {
             let buf = match HipcBufferType::from_type(buf.ty) {
-                HipcBufferType::B | HipcBufferType::BC => buf,
+                HipcBufferType::A | HipcBufferType::AX => buf,
                 _ => continue
             };
 
