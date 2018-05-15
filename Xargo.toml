@@ -5,6 +5,7 @@ path = "../rust/src/libcore"
 [dependencies.compiler_builtins]
 stage = 1
 path = "../rust/src/libcompiler_builtins"
+features = ["mem"]
 
 [dependencies.std_unicode]
 stage = 2
