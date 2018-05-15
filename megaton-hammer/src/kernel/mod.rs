@@ -44,18 +44,24 @@ pub struct TransferMemory(KObject);
 impl TransferMemory {
     /// Allocates memory properly for transfer memory.
     pub fn new(size: usize) -> Result<TransferMemory> {
-        use alloc::heap::{Alloc, Heap, Layout};
+        use alloc::alloc::{Alloc, Global, Layout};
         use core::mem;
 
         // TODO: Use alloc_pages if present, default to normal allocator.
-        let mem : *mut u8 = unsafe { Heap.alloc(Layout::from_size_align(size, 0x20000).unwrap()).unwrap() };
-        // TODO: Allow passing some permission bits.
-        let (res, out) = unsafe { svc::create_transfer_memory(mem as _, size as u64, 0) };
+        let mem = unsafe { Global.alloc(Layout::from_size_align(size, 0x20000).unwrap()).unwrap() };
 
         // Leak the memory. We'll never be able to use it again.
         // TODO: *maybe* there's some kind of event I could listen to or
         // something, that would allow reclaiming the lost memory?
-        mem::forget(mem);
+
+        unsafe {
+            Self::new_ptr_size(mem.cast().as_ptr(), size)
+        }
+    }
+
+    pub unsafe fn new_ptr_size(mem: *mut u8, size: usize) -> Result<TransferMemory> {
+        // TODO: Allow passing some permission bits.
+        let (res, out) = unsafe { svc::create_transfer_memory(mem as _, size as u64, 0) };
         if res != 0 {
             return Err(Error(res));
         }
