@@ -6,12 +6,14 @@ extern crate megaton_hammer;
 extern crate bit_field;
 extern crate spin;
 
-use alloc::allocator::{Alloc, Layout, AllocErr};
+
+use core::alloc::{Alloc, GlobalAlloc, Opaque, Layout, AllocErr};
 use megaton_hammer::loader::{self, HeapStrategy};
 use bit_field::BitField;
 use spin::Once;
 use core::fmt::{Debug, Formatter, Error};
 use core::sync::atomic::{AtomicUsize, Ordering};
+use core::ptr::NonNull;
 
 #[derive(Clone, Copy, PartialEq, PartialOrd)]
 #[repr(transparent)]
@@ -202,7 +204,7 @@ impl Allocator {
 }
 
 unsafe impl<'a> Alloc for &'a Allocator {
-    unsafe fn alloc(&mut self, layout: Layout) -> Result<*mut u8, AllocErr> {
+    unsafe fn alloc(&mut self, layout: Layout) -> Result<NonNull<Opaque>, AllocErr> {
         use core::fmt::Write;
         writeln!(&mut ::loader::Logger, "Allocating {:?}", layout);
         let strategy = self.strategy.call_once(|| loader::acquire_heap_strategy().unwrap());
@@ -232,15 +234,15 @@ unsafe impl<'a> Alloc for &'a Allocator {
 
                 if layout.size() + layout.padding_needed_for(8) <= block.get_size() as usize {
                     block.set_free(false);
-                    //writeln!(&mut ::loader::Logger, "Returning {:p}", block.get_content_ptr());
-                    return Ok(block.get_content_ptr());
+                    //writeln!(logger, "Returning {:p}", block.get_content_ptr());
+                    return Ok(NonNull::new_unchecked(block.get_content_ptr()).as_opaque());
                 }
             }
         }
 
         // No block found. Extend last block.
         match strategy {
-            &HeapStrategy::OverrideHeap(_) => Err(AllocErr::Exhausted { request: layout }),
+            &HeapStrategy::OverrideHeap(_) => Err(AllocErr),
             &HeapStrategy::SetHeapSize => {
                 writeln!(&mut ::loader::Logger, "Expanding heap");
                 // Try to allocate more memory. First: figure out how much we need.
@@ -282,12 +284,12 @@ unsafe impl<'a> Alloc for &'a Allocator {
                 }
 
                 last_block.set_free(false);
-                //writeln!(&mut ::loader::Logger, "Returning {:p}", last_block.get_content_ptr());
-                return Ok(last_block.get_content_ptr());
+                //writeln!(logger, "Returning {:p}", last_block.get_content_ptr());
+                return Ok(NonNull::new_unchecked(last_block.get_content_ptr()).as_opaque());
             }
         }
     }
-    unsafe fn dealloc(&mut self, ptr: *mut u8, layout: Layout) {
+    unsafe fn dealloc(&mut self, ptr: NonNull<Opaque>, layout: Layout) {
         //use core::fmt::Write;
         //writeln!(&mut ::loader::Logger, "Deallocating {:p} {:?}", ptr, layout);
         // TODO: Handle big alignments
@@ -295,8 +297,8 @@ unsafe impl<'a> Alloc for &'a Allocator {
 
         let base = self.get_base();
 
-        let mut start : *mut BlockHdr = ptr.offset(-8) as *mut BlockHdr;
-        let mut end : *mut BlockHdr = ptr.offset((*start).get_size() as isize) as *mut BlockHdr;
+        let mut start : *mut BlockHdr = ptr.cast::<u8>().as_ptr().offset(-8) as *mut BlockHdr;
+        let mut end : *mut BlockHdr = ptr.cast::<u8>().as_ptr().offset((*start).get_size() as isize) as *mut BlockHdr;
 
         if start as usize > base {
             let previous_end : *mut BlockHdr = start.offset(-1) as *mut BlockHdr;
@@ -335,11 +337,13 @@ impl Allocator {
     }
 }
 
-unsafe impl Alloc for Allocator {
-    unsafe fn alloc(&mut self, layout: Layout) -> Result<*mut u8, AllocErr> {
-        (&*self).alloc(layout)
+unsafe impl GlobalAlloc for Allocator {
+    unsafe fn alloc(&self, layout: Layout) -> *mut Opaque {
+        let mut x = self;
+        <&Allocator as Alloc>::alloc(&mut x, layout).ok().map_or(0 as *mut Opaque, |allocation| allocation.as_ptr())
     }
-    unsafe fn dealloc(&mut self, ptr: *mut u8, layout: Layout) {
-        (&*self).dealloc(ptr, layout)
+    unsafe fn dealloc(&self, ptr: *mut Opaque, layout: Layout) {
+        let mut x = self;
+        <&Allocator as Alloc>::dealloc(&mut x, NonNull::new_unchecked(ptr), layout)
     }
 }
