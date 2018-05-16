@@ -266,9 +266,9 @@ impl<'a> IPCBuffer<'a> {
             else { panic!("Invalid buffer type {}", self.ty); };
 
             match (direction, family) {
-                (Direction::In, Family::AB) => HipcBufferType::X,
-                (Direction::Out, Family::AB) => HipcBufferType::A,
-                (Direction::In, Family::XC) => HipcBufferType::B,
+                (Direction::In, Family::AB) => HipcBufferType::A,
+                (Direction::Out, Family::AB) => HipcBufferType::B,
+                (Direction::In, Family::XC) => HipcBufferType::X,
                 (Direction::Out, Family::XC) => HipcBufferType::C /* TODO: Is that right ? */
             }
         } else if self.ty == 0x21 {
