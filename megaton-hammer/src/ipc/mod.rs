@@ -163,18 +163,12 @@ pub enum MessageType {
     Unknown(u16)
 }
 
-//pub enum IPCBufferType {
-//    A { flags: u8 }, B { flags: u8 }, X { counter: u16 }, C { has_u16_size: bool }
-//}
-//
-// #[derive(Debug, Clone, Copy)]
-// enum KernelBufferType { X, A, B, C }
 #[derive(Debug, Clone, Copy)]
-enum HipcBufferType {
-    X, A, B, C,
-    AX,
-    BC
+pub enum IPCBufferType {
+   A { flags: u8 }, B { flags: u8 }, X /* { counter: u16 } */, C { has_u16_size: bool },
+   AX, BC { unk_val: bool } // TODO: what other data, if any, should we return with these?
 }
+
 #[derive(Debug, Clone)]
 pub struct IPCBuffer<'a> {
     // Address to the value
@@ -253,30 +247,44 @@ impl<'a> IPCBuffer<'a> {
         }
     }
 
-    fn buftype(&self) -> HipcBufferType {
+    // Based on http://switchbrew.org/index.php?title=IPC_Marshalling#Official_marshalling_code
+    fn buftype(&self) -> IPCBufferType {
         enum Direction { In, Out }
         enum Family { AB, XC }
-        if self.ty & 0x20 == 0 {
-            let direction = if self.ty & 0b0001 != 0 { Direction::In }
-            else if self.ty & 0b0010 != 0 { Direction::Out }
-            else { panic!("Invalid buffer type {}", self.ty); };
+        let direction = match self.ty & 0b11 {
+            0b01 => Direction::In,
+            0b10 => Direction::Out,
+            _ => panic!("Invalid buffer type {}", self.ty)
+        };
 
-            let family = if self.ty & 0b0100 != 0 { Family::AB }
-            else if self.ty & 0b1000 != 0 { Family::XC }
-            else { panic!("Invalid buffer type {}", self.ty); };
+        // TODO: should we check this only when we actually need it?
+        let flags = match (self.ty >> 6) & 0b11 {
+            0b00 => 0,
+            0b01 => 1,
+            0b10 => 3,
+            0b11 => panic!("Invalid buffer type {}", self.ty) /* TODO: Is this really invalid? */
+        };
+
+        // if self.ty & !0xFF != 0 { panic!("Invalid buffer type {}", self.ty) }
+
+        if self.ty & 0x20 == 0 {
+            let family = match (self.ty >> 2) & 0b11 {
+                0b01 => Family::AB,
+                0b10 => Family::XC,
+                _ => panic!("Invalid buffer type {}", self.ty)
+            };
 
             match (direction, family) {
-                (Direction::In, Family::AB) => HipcBufferType::A,
-                (Direction::Out, Family::AB) => HipcBufferType::B,
-                (Direction::In, Family::XC) => HipcBufferType::X,
-                (Direction::Out, Family::XC) => HipcBufferType::C /* TODO: Is that right ? */
+                (Direction::In, Family::AB) => IPCBufferType::A { flags },
+                (Direction::Out, Family::AB) => IPCBufferType::B { flags },
+                (Direction::In, Family::XC) => IPCBufferType::X,
+                (Direction::Out, Family::XC) => IPCBufferType::C { has_u16_size: self.ty & 0x10 == 0 } /* TODO: Is that right ? */
             }
-        } else if self.ty == 0x21 {
-            HipcBufferType::AX
-        } else if self.ty == 0x22 {
-            HipcBufferType::BC
         } else {
-            panic!("Invalid descriptor type: {}", self.ty);
+            match direction {
+                Direction::In => IPCBufferType::AX,
+                Direction::Out => IPCBufferType::BC { unk_val: self.ty & 0x40 != 0 },
+            }
         }
     }
 }
@@ -357,17 +365,7 @@ where
     }
 
     pub fn descriptor(mut self, buf: IPCBuffer<'a>) -> Self {
-        // TODO: Move type validation to IPCBuffer, where it belongs.
-        if buf.ty & 0x20 == 0 {
-            if buf.ty & 0b0011 == 0 { panic!("Invalid buffer type {}", buf.ty); }
-            if buf.ty & 0b1100 == 0 { panic!("Invalid buffer type {}", buf.ty); }
-        } else if buf.ty == 0x21 {
-
-        } else if buf.ty == 0x22 {
-
-        } else {
-            panic!("Invalid descriptor type: {}", buf.ty);
-        }
+        buf.buftype(); // ignore result, validates the type though!
         self.buffers.push(buf);
         self
     }
@@ -430,15 +428,15 @@ where
         let mut descriptor_counts = (/* X */0, /* A */0, /* B */0, /* C */0);
         for bufty in self.buffers.iter().map(|b| b.buftype()) {
             match bufty {
-                HipcBufferType::X => descriptor_counts.0 += 1,
-                HipcBufferType::A => descriptor_counts.1 += 1,
-                HipcBufferType::B => descriptor_counts.2 += 1,
-                HipcBufferType::C => descriptor_counts.3 += 1,
-                HipcBufferType::AX => {
+                IPCBufferType::X => descriptor_counts.0 += 1,
+                IPCBufferType::A {flags: _} => descriptor_counts.1 += 1,
+                IPCBufferType::B {flags: _} => descriptor_counts.2 += 1,
+                IPCBufferType::C {has_u16_size: _} => descriptor_counts.3 += 1,
+                IPCBufferType::AX => {
                     descriptor_counts.0 += 1; // X
                     descriptor_counts.1 += 1; // A
                 },
-                HipcBufferType::BC => {
+                IPCBufferType::BC { unk_val: _ } => {
                     descriptor_counts.2 += 1; // B
                     descriptor_counts.3 += 1; // C
                 }
@@ -531,8 +529,8 @@ where
             for buf in self.buffers.iter() {
                 let null_buf = IPCBuffer::null();
                 let buf = match buf.buftype() {
-                    HipcBufferType::X => buf,
-                    HipcBufferType::AX => &null_buf,
+                    IPCBufferType::X => buf,
+                    IPCBufferType::AX => &null_buf,
                     _ => continue
                 };
 
@@ -550,8 +548,9 @@ where
 
         // A descriptors
         for buf in self.buffers.iter() {
-            let buf = match buf.buftype() {
-                HipcBufferType::A | HipcBufferType::AX => buf,
+            let (buf, flags) = match buf.buftype() {
+                IPCBufferType::A {flags} => (buf, flags),
+                IPCBufferType::AX => (buf, 0),
                 _ => continue
             };
 
@@ -562,7 +561,7 @@ where
             cursor.write_u32::<LE>((buf.size & 0xFFFFFFFF) as u32);
             cursor.write_u32::<LE>((buf.addr & 0xFFFFFFFF) as u32);
 
-            let num = buf.ty as usize >> 6 // flags
+            let num = flags as usize
                 | ((buf.addr >> 36) & 0b111) << 2
                 | ((buf.size >> 32) & 0b1111) << 24
                 | ((buf.addr >> 32) & 0b1111) << 28;
@@ -571,8 +570,9 @@ where
 
         // B descriptors
         for buf in self.buffers.iter() {
-            let buf = match buf.buftype() {
-                HipcBufferType::B | HipcBufferType::BC => buf,
+            let (buf, flags) = match buf.buftype() {
+                IPCBufferType::B {flags} => (buf, flags),
+                IPCBufferType::BC {unk_val: _} => (buf, 0),
                 _ => continue
             };
             assert!(buf.addr >> 39 == 0, "Invalid buffer address");
@@ -582,7 +582,7 @@ where
             cursor.write_u32::<LE>((buf.size & 0xFFFFFFFF) as u32);
             cursor.write_u32::<LE>((buf.addr & 0xFFFFFFFF) as u32);
 
-            let num = buf.ty as usize >> 6 // flags
+            let num = flags as usize
                 | ((buf.addr >> 36) & 0b111) << 2
                 | ((buf.size >> 32) & 0b1111) << 24
                 | ((buf.addr >> 32) & 0b1111) << 28;
@@ -636,19 +636,17 @@ where
         for buf in self.buffers.iter() {
             let nullbuf = IPCBuffer::null();
             let buf = match buf.buftype() {
-                HipcBufferType::C => buf,
-                HipcBufferType::BC => &nullbuf,
+                IPCBufferType::C { has_u16_size: true } => buf,
+                IPCBufferType::BC { unk_val: _ } => &nullbuf,
                 _ => continue
             };
 
-            if buf.ty & 0x10 == 0 {
-                if buf.size >> 16 != 0 {
-                    panic!("Invalid buffer size {:x}", buf.size);
-                }
-
-                cursor.write_u16::<LE>((buf.size) as u16);
-                i += 1;
+            if buf.size >> 16 != 0 {
+                panic!("Invalid buffer size {:x}", buf.size);
             }
+
+            cursor.write_u16::<LE>((buf.size) as u16);
+            i += 1;
         }
 
         // Align to u32
@@ -659,8 +657,8 @@ where
         for buf in self.buffers.iter() {
             let nullbuf = IPCBuffer::null();
             let buf = match buf.buftype() {
-                HipcBufferType::C => buf,
-                HipcBufferType::BC => &nullbuf,
+                IPCBufferType::C { has_u16_size: _ } => buf,
+                IPCBufferType::BC { unk_val: _ } => &nullbuf,
                 _ => continue
             };
 
