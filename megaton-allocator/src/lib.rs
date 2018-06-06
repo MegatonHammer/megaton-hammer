@@ -21,10 +21,10 @@ impl Allocator {
         // TODO: does we really need to only acquire this once?
         // TODO: do we want to do something even if acquire_heap_strategy fails, such as default to SetHeapSize?
         let strategy = self.1.call_once(|| loader::acquire_heap_strategy().unwrap());
-        let heap = self.0.lock();
+        let mut heap = self.0.lock();
         match strategy {
             HeapStrategy::OverrideHeap(ptr) => if heap.bottom() == 0 {
-                unsafe { heap.init(ptr.as_ptr(), ptr.as_ref().len()) };
+                unsafe { heap.init(ptr.as_ptr() as *mut u8 as usize, ptr.as_ref().len()) };
             } else {
                 // TODO: Should this panic instead of do nothing?
             },
@@ -38,7 +38,7 @@ impl Allocator {
                 }
 
                 if heap.bottom() == 0 {
-                    unsafe { heap.init(ptr, total) };
+                    unsafe { heap.init(ptr as *mut u8 as usize, total) };
                 } else {
                     unsafe { heap.extend(by) };
                 }
