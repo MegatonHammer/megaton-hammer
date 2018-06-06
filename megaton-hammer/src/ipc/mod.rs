@@ -262,7 +262,8 @@ impl<'a> IPCBuffer<'a> {
             0b00 => 0,
             0b01 => 1,
             0b10 => 3,
-            0b11 => panic!("Invalid buffer type {}", self.ty) /* TODO: Is this really invalid? */
+            0b11 => panic!("Invalid buffer type {}", self.ty), /* TODO: Is this really invalid? */
+            _ => unreachable!()
         };
 
         // if self.ty & !0xFF != 0 { panic!("Invalid buffer type {}", self.ty) }
