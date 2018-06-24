@@ -6,7 +6,7 @@ extern crate megaton_hammer;
 extern crate spin;
 extern crate linked_list_allocator;
 
-use core::alloc::{GlobalAlloc, Layout, AllocErr, Opaque};
+use core::alloc::{GlobalAlloc, Layout, AllocErr};
 use megaton_hammer::loader::{self, HeapStrategy};
 use spin::{Mutex, Once};
 use core::ops::Deref;
@@ -61,7 +61,7 @@ impl Deref for Allocator {
 }
 
 unsafe impl<'a> GlobalAlloc for Allocator {
-    unsafe fn alloc(&self, layout: Layout) -> *mut Opaque {
+    unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
         let allocation = self.0.lock().allocate_first_fit(layout);
         let size = layout.size();
         // If the heap is exhausted, then extend and attempt the allocation another time.
@@ -71,10 +71,10 @@ unsafe impl<'a> GlobalAlloc for Allocator {
                 self.0.lock().allocate_first_fit(layout)
             }
             _ => allocation
-        }.ok().map_or(0 as *mut Opaque, |allocation| allocation.as_ptr())
+        }.ok().map_or(0 as *mut u8, |allocation| allocation.as_ptr())
     }
 
-    unsafe fn dealloc(&self, ptr: *mut Opaque, layout: Layout) {
+    unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
         self.0.lock().deallocate(NonNull::new(ptr).unwrap(), layout)
     }
 }
