@@ -30,7 +30,6 @@ impl Allocator {
             },
             HeapStrategy::SetHeapSize => {
                 let total = heap.size() + align_up(by, 0x200_000); // set_heap_size requires this allignment.
-                let mut heap = self.0.lock();
 
                 let (ret, ptr) = unsafe { megaton_hammer::kernel::svc::set_heap_size( total as u32) };
                 if ret != 0 {

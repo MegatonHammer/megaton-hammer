@@ -50,7 +50,9 @@ pub unsafe extern fn start(config: *mut LoaderConfigEntry, _thread_handle: u64, 
     asm!("
 	// clear .bss
 	adrp x5, __bss_start
+	add x5, x5, #:lo12:__bss_start
 	adrp x6, __bss_end
+	add x6, x6, #:lo12:__bss_end
 
 bssloop:
 	cmp x5, x6
