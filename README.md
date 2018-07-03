@@ -1,5 +1,7 @@
 # Megaton Hammer
 
+[![Discord](https://img.shields.io/discord/439418034130780182.svg)]( https://discord.gg/MZJbNZY)
+
 **This is still a work in progress. Do not expect something full-featured,
 stable or easy to use just yet. APIs will break in the blink of an eye.**
 
