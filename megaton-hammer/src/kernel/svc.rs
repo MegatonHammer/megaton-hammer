@@ -176,6 +176,7 @@ define_svcs! {
     send_sync_request("svc 0x21", ("{x0}"(session)), session: Session) -> Result;
 
     /// Output a debug string
+    #[inline(always)]
     output_debug_string("svc 0x27", ("{x0}"(s), "{x1}"(size)), s: *const u8, size: usize) -> Result;
 
     /// Get info about a handle.
