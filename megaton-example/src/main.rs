@@ -2,11 +2,11 @@
 #![feature(termination_trait)]
 
 extern crate megaton_hammer;
-extern crate megaton_ipc;
 extern crate byteorder;
 extern crate image;
 extern crate math;
 
+use megaton_hammer::ipcdefs as megaton_ipc;
 use byteorder::{ReadBytesExt, WriteBytesExt, LE, ByteOrder};
 use megaton_hammer::kernel::{TransferMemory, KObject, FromKObject, Event, svc};
 use megaton_ipc::{nn, nns};

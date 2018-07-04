@@ -5,7 +5,6 @@ authors = ["roblabla <unfiltered@roblab.la>"]
 
 [dependencies]
 megaton-hammer = { path = "../megaton-hammer"  }
-megaton-ipc = { path = "../megaton-ipc" }
 byteorder = "1.2.1"
 image = { version = "0.18.0", default-features = false, features = ["bmp"] }
 math = { git = "https://github.com/roblabla/math.rs" }
