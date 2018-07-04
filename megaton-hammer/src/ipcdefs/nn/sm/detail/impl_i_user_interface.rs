@@ -14,7 +14,7 @@ impl IUserInterface<Session> {
 		use ::kernel::svc;
 		use ::error::Error;
 
-		let (r, session) = unsafe { svc::connect_to_named_port("sm:".as_ptr()) };
+		let (r, session) = unsafe { svc::connect_to_named_port("sm:\0".as_ptr()) };
 		if r != 0 {
 			return Err(Error(r))
 		} else {

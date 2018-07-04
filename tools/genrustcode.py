@@ -361,7 +361,7 @@ def gen_raw_new_method(f, ifacename, servicename, has_initialize_output, initial
 		print("\t\tuse ::kernel::svc;", file=f)
 		print("\t\tuse ::error::Error;", file=f)
 		print("", file=f)
-		print("\t\tlet (r, session) = unsafe { svc::connect_to_named_port(\"sm:\".as_ptr()) };", file=f)
+		print("\t\tlet (r, session) = unsafe { svc::connect_to_named_port(\"sm:\\0\".as_ptr()) };", file=f)
 		print("\t\tif r != 0 {", file=f)
 		print("\t\t\treturn Err(Error(r))", file=f)
 		print("\t\t} else {", file=f)
