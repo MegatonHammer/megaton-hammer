@@ -27,6 +27,8 @@ extern crate byteorder;
 extern crate failure;
 #[macro_use]
 extern crate lazy_static;
+#[macro_use]
+extern crate log;
 
 //#[macro_use]
 //extern crate failure_derive;
@@ -45,6 +47,7 @@ extern crate arrayvec;
 pub mod ipc;
 pub mod tls;
 pub mod kernel;
+mod log_impl;
 
 mod utils;
 
