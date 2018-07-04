@@ -33,7 +33,10 @@ BUILTINS = {
 	"u64": { "len": 8, "rtype": "u64" },
 	"i64": { "len": 8, "rtype": "i64" },
 	"u128": { "len": 16, "rtype": "u128" }, # DERP
+        "uint8_t": { "len": 1, "rtype": "u8" },
 }
+
+kobject_types = ["KObject", "KHandle"]
 
 def camelToSnake(s):
 	""" 
@@ -92,14 +95,14 @@ def getType(output, ty):
 		it = ty[1][0]
 		underlying_type = "T" if output else "Session"
 		if it in ifaces:
-			ret = '::' + it + "<" + underlying_type + ">"
+			ret = '::ipcdefs::' + it + "<" + underlying_type + ">"
 		else:
 			ret = underlying_type
 		if output:
 			return ret
 		else:
 			return "&" + ret
-	elif ty[0] == 'KObject':
+	elif ty[0] in kobject_types:
 		if output:
 			return "KObject"
 		else:
@@ -114,7 +117,7 @@ def getType(output, ty):
 		# TODO: maybe I need it in some situations ?
 		raise Exception("pid is not a valid type")
 	elif ty[0] in types:
-		return "::".join([""] + ty[0].split("::")[:-1] + [to_camel_case(ty[0].split("::")[-1])])
+		return "::ipcdefs" + "::".join([""] + ty[0].split("::")[:-1] + [to_camel_case(ty[0].split("::")[-1])])
 	elif ty[0] in BUILTINS:
 		assert len(ty) == 1
 		return BUILTINS[ty[0]]['rtype']
@@ -208,7 +211,7 @@ def raw_input_type(ty):
 	# Handles (copy/move)
 	elif ty[0] == 'object':
 		return None
-	elif ty[0] == 'KObject':
+	elif ty[0] in kobject_types:
 		return None
 	elif ty[0] == 'pid':
 		return None
@@ -239,8 +242,8 @@ def gen_ipc_method(cmd, f):
 	output_buf = any(map(lambda (name, ty): ty[0] in ["buffer", "array"], cmd['outputs']))
 
 	if input_buf or output_buf:
-		print("\t\tuse megaton_hammer::ipc::IPCBuffer;", file=f)
-	print("\t\tuse megaton_hammer::ipc::{Request, Response};", file=f)
+		print("\t\tuse ::ipc::IPCBuffer;", file=f)
+	print("\t\tuse ::ipc::{Request, Response};", file=f)
 	print("", file=f)
 
 	# Get args type
@@ -250,7 +253,7 @@ def gen_ipc_method(cmd, f):
 	for (idx, (name, ty)) in enumerate(cmd['inputs']):
 		if raw_input_type(ty) is not None:
 			args_arr.append((name, getType(False, ty)))
-		elif ty[0] == "KObject":
+		elif ty[0] in kobject_types:
 			objects_arr.append(name)
 		elif ty[0] == "object":
 			objects_arr.append(name + ".as_ref()")
@@ -307,7 +310,7 @@ def gen_ipc_method(cmd, f):
 
 	args_arr = []
 	for (idx, (name, ty)) in enumerate(cmd['outputs']):
-		if ty[0] in ['buffer', 'object', 'KObject', 'pid', 'array']:
+		if ty[0] in ['buffer', 'object', 'pid', 'array'] + kobject_types:
 			continue
 		args_arr.append((idx, name, getType(True, ty)))
 	if len(args_arr) == 1:
@@ -334,14 +337,14 @@ def gen_ipc_method(cmd, f):
 			args_arr.append("res.get_raw().%s.clone()" % name)
 		elif ty[0] == "object":
 			args_arr.append("T::from_res(&mut res).into()")
-		elif ty[0] == "KObject":
+		elif ty[0] in kobject_types:
 			args_arr.append("res.pop_handle()")
 		elif ty[0] == "buffer" or ty[0] == "array":
 			pass
 		else:
 			raise UnsupportedStructException(ty[0])
 
-	is_mut = any(map(lambda (name, ty): ty[0] in ["object", "KObject"], cmd['outputs']))
+	is_mut = any(map(lambda (name, ty): ty[0] in ["object"] + kobject_types, cmd['outputs']))
 	is_used = len(list(filter(lambda (name, ty): ty[0] not in ["buffer", "array"], cmd['outputs']))) != 0
 
 	print("\t\tlet %sres : Response<%s> = self.0.send(req)?;" % ("mut " if is_mut else "_" if not is_used else "", response_args), file=f)
@@ -355,8 +358,8 @@ def gen_raw_new_method(f, ifacename, servicename, has_initialize_output, initial
 	s_name = s + ("\\0" * (8 - len(s)))
 	if name == "nn::sm::detail::IUserInterface":
 		# TODO: Call Initialize
-		print("\t\tuse megaton_hammer::kernel::svc;", file=f)
-		print("\t\tuse megaton_hammer::error::Error;", file=f)
+		print("\t\tuse ::kernel::svc;", file=f)
+		print("\t\tuse ::error::Error;", file=f)
 		print("", file=f)
 		print("\t\tlet (r, session) = unsafe { svc::connect_to_named_port(\"sm:\".as_ptr()) };", file=f)
 		print("\t\tif r != 0 {", file=f)
@@ -367,7 +370,7 @@ def gen_raw_new_method(f, ifacename, servicename, has_initialize_output, initial
 		print("\t\t}", file=f)
 	else:
                 # TODO: Always creating a connection to sm kinda sucks...
-		print("\t\tuse nn::sm::detail::IUserInterface;", file=f)
+		print("\t\tuse ::ipcdefs::nn::sm::detail::IUserInterface;", file=f)
 		print("", file=f)
 		print("\t\tlet sm = IUserInterface::raw_new()?;", file=f)
 		print("", file=f)
@@ -394,7 +397,7 @@ def gen_new_method(f, ifacename, servicename, raw_new_name, has_initialize_outpu
 	print("\t\t\treturn Ok(hnd)", file=f)
 	print("\t\t}", file=f)
 	print("", file=f)
-	print("\t\tif let Some(hnd) = ::megaton_hammer::loader::get_override_service(*b\"%s\") {" % s_name, file=f)
+	print("\t\tif let Some(hnd) = ::loader::get_override_service(*b\"%s\") {" % s_name, file=f)
 	print("\t\t\tlet ret = Arc::new(%s(ManuallyDrop::into_inner(hnd)));" % ifacename, file=f)
 	print("\t\t\t::core::mem::forget(ret.clone());", file=f)
 	print("\t\t\t*HANDLE.lock() = Arc::downgrade(&ret);", file=f)
@@ -412,27 +415,27 @@ def gen_new_method(f, ifacename, servicename, raw_new_name, has_initialize_outpu
 levels = dict()
 
 parser = argparse.ArgumentParser(description='Generate the NN rust crate source')
-parser.add_argument('path', nargs='?', action='store', type=str, help='Path of the NN crate. Will create a folder src in it.', default=os.path.realpath('%s/../megaton-ipc' % os.path.dirname(os.path.realpath(__file__))))
+parser.add_argument('path', nargs='?', action='store', type=str, help='Path of the NN crate. Will create a folder src in it.', default=os.path.realpath('%s/../megaton-hammer/src/ipcdefs' % os.path.dirname(os.path.realpath(__file__))))
 prog_args = parser.parse_args()
 
-if os.path.exists(os.path.join(prog_args.path, "src")):
+if os.path.exists(os.path.join(prog_args.path)):
 	r = ""
 	while r != "Y" and r != "n":
-		r = input("Delete %s? (Y/n)" % os.path.join(prog_args.path, "src"))
+		r = input("Delete %s? (Y/n)" % os.path.join(prog_args.path))
 		if r == "Y":
 			import shutil
-			shutil.rmtree(os.path.join(prog_args.path, "src"), True)
+			shutil.rmtree(os.path.join(prog_args.path), True)
 
-mkdir_p(os.path.join(prog_args.path, "src"))
-with open(os.path.join(prog_args.path, "src", "lib.rs"), 'a') as f:
-	print("#![feature(alloc, i128_type)]", file=f)
-	print("#![no_std]", file=f)
-	print("extern crate megaton_hammer;", file=f)
-	print("extern crate spin;", file=f)
-	print("extern crate alloc;", file=f)
-	print("#[macro_use]", file=f)
-	print("extern crate lazy_static;", file=f)
-	print("", file=f)
+mkdir_p(os.path.join(prog_args.path))
+#with open(os.path.join(prog_args.path, "mod.rs"), 'a') as f:
+	#print("#![feature(alloc, i128_type)]", file=f)
+	#print("#![no_std]", file=f)
+	#print("extern crate megaton_hammer;", file=f)
+	#print("extern crate spin;", file=f)
+	#print("extern crate alloc;", file=f)
+	#print("#[macro_use]", file=f)
+	#print("extern crate lazy_static;", file=f)
+	#print("", file=f)
 
 try:
     from StringIO import StringIO
@@ -442,13 +445,13 @@ except ImportError:
 # Generate IPC
 for name, cmds in ifaces.items():
 	elmts = name.split("::")
-	mkdir_p(os.path.join(prog_args.path, "src", *elmts[:-1]))
+	mkdir_p(os.path.join(prog_args.path, *elmts[:-1]))
 	# Add a mod.rs at each level adding a mod.rs
 	for i in range(len(elmts)):
 		if levels.get(os.path.join(*elmts[:(i + 1)])) is None:
 			levels[os.path.join(*elmts[:(i + 1)])] = True
-			filename = elmts[:i] + ["mod.rs" if i > 0 else "lib.rs"]
-			with open(os.path.join(prog_args.path, "src", *filename), 'a') as f:
+			filename = elmts[:i] + ["mod.rs"]
+			with open(os.path.join(prog_args.path, *filename), 'a') as f:
 				if i != len(elmts) - 1:
 					print("pub mod %s;" % elmts[i], file=f)
 				else:
@@ -459,14 +462,14 @@ for name, cmds in ifaces.items():
 	filename = elmts[:-1] + ["impl_" + camelToSnake(elmts[-1]) + ".rs"]
 	ifacename = elmts[-1]
 	print(name)
-	with open(os.path.join(prog_args.path, "src", *filename), "w") as f:
+	with open(os.path.join(prog_args.path, *filename), "w") as f:
 		# Print module documentation
 		print("", file=f)
 		# Use statements
-		print("use megaton_hammer::kernel::{Session, Domain, Object};", file=f)
+		print("use ::kernel::{Session, Domain, Object};", file=f)
 		print("#[allow(unused_imports)]", file=f)
-		print("use megaton_hammer::kernel::KObject;", file=f)
-		print("use megaton_hammer::error::*;", file=f)
+		print("use ::kernel::KObject;", file=f)
+		print("use ::error::*;", file=f)
 		print("use core::ops::{Deref, DerefMut};", file=f)
 		if name in services:
 			print("use alloc::arc::Arc;", file=f)
@@ -589,21 +592,21 @@ for name, cmds in ifaces.items():
 # Generate structs
 for name, val in types.items():
 	elmts = name.split("::")
-	mkdir_p(os.path.join(prog_args.path, "src", *elmts[:-1]))
+	mkdir_p(os.path.join(prog_args.path, *elmts[:-1]))
 	# Add a mod.rs at each level adding a mod.rs
 	for i in range(len(elmts)):
 		if levels.get(os.path.join(*elmts[:(i + 1)])) is None:
 			levels[os.path.join(*elmts[:(i + 1)])] = True
-			filename = elmts[:i] + ["mod.rs" if i > 0 else "lib.rs"]
-			with open(os.path.join(prog_args.path, "src", *filename), 'a') as f:
+			filename = elmts[:i] + ["mod.rs"]
+			with open(os.path.join(prog_args.path, *filename), 'a') as f:
 				if i != len(elmts) - 1:
 					print("pub mod %s;" % elmts[i], file=f)
 
 	# Open the interface and generate the struct
-	filename = elmts[:-1] + ["mod.rs" if len(elmts) > 1 else "lib.rs"]
+	filename = elmts[:-1] + ["mod.rs"]
 	ifacename = elmts[-1]
 	print("    ", name)
-	with open(os.path.join(prog_args.path, "src", *filename), "a") as f:
+	with open(os.path.join(prog_args.path, *filename), "a") as f:
 		if val[0] == 'struct':
 			print("#[repr(C)]", file=f)
 			print("#[derive(Debug, Clone)]", file=f)

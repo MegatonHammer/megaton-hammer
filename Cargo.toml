@@ -1,2 +1,2 @@
 [workspace]
-members = ["megaton-hammer", "megaton-allocator", "megaton-ipc", "megaton-example"]
+members = ["megaton-hammer", "megaton-allocator", "megaton-example"]

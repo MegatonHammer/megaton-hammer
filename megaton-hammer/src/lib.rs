@@ -47,6 +47,7 @@ extern crate arrayvec;
 pub mod ipc;
 pub mod tls;
 pub mod kernel;
+pub mod ipcdefs;
 mod log_impl;
 
 mod utils;
