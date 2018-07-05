@@ -8,7 +8,7 @@ extern crate linked_list_allocator;
 
 use core::alloc::{GlobalAlloc, Layout, AllocErr};
 use megaton_hammer::loader::{self, HeapStrategy};
-use spin::{Mutex, Once};
+use spin::{Mutex, MutexGuard, Once};
 use core::ops::Deref;
 use core::ptr::NonNull;
 use linked_list_allocator::{Heap, align_up};
@@ -17,11 +17,10 @@ pub struct Allocator(Mutex<Heap>, Once<HeapStrategy>);
 
 impl Allocator {
     /// safely expands the heap if possible.
-    fn expand(&self, by: usize) {
+    fn expand(&self, by: usize, heap: &mut MutexGuard<Heap>) {
         // TODO: does we really need to only acquire this once?
         // TODO: do we want to do something even if acquire_heap_strategy fails, such as default to SetHeapSize?
         let strategy = self.1.call_once(|| loader::acquire_heap_strategy().unwrap());
-        let mut heap = self.0.lock();
         match strategy {
             HeapStrategy::OverrideHeap(ptr) => if heap.bottom() == 0 {
                 unsafe { heap.init(ptr.as_ptr() as *mut u8 as usize, ptr.as_ref().len()) };
@@ -37,7 +36,7 @@ impl Allocator {
                 }
 
                 if heap.bottom() == 0 {
-                    unsafe { heap.init(ptr as *mut u8 as usize, total) };
+                    unsafe { **heap = Heap::new(ptr as *mut u8 as usize, total) };
                 } else {
                     unsafe { heap.extend(by) };
                 }
@@ -61,13 +60,15 @@ impl Deref for Allocator {
 
 unsafe impl<'a> GlobalAlloc for Allocator {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-        let allocation = self.0.lock().allocate_first_fit(layout);
+        let mut heap = self.0.lock();
+        let allocation = heap.allocate_first_fit(layout);
         let size = layout.size();
         // If the heap is exhausted, then extend and attempt the allocation another time.
         match allocation {
             Err(AllocErr) => {
-                self.expand(size); // TODO: how much should I *really* expand by?
-                self.0.lock().allocate_first_fit(layout)
+                self.expand(size, &mut heap); // TODO: how much should I *really* expand by?
+                let alloc = heap.allocate_first_fit(layout);
+                alloc
             }
             _ => allocation
         }.ok().map_or(0 as *mut u8, |allocation| allocation.as_ptr())
