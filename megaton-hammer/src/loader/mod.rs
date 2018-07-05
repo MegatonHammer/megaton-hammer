@@ -107,6 +107,9 @@ lazy_static! {
 }
 
 impl Logger {
+    pub unsafe fn force_unlock(&self) {
+        SVC_LOG_SPACE.force_unlock();
+    }
     pub fn write(&self, data: &[u8]) {
         use kernel::svc;
 
