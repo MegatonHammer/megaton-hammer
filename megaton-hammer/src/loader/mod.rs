@@ -23,6 +23,7 @@ use core::mem::ManuallyDrop;
 use kernel::{FromKObject, Session, KObject};
 use bit_field::BitField;
 use utils::CursorWrite;
+use ipcdefs::twili::IPipe;
 
 #[doc(hidden)]
 pub struct LoaderConfig {
@@ -31,7 +32,8 @@ pub struct LoaderConfig {
     override_services: ArrayVec<[(u64, u32); 32]>,
     stdio_sockets: Option<(u32, u32, u32, SocketKind)>,
     log: Option<Mutex<CursorWrite<'static>>>,
-    exit: extern fn(u64) -> !
+    exit: extern fn(u64) -> !,
+    twili: Option<IPipe<::kernel::Session>>,
 }
 
 pub enum HeapStrategy{
@@ -127,6 +129,9 @@ impl Logger {
         if let Some(cursor) = LOADER.try().and_then(|ldr_cfg| (&ldr_cfg.log).as_ref()) {
             cursor.lock().write(data);
         }
+        if let Some(pipe) = LOADER.try().and_then(|ldr_cfg| (&ldr_cfg.twili).as_ref()) {
+            pipe.write(data);
+        }
     }
 }
 
@@ -182,6 +187,7 @@ impl LoaderConfigTag {
     pub const ALLOC_PAGES: u32 = 12;
     pub const LOCK_REGION: u32 = 13;
     pub const LOG: u32 = 51;
+    pub const TWILI_PRESENT: u32 = 52;
 }
 
 /// ⚠  FOR INTERNAL USE ONLY. YOU SHOULD NOT HAVE TO CALL THIS.
@@ -215,7 +221,8 @@ pub unsafe fn init_loader(entry: *mut LoaderConfigEntry, exit: extern fn(u64) ->
         override_services: ArrayVec::new(),
         log: None,
         stdio_sockets: None,
-        exit: exit
+        exit: exit,
+        twili: None,
     };
 
     for entry in LoaderConfigEntryIterator(entry, PhantomData) {
@@ -247,6 +254,17 @@ pub unsafe fn init_loader(entry: *mut LoaderConfigEntry, exit: extern fn(u64) ->
                 *config.heap_strategy.lock() = Some(HeapStrategy::OverrideHeap(Unique::new(slice::from_raw_parts_mut((*entry).data.0 as _, (*entry).data.1 as usize)).unwrap()))
             },
             LoaderConfigTag::APPLET_WORKAROUND => {},
+            LoaderConfigTag::TWILI_PRESENT => {
+                let twili = match ::ipcdefs::twili::ITwiliService::raw_new() {
+                    Ok(twili) => twili,
+                    Err(err) => continue, // TODO: log the error
+                };
+                let pipe = match twili.open_stdout() {
+                    Ok(pipe) => pipe,
+                    Err(err) => continue,
+                };
+                config.twili = Some(pipe)
+            },
             tag => {
                 if (*entry).flags & 1 == 1 {
                     // Flag is mandatory! If we don't know about it, we

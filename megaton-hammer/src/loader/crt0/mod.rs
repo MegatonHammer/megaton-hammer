@@ -111,7 +111,7 @@ unsafe extern fn megaton_start(config: *mut LoaderConfigEntry, _thread_handle: u
 
     // Initialize the main thread's context.
     use tls;
-    trace!(b"Initializing TLS struct");
+    trace!("Initializing TLS struct");
     tls::TlsStruct::init();
 
     extern {
@@ -120,7 +120,7 @@ unsafe extern fn megaton_start(config: *mut LoaderConfigEntry, _thread_handle: u
 
     // The arguments are in the config, but I'm a bit too lazy to try it right
     // now.
-    trace!(b"Calling main");
+    trace!("Calling main");
     let _ret = main(0, core::ptr::null());
 
     _ret

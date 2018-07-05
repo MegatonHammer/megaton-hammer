@@ -706,7 +706,8 @@ impl<T: Clone> Response<T> {
 
         // TODO: What about control messages ?
         // TODO: What about buffers ??
-        assert_eq!(hdr.get_ty(), 0);
+        // Twili sends 0 here, Nintendo send 4.
+        //assert_eq!(hdr.get_ty(), 4);
         if this.domain_obj.is_none() {
             assert_eq!(hdr.get_raw_section_size() as usize, (core::mem::size_of::<T>() + 8 + 8 + 0x10) / 4);
         }
