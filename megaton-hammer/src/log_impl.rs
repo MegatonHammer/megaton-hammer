@@ -21,6 +21,6 @@ static LOGGER: Once<Logger> = Once::new();
 pub fn init() {
     log::set_logger(LOGGER.call_once(|| Logger))
         .expect("log_impl::init to be called only once");
-    log::set_max_level(LevelFilter::Debug);
+    log::set_max_level(LevelFilter::Trace);
     info!("Logging enabled");
 }

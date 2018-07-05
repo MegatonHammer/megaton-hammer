@@ -99,6 +99,7 @@ unsafe extern fn megaton_start(config: *mut LoaderConfigEntry, _thread_handle: u
         return -(x as i32);
     }
 
+    #[cfg(feature = "earlydebug")]
     ::log_impl::init();
     trace!("Welcome to megaton-hammer");
 
