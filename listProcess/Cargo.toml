@@ -1,0 +1,7 @@
+[package]
+name = "listProcess"
+version = "0.1.0"
+authors = ["roblabla <unfiltered@roblab.la>"]
+
+[dependencies]
+megaton-hammer = { path = "../megaton-hammer"  }

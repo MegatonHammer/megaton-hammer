@@ -1,2 +1,2 @@
 [workspace]
-members = ["megaton-hammer", "megaton-allocator", "megaton-example"]
+members = ["megaton-hammer", "megaton-allocator", "megaton-example", "listProcess"]
