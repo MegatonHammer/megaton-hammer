@@ -127,6 +127,12 @@ impl TlsStruct {
         }
     }
 
+    /// Used by the panic handler.
+    pub unsafe fn reset_ipc_borrowed() {
+        let tls = get_tls_space();
+        (*tls).ipc_borrowed = false;
+    }
+
     pub fn get_thread_ctx() -> &'static mut ThreadCtx {
         unsafe {
             let tls = get_tls_space();
