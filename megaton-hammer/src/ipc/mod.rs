@@ -708,9 +708,6 @@ impl<T: Clone> Response<T> {
         // TODO: What about buffers ??
         // Twili sends 0 here, Nintendo send 4.
         //assert_eq!(hdr.get_ty(), 4);
-        if this.domain_obj.is_none() {
-            assert_eq!(hdr.get_raw_section_size() as usize, (core::mem::size_of::<T>() + 8 + 8 + 0x10) / 4);
-        }
 
         // First, read the handle descriptor
         if hdr.get_enable_handle_descriptor() {
@@ -777,11 +774,16 @@ impl<T: Clone> Response<T> {
         // Find SFCO
         cursor.assert(b"SFCO\0\0\0\0");
         this.error = cursor.read_u64::<LE>();
-        let raw = cursor.skip_read(core::mem::size_of::<T>());
-        let raw = unsafe {
-            (raw.as_ptr() as *const T).as_ref().unwrap()
-        };
-        this.ret = raw.clone();
+        if this.error == 0 {
+            if this.domain_obj.is_none() {
+                assert_eq!(hdr.get_raw_section_size() as usize, (core::mem::size_of::<T>() + 8 + 8 + 0x10) / 4);
+            }
+            let raw = cursor.skip_read(core::mem::size_of::<T>());
+            let raw = unsafe {
+                (raw.as_ptr() as *const T).as_ref().unwrap()
+            };
+            this.ret = raw.clone();
+        }
 
         if let Some(input_objects) = input_objects {
             for _ in 0..input_objects {
@@ -793,7 +795,11 @@ impl<T: Clone> Response<T> {
 
         // TODO: Read the end
 
-        Ok(this)
+        if this.error != 0{
+            Err(Error(this.error as u32))
+        } else {
+            Ok(this)
+        }
     }
 
     pub fn get_raw(&self) -> &T {
