@@ -207,7 +207,7 @@ define_svcs! {
     /// Thread      | 0xF0000002| 0                     | Performance counter related. 
     get_info("svc 0x29", ("={x0}"(0), "={x1}"(1)), ("{x1}"(info_id), "{x2}"(handle), "{x3}"(info_sub_id)), info_id: u64, handle: Handle, info_sub_id: u64) -> (Result, u64);
 
-    get_process_list("svc 0x65", ("={x0}"(0), "={x1}"(1)), ("{x1}"(pids_out_ptr), "{x2}"(pids_out_len)), pids_out_ptr: *mut u64, pids_out_len: usize) -> (Result, usize);
+    get_process_list("svc 0x65", ("={x0}"(0), "={w1}"(1)), ("{x1}"(pids_out_ptr), "{x2}"(pids_out_len)), pids_out_ptr: *mut u64, pids_out_len: usize) -> (Result, usize);
 }
 
 //
