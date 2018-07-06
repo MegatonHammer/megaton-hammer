@@ -27,3 +27,4 @@ version = "0.1.1"
 [features]
 crt0 = ["compiler_builtins"]
 std = []
+earlydebug = []
