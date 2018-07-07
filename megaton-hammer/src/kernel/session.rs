@@ -1,10 +1,9 @@
-use ipc::{Request, IRequest, Response, IPCBuffer};
+use ipc::{IRequest, Response};
 use kernel::svc::send_sync_request;
 use kernel::{KObject};
 use error::*;
 use tls::TlsStruct;
 use alloc::arc::Arc;
-use arrayvec::Array;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Object

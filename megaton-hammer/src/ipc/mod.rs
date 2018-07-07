@@ -27,58 +27,72 @@ use error::*;
 struct MsgPackedHdr(u64);
 
 impl MsgPackedHdr {
+    #[allow(dead_code)]
     pub fn get_ty(&self) -> u16 {
         self.0.get_bits(0..16) as u16
     }
 
+    #[allow(dead_code)]
     pub fn set_ty(&mut self, n: u16) {
         self.0 = *self.0.set_bits(0..16, n as u64)
     }
 
+    #[allow(dead_code)]
     pub fn get_num_x_descriptors(&self) -> u8 {
         self.0.get_bits(16..20) as u8
     }
 
+    #[allow(dead_code)]
     pub fn set_num_x_descriptors(&mut self, n: u8) {
         self.0 = *self.0.set_bits(16..20, n as u64)
     }
 
+    #[allow(dead_code)]
     pub fn get_num_a_descriptors(&self) -> u8 {
         self.0.get_bits(20..24) as u8
     }
 
+    #[allow(dead_code)]
     pub fn set_num_a_descriptors(&mut self, n: u8) {
         self.0 = *self.0.set_bits(20..24, n as u64)
     }
 
+    #[allow(dead_code)]
     pub fn get_num_b_descriptors(&self) -> u8 {
         self.0.get_bits(24..28) as u8
     }
 
+    #[allow(dead_code)]
     pub fn set_num_b_descriptors(&mut self, n: u8) {
         self.0 = *self.0.set_bits(24..28, n as u64)
     }
 
+    #[allow(dead_code)]
     pub fn get_num_w_descriptors(&self) -> u8 {
         self.0.get_bits(28..32) as u8
     }
 
+    #[allow(dead_code)]
     pub fn set_num_w_descriptors(&mut self, n: u8) {
         self.0 = *self.0.set_bits(28..32, n as u64)
     }
 
+    #[allow(dead_code)]
     pub fn get_raw_section_size(&self) -> u16 {
         self.0.get_bits(32..42) as u16
     }
 
+    #[allow(dead_code)]
     pub fn set_raw_section_size(&mut self, n: u16) {
         self.0 = *self.0.set_bits(32..42, n as u64)
     }
 
+    #[allow(dead_code)]
     pub fn get_c_descriptor_flags(&self) -> u8 {
         self.0.get_bits(42..46) as u8
     }
 
+    #[allow(dead_code)]
     pub fn set_c_descriptor_flags(&mut self, n: u8) {
         self.0 = *self.0.set_bits(42..46, n as u64)
     }
@@ -87,10 +101,12 @@ impl MsgPackedHdr {
     //    self.0.get_bits(52..63) as u16
     //}
 
+    #[allow(dead_code)]
     pub fn get_enable_handle_descriptor(&self) -> bool {
         self.0.get_bit(63)
     }
 
+    #[allow(dead_code)]
     pub fn set_enable_handle_descriptor(&mut self, n: bool) {
         self.0 = *self.0.set_bit(63, n)
     }
@@ -129,6 +145,7 @@ impl HandleDescriptorHeader {
 struct DomainMessageHeader(u32);
 
 impl DomainMessageHeader {
+    #[allow(dead_code)]
     pub fn get_command(&self) -> u8 {
         self.0.get_bits(0..8) as u8
     }
@@ -137,6 +154,7 @@ impl DomainMessageHeader {
         self.0 = *self.0.set_bits(0..8, n as u32);
     }
 
+    #[allow(dead_code)]
     pub fn get_input_object_count(&self) -> u8 {
         self.0.get_bits(8..16) as u8
     }
@@ -145,6 +163,7 @@ impl DomainMessageHeader {
         self.0 = *self.0.set_bits(8..16, n as u32);
     }
 
+    #[allow(dead_code)]
     pub fn get_data_len(&self) -> u16 {
         self.0.get_bits(16..32) as u16
     }
@@ -407,7 +426,7 @@ where
         let mut arr = [0; 0x100];
         other_self.pack(&mut arr, if is_domain { Some(0xff) } else { None });
 
-        hex_print(&arr[..], &mut ::loader::Logger);
+        hex_print(&arr[..], f);
         self
     }
 }
@@ -424,8 +443,6 @@ where
     // Write the data to an IPC buffer to be sent to the Switch OS.
     // TODO: If this is not sent, it can leak move handles!
     fn pack(self, data: &mut [u8], domain_id: Option<u32>) {
-        enum Family { AB, XC }
-
         let mut descriptor_counts = (/* X */0, /* A */0, /* B */0, /* C */0);
         for bufty in self.buffers.iter().map(|b| b.buftype()) {
             match bufty {

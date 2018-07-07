@@ -101,7 +101,7 @@ impl<'a> CursorRead<'a> {
     }
 }
 
-pub fn hex_print<T: ::core::fmt::Write>(arr: &[u8], f: &mut T) {
+pub fn hex_print<T: ::core::fmt::Write + ?Sized>(arr: &[u8], f: &mut T) {
     for (i, chunk) in arr.chunks(16).enumerate() {
         // Print the current offset (do some padding if necessary so it all
         // aligns correctly).

@@ -7,14 +7,10 @@ stage = 1
 path = "../rust/src/libcompiler_builtins"
 features = ["mem"]
 
-[dependencies.std_unicode]
-stage = 2
-path = "../rust/src/libstd_unicode"
-
 [dependencies.alloc]
-stage = 3
+stage = 2
 path = "../rust/src/liballoc"
 
 [dependencies.std]
-stage = 4
+stage = 3
 path = "../rust/src/libstd"

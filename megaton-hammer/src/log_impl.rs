@@ -5,12 +5,12 @@ use core::fmt::Write;
 struct Logger;
 
 impl Log for Logger {
-    fn enabled(&self, metadata: &Metadata) -> bool {
+    fn enabled(&self, _metadata: &Metadata) -> bool {
         true
     }
 
     fn log(&self, record: &Record) {
-        writeln!(::loader::Logger, "[{}] - {} - {}", record.level(), record.target(), record.args());
+        let _ = writeln!(::loader::Logger, "[{}] - {} - {}", record.level(), record.target(), record.args());
     }
 
     fn flush(&self) {}

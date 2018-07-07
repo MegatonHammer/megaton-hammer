@@ -20,7 +20,7 @@ use arrayvec::ArrayVec;
 use spin::Mutex;
 use core::ptr::Unique;
 use core::mem::ManuallyDrop;
-use kernel::{FromKObject, Session, KObject};
+use kernel::{Session, KObject};
 use bit_field::BitField;
 use utils::CursorWrite;
 use ipcdefs::twili::IPipe;
@@ -260,11 +260,11 @@ pub unsafe fn init_loader(entry: *mut LoaderConfigEntry, exit: extern fn(u64) ->
             LoaderConfigTag::TWILI_PRESENT => {
                 let twili = match ::ipcdefs::twili::ITwiliService::raw_new() {
                     Ok(twili) => twili,
-                    Err(err) => continue, // TODO: log the error
+                    Err(_err) => continue, // TODO: log the error
                 };
                 let pipe = match twili.open_stdout() {
                     Ok(pipe) => pipe,
-                    Err(err) => continue,
+                    Err(_err) => continue,
                 };
                 config.twili = Some(pipe)
             },
