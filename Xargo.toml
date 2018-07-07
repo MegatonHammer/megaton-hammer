@@ -1,16 +1,16 @@
 [dependencies.core]
 stage = 0
-path = "../rust/src/libcore"
+git = "https://github.com/megatonhammer/rust"
 
 [dependencies.compiler_builtins]
 stage = 1
-path = "../rust/src/libcompiler_builtins"
+git = "https://github.com/megatonhammer/rust"
 features = ["mem"]
 
 [dependencies.alloc]
 stage = 2
-path = "../rust/src/liballoc"
+git = "https://github.com/megatonhammer/rust"
 
 [dependencies.std]
 stage = 3
-path = "../rust/src/libstd"
+git = "https://github.com/megatonhammer/rust"
