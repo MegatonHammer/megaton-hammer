@@ -50,10 +50,7 @@ impl Session {
     pub fn send<REQ: IRequest, Y: Clone>(&self, req: REQ) -> Result<Response<Y>> {
         let mut ipc_buf = TlsStruct::borrow_ipc_mut();
         req.pack(&mut *ipc_buf, None);
-        let err = unsafe { send_sync_request((self.0).0) };
-        if err != 0 {
-            return Err(Error(err));
-        }
+        unsafe { send_sync_request((self.0).0)? };
         Response::unpack(&mut ipc_buf[..], None)
     }
 
@@ -117,10 +114,7 @@ impl Domain {
     fn send<REQ: IRequest, Y: Clone>(&self, req: REQ) -> Result<Response<Y>> {
         let mut ipc_buf = TlsStruct::borrow_ipc_mut();
         req.pack(&mut *ipc_buf, Some(self.1));
-        let err = unsafe { send_sync_request((self.0).0) };
-        if err != 0 {
-            return Err(Error(err));
-        }
+        unsafe { send_sync_request((self.0).0)? };
         Response::unpack(&mut ipc_buf[..], Some(self.0.clone()))
     }
 }

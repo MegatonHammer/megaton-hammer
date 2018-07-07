@@ -12,15 +12,10 @@ pub struct IUserInterface<T>(T);
 impl IUserInterface<Session> {
 	pub fn raw_new() -> Result<IUserInterface<Session>> {
 		use ::kernel::svc;
-		use ::error::Error;
 
-		let (r, session) = unsafe { svc::connect_to_named_port("sm:\0".as_ptr()) };
-		if r != 0 {
-			return Err(Error(r))
-		} else {
-			let ret = Session::from(unsafe { KObject::new(session) }).into();
-			return Ok(ret);
-		}
+		let session = unsafe { svc::connect_to_named_port("sm:\0".as_ptr())? };
+		let ret = Session::from(unsafe { KObject::new(session) }).into();
+		Ok(ret)
 	}
 
 	pub fn new() -> Result<Arc<IUserInterface<Session>>> {

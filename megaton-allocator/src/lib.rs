@@ -12,12 +12,13 @@ use spin::{Mutex, MutexGuard, Once};
 use core::ops::Deref;
 use core::ptr::NonNull;
 use linked_list_allocator::{Heap, align_up};
+use megaton_hammer::error::*;
 
 pub struct Allocator(Mutex<Heap>, Once<HeapStrategy>);
 
 impl Allocator {
     /// safely expands the heap if possible.
-    fn expand(&self, by: usize, heap: &mut MutexGuard<Heap>) {
+    fn expand(&self, by: usize, heap: &mut MutexGuard<Heap>) -> Result<()> {
         // TODO: does we really need to only acquire this once?
         // TODO: do we want to do something even if acquire_heap_strategy fails, such as default to SetHeapSize?
         let strategy = self.1.call_once(|| loader::acquire_heap_strategy().unwrap());
@@ -30,10 +31,7 @@ impl Allocator {
             HeapStrategy::SetHeapSize => {
                 let total = heap.size() + align_up(by, 0x200_000); // set_heap_size requires this allignment.
 
-                let (ret, ptr) = unsafe { megaton_hammer::kernel::svc::set_heap_size( total as u32) };
-                if ret != 0 {
-                    panic!("Failed to allocate 2MB: {}", ret);
-                }
+                let ptr = unsafe { megaton_hammer::kernel::svc::set_heap_size(total as u32)? };
 
                 if heap.bottom() == 0 {
                     unsafe { **heap = Heap::new(ptr as *mut u8 as usize, total) };
@@ -42,6 +40,7 @@ impl Allocator {
                 }
             }
         }
+        Ok(())
     }
 
     /// Creates a new heap based off of loader settings.
@@ -62,13 +61,16 @@ unsafe impl<'a> GlobalAlloc for Allocator {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
         let mut heap = self.0.lock();
         let allocation = heap.allocate_first_fit(layout);
-        let size = layout.size();
         // If the heap is exhausted, then extend and attempt the allocation another time.
         match allocation {
             Err(AllocErr) => {
-                self.expand(size, &mut heap); // TODO: how much should I *really* expand by?
-                let alloc = heap.allocate_first_fit(layout);
-                alloc
+                if let Ok(_) = self.expand(layout.size(), &mut heap) {
+                    let alloc = heap.allocate_first_fit(layout);
+                    alloc
+                } else {
+                    // Return the original failed allocation of we can't expand.
+                    allocation
+                }
             }
             _ => allocation
         }.ok().map_or(0 as *mut u8, |allocation| allocation.as_ptr())

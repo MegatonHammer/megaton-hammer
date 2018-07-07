@@ -2,7 +2,7 @@ pub mod svc;
 pub mod session;
 
 pub use self::session::*;
-use error::{Error, Result};
+use error::Result;
 
 #[derive(Debug)]
 pub struct KObject(u32);
@@ -45,7 +45,6 @@ impl TransferMemory {
     /// Allocates memory properly for transfer memory.
     pub fn new(size: usize) -> Result<TransferMemory> {
         use alloc::alloc::{Alloc, Global, Layout};
-        use core::mem;
 
         // TODO: Use alloc_pages if present, default to normal allocator.
         let mem = unsafe { Global.alloc(Layout::from_size_align(size, 0x20000).unwrap()).unwrap() };
@@ -61,10 +60,7 @@ impl TransferMemory {
 
     pub unsafe fn new_ptr_size(mem: *mut u8, size: usize) -> Result<TransferMemory> {
         // TODO: Allow passing some permission bits.
-        let (res, out) = unsafe { svc::create_transfer_memory(mem as _, size as u64, 0) };
-        if res != 0 {
-            return Err(Error(res));
-        }
+        let out = svc::create_transfer_memory(mem as _, size as u64, 0)?;
         Ok(TransferMemory(KObject(out)))
     }
 }
@@ -95,21 +91,13 @@ pub struct Event(KObject);
 
 impl Event {
     pub fn wait(&self) -> Result<()> {
-        let (res, _idx) = unsafe { svc::wait_synchronization(&(self.0).0, 1, !0) };
-        if res == 0 {
-            Ok(())
-        } else {
-            Err(Error(res))
-        }
+        let _idx = unsafe { svc::wait_synchronization(&(self.0).0, 1, !0)? };
+        Ok(())
     }
 
     pub fn reset(&self) -> Result<()> {
-        let res = unsafe { svc::reset_signal((self.0).0) };
-        if res == 0 {
-            Ok(())
-        } else {
-            Err(Error(res))
-        }
+        unsafe { svc::reset_signal((self.0).0)? };
+        Ok(())
     }
 }
 

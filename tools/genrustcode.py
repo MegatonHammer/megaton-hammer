@@ -359,15 +359,10 @@ def gen_raw_new_method(f, ifacename, servicename, has_initialize_output, initial
 	if name == "nn::sm::detail::IUserInterface":
 		# TODO: Call Initialize
 		print("\t\tuse ::kernel::svc;", file=f)
-		print("\t\tuse ::error::Error;", file=f)
 		print("", file=f)
-		print("\t\tlet (r, session) = unsafe { svc::connect_to_named_port(\"sm:\\0\".as_ptr()) };", file=f)
-		print("\t\tif r != 0 {", file=f)
-		print("\t\t\treturn Err(Error(r))", file=f)
-		print("\t\t} else {", file=f)
-		print("\t\t\tlet ret = Session::from(unsafe { KObject::new(session) }).into();", file=f)
-		print("\t\t\treturn Ok(ret);", file=f)
-		print("\t\t}", file=f)
+		print("\t\tlet session = unsafe { svc::connect_to_named_port(\"sm:\\0\".as_ptr())? };", file=f)
+		print("\t\tlet ret = Session::from(unsafe { KObject::new(session) }).into();", file=f)
+		print("\t\tOk(ret)", file=f)
 	else:
                 # TODO: Always creating a connection to sm kinda sucks...
 		print("\t\tuse ::ipcdefs::nn::sm::detail::IUserInterface;", file=f)

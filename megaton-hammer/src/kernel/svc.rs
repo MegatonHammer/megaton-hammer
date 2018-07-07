@@ -4,21 +4,21 @@
 extern crate cty;
 
 use core::intrinsics::unreachable;
+use error::*;
 
 // TODO: not sure I like those
-type Result = u32;
-type Handle = u32;
-type Debug = Handle;
-type Process = Handle;
-type Thread = Handle;
-type DevAddrSpace = Handle;
-type TransferMemory = Handle;
-type SharedMemory = Handle;
-type Session = Handle;
-type Port = Handle;
-type WEvent = Handle;
-type Event = Handle;
-type ThreadEntry = ::core::option::Option<unsafe extern "C" fn(arg1: *mut cty::c_void)>;
+pub type Handle = u32;
+pub type Debug = Handle;
+pub type Process = Handle;
+pub type Thread = Handle;
+pub type DevAddrSpace = Handle;
+pub type TransferMemory = Handle;
+pub type SharedMemory = Handle;
+pub type Session = Handle;
+pub type Port = Handle;
+pub type WEvent = Handle;
+pub type Event = Handle;
+pub type ThreadEntry = ::core::option::Option<unsafe extern "C" fn(arg1: *mut cty::c_void)>;
 
 pub const CURRENT_PROCESS: u32 = 0xFFFF8001;
 pub const CURRENT_THREAD: u32 = 0xFFFF8000;
@@ -46,34 +46,36 @@ macro_rules! define_svc {
     };
     ($(#[$meta:meta])* $name:ident ( $svc:tt, ($($svc_in:tt)*), $($args:tt)* ) -> Result) => {
         $(#[$meta])*
-        pub unsafe fn $name($($args)*) -> Result {
-            let ret: Result;
+        pub unsafe fn $name($($args)*) -> Result<()> {
+            let ret: u32;
             asm!($svc : "={x0}"(ret) : $($svc_in)* : : "volatile");
-            ret
+            if ret == 0 {
+                Ok(())
+            } else {
+                Err(Error(ret))
+            }
         }
     };
-    ($(#[$meta:meta])* $name:ident ( $svc:tt, ($($svc_name:tt($svc_id:tt)),*), ($($svc_in:tt)*), $($args:tt)* ) -> $return_type:ty) => {
+    ($(#[$meta:meta])* $name:ident ( $svc:tt, ($retname:ident, $($svc_name:tt($($svc_id:tt)*)),*), ($($svc_in:tt)*), $($args:tt)* ) -> Result<$return_type:ty>) => {
         $(#[$meta])*
-        pub unsafe fn $name($($args)*) -> $return_type {
-            let mut ret: $return_type = ::core::mem::uninitialized();
-            asm!($svc : $($svc_name(ret.$svc_id)),* : $($svc_in)* : : "volatile");
-            ret
+        #[allow(unused_assignments)]
+        pub unsafe fn $name($($args)*) -> Result<$return_type> {
+            let mut $retname: $return_type = ::core::mem::uninitialized();
+            let ret: u32;
+            asm!($svc : "={x0}"(ret), $($svc_name($($svc_id)*)),* : $($svc_in)* : : "volatile");
+            if ret == 0 {
+                Ok($retname)
+            } else {
+                Err(Error(ret))
+            }
         }
-    };
-}
-
-macro_rules! define_svcs {
-    ($($(#[$meta:meta])* $name:ident ( $($args:tt)* ) -> $return_type:tt;)*) => {
-        $(
-            define_svc!($(#[$meta])* $name ( $($args)* ) -> $return_type);
-        )*
     };
 }
 
 // TODO: Documentation for all syscalls. Let's try to do better than switchbrew.
 // TODO: Rewrite the syscalls to wrap them in an idiomatic rust style.
 
-define_svcs! {
+define_svc! {
     /// Sets the size of the heap. Equivalent to a brk syscall on unix.
     ///
     /// Note that you should almost never use this method! Use the system
@@ -82,64 +84,94 @@ define_svcs! {
     ///
     /// @param outAddr Output for address of the heap
     /// @param size Size of the heap
-    set_heap_size("svc 0x01", ("={x0}"(0), "={x1}"(1)), ("{x1}"(size)), size: u32) -> (Result, *mut cty::c_void);
+    set_heap_size("svc 0x01", (val, "={x1}"(val)), ("{x1}"(size)), size: u32) -> Result<*mut cty::c_void>
+}
 
+define_svc! {
     /// Sets memory permissions. Takes the address of the region to reprotect,
     /// its size, and the new permission of that region.
     ///
     /// Address and size must be page-aligned, and execute bit is not allowed.
-    set_memory_permission("svc 0x02", ("{x0}"(addr), "{x1}"(size), "{x2}"(permission)), addr: *mut cty::c_void, size: u64, permission: u32) -> Result;
+    set_memory_permission("svc 0x02", ("{x0}"(addr), "{x1}"(size), "{x2}"(permission)), addr: *mut cty::c_void, size: u64, permission: u32) -> Result
+}
 
+define_svc! {
     /// Sets memory attributes
     set_memory_attribute("svc 0x03", ("{x0}"(addr), "{x1}"(size), "{x2}"(state0), "{x3}"(state1)),
         addr: *mut cty::c_void,
         size: usize,
         state0: u32,
-        state1: u32,) -> Result;
+        state1: u32,) -> Result
+}
 
+define_svc! {
     /// Map memory
-    map_memory("svc 0x04", ("{x0}"(dest), "{x1}"(src), "{x2}"(size)), dest: *mut cty::c_void, src: *mut cty::c_void, size: u64) -> Result;
+    map_memory("svc 0x04", ("{x0}"(dest), "{x1}"(src), "{x2}"(size)), dest: *mut cty::c_void, src: *mut cty::c_void, size: u64) -> Result
+}
 
+define_svc! {
     /// Unmap memory
-    unmap_memory("svc 0x05", ("{x0}"(dest), "{x1}"(src), "{x2}"(size)), dest: *mut cty::c_void, src: *mut cty::c_void, size: u64) -> Result;
+    unmap_memory("svc 0x05", ("{x0}"(dest), "{x1}"(src), "{x2}"(size)), dest: *mut cty::c_void, src: *mut cty::c_void, size: u64) -> Result
+}
 
+define_svc! {
     /// Query Memory
-    query_memory("svc 0x06", ("={x0}"(0), "={x1}"(1)), ("{x0}"(memory_info), "{x2}"(addr)),
+    query_memory("svc 0x06", (val, "={x1}"(val)), ("{x0}"(memory_info), "{x2}"(addr)),
         memory_info: *mut memory_info_t,
-        addr: *mut cty::c_void) -> (Result, u32);
+        addr: *mut cty::c_void) -> Result<u32>
+}
 
+define_svc! {
     /// Exit the process
-    exit_process("svc 0x07", (),) -> !;
+    exit_process("svc 0x07", (),) -> !
+}
 
+define_svc! {
     /// Create a new thread
-    create_thread("svc 0x08", ("={x0}"(0), "={x1}"(1)), ("{x1}"(entry), "{x2}"(arg), "{x3}"(stacktop), "{x4}"(priority), "{x5}"(processor_id)),
+    create_thread("svc 0x08", (val, "={x1}"(val)), ("{x1}"(entry), "{x2}"(arg), "{x3}"(stacktop), "{x4}"(priority), "{x5}"(processor_id)),
         entry: ThreadEntry,
         arg: u64,
         stacktop: *mut cty::c_void,
         priority: i32,
-        processor_id: i32,) -> (Result, Thread);
+        processor_id: i32,) -> Result<Thread>
+}
 
+define_svc! {
     /// Start a thread. Takes a handle to the thread to be started.
-    start_thread("svc 0x09", ("{x0}"(thread)), thread: Thread) -> Result;
+    start_thread("svc 0x09", ("{x0}"(thread)), thread: Thread) -> Result
+}
 
+define_svc! {
     /// Exit thread
-    exit_thread("svc 0x0A", (),) -> !;
+    exit_thread("svc 0x0A", (),) -> !
+}
 
+define_svc! {
     /// Sleep thread for specified time, in nanoseconds.
-    sleep_thread("svc 0x0B", ("{x0}"(nanos)), nanos: u64) -> Result;
+    sleep_thread("svc 0x0B", ("{x0}"(nanos)), nanos: u64) -> Result
+}
 
+define_svc! {
     /// Get the thread priority
-    get_thread_priority("svc 0x0C", ("={x0}"(0), "={x1}"(1)), ("{x1}"(thread)), thread: Thread) -> (Result, u32);
+    get_thread_priority("svc 0x0C", (val, "={x1}"(val)), ("{x1}"(thread)), thread: Thread) -> Result<u32>
+}
 
+define_svc! {
     /// Set the thread priority
-    set_thread_priority("svc 0x0D", ("{x0}"(thread), "{x1}"(priority)), thread: Thread, priority: u32) -> Result;
+    set_thread_priority("svc 0x0D", ("{x0}"(thread), "{x1}"(priority)), thread: Thread, priority: u32) -> Result
+}
 
+define_svc! {
     /// Get thread core mask
-    get_thread_core_mask("svc 0x0E", ("={x0}"(0), "={x1}"(1), "={x2}"(2)), ("{x2}"(thread)), thread: Thread) -> (Result, u32, u32);
+    get_thread_core_mask("svc 0x0E", (val, "={x1}"(val.0), "={x2}"(val.1)), ("{x2}"(thread)), thread: Thread) -> Result<(u32, u32)>
+}
 
+define_svc! {
     /// Set affinity mask of provided thread handle
-    set_thread_core_mask("svc 0x0F", ("{x0}"(thread), "{x1}"(in1), "{x2}"(in2)), thread: Thread, in1: u32, in2: u64) -> Result;
+    set_thread_core_mask("svc 0x0F", ("{x0}"(thread), "{x1}"(in1), "{x2}"(in2)), thread: Thread, in1: u32, in2: u64) -> Result
+}
 
+define_svc! {
     /// Creates transfer memory.
     ///
     /// The address should point to some Heap memory.
@@ -152,33 +184,47 @@ define_svcs! {
     /// Closing all handlese automatically causes the bit0 in MemoryAttribute to
     /// clear, and the permission to reset.
     ///
-    create_transfer_memory("svc 0x15", ("={x0}"(0), "={x1}"(1)), ("{x1}"(addr), "{x2}"(size), "{x3}"(permission)),
+    create_transfer_memory("svc 0x15", (val, "={x1}"(val)), ("{x1}"(addr), "{x2}"(size), "{x3}"(permission)),
         addr: *mut cty::c_void,
         size: u64,
-        permission: u32) -> (Result, TransferMemory);
+        permission: u32) -> Result<TransferMemory>
+}
 
+define_svc! {
     /// Closes the specified handle
-    close_handle("svc 0x16", ("{x0}"(handle)), handle: Handle) -> Result;
+    close_handle("svc 0x16", ("{x0}"(handle)), handle: Handle) -> Result
+}
 
+define_svc! {
     /// Resets a signal. Takes a revent or process.
-    reset_signal("svc 0x17", ("{x0}"(signal)), signal: Handle) -> Result;
+    reset_signal("svc 0x17", ("{x0}"(signal)), signal: Handle) -> Result
+}
 
+define_svc! {
     /// Wait synchronization
-    wait_synchronization("svc 0x18", ("={x0}"(0), "={x1}"(1)), ("{x1}"(handles), "{x2}"(num_handles), "{x3}"(timeout)),
+    wait_synchronization("svc 0x18", (val, "={x1}"(val)), ("{x1}"(handles), "{x2}"(num_handles), "{x3}"(timeout)),
         handles: *const Handle,
         num_handles: u32,
-        timeout: u64) -> (Result, u32);
+        timeout: u64) -> Result<u32>
+}
 
+define_svc! {
     /// Connect to a named port
-    connect_to_named_port("svc 0x1F", ("={x0}"(0), "={x1}"(1)), ("{x1}"(name)), name: *const cty::c_char) -> (Result, Session);
+    connect_to_named_port("svc 0x1F", (val, "={x1}"(val)), ("{x1}"(name)), name: *const cty::c_char) -> Result<Session>
+}
 
+define_svc! {
     /// Send sync request
-    send_sync_request("svc 0x21", ("{x0}"(session)), session: Session) -> Result;
+    send_sync_request("svc 0x21", ("{x0}"(session)), session: Session) -> Result
+}
 
+define_svc! {
     /// Output a debug string
     #[inline(always)]
-    output_debug_string("svc 0x27", ("{x0}"(s), "{x1}"(size)), s: *const u8, size: usize) -> Result;
+    output_debug_string("svc 0x27", ("{x0}"(s), "{x1}"(size)), s: *const u8, size: usize) -> Result
+}
 
+define_svc! {
     /// Get info about a handle.
     ///
     /// Handle Type | `info_id` | `info_sub_id`         | Description
@@ -205,9 +251,11 @@ define_svcs! {
     /// Zero        | 19        | 0                     | [4.0.0+] PrivilegedProcessId_LowerBound
     /// Zero        | 19        | 1                     | [4.0.0+] PrivilegedProcessId_UpperBound
     /// Thread      | 0xF0000002| 0                     | Performance counter related. 
-    get_info("svc 0x29", ("={x0}"(0), "={x1}"(1)), ("{x1}"(info_id), "{x2}"(handle), "{x3}"(info_sub_id)), info_id: u64, handle: Handle, info_sub_id: u64) -> (Result, u64);
+    get_info("svc 0x29", (val, "={x1}"(val)), ("{x1}"(info_id), "{x2}"(handle), "{x3}"(info_sub_id)), info_id: u64, handle: Handle, info_sub_id: u64) -> Result<u64>
+}
 
-    get_process_list("svc 0x65", ("={x0}"(0), "={w1}"(1)), ("{x1}"(pids_out_ptr), "{x2}"(pids_out_len)), pids_out_ptr: *mut u64, pids_out_len: usize) -> (Result, usize);
+define_svc! {
+    get_process_list("svc 0x65", (val, "={w1}"(val)), ("{x1}"(pids_out_ptr), "{x2}"(pids_out_len)), pids_out_ptr: *mut u64, pids_out_len: usize) -> Result<usize>
 }
 
 //

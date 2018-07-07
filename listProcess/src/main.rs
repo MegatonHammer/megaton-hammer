@@ -37,10 +37,7 @@ fn main() -> std::result::Result<(), MyError> {
     writeln!(stream, "Helloooo");
     let mut processes = [0; 64];
     //let (res, num) = (0, 0);
-    let (res, num) = unsafe { svc::get_process_list(&mut processes as *mut _ as *mut u64, 64) };
-    if res != 0 {
-        return Err(MyError::MegatonError(megaton_hammer::error::Error(res)));
-    }
+    let num = unsafe { svc::get_process_list(&mut processes as *mut _ as *mut u64, 64)? };
 
     let pm_info = IInformationInterface::new()?;
     for i in 0..num {

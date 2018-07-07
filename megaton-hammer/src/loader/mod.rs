@@ -118,13 +118,13 @@ impl Logger {
             let available_capacity = svc_log_space.capacity() - svc_log_space.len();
             if data.len() > available_capacity {
                 // Worse-case. Just print it all out and start fresh.
-                unsafe { svc::output_debug_string(svc_log_space.as_ptr(), svc_log_space.len()); }
-                unsafe { svc::output_debug_string(data.as_ptr(), data.len()); }
+                let _ = unsafe { svc::output_debug_string(svc_log_space.as_ptr(), svc_log_space.len()) };
+                let _ = unsafe { svc::output_debug_string(data.as_ptr(), data.len()) };
                 let _ = svc_log_space.drain(..);
             } else {
                 svc_log_space.extend(data.iter().cloned());
                 if let Some(pos) = svc_log_space.iter().cloned().rposition(|i| i == b'\n') {
-                    unsafe { svc::output_debug_string(svc_log_space.as_ptr(), pos); }
+                    let _ = unsafe { svc::output_debug_string(svc_log_space.as_ptr(), pos) };
                     svc_log_space.drain(..pos + 1);
                 }
             }
@@ -133,7 +133,7 @@ impl Logger {
             cursor.lock().write(data);
         }
         if let Some(pipe) = LOADER.try().and_then(|ldr_cfg| (&ldr_cfg.twili).as_ref()) {
-            pipe.write(data);
+            let _ = pipe.write(data);
         }
     }
 }

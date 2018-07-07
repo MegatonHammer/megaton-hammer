@@ -125,9 +125,7 @@ fn main() -> std::result::Result<(), MyError> {
     let mut mem : Vec<BufferMemory> = Vec::with_capacity(3);
     unsafe { mem.set_len(3); }
     // Disables caching when talking to the gpu.
-    if unsafe { svc::set_memory_attribute(mem.as_mut_ptr() as _, mem.len() * std::mem::size_of::<BufferMemory>(), 0x8, 0x8) } != 0 {
-        panic!("Failed to set memory attribute");
-    }
+    unsafe { svc::set_memory_attribute(mem.as_mut_ptr() as _, mem.len() * std::mem::size_of::<BufferMemory>(), 0x8, 0x8).expect("Failed to set memory attribute"); }
 
     let gpu_buffer = {
         let mut create = NvMapIocCreateArgs {
