@@ -3,7 +3,6 @@
 // For compat reasons
 extern crate cty;
 
-use core::intrinsics::unreachable;
 use error::*;
 
 // TODO: not sure I like those
@@ -41,7 +40,13 @@ macro_rules! define_svc {
         $(#[$meta])*
         pub unsafe fn $name($($args)*) -> ! {
             asm!($svc : : $($svc_in)* : : "volatile");
-            unreachable();
+            unreachable!();
+        }
+    };
+    ($(#[$meta:meta])* $name:ident ( $svc:tt, ($($svc_in:tt)*), $($args:tt)* ) -> ()) => {
+        $(#[$meta])*
+        pub unsafe fn $name($($args)*) {
+            asm!($svc : : $($svc_in)* : : "volatile");
         }
     };
     ($(#[$meta:meta])* $name:ident ( $svc:tt, ($($svc_in:tt)*), $($args:tt)* ) -> Result) => {
