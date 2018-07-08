@@ -8,7 +8,8 @@ extern crate linked_list_allocator;
 
 use core::alloc::{GlobalAlloc, Layout, AllocErr};
 use megaton_hammer::loader::{self, HeapStrategy};
-use spin::{Mutex, MutexGuard, Once};
+use megaton_hammer::kernel::sync::{InternalMutex as Mutex, InternalMutexGuard as MutexGuard};
+use spin::Once;
 use core::ops::Deref;
 use core::ptr::NonNull;
 use linked_list_allocator::{Heap, align_up};

@@ -22,10 +22,10 @@ impl IBaasAccessTokenAccessor<Session> {
 
 	pub fn new() -> Result<Arc<IBaasAccessTokenAccessor<Session>>> {
 		use alloc::arc::Weak;
-		use spin::Mutex;
+		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IBaasAccessTokenAccessor<Session>>> = Mutex::new(Weak::new());
+			static ref HANDLE : InternalMutex<Weak<IBaasAccessTokenAccessor<Session>>> = InternalMutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)

@@ -17,7 +17,7 @@
 pub mod crt0;
 
 use arrayvec::ArrayVec;
-use spin::Mutex;
+use kernel::sync::InternalMutex;
 use core::ptr::Unique;
 use core::mem::ManuallyDrop;
 use kernel::{Session, KObject};
@@ -28,10 +28,10 @@ use ipcdefs::twili::IPipe;
 #[doc(hidden)]
 pub struct LoaderConfig {
     main_thread: u32,
-    heap_strategy: Mutex<Option<HeapStrategy>>,
+    heap_strategy: InternalMutex<Option<HeapStrategy>>,
     override_services: ArrayVec<[(u64, u32); 32]>,
     stdio_sockets: Option<(u32, u32, u32, SocketKind)>,
-    log: Option<Mutex<CursorWrite<'static>>>,
+    log: Option<InternalMutex<CursorWrite<'static>>>,
     exit: extern fn(u64) -> !,
     twili: Option<IPipe<::kernel::Session>>,
 }
@@ -39,6 +39,10 @@ pub struct LoaderConfig {
 pub enum HeapStrategy{
     OverrideHeap(Unique<[u8]>),
     SetHeapSize,
+}
+
+pub(crate) fn get_main_thread_handle() -> Option<u32> {
+    LOADER.try().map(|x| x.main_thread)
 }
 
 /// The allocator should use this to figure out where to get its heap from.
@@ -103,13 +107,10 @@ pub struct Logger;
 
 // TODO: Provide some space in TLS for this
 lazy_static! {
-    static ref SVC_LOG_SPACE: Mutex<ArrayVec<[u8; 4096]>> = Mutex::new(ArrayVec::new());
+    static ref SVC_LOG_SPACE: InternalMutex<ArrayVec<[u8; 4096]>> = InternalMutex::new(ArrayVec::new());
 }
 
 impl Logger {
-    pub unsafe fn force_unlock(&self) {
-        SVC_LOG_SPACE.force_unlock();
-    }
     pub fn write(&self, data: &[u8]) {
         use kernel::svc;
 
@@ -220,7 +221,7 @@ pub unsafe fn init_loader(entry: *mut LoaderConfigEntry, exit: extern fn(u64) ->
 
     let mut config = LoaderConfig {
         main_thread: 0,
-        heap_strategy: Mutex::new(Some(HeapStrategy::SetHeapSize)),
+        heap_strategy: InternalMutex::new(Some(HeapStrategy::SetHeapSize)),
         override_services: ArrayVec::new(),
         log: None,
         stdio_sockets: None,
@@ -232,7 +233,7 @@ pub unsafe fn init_loader(entry: *mut LoaderConfigEntry, exit: extern fn(u64) ->
         match entry.tag {
             LoaderConfigTag::END_OF_LIST => break,
             LoaderConfigTag::LOG => {
-                config.log = Some(Mutex::new(CursorWrite::new(slice::from_raw_parts_mut((*entry).data.0 as _, (*entry).data.1 as _))));
+                config.log = Some(InternalMutex::new(CursorWrite::new(slice::from_raw_parts_mut((*entry).data.0 as _, (*entry).data.1 as _))));
             },
             LoaderConfigTag::STDIO_SOCKET => {
                 let stdin = (*entry).data.0.get_bits(0..32);

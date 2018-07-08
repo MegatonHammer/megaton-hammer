@@ -23,10 +23,10 @@ impl IPcvService<Session> {
 
 	pub fn new() -> Result<Arc<IPcvService<Session>>> {
 		use alloc::arc::Weak;
-		use spin::Mutex;
+		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IPcvService<Session>>> = Mutex::new(Weak::new());
+			static ref HANDLE : InternalMutex<Weak<IPcvService<Session>>> = InternalMutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)

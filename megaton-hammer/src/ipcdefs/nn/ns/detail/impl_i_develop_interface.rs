@@ -22,10 +22,10 @@ impl IDevelopInterface<Session> {
 
 	pub fn new() -> Result<Arc<IDevelopInterface<Session>>> {
 		use alloc::arc::Weak;
-		use spin::Mutex;
+		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IDevelopInterface<Session>>> = Mutex::new(Weak::new());
+			static ref HANDLE : InternalMutex<Weak<IDevelopInterface<Session>>> = InternalMutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)

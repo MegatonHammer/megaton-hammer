@@ -23,10 +23,10 @@ impl IFileSystemProxy<Session> {
 
 	pub fn new<T: FnOnce(fn(u64) -> Result<IFileSystemProxy<Session>>) -> Result<IFileSystemProxy<Session>>>(f: T) -> Result<Arc<IFileSystemProxy<Session>>> {
 		use alloc::arc::Weak;
-		use spin::Mutex;
+		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IFileSystemProxy<Session>>> = Mutex::new(Weak::new());
+			static ref HANDLE : InternalMutex<Weak<IFileSystemProxy<Session>>> = InternalMutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)

@@ -383,10 +383,10 @@ def gen_raw_new_method(f, ifacename, servicename, has_initialize_output, initial
 def gen_new_method(f, ifacename, servicename, raw_new_name, has_initialize_output, initialize_args):
 	s_name = s + ("\\0" * (8 - len(s)))
 	print("\t\tuse alloc::arc::Weak;", file=f)
-	print("\t\tuse spin::Mutex;", file=f)
+        print("\t\tuse kernel::sync::InternalMutex;", file=f)
 	print("\t\tuse core::mem::ManuallyDrop;", file=f)
 	print("\t\tlazy_static! {", file=f)
-	print("\t\t\tstatic ref HANDLE : Mutex<Weak<%s<Session>>> = Mutex::new(Weak::new());" % ifacename, file=f)
+	print("\t\t\tstatic ref HANDLE : InternalMutex<Weak<%s<Session>>> = InternalMutex::new(Weak::new());" % ifacename, file=f)
 	print("\t\t}", file=f)
 	print("\t\tif let Some(hnd) = HANDLE.lock().upgrade() {", file=f)
 	print("\t\t\treturn Ok(hnd)", file=f)

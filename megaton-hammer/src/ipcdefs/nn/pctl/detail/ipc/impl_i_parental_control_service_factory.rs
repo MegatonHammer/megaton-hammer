@@ -22,10 +22,10 @@ impl IParentalControlServiceFactory<Session> {
 
 	pub fn new_pctl_s() -> Result<Arc<IParentalControlServiceFactory<Session>>> {
 		use alloc::arc::Weak;
-		use spin::Mutex;
+		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IParentalControlServiceFactory<Session>>> = Mutex::new(Weak::new());
+			static ref HANDLE : InternalMutex<Weak<IParentalControlServiceFactory<Session>>> = InternalMutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -56,10 +56,10 @@ impl IParentalControlServiceFactory<Session> {
 
 	pub fn new_pctl_r() -> Result<Arc<IParentalControlServiceFactory<Session>>> {
 		use alloc::arc::Weak;
-		use spin::Mutex;
+		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IParentalControlServiceFactory<Session>>> = Mutex::new(Weak::new());
+			static ref HANDLE : InternalMutex<Weak<IParentalControlServiceFactory<Session>>> = InternalMutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -90,10 +90,10 @@ impl IParentalControlServiceFactory<Session> {
 
 	pub fn new_pctl_a() -> Result<Arc<IParentalControlServiceFactory<Session>>> {
 		use alloc::arc::Weak;
-		use spin::Mutex;
+		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IParentalControlServiceFactory<Session>>> = Mutex::new(Weak::new());
+			static ref HANDLE : InternalMutex<Weak<IParentalControlServiceFactory<Session>>> = InternalMutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -124,10 +124,10 @@ impl IParentalControlServiceFactory<Session> {
 
 	pub fn new_pctl() -> Result<Arc<IParentalControlServiceFactory<Session>>> {
 		use alloc::arc::Weak;
-		use spin::Mutex;
+		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IParentalControlServiceFactory<Session>>> = Mutex::new(Weak::new());
+			static ref HANDLE : InternalMutex<Weak<IParentalControlServiceFactory<Session>>> = InternalMutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)

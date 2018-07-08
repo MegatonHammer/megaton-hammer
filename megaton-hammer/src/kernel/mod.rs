@@ -1,5 +1,6 @@
 pub mod svc;
 pub mod session;
+pub mod sync;
 
 pub use self::session::*;
 use error::Result;

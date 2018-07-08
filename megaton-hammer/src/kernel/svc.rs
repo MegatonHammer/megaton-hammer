@@ -209,6 +209,20 @@ define_svc! {
 }
 
 define_svc! {
+    /// Arbitrate lock
+    arbitrate_lock("svc 0x1A",
+        ("{w0}"(current_thread), "{x1}"(lock), "{w2}"(requesting_thread)),
+        current_thread: Thread,
+        lock: *mut cty::c_void,
+        requesting_thread: Thread) -> ()
+}
+
+define_svc! {
+    /// Arbitrate unlock
+    arbitrate_unlock("svc 0x1B", ("{x0}"(lock)), lock: *mut cty::c_void) -> ()
+}
+
+define_svc! {
     /// Connect to a named port
     connect_to_named_port("svc 0x1F", (val, "={x1}"(val)), ("{x1}"(name)), name: *const cty::c_char) -> Result<Session>
 }
@@ -340,19 +354,6 @@ define_svc! {
 //}
 //
 //define_out00_svc! {
-//    /// Arbitrate lock
-//    arbitrate_lock(0x1A,
-//        current_thread: Thread,
-//        lock: *mut cty::c_void,
-//        requesting_thread: Thread) -> ()
-//}
-//
-//define_out00_svc! {
-//    /// Arbitrate unlock
-//    arbitrate_unlock(0x1B, lock: *mut cty::c_void) -> ()
-//}
-//
-//define_out00_svc! {
 //    /// Wait process wide key atomic
 //    wait_process_wide_key_atomic(0x1C,
 //        ptr0: *mut cty::c_void,
@@ -437,36 +438,6 @@ define_svc! {
 //define_out00_svc! {
 //    /// Return from exception
 //    return_from_exception(0x28, result: u64) -> ()
-//}
-//
-//define_out64_svc! {
-//    /// Get info about a handle.
-//    ///
-//    /// Handle Type | `info_id` | `info_sub_id`         | Description
-//    /// ------------|-----------|-----------------------|-----------------------
-//    /// Process     | 0         | 0                     | AllowedCpuIdBitmask
-//    /// Process     | 1         | 0                     | AllowedThreadPrioBitmask
-//    /// Process     | 2         | 0                     | MapRegionBaseAddr
-//    /// Process     | 3         | 0                     | MapRegionSize
-//    /// Process     | 4         | 0                     | HeapRegionBaseAddr
-//    /// Process     | 5         | 0                     | HeapRegionSize
-//    /// Process     | 6         | 0                     | TotalMemoryAvailable. Total memory available(free+used).
-//    /// Process     | 7         | 0                     | TotalMemoryUsage. Total used size of codebin memory + main-thread stack + allocated heap.
-//    /// Zero        | 8         | 0                     | IsCurrentProcessBeingDebugged
-//    /// Zero        | 9         | 0                     | Returns ResourceLimit handle for current process. Used by PM.
-//    /// Zero        | 10        | -1, {current coreid}  | IdleTickCount
-//    /// Zero        | 11        | 0-3                   | RandomEntropy from current process. TRNG. Used to seed usermode PRNGs.
-//    /// Process     | 12        | 0                     | [2.0.0+] AddressSpaceBaseAddr
-//    /// Process     | 13        | 0                     | [2.0.0+] AddressSpaceSize
-//    /// Process     | 14        | 0                     | [2.0.0+] NewMapRegionBaseAddr
-//    /// Process     | 15        | 0                     | [2.0.0+] NewMapRegionSize
-//    /// Process     | 16        | 0                     | [3.0.0+] IsVirtualAddressMemoryEnabled
-//    /// Process     | 17        | 0                     | [3.0.0+] Some size in bytes.
-//    /// Process     | 18        | 0                     | [3.0.0+] TitleId
-//    /// Zero        | 19        | 0                     | [4.0.0+] PrivilegedProcessId_LowerBound
-//    /// Zero        | 19        | 1                     | [4.0.0+] PrivilegedProcessId_UpperBound
-//    /// Thread      | 0xF0000002| 0                     | Performance counter related. 
-//    get_info(0x29, info: *mut u64, info_id: u64, handle: Handle, info_sub_id: u64)
 //}
 //
 //define_out00_svc! {

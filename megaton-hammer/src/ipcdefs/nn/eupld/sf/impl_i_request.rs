@@ -22,10 +22,10 @@ impl IRequest<Session> {
 
 	pub fn new() -> Result<Arc<IRequest<Session>>> {
 		use alloc::arc::Weak;
-		use spin::Mutex;
+		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IRequest<Session>>> = Mutex::new(Weak::new());
+			static ref HANDLE : InternalMutex<Weak<IRequest<Session>>> = InternalMutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)

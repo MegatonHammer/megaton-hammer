@@ -22,10 +22,10 @@ impl IFinalOutputRecorderManagerForDebugger<Session> {
 
 	pub fn new() -> Result<Arc<IFinalOutputRecorderManagerForDebugger<Session>>> {
 		use alloc::arc::Weak;
-		use spin::Mutex;
+		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IFinalOutputRecorderManagerForDebugger<Session>>> = Mutex::new(Weak::new());
+			static ref HANDLE : InternalMutex<Weak<IFinalOutputRecorderManagerForDebugger<Session>>> = InternalMutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)

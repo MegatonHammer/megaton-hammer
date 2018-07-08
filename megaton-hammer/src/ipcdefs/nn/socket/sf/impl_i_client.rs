@@ -26,10 +26,10 @@ impl IClient<Session> {
 
 	pub fn new_bsd_u<T: FnOnce(fn(::ipcdefs::nn::socket::BsdBufferConfig, u64, u64, &KObject) -> Result<IClient<Session>>) -> Result<IClient<Session>>>(f: T) -> Result<Arc<IClient<Session>>> {
 		use alloc::arc::Weak;
-		use spin::Mutex;
+		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IClient<Session>>> = Mutex::new(Weak::new());
+			static ref HANDLE : InternalMutex<Weak<IClient<Session>>> = InternalMutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -64,10 +64,10 @@ impl IClient<Session> {
 
 	pub fn new_bsd_s<T: FnOnce(fn(::ipcdefs::nn::socket::BsdBufferConfig, u64, u64, &KObject) -> Result<IClient<Session>>) -> Result<IClient<Session>>>(f: T) -> Result<Arc<IClient<Session>>> {
 		use alloc::arc::Weak;
-		use spin::Mutex;
+		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IClient<Session>>> = Mutex::new(Weak::new());
+			static ref HANDLE : InternalMutex<Weak<IClient<Session>>> = InternalMutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)

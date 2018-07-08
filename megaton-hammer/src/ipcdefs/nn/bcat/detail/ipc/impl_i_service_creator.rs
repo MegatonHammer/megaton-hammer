@@ -22,10 +22,10 @@ impl IServiceCreator<Session> {
 
 	pub fn new_bcat_a() -> Result<Arc<IServiceCreator<Session>>> {
 		use alloc::arc::Weak;
-		use spin::Mutex;
+		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IServiceCreator<Session>>> = Mutex::new(Weak::new());
+			static ref HANDLE : InternalMutex<Weak<IServiceCreator<Session>>> = InternalMutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -56,10 +56,10 @@ impl IServiceCreator<Session> {
 
 	pub fn new_bcat_m() -> Result<Arc<IServiceCreator<Session>>> {
 		use alloc::arc::Weak;
-		use spin::Mutex;
+		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IServiceCreator<Session>>> = Mutex::new(Weak::new());
+			static ref HANDLE : InternalMutex<Weak<IServiceCreator<Session>>> = InternalMutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -90,10 +90,10 @@ impl IServiceCreator<Session> {
 
 	pub fn new_bcat_u() -> Result<Arc<IServiceCreator<Session>>> {
 		use alloc::arc::Weak;
-		use spin::Mutex;
+		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IServiceCreator<Session>>> = Mutex::new(Weak::new());
+			static ref HANDLE : InternalMutex<Weak<IServiceCreator<Session>>> = InternalMutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -124,10 +124,10 @@ impl IServiceCreator<Session> {
 
 	pub fn new_bcat_s() -> Result<Arc<IServiceCreator<Session>>> {
 		use alloc::arc::Weak;
-		use spin::Mutex;
+		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IServiceCreator<Session>>> = Mutex::new(Weak::new());
+			static ref HANDLE : InternalMutex<Weak<IServiceCreator<Session>>> = InternalMutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)

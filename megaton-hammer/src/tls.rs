@@ -41,12 +41,15 @@ static mut TLS: TlsStruct = TlsStruct {
     ipc_buf: ::core::cell::UnsafeCell::new([0; 0x100]),
     ipc_borrowed: false,
     unknown: [0; 0xF7],
-    ctx: Box::new(ThreadCtx { locals: BTreeMap::new() })
+    ctx: Box::new(ThreadCtx { locals: BTreeMap::new(), thread_handle: 0 })
 };
 
 #[derive(Debug)]
 pub struct ThreadCtx {
-    pub locals: BTreeMap<usize, *mut u8>
+    /// Used by libstd for thread-local variable implementation.
+    // TODO: Switch to ELF thread locals.
+    pub locals: BTreeMap<usize, *mut u8>,
+    thread_handle: u32
 }
 
 /// The TLS buffer can be accessed through the tpidrro_el0 ARM system register.
@@ -99,10 +102,10 @@ impl TlsStruct {
     /// FOR INTERNAL USE ONLY
     ///
     /// Sets up the ThreadCtx.
-    pub unsafe fn init() {
+    pub unsafe fn init(thread_handle: u32) {
         use core::{mem, ptr};
         let tls = get_tls_space();
-        let new_ctx = Box::new(ThreadCtx { locals: BTreeMap::new() });
+        let new_ctx = Box::new(ThreadCtx { locals: BTreeMap::new(), thread_handle });
         let old_ctx = &mut (*tls).ctx;
 
         // Copy the newly allocated box in the old one without dropping what was
@@ -131,6 +134,14 @@ impl TlsStruct {
     pub unsafe fn reset_ipc_borrowed() {
         let tls = get_tls_space();
         (*tls).ipc_borrowed = false;
+    }
+
+
+    pub fn get_thread_handle() -> u32 {
+        unsafe {
+            let tls = get_tls_space();
+            (*tls).ctx.thread_handle
+        }
     }
 
     pub fn get_thread_ctx() -> &'static mut ThreadCtx {

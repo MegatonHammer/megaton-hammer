@@ -22,10 +22,10 @@ impl IServiceGetterInterface<Session> {
 
 	pub fn new_ns_rid() -> Result<Arc<IServiceGetterInterface<Session>>> {
 		use alloc::arc::Weak;
-		use spin::Mutex;
+		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IServiceGetterInterface<Session>>> = Mutex::new(Weak::new());
+			static ref HANDLE : InternalMutex<Weak<IServiceGetterInterface<Session>>> = InternalMutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -56,10 +56,10 @@ impl IServiceGetterInterface<Session> {
 
 	pub fn new_ns_web() -> Result<Arc<IServiceGetterInterface<Session>>> {
 		use alloc::arc::Weak;
-		use spin::Mutex;
+		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IServiceGetterInterface<Session>>> = Mutex::new(Weak::new());
+			static ref HANDLE : InternalMutex<Weak<IServiceGetterInterface<Session>>> = InternalMutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -90,10 +90,10 @@ impl IServiceGetterInterface<Session> {
 
 	pub fn new_ns_ec() -> Result<Arc<IServiceGetterInterface<Session>>> {
 		use alloc::arc::Weak;
-		use spin::Mutex;
+		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IServiceGetterInterface<Session>>> = Mutex::new(Weak::new());
+			static ref HANDLE : InternalMutex<Weak<IServiceGetterInterface<Session>>> = InternalMutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -124,10 +124,10 @@ impl IServiceGetterInterface<Session> {
 
 	pub fn new_ns_am2() -> Result<Arc<IServiceGetterInterface<Session>>> {
 		use alloc::arc::Weak;
-		use spin::Mutex;
+		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IServiceGetterInterface<Session>>> = Mutex::new(Weak::new());
+			static ref HANDLE : InternalMutex<Weak<IServiceGetterInterface<Session>>> = InternalMutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -158,10 +158,10 @@ impl IServiceGetterInterface<Session> {
 
 	pub fn new_ns_rt() -> Result<Arc<IServiceGetterInterface<Session>>> {
 		use alloc::arc::Weak;
-		use spin::Mutex;
+		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IServiceGetterInterface<Session>>> = Mutex::new(Weak::new());
+			static ref HANDLE : InternalMutex<Weak<IServiceGetterInterface<Session>>> = InternalMutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)

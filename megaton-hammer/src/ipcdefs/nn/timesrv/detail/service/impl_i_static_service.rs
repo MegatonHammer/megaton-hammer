@@ -22,10 +22,10 @@ impl IStaticService<Session> {
 
 	pub fn new_time_s() -> Result<Arc<IStaticService<Session>>> {
 		use alloc::arc::Weak;
-		use spin::Mutex;
+		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IStaticService<Session>>> = Mutex::new(Weak::new());
+			static ref HANDLE : InternalMutex<Weak<IStaticService<Session>>> = InternalMutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -56,10 +56,10 @@ impl IStaticService<Session> {
 
 	pub fn new_time_u() -> Result<Arc<IStaticService<Session>>> {
 		use alloc::arc::Weak;
-		use spin::Mutex;
+		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IStaticService<Session>>> = Mutex::new(Weak::new());
+			static ref HANDLE : InternalMutex<Weak<IStaticService<Session>>> = InternalMutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -90,10 +90,10 @@ impl IStaticService<Session> {
 
 	pub fn new_time_r() -> Result<Arc<IStaticService<Session>>> {
 		use alloc::arc::Weak;
-		use spin::Mutex;
+		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IStaticService<Session>>> = Mutex::new(Weak::new());
+			static ref HANDLE : InternalMutex<Weak<IStaticService<Session>>> = InternalMutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -124,10 +124,10 @@ impl IStaticService<Session> {
 
 	pub fn new_time_a() -> Result<Arc<IStaticService<Session>>> {
 		use alloc::arc::Weak;
-		use spin::Mutex;
+		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<IStaticService<Session>>> = Mutex::new(Weak::new());
+			static ref HANDLE : InternalMutex<Weak<IStaticService<Session>>> = InternalMutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)

@@ -26,10 +26,10 @@ impl INvDrvServices<Session> {
 
 	pub fn new_nvdrv_s<T: FnOnce(fn(u32, &KObject, &KObject) -> Result<INvDrvServices<Session>>) -> Result<INvDrvServices<Session>>>(f: T) -> Result<Arc<INvDrvServices<Session>>> {
 		use alloc::arc::Weak;
-		use spin::Mutex;
+		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<INvDrvServices<Session>>> = Mutex::new(Weak::new());
+			static ref HANDLE : InternalMutex<Weak<INvDrvServices<Session>>> = InternalMutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -64,10 +64,10 @@ impl INvDrvServices<Session> {
 
 	pub fn new_nvdrv_t<T: FnOnce(fn(u32, &KObject, &KObject) -> Result<INvDrvServices<Session>>) -> Result<INvDrvServices<Session>>>(f: T) -> Result<Arc<INvDrvServices<Session>>> {
 		use alloc::arc::Weak;
-		use spin::Mutex;
+		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<INvDrvServices<Session>>> = Mutex::new(Weak::new());
+			static ref HANDLE : InternalMutex<Weak<INvDrvServices<Session>>> = InternalMutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -102,10 +102,10 @@ impl INvDrvServices<Session> {
 
 	pub fn new_nvdrv_a<T: FnOnce(fn(u32, &KObject, &KObject) -> Result<INvDrvServices<Session>>) -> Result<INvDrvServices<Session>>>(f: T) -> Result<Arc<INvDrvServices<Session>>> {
 		use alloc::arc::Weak;
-		use spin::Mutex;
+		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<INvDrvServices<Session>>> = Mutex::new(Weak::new());
+			static ref HANDLE : InternalMutex<Weak<INvDrvServices<Session>>> = InternalMutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
@@ -140,10 +140,10 @@ impl INvDrvServices<Session> {
 
 	pub fn new_nvdrv<T: FnOnce(fn(u32, &KObject, &KObject) -> Result<INvDrvServices<Session>>) -> Result<INvDrvServices<Session>>>(f: T) -> Result<Arc<INvDrvServices<Session>>> {
 		use alloc::arc::Weak;
-		use spin::Mutex;
+		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
-			static ref HANDLE : Mutex<Weak<INvDrvServices<Session>>> = Mutex::new(Weak::new());
+			static ref HANDLE : InternalMutex<Weak<INvDrvServices<Session>>> = InternalMutex::new(Weak::new());
 		}
 		if let Some(hnd) = HANDLE.lock().upgrade() {
 			return Ok(hnd)
