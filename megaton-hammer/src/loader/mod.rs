@@ -146,6 +146,35 @@ impl ::core::fmt::Write for Logger {
     }
 }
 
+
+/// Do not use, for libstd use only during panics.
+pub struct NonLockingLogger;
+
+use core::fmt::Write;
+
+impl Write for NonLockingLogger {
+    fn write_str(&mut self, s: &str) -> Result<(), ::core::fmt::Error> {
+        self.write(s.as_bytes());
+        Ok(())
+    }
+}
+
+impl NonLockingLogger {
+    fn write(&self, data: &[u8]) {
+        use kernel::svc;
+
+        let _ = unsafe { svc::output_debug_string(data.as_ptr(), data.len()) };
+        if let Some(cursor) = LOADER.try().and_then(|ldr_cfg| (&ldr_cfg.log).as_ref()) {
+            unsafe { cursor.force_inner().write(data); }
+
+        }
+        if let Some(pipe) = LOADER.try().and_then(|ldr_cfg| (&ldr_cfg.twili).as_ref()) {
+            let _ = pipe.write(data);
+        }
+    }
+}
+
+
 // TODO: Reenable logger.
 // This should probably write in as many places as possible (bsd log if
 // there is one, static LOG if there is one, SvcLog)
