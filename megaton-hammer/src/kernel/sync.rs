@@ -18,8 +18,16 @@ impl Mutex {
     }
 
     pub fn lock(&self) {
-        let tag = ::tls::TlsStruct::get_thread_handle();
+        let tag = ::tls::TlsStruct::get_thread_handle().unwrap_or(0);
 
+        // A note about 0: when trying to lock mutexes very early in the init
+        // (before TlsStruct::set_thread_handle is called), we will have a problem:
+        // we do not yet know what our thread_handle is. We might still want to
+        // lock those structs, however. What we do is, we get the handle as 0.
+        //
+        // This will let the CAS succeed, without actually locking the lock.
+        // This is, obviously, unsafe. This is mostly useful for the earlydebug
+        // logging mechanism. Only Loader::init is called in this weird state.
         loop {
             let cur = self.0.compare_and_swap(0, tag as usize, Ordering::SeqCst) as u32;
 
@@ -49,7 +57,7 @@ impl Mutex {
     }
 
     pub fn try_lock(&self) -> bool {
-        let tag = ::tls::TlsStruct::get_thread_handle();
+        let tag = ::tls::TlsStruct::get_thread_handle().unwrap_or(0);
 
         let cur = self.0.compare_and_swap(0, tag as usize, Ordering::SeqCst) as u32;
 
@@ -67,7 +75,7 @@ impl Mutex {
     }
 
     pub fn unlock(&self) {
-        let tag = ::tls::TlsStruct::get_thread_handle();
+        let tag = ::tls::TlsStruct::get_thread_handle().unwrap_or(0);
         let old = self.0.compare_and_swap(tag as usize, 0, Ordering::SeqCst) as u32;
         if old & HAS_LISTENERS != 0 {
             unsafe { arbitrate_unlock(self as *const _ as *mut _); }

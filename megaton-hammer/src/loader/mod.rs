@@ -284,7 +284,8 @@ pub unsafe fn init_loader(entry: *mut LoaderConfigEntry, exit: extern fn(u64) ->
             },
             LoaderConfigTag::MAIN_THREAD_HANDLE => config.main_thread = (*entry).data.0 as u32,
             LoaderConfigTag::OVERRIDE_HEAP => {
-                *config.heap_strategy.lock() = Some(HeapStrategy::OverrideHeap(Unique::new(slice::from_raw_parts_mut((*entry).data.0 as _, (*entry).data.1 as usize)).unwrap()))
+                // At this point, we cannot lock mutexes yet. Let's just force this one open.
+                *config.heap_strategy.force_inner() = Some(HeapStrategy::OverrideHeap(Unique::new(slice::from_raw_parts_mut((*entry).data.0 as _, (*entry).data.1 as usize)).unwrap()))
             },
             LoaderConfigTag::APPLET_WORKAROUND => {},
             LoaderConfigTag::TWILI_PRESENT => {

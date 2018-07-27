@@ -94,10 +94,11 @@ unsafe extern fn megaton_start(config: *mut LoaderConfigEntry, _thread_handle: u
         fini_array: None
     };
 
-
     if let Err(x) = relocation::relocate(aslr_base as _, &mut dyn_info) {
         return -(x as i32);
     }
+
+    tls::TlsStruct::init();
 
     #[cfg(feature = "earlydebug")]
     ::log_impl::init();
@@ -113,7 +114,7 @@ unsafe extern fn megaton_start(config: *mut LoaderConfigEntry, _thread_handle: u
     // Initialize the main thread's context.
     use tls;
     trace!("Initializing TLS struct");
-    tls::TlsStruct::init(::loader::get_main_thread_handle().expect("Loader did not provide a main thread handle"));
+    tls::TlsStruct::set_thread_handle(::loader::get_main_thread_handle().expect("Loader did not provide a main thread handle"));
 
     extern {
         fn main(argc: isize, argv: *const *const u8) -> i32;

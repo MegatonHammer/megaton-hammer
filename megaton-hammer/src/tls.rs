@@ -8,6 +8,7 @@
 
 use core::ops::{Deref, DerefMut};
 use core::cell::UnsafeCell;
+use core::num::NonZeroU32;
 use core::fmt;
 use alloc::BTreeMap;
 use alloc::boxed::Box;
@@ -41,7 +42,7 @@ static mut TLS: TlsStruct = TlsStruct {
     ipc_buf: ::core::cell::UnsafeCell::new([0; 0x100]),
     ipc_borrowed: false,
     unknown: [0; 0xF7],
-    ctx: Box::new(ThreadCtx { locals: BTreeMap::new(), thread_handle: 0 })
+    ctx: Some(Box::new(ThreadCtx { locals: BTreeMap::new(), }))
 };
 
 #[derive(Debug)]
@@ -49,7 +50,6 @@ pub struct ThreadCtx {
     /// Used by libstd for thread-local variable implementation.
     // TODO: Switch to ELF thread locals.
     pub locals: BTreeMap<usize, *mut u8>,
-    thread_handle: u32
 }
 
 /// The TLS buffer can be accessed through the tpidrro_el0 ARM system register.
@@ -59,8 +59,9 @@ pub struct ThreadCtx {
 pub struct TlsStruct {
     pub ipc_buf: UnsafeCell<[u8; 0x100]>,
     ipc_borrowed: bool, // A bool is an i8. But it's not spec'd to be...
-    unknown: [u8; 0xF7],
-    ctx: Box<ThreadCtx>
+    unknown: [u8; 0xF3],
+    thread_handle: Option<NonZeroU32>,
+    ctx: Option<Box<ThreadCtx>>
 }
 
 assert_eq_size!(tlsstruct_is_0x200_bytes; [u8; 0x200], TlsStruct);
@@ -99,19 +100,25 @@ impl DerefMut for IpcBufferRefMut {
 }
 
 impl TlsStruct {
+    pub unsafe fn init() {
+        use core::mem;
+        let tls = get_tls_space();
+        let old_ctx = &mut (*tls).ctx;
+        (*tls).ipc_borrowed = false;
+        (*tls).thread_handle = None;
+
+        // Copy None into ctx without letting the destructor run on whatever
+        // garbage was there.
+        mem::forget(mem::replace(old_ctx, None));
+    }
+
     /// FOR INTERNAL USE ONLY
     ///
     /// Sets up the ThreadCtx.
-    pub unsafe fn init(thread_handle: u32) {
-        use core::{mem, ptr};
+    pub unsafe fn set_thread_handle(thread_handle: u32) {
         let tls = get_tls_space();
-        let new_ctx = Box::new(ThreadCtx { locals: BTreeMap::new(), thread_handle });
-        let old_ctx = &mut (*tls).ctx;
-
-        // Copy the newly allocated box in the old one without dropping what was
-        // there before - most likely garbage!
-        ptr::copy(&new_ctx, old_ctx, 1);
-        mem::forget(new_ctx);
+        (*tls).thread_handle = Some(NonZeroU32::new(thread_handle).expect("Thread_handle to be non-zero"));
+        (*tls).ctx = Some(Box::new(ThreadCtx { locals: BTreeMap::new(), }));
     }
 
     /// 
@@ -137,10 +144,10 @@ impl TlsStruct {
     }
 
 
-    pub fn get_thread_handle() -> u32 {
+    pub fn get_thread_handle() -> Option<u32> {
         unsafe {
             let tls = get_tls_space();
-            (*tls).ctx.thread_handle
+            (*tls).thread_handle.map(|x| x.get())
         }
     }
 
@@ -151,7 +158,7 @@ impl TlsStruct {
             // :scream:
             //
             // I don't have a better solution for now.
-            &mut (*tls).ctx
+            &mut *(*tls).ctx.as_mut().unwrap()
         }
     }
 }
