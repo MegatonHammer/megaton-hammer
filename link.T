@@ -23,6 +23,7 @@ SECTIONS
 
     *(.text .text.*)
     *(.plt .plt.*)
+    HIDDEN(__text_end = .);
   }
 
   /* Read-only sections */

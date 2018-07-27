@@ -19,7 +19,7 @@
   "llvm-target": "aarch64-unknown-none",
   "max-atomic-width": 128,
   "os": "switch",
-  "panic-strategy": "abort",
+  "panic-strategy": "unwind",
   "position-independent-executables": true,
   "pre-link-args": {
     "ld.lld": [
@@ -28,7 +28,8 @@
   },
   "post-link-args": {
     "ld.lld": [
-      "--no-gc-sections"
+      "--no-gc-sections",
+      "--eh-frame-hdr"
     ]
   },
   "relro-level": "off",

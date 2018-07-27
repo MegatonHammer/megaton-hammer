@@ -1,4 +1,5 @@
 extern crate megaton_hammer;
+extern crate unwind;
 
 use megaton_hammer::kernel::{TransferMemory, KObject, FromKObject, Event, svc};
 use megaton_hammer::ipcdefs as megaton_ipc;
@@ -26,6 +27,9 @@ impl From<megaton_hammer::error::Error> for MyError {
 fn main() -> std::result::Result<(), MyError> {
     use megaton_ipc::nn::pm::detail::IInformationInterface;
 
+    megaton_hammer::log_impl::init();
+
+    panic!("Yay");
     // Sleep 2 seconds, for sm to be ready
     //unsafe { svc::sleep_thread(2_000_000_000); }
 

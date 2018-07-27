@@ -14,3 +14,4 @@ git = "https://github.com/megatonhammer/rust"
 [dependencies.std]
 stage = 3
 git = "https://github.com/megatonhammer/rust"
+features = ["panic-unwind"]

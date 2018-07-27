@@ -5,3 +5,4 @@ authors = ["roblabla <unfiltered@roblab.la>"]
 
 [dependencies]
 megaton-hammer = { path = "../megaton-hammer"  }
+unwind = { git = "https://github.com/roblabla/unwind-rs", features = ["nightly"] }
