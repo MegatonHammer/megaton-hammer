@@ -4,7 +4,7 @@ use ::kernel::{Session, Domain, Object};
 use ::kernel::KObject;
 use ::error::*;
 use core::ops::{Deref, DerefMut};
-use alloc::arc::Arc;
+use alloc::sync::Arc;
 
 #[derive(Debug)]
 pub struct IFileSystemProxy<T>(T);
@@ -22,7 +22,7 @@ impl IFileSystemProxy<Session> {
 	}
 
 	pub fn new<T: FnOnce(fn(u64) -> Result<IFileSystemProxy<Session>>) -> Result<IFileSystemProxy<Session>>>(f: T) -> Result<Arc<IFileSystemProxy<Session>>> {
-		use alloc::arc::Weak;
+		use alloc::sync::Weak;
 		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {

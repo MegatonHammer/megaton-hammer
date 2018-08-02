@@ -382,7 +382,7 @@ def gen_raw_new_method(f, ifacename, servicename, has_initialize_output, initial
 
 def gen_new_method(f, ifacename, servicename, raw_new_name, has_initialize_output, initialize_args):
 	s_name = s + ("\\0" * (8 - len(s)))
-	print("\t\tuse alloc::arc::Weak;", file=f)
+	print("\t\tuse alloc::sync::Weak;", file=f)
         print("\t\tuse kernel::sync::InternalMutex;", file=f)
 	print("\t\tuse core::mem::ManuallyDrop;", file=f)
 	print("\t\tlazy_static! {", file=f)
@@ -467,7 +467,7 @@ for name, cmds in ifaces.items():
 		print("use ::error::*;", file=f)
 		print("use core::ops::{Deref, DerefMut};", file=f)
 		if name in services:
-			print("use alloc::arc::Arc;", file=f)
+			print("use alloc::sync::Arc;", file=f)
 		# Check if we'll need to send/receive a buffer
 
 		print("", file=f)

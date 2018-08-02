@@ -4,7 +4,7 @@ use ::kernel::{Session, Domain, Object};
 use ::kernel::KObject;
 use ::error::*;
 use core::ops::{Deref, DerefMut};
-use alloc::arc::Arc;
+use alloc::sync::Arc;
 
 #[derive(Debug)]
 pub struct IAllSystemAppletProxiesService<T>(T);
@@ -21,7 +21,7 @@ impl IAllSystemAppletProxiesService<Session> {
 	}
 
 	pub fn new() -> Result<Arc<IAllSystemAppletProxiesService<Session>>> {
-		use alloc::arc::Weak;
+		use alloc::sync::Weak;
 		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {

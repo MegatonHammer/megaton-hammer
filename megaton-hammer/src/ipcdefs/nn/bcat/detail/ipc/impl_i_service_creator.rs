@@ -4,7 +4,7 @@ use ::kernel::{Session, Domain, Object};
 use ::kernel::KObject;
 use ::error::*;
 use core::ops::{Deref, DerefMut};
-use alloc::arc::Arc;
+use alloc::sync::Arc;
 
 #[derive(Debug)]
 pub struct IServiceCreator<T>(T);
@@ -21,7 +21,7 @@ impl IServiceCreator<Session> {
 	}
 
 	pub fn new_bcat_a() -> Result<Arc<IServiceCreator<Session>>> {
-		use alloc::arc::Weak;
+		use alloc::sync::Weak;
 		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
@@ -55,7 +55,7 @@ impl IServiceCreator<Session> {
 	}
 
 	pub fn new_bcat_m() -> Result<Arc<IServiceCreator<Session>>> {
-		use alloc::arc::Weak;
+		use alloc::sync::Weak;
 		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
@@ -89,7 +89,7 @@ impl IServiceCreator<Session> {
 	}
 
 	pub fn new_bcat_u() -> Result<Arc<IServiceCreator<Session>>> {
-		use alloc::arc::Weak;
+		use alloc::sync::Weak;
 		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
@@ -123,7 +123,7 @@ impl IServiceCreator<Session> {
 	}
 
 	pub fn new_bcat_s() -> Result<Arc<IServiceCreator<Session>>> {
-		use alloc::arc::Weak;
+		use alloc::sync::Weak;
 		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {

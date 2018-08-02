@@ -4,7 +4,7 @@ use ::kernel::{Session, Domain, Object};
 use ::kernel::KObject;
 use ::error::*;
 use core::ops::{Deref, DerefMut};
-use alloc::arc::Arc;
+use alloc::sync::Arc;
 
 #[derive(Debug)]
 pub struct IManager<T>(T);
@@ -21,7 +21,7 @@ impl IManager<Session> {
 	}
 
 	pub fn new_nsd_a() -> Result<Arc<IManager<Session>>> {
-		use alloc::arc::Weak;
+		use alloc::sync::Weak;
 		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
@@ -55,7 +55,7 @@ impl IManager<Session> {
 	}
 
 	pub fn new_nsd_u() -> Result<Arc<IManager<Session>>> {
-		use alloc::arc::Weak;
+		use alloc::sync::Weak;
 		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {

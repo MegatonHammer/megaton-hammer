@@ -4,7 +4,7 @@ use ::kernel::{Session, Domain, Object};
 use ::kernel::KObject;
 use ::error::*;
 use core::ops::{Deref, DerefMut};
-use alloc::arc::Arc;
+use alloc::sync::Arc;
 
 #[derive(Debug)]
 pub struct IClient<T>(T);
@@ -25,7 +25,7 @@ impl IClient<Session> {
 	}
 
 	pub fn new_bsd_u<T: FnOnce(fn(::ipcdefs::nn::socket::BsdBufferConfig, u64, u64, &KObject) -> Result<IClient<Session>>) -> Result<IClient<Session>>>(f: T) -> Result<Arc<IClient<Session>>> {
-		use alloc::arc::Weak;
+		use alloc::sync::Weak;
 		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
@@ -63,7 +63,7 @@ impl IClient<Session> {
 	}
 
 	pub fn new_bsd_s<T: FnOnce(fn(::ipcdefs::nn::socket::BsdBufferConfig, u64, u64, &KObject) -> Result<IClient<Session>>) -> Result<IClient<Session>>>(f: T) -> Result<Arc<IClient<Session>>> {
-		use alloc::arc::Weak;
+		use alloc::sync::Weak;
 		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {

@@ -4,7 +4,7 @@ use ::kernel::{Session, Domain, Object};
 use ::kernel::KObject;
 use ::error::*;
 use core::ops::{Deref, DerefMut};
-use alloc::arc::Arc;
+use alloc::sync::Arc;
 
 #[derive(Debug)]
 pub struct ISession<T>(T);
@@ -21,7 +21,7 @@ impl ISession<Session> {
 	}
 
 	pub fn new_fgm_0() -> Result<Arc<ISession<Session>>> {
-		use alloc::arc::Weak;
+		use alloc::sync::Weak;
 		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
@@ -55,7 +55,7 @@ impl ISession<Session> {
 	}
 
 	pub fn new_fgm() -> Result<Arc<ISession<Session>>> {
-		use alloc::arc::Weak;
+		use alloc::sync::Weak;
 		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
@@ -89,7 +89,7 @@ impl ISession<Session> {
 	}
 
 	pub fn new_fgm_9() -> Result<Arc<ISession<Session>>> {
-		use alloc::arc::Weak;
+		use alloc::sync::Weak;
 		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {

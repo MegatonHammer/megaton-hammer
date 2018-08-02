@@ -4,7 +4,7 @@ use ::kernel::{Session, Domain, Object};
 use ::kernel::KObject;
 use ::error::*;
 use core::ops::{Deref, DerefMut};
-use alloc::arc::Arc;
+use alloc::sync::Arc;
 
 #[derive(Debug)]
 pub struct IServiceGetterInterface<T>(T);
@@ -21,7 +21,7 @@ impl IServiceGetterInterface<Session> {
 	}
 
 	pub fn new_ns_rid() -> Result<Arc<IServiceGetterInterface<Session>>> {
-		use alloc::arc::Weak;
+		use alloc::sync::Weak;
 		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
@@ -55,7 +55,7 @@ impl IServiceGetterInterface<Session> {
 	}
 
 	pub fn new_ns_web() -> Result<Arc<IServiceGetterInterface<Session>>> {
-		use alloc::arc::Weak;
+		use alloc::sync::Weak;
 		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
@@ -89,7 +89,7 @@ impl IServiceGetterInterface<Session> {
 	}
 
 	pub fn new_ns_ec() -> Result<Arc<IServiceGetterInterface<Session>>> {
-		use alloc::arc::Weak;
+		use alloc::sync::Weak;
 		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
@@ -123,7 +123,7 @@ impl IServiceGetterInterface<Session> {
 	}
 
 	pub fn new_ns_am2() -> Result<Arc<IServiceGetterInterface<Session>>> {
-		use alloc::arc::Weak;
+		use alloc::sync::Weak;
 		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
@@ -157,7 +157,7 @@ impl IServiceGetterInterface<Session> {
 	}
 
 	pub fn new_ns_rt() -> Result<Arc<IServiceGetterInterface<Session>>> {
-		use alloc::arc::Weak;
+		use alloc::sync::Weak;
 		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {

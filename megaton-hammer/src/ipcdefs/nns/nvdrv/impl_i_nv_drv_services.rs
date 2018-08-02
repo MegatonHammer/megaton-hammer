@@ -4,7 +4,7 @@ use ::kernel::{Session, Domain, Object};
 use ::kernel::KObject;
 use ::error::*;
 use core::ops::{Deref, DerefMut};
-use alloc::arc::Arc;
+use alloc::sync::Arc;
 
 #[derive(Debug)]
 pub struct INvDrvServices<T>(T);
@@ -25,7 +25,7 @@ impl INvDrvServices<Session> {
 	}
 
 	pub fn new_nvdrv_s<T: FnOnce(fn(u32, &KObject, &KObject) -> Result<INvDrvServices<Session>>) -> Result<INvDrvServices<Session>>>(f: T) -> Result<Arc<INvDrvServices<Session>>> {
-		use alloc::arc::Weak;
+		use alloc::sync::Weak;
 		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
@@ -63,7 +63,7 @@ impl INvDrvServices<Session> {
 	}
 
 	pub fn new_nvdrv_t<T: FnOnce(fn(u32, &KObject, &KObject) -> Result<INvDrvServices<Session>>) -> Result<INvDrvServices<Session>>>(f: T) -> Result<Arc<INvDrvServices<Session>>> {
-		use alloc::arc::Weak;
+		use alloc::sync::Weak;
 		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
@@ -101,7 +101,7 @@ impl INvDrvServices<Session> {
 	}
 
 	pub fn new_nvdrv_a<T: FnOnce(fn(u32, &KObject, &KObject) -> Result<INvDrvServices<Session>>) -> Result<INvDrvServices<Session>>>(f: T) -> Result<Arc<INvDrvServices<Session>>> {
-		use alloc::arc::Weak;
+		use alloc::sync::Weak;
 		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
@@ -139,7 +139,7 @@ impl INvDrvServices<Session> {
 	}
 
 	pub fn new_nvdrv<T: FnOnce(fn(u32, &KObject, &KObject) -> Result<INvDrvServices<Session>>) -> Result<INvDrvServices<Session>>>(f: T) -> Result<Arc<INvDrvServices<Session>>> {
-		use alloc::arc::Weak;
+		use alloc::sync::Weak;
 		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {

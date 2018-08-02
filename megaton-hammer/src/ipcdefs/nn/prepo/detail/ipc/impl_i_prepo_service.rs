@@ -4,7 +4,7 @@ use ::kernel::{Session, Domain, Object};
 use ::kernel::KObject;
 use ::error::*;
 use core::ops::{Deref, DerefMut};
-use alloc::arc::Arc;
+use alloc::sync::Arc;
 
 #[derive(Debug)]
 pub struct IPrepoService<T>(T);
@@ -21,7 +21,7 @@ impl IPrepoService<Session> {
 	}
 
 	pub fn new_prepo_a() -> Result<Arc<IPrepoService<Session>>> {
-		use alloc::arc::Weak;
+		use alloc::sync::Weak;
 		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
@@ -55,7 +55,7 @@ impl IPrepoService<Session> {
 	}
 
 	pub fn new_prepo_m() -> Result<Arc<IPrepoService<Session>>> {
-		use alloc::arc::Weak;
+		use alloc::sync::Weak;
 		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
@@ -89,7 +89,7 @@ impl IPrepoService<Session> {
 	}
 
 	pub fn new_prepo_u() -> Result<Arc<IPrepoService<Session>>> {
-		use alloc::arc::Weak;
+		use alloc::sync::Weak;
 		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
@@ -123,7 +123,7 @@ impl IPrepoService<Session> {
 	}
 
 	pub fn new_prepo_s() -> Result<Arc<IPrepoService<Session>>> {
-		use alloc::arc::Weak;
+		use alloc::sync::Weak;
 		use kernel::sync::InternalMutex;
 		use core::mem::ManuallyDrop;
 		lazy_static! {
