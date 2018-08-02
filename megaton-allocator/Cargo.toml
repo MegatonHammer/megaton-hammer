@@ -7,4 +7,4 @@ version = "0.1.0"
 spin = { version = "0.4.6" }
 megaton-hammer = { path = "../megaton-hammer" }
 
-linked_list_allocator = "0.6.2"
+linked_list_allocator = "0.6.3"

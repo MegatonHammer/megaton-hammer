@@ -3,7 +3,7 @@ use kernel::svc::send_sync_request;
 use kernel::{KObject};
 use error::*;
 use tls::TlsStruct;
-use alloc::arc::Arc;
+use alloc::sync::Arc;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Object

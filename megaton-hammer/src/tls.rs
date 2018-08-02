@@ -10,7 +10,7 @@ use core::ops::{Deref, DerefMut};
 use core::cell::UnsafeCell;
 use core::num::NonZeroU32;
 use core::fmt;
-use alloc::BTreeMap;
+use alloc::collections::btree_map::BTreeMap;
 use alloc::boxed::Box;
 
 /// The basic unsafe building block of this module, and a very thin wrapper

@@ -10,7 +10,7 @@ use core;
 use core::mem;
 use core::marker::PhantomData;
 use arrayvec::{ArrayVec, Array};
-use alloc::arc::Arc;
+use alloc::sync::Arc;
 use byteorder::{LE};
 use kernel::{KObject, Domain};
 use bit_field::BitField;
