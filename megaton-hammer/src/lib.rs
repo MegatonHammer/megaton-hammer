@@ -42,6 +42,8 @@ extern crate alloc;
 extern crate static_assertions;
 
 extern crate arrayvec;
+#[macro_use]
+extern crate enum_primitive;
 
 pub mod ipc;
 pub mod tls;
@@ -53,28 +55,4 @@ mod utils;
 
 pub mod loader;
 
-pub mod error {
-    use core::fmt;
-    use failure;
-
-    #[derive(Clone, Copy)]
-    #[repr(transparent)]
-    pub struct Error(pub u32);
-
-    impl failure::Fail for Error { }
-
-    impl fmt::Debug for Error {
-        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-            write!(f, "Error {:x} in module {}: {}", self.0, self.0 & (1 << 9) - 1, self.0 >> 9)
-        }
-    }
-
-    impl fmt::Display for Error {
-        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-            // TODO: Actually print the module name, and description if we have it.
-            write!(f, "Error in module {}: {}", self.0 & (1 << 9) - 1, self.0 >> 9)
-        }
-    }
-
-    pub type Result<T> = ::core::result::Result<T, Error>;
-}
+pub mod error;
