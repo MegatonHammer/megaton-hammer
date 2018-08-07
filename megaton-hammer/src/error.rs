@@ -8,27 +8,33 @@ pub struct Error(pub u32);
 
 impl Error {
     // TODO: eww. Don't do that.
-    fn module(&self) -> ::core::result::Result<Module, u32> {
-        let module = self.0 & ((1 << 9) - 1);
-        if let Some(m) = Module::from_u32(module) {
-            Ok(m)
-        } else {
-            Err(module)
+    pub fn module_id(&self) -> u32 {
+        self.0 & ((1 << 9) - 1)
+    }
+
+    pub fn module(&self) -> ::core::result::Result<Module, u32> {
+        match Module::from_u32(self.module_id()) {
+            Some(Module::__AnExtraHiddenParam) => Err(0),
+            Some(m) => Ok(m),
+            None => Err(self.module_id())
         }
     }
+
+    pub fn description_id(&self) -> u32 {
+        self.0 >> 9
+    }
+
 }
 
 impl failure::Fail for Error { }
 
 impl fmt::Debug for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let description = self.0 >> 9;
-
         match self.module() {
             Ok(m) =>
-                write!(f, "Error {:x} in module {:?}: {}", self.0, m, description),
+                write!(f, "Error {:x} in module {:?}: {}", self.0, m, self.description_id()),
             Err(m) =>
-                write!(f, "Error {:x} in module {}: {}", self.0, m, description)
+                write!(f, "Error {:x} in module {}: {}", self.0, m, self.description_id())
         }
     }
 }
@@ -36,13 +42,11 @@ impl fmt::Debug for Error {
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // TODO: Actually print the description if we have it.
-        let description = self.0 >> 9;
-
         match self.module() {
             Ok(m) =>
-                write!(f, "Error {:x} in module {:?}: {}", self.0, m, description),
+                write!(f, "Error {:x} in module {:?}: {}", self.0, m, self.description_id()),
             Err(m) =>
-                write!(f, "Error {:x} in module {}: {}", self.0, m, description)
+                write!(f, "Error {:x} in module {}: {}", self.0, m, self.description_id())
         }
     }
 }
@@ -52,7 +56,9 @@ pub type Result<T> = ::core::result::Result<T, Error>;
 enum_from_primitive! {
     #[repr(u16)]
     #[derive(Debug, PartialEq)]
-    enum Module {
+    pub enum Module {
+        #[doc(hidden)]
+        __AnExtraHiddenParam = 0,
         Kernel = 1,
         FS = 2,
         OS = 3,
