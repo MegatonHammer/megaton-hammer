@@ -83,6 +83,73 @@ impl Mutex {
     }
 }
 
+pub struct RMutex {
+    internal: Mutex,
+    counter: UnsafeCell<usize>,
+    tag: UnsafeCell<u32>
+}
+
+impl RMutex {
+    pub const fn new() -> RMutex {
+        RMutex {
+            internal: Mutex::new(),
+            counter: UnsafeCell::new(0),
+            tag: UnsafeCell::new(0)
+        }
+    }
+
+    pub fn lock(&self) {
+        let tag = ::tls::TlsStruct::get_thread_handle().unwrap_or(0);
+        unsafe {
+            // Safety: Tag is only read from here before we lock the lock, so no
+            // aliasing occurs. Furthermore, we're not using atomics because
+            // tag = self case can only happen from our own thread, so we don't
+            // need to force a memory reload or whatever the proper name is.
+            if *self.tag.get() != tag {
+                self.internal.lock();
+                // Safety: We're now locked by the above lock.
+                *self.tag.get() = tag;
+            }
+
+            // Safety: If we reach here, then we're locked, either directly, or
+            // from a previous call to lock().
+            *self.counter.get() += 1;
+        }
+    }
+
+    pub fn try_lock(&self) -> bool {
+        let tag = ::tls::TlsStruct::get_thread_handle().unwrap_or(0);
+        unsafe {
+            // Safety: Tag is only read from here before we lock the lock, so no
+            // aliasing occurs. Furthermore, we're not using atomics because
+            // tag = self case can only happen from our own thread, so we don't
+            // need to force a memory reload or whatever the proper name is.
+            if *self.tag.get() != tag {
+                if !self.internal.try_lock() {
+                    return false;
+                }
+                // Safety: We're now locked by the above lock.
+                *self.tag.get() = tag;
+            }
+
+            // Safety: If we reach here, then we're locked, either directly, or
+            // from a previous call to lock().
+            *self.counter.get() += 1;
+            true
+        }
+    }
+
+    // Safety: You should only call this function from a thread that holds the
+    // lock!
+    pub unsafe fn unlock(&self) {
+        let counter = self.counter.get();
+        *counter -= 1;
+        if *counter == 0 {
+            *self.tag.get() = 0;
+            self.internal.unlock();
+        }
+    }
+}
 
 /// A lock used internally by megaton-hammer, based on spin, but using the
 /// locking facility provided by the Kernel.
