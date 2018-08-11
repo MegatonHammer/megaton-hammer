@@ -33,9 +33,9 @@ impl<T> DerefMut for IService<T> {
 	}
 }
 impl<T: Object> IService<T> {
-	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown2(&self, unk0: u64) -> Result<()> {
+	// fn get_variable(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_variable_length(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn wait_until_variable_available(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)

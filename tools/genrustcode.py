@@ -402,7 +402,7 @@ def gen_new_method(f, ifacename, servicename, raw_new_name, has_initialize_outpu
 	if has_initialize_output == "u32" or has_initialize_output == "()" and initialize_args != "":
 		print("\t\tlet hnd = f(Self::%s)?;" % raw_new_name, file=f)
 	else:
-		print("\t\tlet hnd = Self::%s(%s)?;" % (raw_new_name, initialize_args), file=f)
+		print("\t\tlet hnd = Self::%s()?;" % raw_new_name, file=f)
 	print("\t\tlet ret = Arc::new(hnd);", file=f)
 	print("\t\t*HANDLE.lock() = Arc::downgrade(&ret);", file=f)
 	print("\t\tOk(ret)", file=f)
@@ -477,7 +477,7 @@ for name, cmds in ifaces.items():
 		print("impl %s<Session> {" % ifacename, file=f)
 		for s in services.get(name, []):
 			initialize_method = next((cmd for cmd in cmds['cmds'] if cmd['name'] == "Initialize"), None)
-			if s != "sm:" and initialize_method is not None:
+			if s != "sm:" and initialize_method is not None and not initialize_method['undocumented']:
 				args = formatInputs(initialize_method)
 				args_names = formatInputs(initialize_method, format_ty=IS_NAME)
 				args_ty = formatInputs(initialize_method, format_ty=IS_TYPE)

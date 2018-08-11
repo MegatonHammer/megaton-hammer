@@ -33,9 +33,9 @@ impl<T> DerefMut for IReport<T> {
 	}
 }
 impl<T: Object> IReport<T> {
-	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown2(&self, unk0: u32) -> Result<()> {
+	// fn open(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn read(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn set_flags(&self, unk0: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
@@ -45,7 +45,7 @@ impl<T: Object> IReport<T> {
 		Ok(())
 	}
 
-	pub fn unknown3(&self, ) -> Result<u32> {
+	pub fn get_flags(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
@@ -55,7 +55,7 @@ impl<T: Object> IReport<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown4(&self, ) -> Result<()> {
+	pub fn close(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
@@ -65,7 +65,7 @@ impl<T: Object> IReport<T> {
 		Ok(())
 	}
 
-	pub fn unknown5(&self, ) -> Result<u64> {
+	pub fn get_size(&self, ) -> Result<u64> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)

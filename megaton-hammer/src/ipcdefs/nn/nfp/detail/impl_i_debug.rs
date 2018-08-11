@@ -33,8 +33,8 @@ impl<T> DerefMut for IDebug<T> {
 	}
 }
 impl<T: Object> IDebug<T> {
-	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown1(&self, ) -> Result<()> {
+	// fn initialize_debug(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn finalize_debug(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
@@ -44,8 +44,8 @@ impl<T: Object> IDebug<T> {
 		Ok(())
 	}
 
-	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown3(&self, unk0: u64) -> Result<()> {
+	// fn list_devices(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn start_detection(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
@@ -55,7 +55,7 @@ impl<T: Object> IDebug<T> {
 		Ok(())
 	}
 
-	pub fn unknown4(&self, unk0: u64) -> Result<()> {
+	pub fn stop_detection(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
@@ -65,7 +65,7 @@ impl<T: Object> IDebug<T> {
 		Ok(())
 	}
 
-	pub fn unknown5(&self, unk0: u64, unk1: u32, unk2: u32) -> Result<()> {
+	pub fn mount(&self, unk0: u64, unk1: u32, unk2: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -85,7 +85,7 @@ impl<T: Object> IDebug<T> {
 		Ok(())
 	}
 
-	pub fn unknown6(&self, unk0: u64) -> Result<()> {
+	pub fn unmount(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
@@ -95,7 +95,7 @@ impl<T: Object> IDebug<T> {
 		Ok(())
 	}
 
-	pub fn unknown7(&self, unk0: u64, unk1: u32) -> Result<()> {
+	pub fn open_application_area(&self, unk0: u64, unk1: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -113,9 +113,9 @@ impl<T: Object> IDebug<T> {
 		Ok(())
 	}
 
-	// fn unknown8(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown9(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown10(&self, unk0: u64) -> Result<()> {
+	// fn get_application_area(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_application_area(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn flush(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
@@ -125,7 +125,7 @@ impl<T: Object> IDebug<T> {
 		Ok(())
 	}
 
-	pub fn unknown11(&self, unk0: u64) -> Result<()> {
+	pub fn restore(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)
@@ -135,8 +135,8 @@ impl<T: Object> IDebug<T> {
 		Ok(())
 	}
 
-	// fn unknown12(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown13(&self, unk0: u64, unk1: &mut [u8; 0x58]) -> Result<()> {
+	// fn create_application_area(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_tag_info(&self, unk0: u64, unk1: &mut [u8; 0x58]) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -148,7 +148,7 @@ impl<T: Object> IDebug<T> {
 		Ok(())
 	}
 
-	pub fn unknown14(&self, unk0: u64, unk1: &mut [u8; 0x100]) -> Result<()> {
+	pub fn get_register_info(&self, unk0: u64, unk1: &mut [u8; 0x100]) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -160,7 +160,7 @@ impl<T: Object> IDebug<T> {
 		Ok(())
 	}
 
-	pub fn unknown15(&self, unk0: u64, unk1: &mut [u8; 0x40]) -> Result<()> {
+	pub fn get_common_info(&self, unk0: u64, unk1: &mut [u8; 0x40]) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -172,7 +172,7 @@ impl<T: Object> IDebug<T> {
 		Ok(())
 	}
 
-	pub fn unknown16(&self, unk0: u64, unk1: &mut [u8; 0x40]) -> Result<()> {
+	pub fn get_model_info(&self, unk0: u64, unk1: &mut [u8; 0x40]) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -184,7 +184,7 @@ impl<T: Object> IDebug<T> {
 		Ok(())
 	}
 
-	pub fn unknown17(&self, unk0: u64) -> Result<KObject> {
+	pub fn attach_activate_event(&self, unk0: u64) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(17)
@@ -194,7 +194,7 @@ impl<T: Object> IDebug<T> {
 		Ok(res.pop_handle())
 	}
 
-	pub fn unknown18(&self, unk0: u64) -> Result<KObject> {
+	pub fn attach_deactivate_event(&self, unk0: u64) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(18)
@@ -204,7 +204,7 @@ impl<T: Object> IDebug<T> {
 		Ok(res.pop_handle())
 	}
 
-	pub fn unknown19(&self, ) -> Result<u32> {
+	pub fn get_state(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(19)
@@ -214,7 +214,7 @@ impl<T: Object> IDebug<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown20(&self, unk0: u64) -> Result<u32> {
+	pub fn get_device_state(&self, unk0: u64) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20)
@@ -224,7 +224,7 @@ impl<T: Object> IDebug<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown21(&self, unk0: u64) -> Result<u32> {
+	pub fn get_npad_id(&self, unk0: u64) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(21)
@@ -234,7 +234,7 @@ impl<T: Object> IDebug<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown22(&self, unk0: u64) -> Result<u32> {
+	pub fn get_application_area2(&self, unk0: u64) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(22)
@@ -244,7 +244,7 @@ impl<T: Object> IDebug<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown23(&self, ) -> Result<KObject> {
+	pub fn attach_availability_change_event(&self, ) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(23)
@@ -254,8 +254,8 @@ impl<T: Object> IDebug<T> {
 		Ok(res.pop_handle())
 	}
 
-	// fn unknown24(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown100(&self, unk0: u64) -> Result<()> {
+	// fn recreate_application_area(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn format(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(100)
@@ -265,7 +265,7 @@ impl<T: Object> IDebug<T> {
 		Ok(())
 	}
 
-	pub fn unknown101(&self, unk0: u64, unk1: &mut [u8; 0x40]) -> Result<()> {
+	pub fn get_admin_info(&self, unk0: u64, unk1: &mut [u8; 0x40]) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -277,7 +277,7 @@ impl<T: Object> IDebug<T> {
 		Ok(())
 	}
 
-	pub fn unknown102(&self, unk0: u64, unk1: &mut [u8; 0x100]) -> Result<()> {
+	pub fn get_register_info2(&self, unk0: u64, unk1: &mut [u8; 0x100]) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -289,7 +289,7 @@ impl<T: Object> IDebug<T> {
 		Ok(())
 	}
 
-	pub fn unknown103(&self, unk0: u64, unk1: &[u8; 0x100]) -> Result<()> {
+	pub fn set_register_info(&self, unk0: u64, unk1: &[u8; 0x100]) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -301,7 +301,7 @@ impl<T: Object> IDebug<T> {
 		Ok(())
 	}
 
-	pub fn unknown104(&self, unk0: u64) -> Result<()> {
+	pub fn delete_register_info(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(104)
@@ -311,7 +311,7 @@ impl<T: Object> IDebug<T> {
 		Ok(())
 	}
 
-	pub fn unknown105(&self, unk0: u64) -> Result<()> {
+	pub fn delete_application_area(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(105)
@@ -321,7 +321,7 @@ impl<T: Object> IDebug<T> {
 		Ok(())
 	}
 
-	pub fn unknown106(&self, unk0: u64) -> Result<u8> {
+	pub fn exists_application_area(&self, unk0: u64) -> Result<u8> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(106)
@@ -331,7 +331,7 @@ impl<T: Object> IDebug<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown200(&self, unk0: u64, unk1: &mut [u8; 0x298]) -> Result<()> {
+	pub fn get_all(&self, unk0: u64, unk1: &mut [u8; 0x298]) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -343,7 +343,7 @@ impl<T: Object> IDebug<T> {
 		Ok(())
 	}
 
-	pub fn unknown201(&self, unk0: u64, unk1: &[u8; 0x298]) -> Result<()> {
+	pub fn set_all(&self, unk0: u64, unk1: &[u8; 0x298]) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -355,7 +355,7 @@ impl<T: Object> IDebug<T> {
 		Ok(())
 	}
 
-	pub fn unknown202(&self, unk0: u64) -> Result<()> {
+	pub fn flush_debug(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(202)
@@ -365,7 +365,7 @@ impl<T: Object> IDebug<T> {
 		Ok(())
 	}
 
-	pub fn unknown203(&self, unk0: u64, unk1: u32) -> Result<()> {
+	pub fn break_tag(&self, unk0: u64, unk1: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -383,10 +383,11 @@ impl<T: Object> IDebug<T> {
 		Ok(())
 	}
 
-	// fn unknown204(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown205(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown206(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn read_backup_data(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn write_backup_data(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn write_ntf(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown300(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(not(feature = "switch-4.0.0"))]
 	pub fn unknown301(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
@@ -398,6 +399,7 @@ impl<T: Object> IDebug<T> {
 	}
 
 	// fn unknown302(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(not(feature = "switch-4.0.0"))]
 	pub fn unknown303(&self, unk0: u64, unk1: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
@@ -416,6 +418,7 @@ impl<T: Object> IDebug<T> {
 		Ok(())
 	}
 
+	#[cfg(not(feature = "switch-4.0.0"))]
 	pub fn unknown304(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
@@ -427,6 +430,7 @@ impl<T: Object> IDebug<T> {
 	}
 
 	// fn unknown305(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(not(feature = "switch-4.0.0"))]
 	pub fn unknown306(&self, unk0: u64, unk1: &mut [u8; 0x58]) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
@@ -439,6 +443,7 @@ impl<T: Object> IDebug<T> {
 		Ok(())
 	}
 
+	#[cfg(not(feature = "switch-4.0.0"))]
 	pub fn unknown307(&self, unk0: u64) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
@@ -449,6 +454,7 @@ impl<T: Object> IDebug<T> {
 		Ok(res.pop_handle())
 	}
 
+	#[cfg(not(feature = "switch-4.0.0"))]
 	pub fn unknown308(&self, unk0: u64) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
@@ -459,6 +465,7 @@ impl<T: Object> IDebug<T> {
 		Ok(res.pop_handle())
 	}
 
+	#[cfg(not(feature = "switch-4.0.0"))]
 	pub fn unknown309(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
@@ -469,6 +476,7 @@ impl<T: Object> IDebug<T> {
 		Ok(*res.get_raw())
 	}
 
+	#[cfg(not(feature = "switch-4.0.0"))]
 	pub fn unknown310(&self, unk0: u64) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
@@ -479,6 +487,7 @@ impl<T: Object> IDebug<T> {
 		Ok(*res.get_raw())
 	}
 
+	#[cfg(not(feature = "switch-4.0.0"))]
 	pub fn unknown311(&self, unk0: u64) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
@@ -489,6 +498,7 @@ impl<T: Object> IDebug<T> {
 		Ok(*res.get_raw())
 	}
 
+	#[cfg(not(feature = "switch-4.0.0"))]
 	pub fn unknown312(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
@@ -499,6 +509,7 @@ impl<T: Object> IDebug<T> {
 		Ok(())
 	}
 
+	#[cfg(not(feature = "switch-4.0.0"))]
 	pub fn unknown313(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
@@ -509,6 +520,7 @@ impl<T: Object> IDebug<T> {
 		Ok(())
 	}
 
+	#[cfg(not(feature = "switch-4.0.0"))]
 	pub fn unknown314(&self, ) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 

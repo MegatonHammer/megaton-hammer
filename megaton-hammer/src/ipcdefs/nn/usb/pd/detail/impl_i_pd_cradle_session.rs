@@ -75,6 +75,28 @@ impl<T: Object> IPdCradleSession<T> {
 	// fn get_fw_revision(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_manufacturer_id(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_device_id(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(feature = "switch-3.0.0")]
+	pub fn unknown7(&self, ) -> Result<u8> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(7)
+			.args(())
+			;
+		let res : Response<u8> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	#[cfg(feature = "switch-3.0.0")]
+	pub fn unknown8(&self, ) -> Result<u8> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(8)
+			.args(())
+			;
+		let res : Response<u8> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 }
 
 impl<T: Object> From<T> for IPdCradleSession<T> {

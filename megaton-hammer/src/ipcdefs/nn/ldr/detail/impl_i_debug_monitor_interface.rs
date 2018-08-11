@@ -88,7 +88,7 @@ impl<T: Object> IDebugMonitorInterface<T> {
 		Ok(())
 	}
 
-	pub fn unknown2(&self, ) -> Result<()> {
+	pub fn get_nso_infos(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)

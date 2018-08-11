@@ -135,6 +135,7 @@ impl<T: Object> IGeneralService<T> {
 		Ok(())
 	}
 
+	#[cfg(not(feature = "switch-4.0.0"))]
 	pub fn get_scan_data(&self, unk1: &mut [::ipcdefs::nn::nifm::detail::sf::AccessPointData]) -> Result<i32> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
@@ -157,6 +158,7 @@ impl<T: Object> IGeneralService<T> {
 		Ok(*res.get_raw())
 	}
 
+	#[cfg(not(feature = "switch-4.0.0"))]
 	pub fn get_current_access_point(&self, unk0: &mut ::ipcdefs::nn::nifm::detail::sf::AccessPointData) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
@@ -340,6 +342,7 @@ impl<T: Object> IGeneralService<T> {
 		Ok(())
 	}
 
+	#[cfg(feature = "switch-2.0.0")]
 	pub fn get_telemetory_system_event_readable_handle(&self, ) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
@@ -350,6 +353,7 @@ impl<T: Object> IGeneralService<T> {
 		Ok(res.pop_handle())
 	}
 
+	#[cfg(feature = "switch-2.0.0")]
 	pub fn get_telemetry_info(&self, unk0: &mut ::ipcdefs::nn::nifm::TelemetryInfo) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
@@ -362,10 +366,55 @@ impl<T: Object> IGeneralService<T> {
 		Ok(())
 	}
 
+	#[cfg(feature = "switch-2.0.0")]
 	pub fn confirm_system_availability(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(33)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn set_background_request_enabled(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(34)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn get_scan_data(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(35)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn get_current_access_point(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(36)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn shutdown(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(37)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;

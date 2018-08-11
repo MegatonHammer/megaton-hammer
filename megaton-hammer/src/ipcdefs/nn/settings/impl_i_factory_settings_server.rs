@@ -316,7 +316,7 @@ impl<T: Object> IFactorySettingsServer<T> {
 	}
 
 	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_unknown_key1(&self, ) -> Result<()> {
+	pub fn get_eci_device_certificate2(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(24)
@@ -327,7 +327,7 @@ impl<T: Object> IFactorySettingsServer<T> {
 	}
 
 	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_unknown_key0(&self, ) -> Result<()> {
+	pub fn get_eci_device_key2(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(25)
@@ -371,7 +371,7 @@ impl<T: Object> IFactorySettingsServer<T> {
 	}
 
 	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_amiibo_ecqvbls_key(&self, ) -> Result<()> {
+	pub fn get_amiibo_ecqv_bls_key(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(29)
@@ -382,7 +382,7 @@ impl<T: Object> IFactorySettingsServer<T> {
 	}
 
 	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_amiibo_ecqvbls_certificate(&self, ) -> Result<()> {
+	pub fn get_amiibo_ecqv_bls_certificate(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30)
@@ -393,7 +393,7 @@ impl<T: Object> IFactorySettingsServer<T> {
 	}
 
 	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_amiibo_ecqvbls_root_certificate(&self, ) -> Result<()> {
+	pub fn get_amiibo_ecqv_bls_root_certificate(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(31)

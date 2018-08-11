@@ -73,9 +73,31 @@ impl<T: Object> IClientEpSession<T> {
 		Ok(())
 	}
 
-	// fn unknown4(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn post_buffer_async(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown5(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown6(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn unknown7(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(7)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn unknown8(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(8)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 }
 
 impl<T: Object> From<T> for IClientEpSession<T> {

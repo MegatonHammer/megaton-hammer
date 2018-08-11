@@ -68,7 +68,7 @@ impl<T> DerefMut for IManager<T> {
 	}
 }
 impl<T: Object> IManager<T> {
-	pub fn unknown0(&self, unk0: u32) -> Result<T> {
+	pub fn open_session(&self, unk0: u32) -> Result<T> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)

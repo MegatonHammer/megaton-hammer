@@ -68,10 +68,10 @@ impl<T> DerefMut for IControl<T> {
 	}
 }
 impl<T: Object> IControl<T> {
-	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_url(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn import_crt(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn import_pki(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_auto_upload(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IControl<T> {

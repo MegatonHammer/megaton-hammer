@@ -68,8 +68,8 @@ impl<T> DerefMut for IManager<T> {
 	}
 }
 impl<T: Object> IManager<T> {
-	// fn get_i_session(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn list_endpoints(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn register_class_driver(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn query_functions_unregistered(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IManager<T> {

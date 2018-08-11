@@ -78,6 +78,7 @@ impl<T: Object> IPolicyManagerSystem<T> {
 		Ok(res.pop_handle())
 	}
 
+	#[cfg(not(feature = "switch-4.0.0"))]
 	pub fn unknown1(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
@@ -88,6 +89,7 @@ impl<T: Object> IPolicyManagerSystem<T> {
 		Ok(())
 	}
 
+	#[cfg(not(feature = "switch-4.0.0"))]
 	pub fn unknown2(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 

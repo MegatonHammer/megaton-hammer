@@ -68,7 +68,7 @@ impl<T> DerefMut for IAudioInManagerForDebugger<T> {
 	}
 }
 impl<T: Object> IAudioInManagerForDebugger<T> {
-	pub fn list_audio_ins(&self, unk0: u64) -> Result<()> {
+	pub fn unknown0(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
@@ -78,44 +78,11 @@ impl<T: Object> IAudioInManagerForDebugger<T> {
 		Ok(())
 	}
 
-	pub fn open_audio_in(&self, unk0: u64) -> Result<()> {
+	pub fn unknown1(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
 			.args(unk0)
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-3.0.0")]
-	pub fn list_audio_ins_ex(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-3.0.0")]
-	pub fn open_audio_in_ex(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-3.0.0")]
-	pub fn list_audio_ins_ex_and_probe(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
-			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
 		Ok(())

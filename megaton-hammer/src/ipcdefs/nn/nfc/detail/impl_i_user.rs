@@ -33,8 +33,8 @@ impl<T> DerefMut for IUser<T> {
 	}
 }
 impl<T: Object> IUser<T> {
-	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown1(&self, ) -> Result<()> {
+	// fn initialize(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn finalize(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
@@ -44,7 +44,7 @@ impl<T: Object> IUser<T> {
 		Ok(())
 	}
 
-	pub fn unknown2(&self, ) -> Result<u32> {
+	pub fn get_state(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
@@ -54,7 +54,7 @@ impl<T: Object> IUser<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown3(&self, ) -> Result<u8> {
+	pub fn is_nfc_enabled(&self, ) -> Result<u8> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
@@ -62,6 +62,204 @@ impl<T: Object> IUser<T> {
 			;
 		let res : Response<u8> = self.0.send(req)?;
 		Ok(*res.get_raw())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn initialize(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(400)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn finalize(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(401)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn get_state(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(402)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn is_nfc_enabled(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(403)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn list_devices(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(404)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn get_device_state(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(405)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn get_npad_id(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(406)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn attach_availability_change_event(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(407)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn start_detection(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(408)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn stop_detection(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(409)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn get_tag_info(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(410)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn attach_activate_event(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(411)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn attach_deactivate_event(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(412)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn read_mifare(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1000)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn write_mifare(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1001)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn send_command_by_pass_through(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1300)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn keep_pass_through_session(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1301)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn release_pass_through_session(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1302)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
 	}
 
 }

@@ -33,7 +33,7 @@ impl<T> DerefMut for IEnsureNetworkClockAvailabilityService<T> {
 	}
 }
 impl<T: Object> IEnsureNetworkClockAvailabilityService<T> {
-	pub fn unknown0(&self, ) -> Result<()> {
+	pub fn start_task(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
@@ -43,7 +43,7 @@ impl<T: Object> IEnsureNetworkClockAvailabilityService<T> {
 		Ok(())
 	}
 
-	pub fn unknown1(&self, ) -> Result<KObject> {
+	pub fn get_finish_notification_event(&self, ) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
@@ -53,7 +53,7 @@ impl<T: Object> IEnsureNetworkClockAvailabilityService<T> {
 		Ok(res.pop_handle())
 	}
 
-	pub fn unknown2(&self, ) -> Result<()> {
+	pub fn get_result(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
@@ -63,7 +63,7 @@ impl<T: Object> IEnsureNetworkClockAvailabilityService<T> {
 		Ok(())
 	}
 
-	pub fn unknown3(&self, ) -> Result<()> {
+	pub fn cancel(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
@@ -73,7 +73,7 @@ impl<T: Object> IEnsureNetworkClockAvailabilityService<T> {
 		Ok(())
 	}
 
-	pub fn unknown4(&self, ) -> Result<u8> {
+	pub fn is_processing(&self, ) -> Result<u8> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
@@ -83,7 +83,7 @@ impl<T: Object> IEnsureNetworkClockAvailabilityService<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown5(&self, ) -> Result<u64> {
+	pub fn get_server_time(&self, ) -> Result<u64> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)

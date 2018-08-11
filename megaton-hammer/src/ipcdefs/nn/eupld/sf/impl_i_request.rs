@@ -68,7 +68,7 @@ impl<T> DerefMut for IRequest<T> {
 	}
 }
 impl<T: Object> IRequest<T> {
-	pub fn unknown0(&self, ) -> Result<KObject> {
+	pub fn initialize(&self, ) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
@@ -78,7 +78,7 @@ impl<T: Object> IRequest<T> {
 		Ok(res.pop_handle())
 	}
 
-	pub fn unknown1(&self, ) -> Result<()> {
+	pub fn upload_all(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
@@ -88,9 +88,9 @@ impl<T: Object> IRequest<T> {
 		Ok(())
 	}
 
-	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown4(&self, ) -> Result<()> {
+	// fn upload_selected(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_upload_status(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn cancel_upload(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
@@ -100,7 +100,7 @@ impl<T: Object> IRequest<T> {
 		Ok(())
 	}
 
-	pub fn unknown5(&self, ) -> Result<()> {
+	pub fn get_result(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)

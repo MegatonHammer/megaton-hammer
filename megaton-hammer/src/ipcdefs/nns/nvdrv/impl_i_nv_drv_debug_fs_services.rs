@@ -71,6 +71,8 @@ impl<T: Object> INvDrvDebugFSServices<T> {
 	// fn open_log(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn close_log(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn read_log(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown4(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for INvDrvDebugFSServices<T> {

@@ -128,9 +128,9 @@ impl<T: Object> ILocalManager<T> {
 		Ok(())
 	}
 
-	// fn unknown6(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown7(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown8(&self, ) -> Result<()> {
+	// fn get_mac_address(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn create_bss(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn destroy_bss(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(8)
@@ -140,8 +140,8 @@ impl<T: Object> ILocalManager<T> {
 		Ok(())
 	}
 
-	// fn unknown9(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown10(&self, ) -> Result<()> {
+	// fn start_scan(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn stop_scan(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
@@ -151,8 +151,8 @@ impl<T: Object> ILocalManager<T> {
 		Ok(())
 	}
 
-	// fn unknown11(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown12(&self, ) -> Result<()> {
+	// fn connect(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn cancel_connect(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)
@@ -162,8 +162,8 @@ impl<T: Object> ILocalManager<T> {
 		Ok(())
 	}
 
-	// fn unknown13(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown14(&self, ) -> Result<()> {
+	// fn join(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn cancel_join(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(14)
@@ -173,8 +173,8 @@ impl<T: Object> ILocalManager<T> {
 		Ok(())
 	}
 
-	// fn unknown15(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown16(&self, unk0: u32) -> Result<()> {
+	// fn disconnect(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn set_beacon_lost_count(&self, unk0: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(16)
@@ -187,7 +187,7 @@ impl<T: Object> ILocalManager<T> {
 	// fn unknown17(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown18(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown19(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown20(&self, ) -> Result<KObject> {
+	pub fn get_bss_indication_event(&self, ) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20)
@@ -197,8 +197,8 @@ impl<T: Object> ILocalManager<T> {
 		Ok(res.pop_handle())
 	}
 
-	// fn unknown21(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown22(&self, ) -> Result<u32> {
+	// fn get_bss_indication_info(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_state(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(22)
@@ -208,9 +208,9 @@ impl<T: Object> ILocalManager<T> {
 		Ok(*res.get_raw())
 	}
 
-	// fn unknown23(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown24(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown25(&self, unk0: u32) -> Result<()> {
+	// fn get_allowed_channels(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn add_ie(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn delete_ie(&self, unk0: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(25)
@@ -231,8 +231,8 @@ impl<T: Object> ILocalManager<T> {
 		Ok(())
 	}
 
-	// fn unknown28(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown29(&self, unk0: u32) -> Result<()> {
+	// fn create_rx_entry(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn delete_rx_entry(&self, unk0: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(29)
@@ -244,12 +244,12 @@ impl<T: Object> ILocalManager<T> {
 
 	// fn unknown30(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown31(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown32(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown33(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown34(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn add_matching_data_to_rx_entry(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn remove_matching_data_from_rx_entry(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_scan_result(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown35(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown36(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown37(&self, ) -> Result<()> {
+	// fn set_action_frame_with_beacon(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn cancel_action_frame_with_beacon(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(37)
@@ -259,8 +259,8 @@ impl<T: Object> ILocalManager<T> {
 		Ok(())
 	}
 
-	// fn unknown38(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown39(&self, unk0: u32) -> Result<()> {
+	// fn create_rx_entry_for_action_frame(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn delete_rx_entry_for_action_frame(&self, unk0: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(39)
@@ -272,7 +272,7 @@ impl<T: Object> ILocalManager<T> {
 
 	// fn unknown40(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown41(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown42(&self, unk0: u32) -> Result<()> {
+	pub fn cancel_get_action_frame(&self, unk0: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(42)
@@ -282,7 +282,7 @@ impl<T: Object> ILocalManager<T> {
 		Ok(())
 	}
 
-	pub fn unknown43(&self, ) -> Result<u32> {
+	pub fn get_rssi(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(43)
@@ -297,6 +297,50 @@ impl<T: Object> ILocalManager<T> {
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(44)
 			.args(unk0)
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn unknown45(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(45)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn unknown46(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(46)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn unknown47(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(47)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn unknown48(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(48)
+			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
 		Ok(())

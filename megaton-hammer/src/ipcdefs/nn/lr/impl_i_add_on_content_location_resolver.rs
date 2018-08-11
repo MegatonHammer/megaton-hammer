@@ -33,8 +33,8 @@ impl<T> DerefMut for IAddOnContentLocationResolver<T> {
 	}
 }
 impl<T: Object> IAddOnContentLocationResolver<T> {
-	// fn get_add_on_content_nca_path(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn register_add_on_content(&self, unk0: u8, unk1: u64) -> Result<()> {
+	// fn resolve_add_on_content_path(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn register_add_on_content_storage(&self, unk0: u8, unk1: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -52,7 +52,7 @@ impl<T: Object> IAddOnContentLocationResolver<T> {
 		Ok(())
 	}
 
-	pub fn clear_add_on_content_location_resolver(&self, ) -> Result<()> {
+	pub fn unregister_all_add_on_content_path(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)

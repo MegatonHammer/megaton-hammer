@@ -102,7 +102,7 @@ impl<T> DerefMut for IStaticService<T> {
 	}
 }
 impl<T: Object> IStaticService<T> {
-	pub fn get_database_service_shared_pointer(&self, unk0: i32) -> Result<::ipcdefs::nn::mii::detail::IDatabaseService<T>> {
+	pub fn get_database_service(&self, unk0: i32) -> Result<::ipcdefs::nn::mii::detail::IDatabaseService<T>> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)

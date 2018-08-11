@@ -33,7 +33,7 @@ impl<T> DerefMut for IAm<T> {
 	}
 }
 impl<T: Object> IAm<T> {
-	pub fn unknown0(&self, ) -> Result<()> {
+	pub fn initialize(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
@@ -43,7 +43,7 @@ impl<T: Object> IAm<T> {
 		Ok(())
 	}
 
-	pub fn unknown1(&self, ) -> Result<()> {
+	pub fn finalize(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
@@ -53,7 +53,7 @@ impl<T: Object> IAm<T> {
 		Ok(())
 	}
 
-	pub fn unknown2(&self, unk0: u64) -> Result<()> {
+	pub fn notify_foreground_applet(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)

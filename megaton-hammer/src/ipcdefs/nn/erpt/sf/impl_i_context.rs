@@ -68,9 +68,10 @@ impl<T> DerefMut for IContext<T> {
 	}
 }
 impl<T: Object> IContext<T> {
-	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn submit_context(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn create_report(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(feature = "switch-3.0.0")]
 	pub fn unknown3(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
@@ -81,6 +82,7 @@ impl<T: Object> IContext<T> {
 		Ok(())
 	}
 
+	#[cfg(feature = "switch-3.0.0")]
 	pub fn unknown4(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
@@ -91,10 +93,22 @@ impl<T: Object> IContext<T> {
 		Ok(())
 	}
 
+	#[cfg(feature = "switch-3.0.0")]
 	pub fn unknown5(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn unknown6(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;

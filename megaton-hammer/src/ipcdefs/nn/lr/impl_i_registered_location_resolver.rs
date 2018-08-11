@@ -33,9 +33,9 @@ impl<T> DerefMut for IRegisteredLocationResolver<T> {
 	}
 }
 impl<T: Object> IRegisteredLocationResolver<T> {
-	// fn get_patch_type0_nca_path(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn register_patch_type0_fallback_path(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unregister_patch_type0_fallback_path(&self, unk0: u64) -> Result<()> {
+	// fn resolve_program_path(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn register_program_path(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn unregister_program_path(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
@@ -45,11 +45,11 @@ impl<T: Object> IRegisteredLocationResolver<T> {
 		Ok(())
 	}
 
-	// fn set_patch_type0_nca_path(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_patch_type1_nca_path(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn register_patch_type1_fallback_path(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn redirect_program_path(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn resolve_html_document_path(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn register_html_document_path(&self, UNKNOWN) -> Result<UNKNOWN>;
 	#[cfg(feature = "switch-2.0.0")]
-	pub fn unregister_patch_type1_fallback_path(&self, unk0: u64) -> Result<()> {
+	pub fn unregister_html_document_path(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
@@ -59,7 +59,7 @@ impl<T: Object> IRegisteredLocationResolver<T> {
 		Ok(())
 	}
 
-	// fn set_patch_type1_nca_path(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn redirect_html_document_path(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IRegisteredLocationResolver<T> {

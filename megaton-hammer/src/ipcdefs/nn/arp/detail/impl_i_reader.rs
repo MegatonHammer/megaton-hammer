@@ -68,10 +68,10 @@ impl<T> DerefMut for IReader<T> {
 	}
 }
 impl<T: Object> IReader<T> {
-	// fn read_header0(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn read_header1(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn read_data0(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn read_data1(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_application_launch_property(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_application_launch_property_with_application_id(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_application_control_property(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_application_control_property_with_application_id(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IReader<T> {

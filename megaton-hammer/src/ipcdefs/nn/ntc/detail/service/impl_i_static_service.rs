@@ -68,7 +68,7 @@ impl<T> DerefMut for IStaticService<T> {
 	}
 }
 impl<T: Object> IStaticService<T> {
-	pub fn unknown0(&self, unk0: u32, unk1: u32) -> Result<T> {
+	pub fn open_ensure_network_clock_availability_service(&self, unk0: u32, unk1: u32) -> Result<T> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -86,7 +86,7 @@ impl<T: Object> IStaticService<T> {
 		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn unknown100(&self, ) -> Result<()> {
+	pub fn suspend_autonomic_time_correction(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(100)
@@ -96,7 +96,7 @@ impl<T: Object> IStaticService<T> {
 		Ok(())
 	}
 
-	pub fn unknown101(&self, ) -> Result<()> {
+	pub fn resume_autonomic_time_correction(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(101)

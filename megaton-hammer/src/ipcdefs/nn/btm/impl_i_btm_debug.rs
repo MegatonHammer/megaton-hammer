@@ -68,7 +68,7 @@ impl<T> DerefMut for IBtmDebug<T> {
 	}
 }
 impl<T: Object> IBtmDebug<T> {
-	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn register_system_event_for_discovery_impl(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;

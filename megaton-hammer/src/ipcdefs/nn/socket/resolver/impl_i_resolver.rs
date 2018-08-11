@@ -68,43 +68,13 @@ impl<T> DerefMut for IResolver<T> {
 	}
 }
 impl<T: Object> IResolver<T> {
-	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_dns_address_private(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_dns_address_private(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_host_by_name(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_host_by_addr(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_host_string_error(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_gai_string_error(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn get_addr_info(&self, unk0: u8, unk1: u32, unk2: u64, unk4: &[u8], unk5: &[u8], unk6: &[u8; 0x400], unk10: &mut [u8; 0x1000]) -> Result<(u32, u32, u32)> {
-		use ::ipc::IPCBuffer;
-		use ::ipc::{Request, Response};
-
-		#[repr(C)] #[derive(Clone)]
-		struct InRaw {
-			unk0: u8,
-			unk1: u32,
-			unk2: u64,
-		}
-		let req : Request<_, [_; 4], [_; 0], [_; 0]> = Request::new(6)
-			.args(InRaw {
-				unk0,
-				unk1,
-				unk2,
-			})
-			.send_pid()
-			.descriptor(IPCBuffer::from_slice(unk4, 5))
-			.descriptor(IPCBuffer::from_slice(unk5, 5))
-			.descriptor(IPCBuffer::from_ref(unk6, 5))
-			.descriptor(IPCBuffer::from_mut_ref(unk10, 6))
-			;
-		#[repr(C)] #[derive(Clone)] struct OutRaw {
-			unk7: u32,
-			unk8: u32,
-			unk9: u32,
-		}
-		let res : Response<OutRaw> = self.0.send(req)?;
-		Ok((res.get_raw().unk7.clone(),res.get_raw().unk8.clone(),res.get_raw().unk9.clone()))
-	}
-
+	// fn get_addr_info(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_name_info(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn request_cancel_handle(&self, unk0: u64) -> Result<u32> {
 		use ::ipc::{Request, Response};

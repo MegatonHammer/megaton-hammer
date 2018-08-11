@@ -68,7 +68,7 @@ impl<T> DerefMut for IWriter<T> {
 	}
 }
 impl<T: Object> IWriter<T> {
-	pub fn get_i_registrar(&self, ) -> Result<T> {
+	pub fn acquire_registrar(&self, ) -> Result<T> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)

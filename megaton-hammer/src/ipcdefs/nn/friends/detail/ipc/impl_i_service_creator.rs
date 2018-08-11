@@ -224,6 +224,17 @@ impl<T: Object> IServiceCreator<T> {
 		Ok(T::from_res(&mut res).into())
 	}
 
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn create_daemon_suspend_session_service(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 }
 
 impl<T: Object> From<T> for IServiceCreator<T> {

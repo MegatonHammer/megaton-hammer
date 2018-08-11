@@ -33,8 +33,8 @@ impl<T> DerefMut for IUser<T> {
 	}
 }
 impl<T: Object> IUser<T> {
-	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown1(&self, ) -> Result<()> {
+	// fn initialize(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn finalize(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
@@ -44,8 +44,8 @@ impl<T: Object> IUser<T> {
 		Ok(())
 	}
 
-	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown3(&self, unk0: u64) -> Result<()> {
+	// fn list_devices(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn start_detection(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
@@ -55,7 +55,7 @@ impl<T: Object> IUser<T> {
 		Ok(())
 	}
 
-	pub fn unknown4(&self, unk0: u64) -> Result<()> {
+	pub fn stop_detection(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
@@ -65,7 +65,7 @@ impl<T: Object> IUser<T> {
 		Ok(())
 	}
 
-	pub fn unknown5(&self, unk0: u64, unk1: u32, unk2: u32) -> Result<()> {
+	pub fn mount(&self, unk0: u64, unk1: u32, unk2: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -85,7 +85,7 @@ impl<T: Object> IUser<T> {
 		Ok(())
 	}
 
-	pub fn unknown6(&self, unk0: u64) -> Result<()> {
+	pub fn unmount(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
@@ -95,7 +95,7 @@ impl<T: Object> IUser<T> {
 		Ok(())
 	}
 
-	pub fn unknown7(&self, unk0: u64, unk1: u32) -> Result<()> {
+	pub fn open_application_area(&self, unk0: u64, unk1: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -113,9 +113,9 @@ impl<T: Object> IUser<T> {
 		Ok(())
 	}
 
-	// fn unknown8(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown9(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown10(&self, unk0: u64) -> Result<()> {
+	// fn get_application_area(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_application_area(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn flush(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
@@ -125,7 +125,7 @@ impl<T: Object> IUser<T> {
 		Ok(())
 	}
 
-	pub fn unknown11(&self, unk0: u64) -> Result<()> {
+	pub fn restore(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)
@@ -135,8 +135,8 @@ impl<T: Object> IUser<T> {
 		Ok(())
 	}
 
-	// fn unknown12(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown13(&self, unk0: u64, unk1: &mut [u8; 0x58]) -> Result<()> {
+	// fn create_application_area(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_tag_info(&self, unk0: u64, unk1: &mut [u8; 0x58]) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -148,7 +148,7 @@ impl<T: Object> IUser<T> {
 		Ok(())
 	}
 
-	pub fn unknown14(&self, unk0: u64, unk1: &mut [u8; 0x100]) -> Result<()> {
+	pub fn get_register_info(&self, unk0: u64, unk1: &mut [u8; 0x100]) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -160,7 +160,7 @@ impl<T: Object> IUser<T> {
 		Ok(())
 	}
 
-	pub fn unknown15(&self, unk0: u64, unk1: &mut [u8; 0x40]) -> Result<()> {
+	pub fn get_common_info(&self, unk0: u64, unk1: &mut [u8; 0x40]) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -172,7 +172,7 @@ impl<T: Object> IUser<T> {
 		Ok(())
 	}
 
-	pub fn unknown16(&self, unk0: u64, unk1: &mut [u8; 0x40]) -> Result<()> {
+	pub fn get_model_info(&self, unk0: u64, unk1: &mut [u8; 0x40]) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -184,7 +184,7 @@ impl<T: Object> IUser<T> {
 		Ok(())
 	}
 
-	pub fn unknown17(&self, unk0: u64) -> Result<KObject> {
+	pub fn attach_activate_event(&self, unk0: u64) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(17)
@@ -194,7 +194,7 @@ impl<T: Object> IUser<T> {
 		Ok(res.pop_handle())
 	}
 
-	pub fn unknown18(&self, unk0: u64) -> Result<KObject> {
+	pub fn attach_deactivate_event(&self, unk0: u64) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(18)
@@ -204,7 +204,7 @@ impl<T: Object> IUser<T> {
 		Ok(res.pop_handle())
 	}
 
-	pub fn unknown19(&self, ) -> Result<u32> {
+	pub fn get_state(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(19)
@@ -214,7 +214,7 @@ impl<T: Object> IUser<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown20(&self, unk0: u64) -> Result<u32> {
+	pub fn get_device_state(&self, unk0: u64) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20)
@@ -224,7 +224,7 @@ impl<T: Object> IUser<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown21(&self, unk0: u64) -> Result<u32> {
+	pub fn get_npad_id(&self, unk0: u64) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(21)
@@ -234,7 +234,7 @@ impl<T: Object> IUser<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown22(&self, unk0: u64) -> Result<u32> {
+	pub fn get_application_area2(&self, unk0: u64) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(22)
@@ -244,7 +244,7 @@ impl<T: Object> IUser<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown23(&self, ) -> Result<KObject> {
+	pub fn attach_availability_change_event(&self, ) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(23)
@@ -254,7 +254,7 @@ impl<T: Object> IUser<T> {
 		Ok(res.pop_handle())
 	}
 
-	// fn unknown24(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn recreate_application_area(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IUser<T> {

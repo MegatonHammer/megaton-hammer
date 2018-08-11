@@ -33,19 +33,85 @@ impl<T> DerefMut for ILocationResolver<T> {
 	}
 }
 impl<T: Object> ILocationResolver<T> {
-	// fn get_program_nca_path(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn set_program_nca_path(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_user_control_nca_path(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_doc_html_nca_path(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_control_nca_path(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn set_control_nca_path(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn set_doc_html_nca_path(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_info_html_nca_path(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn set_info_html_nca_path(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn clear_location_resolver(&self, ) -> Result<()> {
+	// fn resolve_program_path(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn redirect_program_path(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn resolve_application_control_path(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn resolve_application_html_document_path(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn resolve_data_path(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn redirect_application_control_path(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn redirect_application_html_document_path(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn resolve_application_legal_information_path(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn redirect_application_legal_information_path(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn refresh(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(9)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn set_program_nca_path2(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn clear_location_resolver2(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn delete_program_nca_path(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn delete_control_nca_path(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(13)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn delete_doc_html_nca_path(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(14)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn delete_info_html_nca_path(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(15)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;

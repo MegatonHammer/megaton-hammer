@@ -68,7 +68,7 @@ impl<T> DerefMut for ISystemServer<T> {
 	}
 }
 impl<T: Object> ISystemServer<T> {
-	pub fn unknown0(&self, unk0: u64) -> Result<u8> {
+	pub fn get_data_format(&self, unk0: u64) -> Result<u8> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
@@ -78,8 +78,8 @@ impl<T: Object> ISystemServer<T> {
 		Ok(*res.get_raw())
 	}
 
-	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown2(&self, unk0: u64) -> Result<u8> {
+	// fn set_data_format(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_mcu_state(&self, unk0: u64) -> Result<u8> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
@@ -89,9 +89,9 @@ impl<T: Object> ISystemServer<T> {
 		Ok(*res.get_raw())
 	}
 
-	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown4(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown5(&self, unk0: u64) -> Result<()> {
+	// fn set_mcu_state(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_mcu_version_for_nfc(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn check_nfc_device_power(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
@@ -101,10 +101,10 @@ impl<T: Object> ISystemServer<T> {
 		Ok(())
 	}
 
-	// fn unknown10(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown11(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown12(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown13(&self, unk0: u64) -> Result<()> {
+	// fn set_nfc_event(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_nfc_info(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn start_nfc_discovery(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn stop_nfc_discovery(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(13)
@@ -114,14 +114,14 @@ impl<T: Object> ISystemServer<T> {
 		Ok(())
 	}
 
-	// fn unknown14(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown15(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown16(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown17(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown18(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown19(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown20(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown101(&self, ) -> Result<u64> {
+	// fn start_ntag_read(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn start_ntag_write(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn send_nfc_raw_data(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn register_mifare_key(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn clear_mifare_key(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn start_mifare_read(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn start_mifare_write(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_awake_trigger_reason_for_left_rail(&self, ) -> Result<u64> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(101)
@@ -131,7 +131,7 @@ impl<T: Object> ISystemServer<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown102(&self, ) -> Result<u64> {
+	pub fn get_awake_trigger_reason_for_right_rail(&self, ) -> Result<u64> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(102)

@@ -33,8 +33,8 @@ impl<T> DerefMut for IManager<T> {
 	}
 }
 impl<T: Object> IManager<T> {
-	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown1(&self, ) -> Result<KObject> {
+	// fn get_report_list(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_event(&self, ) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
@@ -42,6 +42,39 @@ impl<T: Object> IManager<T> {
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(res.pop_handle())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn unknown2(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn unknown3(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn unknown4(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
 	}
 
 }

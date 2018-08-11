@@ -4,11 +4,46 @@ use ::kernel::{Session, Domain, Object};
 use ::kernel::KObject;
 use ::error::*;
 use core::ops::{Deref, DerefMut};
+use alloc::sync::Arc;
 
 #[derive(Debug)]
 pub struct IDebugger<T>(T);
 
 impl IDebugger<Session> {
+	pub fn raw_new() -> Result<IDebugger<Session>> {
+		use ::ipcdefs::nn::sm::detail::IUserInterface;
+
+		let sm = IUserInterface::raw_new()?;
+
+		let session = sm.get_service(*b"fgm:dbg\0")?;
+		let object : Self = Session::from(session).into();
+		Ok(object)
+	}
+
+	pub fn new() -> Result<Arc<IDebugger<Session>>> {
+		use alloc::sync::Weak;
+		use kernel::sync::InternalMutex;
+		use core::mem::ManuallyDrop;
+		lazy_static! {
+			static ref HANDLE : InternalMutex<Weak<IDebugger<Session>>> = InternalMutex::new(Weak::new());
+		}
+		if let Some(hnd) = HANDLE.lock().upgrade() {
+			return Ok(hnd)
+		}
+
+		if let Some(hnd) = ::loader::get_override_service(*b"fgm:dbg\0") {
+			let ret = Arc::new(IDebugger(ManuallyDrop::into_inner(hnd)));
+			::core::mem::forget(ret.clone());
+			*HANDLE.lock() = Arc::downgrade(&ret);
+			return Ok(ret);
+		}
+
+		let hnd = Self::raw_new()?;
+		let ret = Arc::new(hnd);
+		*HANDLE.lock() = Arc::downgrade(&ret);
+		Ok(ret)
+	}
+
 	pub fn to_domain(self) -> ::core::result::Result<IDebugger<Domain>, (Self, Error)> {
 		match self.0.to_domain() {
 			Ok(domain) => Ok(IDebugger(domain)),

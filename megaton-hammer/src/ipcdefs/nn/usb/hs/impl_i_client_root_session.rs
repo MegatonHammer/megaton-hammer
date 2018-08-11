@@ -68,7 +68,7 @@ impl<T> DerefMut for IClientRootSession<T> {
 	}
 }
 impl<T: Object> IClientRootSession<T> {
-	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn bind_client_process(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
@@ -83,7 +83,7 @@ impl<T: Object> IClientRootSession<T> {
 		Ok(())
 	}
 
-	pub fn unknown6(&self, ) -> Result<KObject> {
+	pub fn get_interface_state_change_event(&self, ) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
@@ -93,7 +93,7 @@ impl<T: Object> IClientRootSession<T> {
 		Ok(res.pop_handle())
 	}
 
-	// fn unknown7(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_client_if_session(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IClientRootSession<T> {

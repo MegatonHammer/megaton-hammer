@@ -33,7 +33,7 @@ impl<T> DerefMut for IEventNotifier<T> {
 	}
 }
 impl<T: Object> IEventNotifier<T> {
-	pub fn bind_event(&self, ) -> Result<KObject> {
+	pub fn get_event_handle(&self, ) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)

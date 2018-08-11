@@ -127,6 +127,17 @@ impl<T: Object> ISystemSettingsServer<T> {
 		Ok(())
 	}
 
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn get_firmware_version_digest(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn get_lock_screen_flag(&self, ) -> Result<bool> {
 		use ::ipc::{Request, Response};
 
@@ -1524,7 +1535,7 @@ impl<T: Object> ISystemSettingsServer<T> {
 	}
 
 	#[cfg(feature = "switch-5.0.0")]
-	pub fn unknown141(&self, ) -> Result<()> {
+	pub fn get_requires_run_repair_time_reviser(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(141)
@@ -1535,7 +1546,7 @@ impl<T: Object> ISystemSettingsServer<T> {
 	}
 
 	#[cfg(feature = "switch-5.0.0")]
-	pub fn unknown142(&self, ) -> Result<()> {
+	pub fn set_requires_run_repair_time_reviser(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(142)
@@ -1546,7 +1557,7 @@ impl<T: Object> ISystemSettingsServer<T> {
 	}
 
 	#[cfg(feature = "switch-5.0.0")]
-	pub fn unknown143(&self, ) -> Result<()> {
+	pub fn set_ble_pairing_settings(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(143)
@@ -1557,7 +1568,7 @@ impl<T: Object> ISystemSettingsServer<T> {
 	}
 
 	#[cfg(feature = "switch-5.0.0")]
-	pub fn unknown144(&self, ) -> Result<()> {
+	pub fn get_ble_pairing_settings(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(144)
@@ -1568,7 +1579,7 @@ impl<T: Object> ISystemSettingsServer<T> {
 	}
 
 	#[cfg(feature = "switch-5.0.0")]
-	pub fn unknown145(&self, ) -> Result<()> {
+	pub fn get_console_six_axis_sensor_angular_velocity_time_bias(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(145)
@@ -1579,7 +1590,7 @@ impl<T: Object> ISystemSettingsServer<T> {
 	}
 
 	#[cfg(feature = "switch-5.0.0")]
-	pub fn unknown146(&self, ) -> Result<()> {
+	pub fn set_console_six_axis_sensor_angular_velocity_time_bias(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(146)
@@ -1590,7 +1601,7 @@ impl<T: Object> ISystemSettingsServer<T> {
 	}
 
 	#[cfg(feature = "switch-5.0.0")]
-	pub fn unknown147(&self, ) -> Result<()> {
+	pub fn get_console_six_axis_sensor_angular_acceleration(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(147)
@@ -1601,7 +1612,7 @@ impl<T: Object> ISystemSettingsServer<T> {
 	}
 
 	#[cfg(feature = "switch-5.0.0")]
-	pub fn unknown148(&self, ) -> Result<()> {
+	pub fn set_console_six_axis_sensor_angular_acceleration(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(148)
@@ -1612,7 +1623,7 @@ impl<T: Object> ISystemSettingsServer<T> {
 	}
 
 	#[cfg(feature = "switch-5.0.0")]
-	pub fn unknown149(&self, ) -> Result<()> {
+	pub fn get_rebootless_system_update_version(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(149)

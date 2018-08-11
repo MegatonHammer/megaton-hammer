@@ -33,11 +33,11 @@ impl<T> DerefMut for IAudioDevice<T> {
 	}
 }
 impl<T: Object> IAudioDevice<T> {
-	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown4(&self, ) -> Result<KObject> {
+	// fn list_audio_device_name(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_audio_device_output_volume(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_audio_device_output_volume(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_active_audio_device_name(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn query_audio_device_system_event(&self, ) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
@@ -47,7 +47,7 @@ impl<T: Object> IAudioDevice<T> {
 		Ok(res.pop_handle())
 	}
 
-	pub fn unknown5(&self, ) -> Result<u32> {
+	pub fn get_active_channel_count(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
@@ -57,11 +57,12 @@ impl<T: Object> IAudioDevice<T> {
 		Ok(*res.get_raw())
 	}
 
-	// fn unknown6(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown7(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown8(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown10(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown11(&self, ) -> Result<KObject> {
+	// fn list_audio_device_name_auto(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_audio_device_output_volume_auto(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_audio_device_output_volume_auto(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_active_audio_device_name_auto(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(feature = "switch-3.0.0")]
+	pub fn query_audio_device_input_event(&self, ) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)
@@ -71,7 +72,8 @@ impl<T: Object> IAudioDevice<T> {
 		Ok(res.pop_handle())
 	}
 
-	pub fn unknown12(&self, ) -> Result<KObject> {
+	#[cfg(feature = "switch-3.0.0")]
+	pub fn query_audio_device_output_event(&self, ) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)

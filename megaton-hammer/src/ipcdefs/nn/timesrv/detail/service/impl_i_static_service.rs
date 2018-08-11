@@ -220,6 +220,28 @@ impl<T: Object> IStaticService<T> {
 		Ok(T::from_res(&mut res).into())
 	}
 
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn get_ephemeral_network_system_clock(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn set_standard_steady_clock_internal_offset(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(50)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn is_standard_user_system_clock_automatic_correction_enabled(&self, ) -> Result<bool> {
 		use ::ipc::{Request, Response};
 
@@ -240,6 +262,18 @@ impl<T: Object> IStaticService<T> {
 		Ok(())
 	}
 
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn get_standard_user_system_clock_initial_year(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(102)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-3.0.0")]
 	pub fn is_standard_network_system_clock_accuracy_sufficient(&self, ) -> Result<bool> {
 		use ::ipc::{Request, Response};
 
@@ -248,6 +282,61 @@ impl<T: Object> IStaticService<T> {
 			;
 		let res : Response<bool> = self.0.send(req)?;
 		Ok(*res.get_raw())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn calculate_monotonic_system_clock_base_time_point(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(300)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn get_clock_snapshot(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(400)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn get_clock_snapshot_from_system_clock_context(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(401)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn calculate_standard_user_system_clock_difference_by_user(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(500)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn calculate_span_between(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(501)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
 	}
 
 }

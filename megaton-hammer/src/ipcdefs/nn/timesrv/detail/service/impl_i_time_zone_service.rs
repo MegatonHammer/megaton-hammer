@@ -87,6 +87,7 @@ impl<T: Object> ITimeZoneService<T> {
 		Ok(())
 	}
 
+	#[cfg(feature = "switch-2.0.0")]
 	pub fn get_time_zone_rule_version(&self, ) -> Result<::ipcdefs::nn::time::TimeZoneRuleVersion> {
 		use ::ipc::{Request, Response};
 

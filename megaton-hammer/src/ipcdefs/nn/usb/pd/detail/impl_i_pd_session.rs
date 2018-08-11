@@ -33,7 +33,7 @@ impl<T> DerefMut for IPdSession<T> {
 	}
 }
 impl<T: Object> IPdSession<T> {
-	pub fn unknown0(&self, ) -> Result<KObject> {
+	pub fn bind_notice_event(&self, ) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
@@ -53,8 +53,8 @@ impl<T: Object> IPdSession<T> {
 		Ok(())
 	}
 
-	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown3(&self, ) -> Result<u32> {
+	// fn get_status(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_notice(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
@@ -84,7 +84,7 @@ impl<T: Object> IPdSession<T> {
 		Ok(())
 	}
 
-	pub fn unknown6(&self, unk0: u8) -> Result<()> {
+	pub fn reply_power_request(&self, unk0: u8) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)

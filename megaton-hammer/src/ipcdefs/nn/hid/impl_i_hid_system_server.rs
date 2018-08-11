@@ -197,6 +197,28 @@ impl<T: Object> IHidSystemServer<T> {
 		Ok(())
 	}
 
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn get_xcd_handle_for_npad_with_nfc(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(214)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn is_nfc_activated(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(215)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn acquire_ir_sensor_event_handle(&self, unk0: u32) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
@@ -293,6 +315,28 @@ impl<T: Object> IHidSystemServer<T> {
 		}
 		let res : Response<OutRaw> = self.0.send(req)?;
 		Ok((res.get_raw().unk1.clone(),res.get_raw().unk2.clone()))
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn apply_npad_system_common_policy_full(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(308)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn get_npad_full_key_grip_color(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(309)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
 	}
 
 	pub fn set_npad_player_led_blinking_device(&self, unk0: u32, unk1: ::ipcdefs::nn::hid::system::DeviceType, unk2: ::ipcdefs::nn::applet::AppletResourceUserId) -> Result<()> {
@@ -550,6 +594,7 @@ impl<T: Object> IHidSystemServer<T> {
 		Ok(res.pop_handle())
 	}
 
+	#[cfg(not(feature = "switch-5.0.0"))]
 	pub fn get_registered_devices(&self, unk1: &mut [::ipcdefs::nn::hid::system::RegisteredDevice]) -> Result<i64> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
@@ -600,6 +645,17 @@ impl<T: Object> IHidSystemServer<T> {
 			;
 		let res : Response<i64> = self.0.send(req)?;
 		Ok(*res.get_raw())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn get_registered_devices(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(548)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
 	}
 
 	pub fn activate_unique_pad(&self, unk0: ::ipcdefs::nn::applet::AppletResourceUserId, unk1: ::ipcdefs::nn::hid::system::UniquePadId) -> Result<()> {
@@ -726,6 +782,61 @@ impl<T: Object> IHidSystemServer<T> {
 		Ok(())
 	}
 
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn get_unique_pad_type(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(807)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn get_unique_pad_interface(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(808)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn get_unique_pad_serial_number(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(809)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn get_unique_pad_controller_number(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(810)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn get_six_axis_sensor_user_calibration_stage(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(811)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn start_analog_stick_manual_calibration(&self, unk0: ::ipcdefs::nn::hid::system::UniquePadId, unk1: i64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
@@ -793,6 +904,61 @@ impl<T: Object> IHidSystemServer<T> {
 				unk0,
 				unk1,
 			})
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn get_analog_stick_state(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(825)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn get_analog_stick_manual_calibration_stage(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(826)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn is_analog_stick_button_pressed(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(827)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn is_analog_stick_in_release_position(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(828)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn is_analog_stick_in_circumference(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(829)
+			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
 		Ok(())
@@ -927,6 +1093,105 @@ impl<T: Object> IHidSystemServer<T> {
 			;
 		let res : Response<::ipcdefs::nn::hid::system::FirmwareUpdateState> = self.0.send(req)?;
 		Ok(*res.get_raw())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn activate_audio_control(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1008)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn acquire_audio_control_event_handle(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1009)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn get_audio_control_states(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1010)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn deactivate_audio_control(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1011)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn is_six_axis_sensor_accurate_user_calibration_supported(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1050)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn start_six_axis_sensor_accurate_user_calibration(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1051)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn cancel_six_axis_sensor_accurate_user_calibration(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1052)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn get_six_axis_sensor_accurate_user_calibration_state(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1053)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn get_hidbus_system_service_object(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1100)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
 	}
 
 }

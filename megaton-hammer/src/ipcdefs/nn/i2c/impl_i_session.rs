@@ -33,39 +33,12 @@ impl<T> DerefMut for ISession<T> {
 	}
 }
 impl<T: Object> ISession<T> {
-	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn send(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn receive(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn execute_command_list(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn send(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn receive(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn execute_command_list(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn send_auto(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn receive_auto(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn execute_command_list_auto(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for ISession<T> {

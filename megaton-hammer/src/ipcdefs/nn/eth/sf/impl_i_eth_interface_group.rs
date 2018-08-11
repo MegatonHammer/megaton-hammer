@@ -68,7 +68,7 @@ impl<T> DerefMut for IEthInterfaceGroup<T> {
 	}
 }
 impl<T: Object> IEthInterfaceGroup<T> {
-	pub fn unknown0(&self, ) -> Result<KObject> {
+	pub fn get_readable_handle(&self, ) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
@@ -78,7 +78,7 @@ impl<T: Object> IEthInterfaceGroup<T> {
 		Ok(res.pop_handle())
 	}
 
-	pub fn unknown1(&self, ) -> Result<()> {
+	pub fn cancel(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
@@ -88,7 +88,7 @@ impl<T: Object> IEthInterfaceGroup<T> {
 		Ok(())
 	}
 
-	pub fn unknown2(&self, ) -> Result<()> {
+	pub fn get_result(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
@@ -98,8 +98,8 @@ impl<T: Object> IEthInterfaceGroup<T> {
 		Ok(())
 	}
 
-	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown4(&self, ) -> Result<u32> {
+	// fn get_interface_list(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_interface_count(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)

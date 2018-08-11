@@ -170,7 +170,7 @@ impl<T> DerefMut for IParentalControlServiceFactory<T> {
 	}
 }
 impl<T: Object> IParentalControlServiceFactory<T> {
-	pub fn get_service(&self, unk0: u64) -> Result<::ipcdefs::nn::pctl::detail::ipc::IParentalControlService<T>> {
+	pub fn create_service(&self, unk0: u64) -> Result<::ipcdefs::nn::pctl::detail::ipc::IParentalControlService<T>> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
@@ -179,6 +179,17 @@ impl<T: Object> IParentalControlServiceFactory<T> {
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(T::from_res(&mut res).into())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn create_service_without_initialize(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
 	}
 
 }

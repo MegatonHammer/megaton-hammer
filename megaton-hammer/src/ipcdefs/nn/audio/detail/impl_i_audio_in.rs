@@ -86,11 +86,11 @@ impl<T: Object> IAudioIn<T> {
 	}
 
 	// fn append_audio_in_buffer_with_user_event(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn append_audio_in_buffer_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_released_audio_in_buffer_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn append_audio_in_buffer_with_user_event_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn append_audio_in_buffer_auto(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_released_audio_in_buffer_auto(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn append_audio_in_buffer_with_user_event_auto(&self, UNKNOWN) -> Result<UNKNOWN>;
 	#[cfg(feature = "switch-4.0.0")]
-	pub fn unknown11(&self, ) -> Result<()> {
+	pub fn get_audio_in_buffer_count(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)
@@ -101,7 +101,7 @@ impl<T: Object> IAudioIn<T> {
 	}
 
 	#[cfg(feature = "switch-4.0.0")]
-	pub fn unknown12(&self, ) -> Result<()> {
+	pub fn set_audio_in_device_gain(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)
@@ -112,7 +112,7 @@ impl<T: Object> IAudioIn<T> {
 	}
 
 	#[cfg(feature = "switch-4.0.0")]
-	pub fn unknown13(&self, ) -> Result<()> {
+	pub fn get_audio_in_device_gain(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(13)

@@ -68,7 +68,7 @@ impl<T> DerefMut for ISession<T> {
 	}
 }
 impl<T: Object> ISession<T> {
-	pub fn unknown0(&self, ) -> Result<T> {
+	pub fn open_report(&self, ) -> Result<T> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
@@ -78,7 +78,7 @@ impl<T: Object> ISession<T> {
 		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn unknown1(&self, ) -> Result<T> {
+	pub fn open_manager(&self, ) -> Result<T> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)

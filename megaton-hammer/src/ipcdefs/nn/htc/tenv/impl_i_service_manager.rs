@@ -68,7 +68,7 @@ impl<T> DerefMut for IServiceManager<T> {
 	}
 }
 impl<T: Object> IServiceManager<T> {
-	pub fn open_service(&self, unk0: u64) -> Result<T> {
+	pub fn get_service_interface(&self, unk0: u64) -> Result<T> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)

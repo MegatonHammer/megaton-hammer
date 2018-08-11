@@ -68,8 +68,8 @@ impl<T> DerefMut for ILocationResolverManager<T> {
 	}
 }
 impl<T: Object> ILocationResolverManager<T> {
-	// fn get_location_resolver(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn get_registered_location_resolver(&self, ) -> Result<T> {
+	// fn open_location_resolver(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn open_registered_location_resolver(&self, ) -> Result<T> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
@@ -79,7 +79,7 @@ impl<T: Object> ILocationResolverManager<T> {
 		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn check_storage(&self, unk0: u8) -> Result<()> {
+	pub fn refresh_location_resolver(&self, unk0: u8) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
@@ -89,7 +89,8 @@ impl<T: Object> ILocationResolverManager<T> {
 		Ok(())
 	}
 
-	pub fn get_add_on_content_location_resolver(&self, ) -> Result<T> {
+	#[cfg(feature = "switch-2.0.0")]
+	pub fn open_add_on_content_location_resolver(&self, ) -> Result<T> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)

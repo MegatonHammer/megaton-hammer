@@ -68,7 +68,7 @@ impl<T> DerefMut for IRequest<T> {
 	}
 }
 impl<T: Object> IRequest<T> {
-	pub fn unknown0(&self, unk0: u32, unk1: u32, unk2: u32) -> Result<()> {
+	pub fn initialize_old(&self, unk0: u32, unk1: u32, unk2: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -88,7 +88,7 @@ impl<T: Object> IRequest<T> {
 		Ok(())
 	}
 
-	pub fn unknown1(&self, unk0: u32) -> Result<()> {
+	pub fn finalize_old(&self, unk0: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
@@ -98,7 +98,7 @@ impl<T: Object> IRequest<T> {
 		Ok(())
 	}
 
-	pub fn unknown2(&self, unk0: u32, unk1: u32, unk2: u32) -> Result<()> {
+	pub fn set_and_wait_old(&self, unk0: u32, unk1: u32, unk2: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -118,7 +118,7 @@ impl<T: Object> IRequest<T> {
 		Ok(())
 	}
 
-	pub fn unknown3(&self, unk0: u32) -> Result<u32> {
+	pub fn get_old(&self, unk0: u32) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
@@ -128,8 +128,8 @@ impl<T: Object> IRequest<T> {
 		Ok(*res.get_raw())
 	}
 
-	// fn module_init_clk(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn module_deinit_clk(&self, unk0: u32) -> Result<()> {
+	// fn initialize(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn finalize(&self, unk0: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
@@ -139,7 +139,7 @@ impl<T: Object> IRequest<T> {
 		Ok(())
 	}
 
-	pub fn module_set_clk_rate(&self, unk0: u32, unk1: u32, unk2: u32) -> Result<()> {
+	pub fn set_and_wait(&self, unk0: u32, unk1: u32, unk2: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -159,7 +159,7 @@ impl<T: Object> IRequest<T> {
 		Ok(())
 	}
 
-	pub fn module_get_clk_rate(&self, unk0: u32) -> Result<u32> {
+	pub fn get(&self, unk0: u32) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(7)

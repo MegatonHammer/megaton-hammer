@@ -33,7 +33,7 @@ impl<T> DerefMut for ISession<T> {
 	}
 }
 impl<T: Object> ISession<T> {
-	pub fn unknown0(&self, unk0: u32) -> Result<()> {
+	pub fn set_pin_assignment(&self, unk0: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
@@ -43,7 +43,7 @@ impl<T: Object> ISession<T> {
 		Ok(())
 	}
 
-	pub fn unknown1(&self, ) -> Result<u32> {
+	pub fn get_pin_assignment(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
@@ -53,7 +53,7 @@ impl<T: Object> ISession<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown2(&self, unk0: u32) -> Result<()> {
+	pub fn set_pin_assignment_for_hardware_test(&self, unk0: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)

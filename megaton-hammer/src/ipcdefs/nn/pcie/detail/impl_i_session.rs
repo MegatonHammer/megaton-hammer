@@ -33,9 +33,9 @@ impl<T> DerefMut for ISession<T> {
 	}
 }
 impl<T: Object> ISession<T> {
-	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown2(&self, unk0: u32) -> Result<()> {
+	// fn query_functions(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn acquire_function(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn release_function(&self, unk0: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
@@ -45,20 +45,20 @@ impl<T: Object> ISession<T> {
 		Ok(())
 	}
 
-	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown4(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown5(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown6(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown7(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown8(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown9(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown10(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown11(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown12(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown13(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown14(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown15(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown16(&self, unk0: u8, unk1: u32) -> Result<()> {
+	// fn get_function_state(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_bar_profile(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn read_config(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn write_config(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn read_bar_region(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn write_bar_region(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn find_capability(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn find_extended_capability(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn map_dma(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unmap_dma(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unmap_dma_bus_address(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_dma_bus_address(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_dma_bus_address_range(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn set_dma_enable(&self, unk0: u8, unk1: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -76,8 +76,8 @@ impl<T: Object> ISession<T> {
 		Ok(())
 	}
 
-	// fn unknown17(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown18(&self, unk0: u32) -> Result<()> {
+	// fn acquire_irq(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn release_irq(&self, unk0: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(18)
@@ -87,8 +87,8 @@ impl<T: Object> ISession<T> {
 		Ok(())
 	}
 
-	// fn unknown19(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown20(&self, unk0: u8, unk1: u32) -> Result<()> {
+	// fn set_irq_enable(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn set_aspm_enable(&self, unk0: u8, unk1: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]

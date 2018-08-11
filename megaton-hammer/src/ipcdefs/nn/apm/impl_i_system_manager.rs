@@ -118,6 +118,17 @@ impl<T: Object> ISystemManager<T> {
 		Ok(())
 	}
 
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn load_and_apply_settings(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 }
 
 impl<T: Object> From<T> for ISystemManager<T> {

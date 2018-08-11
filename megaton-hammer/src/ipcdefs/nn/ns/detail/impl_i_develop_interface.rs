@@ -68,10 +68,10 @@ impl<T> DerefMut for IDevelopInterface<T> {
 	}
 }
 impl<T: Object> IDevelopInterface<T> {
-	// fn launch_title(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn terminate_title_by_pid(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn terminate_title_by_title_id(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn get_ns_dev_wait_event(&self, ) -> Result<()> {
+	// fn launch_program(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn terminate_process(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn terminate_program(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_shell_event_handle(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
@@ -81,9 +81,9 @@ impl<T: Object> IDevelopInterface<T> {
 		Ok(())
 	}
 
-	// fn get_ns_dev_event_type(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn terminate_crashing_title(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn install_title(&self, ) -> Result<()> {
+	// fn get_shell_event_info(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn terminate_application(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn prepare_launch_program_from_host(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
@@ -93,8 +93,8 @@ impl<T: Object> IDevelopInterface<T> {
 		Ok(())
 	}
 
-	// fn set_event_state6(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn set_event_state(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn launch_application(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn launch_application_with_storage_id(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IDevelopInterface<T> {

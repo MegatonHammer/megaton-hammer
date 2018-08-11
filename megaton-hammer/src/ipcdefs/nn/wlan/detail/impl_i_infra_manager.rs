@@ -88,9 +88,9 @@ impl<T: Object> IInfraManager<T> {
 		Ok(())
 	}
 
-	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown4(&self, ) -> Result<()> {
+	// fn get_mac_address(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn start_scan(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn stop_scan(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
@@ -100,8 +100,8 @@ impl<T: Object> IInfraManager<T> {
 		Ok(())
 	}
 
-	// fn unknown5(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown6(&self, ) -> Result<()> {
+	// fn connect(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn cancel_connect(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
@@ -111,7 +111,7 @@ impl<T: Object> IInfraManager<T> {
 		Ok(())
 	}
 
-	pub fn unknown7(&self, ) -> Result<()> {
+	pub fn disconnect(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(7)
@@ -123,7 +123,7 @@ impl<T: Object> IInfraManager<T> {
 
 	// fn unknown8(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown9(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown10(&self, ) -> Result<u32> {
+	pub fn get_state(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
@@ -133,8 +133,8 @@ impl<T: Object> IInfraManager<T> {
 		Ok(*res.get_raw())
 	}
 
-	// fn unknown11(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown12(&self, ) -> Result<u32> {
+	// fn get_scan_result(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_rssi(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)
@@ -144,7 +144,7 @@ impl<T: Object> IInfraManager<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown13(&self, unk0: u32) -> Result<()> {
+	pub fn change_rx_antenna(&self, unk0: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(13)
@@ -165,7 +165,7 @@ impl<T: Object> IInfraManager<T> {
 		Ok(())
 	}
 
-	pub fn unknown16(&self, ) -> Result<()> {
+	pub fn request_wake_up(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(16)
@@ -175,7 +175,8 @@ impl<T: Object> IInfraManager<T> {
 		Ok(())
 	}
 
-	// fn unknown17(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn request_if_up_down(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(feature = "switch-2.0.0")]
 	pub fn unknown18(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
@@ -187,6 +188,7 @@ impl<T: Object> IInfraManager<T> {
 	}
 
 	// fn unknown19(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(feature = "switch-2.0.0")]
 	pub fn unknown20(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
@@ -197,6 +199,7 @@ impl<T: Object> IInfraManager<T> {
 		Ok(())
 	}
 
+	#[cfg(feature = "switch-2.0.0")]
 	pub fn unknown21(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
@@ -207,6 +210,7 @@ impl<T: Object> IInfraManager<T> {
 		Ok(*res.get_raw())
 	}
 
+	#[cfg(feature = "switch-2.0.0")]
 	pub fn unknown22(&self, unk0: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
@@ -217,6 +221,7 @@ impl<T: Object> IInfraManager<T> {
 		Ok(())
 	}
 
+	#[cfg(feature = "switch-2.0.0")]
 	pub fn unknown23(&self, unk0: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
@@ -229,6 +234,28 @@ impl<T: Object> IInfraManager<T> {
 
 	// fn unknown24(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown25(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn unknown26(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(26)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn unknown27(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(27)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 }
 
 impl<T: Object> From<T> for IInfraManager<T> {

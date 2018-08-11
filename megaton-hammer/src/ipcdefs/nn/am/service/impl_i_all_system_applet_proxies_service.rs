@@ -80,8 +80,8 @@ impl<T: Object> IAllSystemAppletProxiesService<T> {
 		Ok(T::from_res(&mut res).into())
 	}
 
-	#[cfg(feature = "switch-3.0.0")]
-	pub fn open_library_applet_proxy_old(&self, unk0: u64, unk2: &KObject) -> Result<::ipcdefs::nn::am::service::ILibraryAppletProxy<T>> {
+	#[cfg(not(feature = "switch-3.0.0"))]
+	pub fn open_library_applet_proxy(&self, unk0: u64, unk2: &KObject) -> Result<::ipcdefs::nn::am::service::ILibraryAppletProxy<T>> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 1], [_; 0]> = Request::new(200)

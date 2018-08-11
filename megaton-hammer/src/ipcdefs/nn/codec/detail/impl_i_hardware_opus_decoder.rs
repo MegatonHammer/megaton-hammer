@@ -35,8 +35,8 @@ impl<T> DerefMut for IHardwareOpusDecoder<T> {
 impl<T: Object> IHardwareOpusDecoder<T> {
 	// fn decode_interleaved(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn set_context(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn decode_interleaved_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn set_context_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
 	#[cfg(feature = "switch-4.0.0")]
 	pub fn unknown4(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};

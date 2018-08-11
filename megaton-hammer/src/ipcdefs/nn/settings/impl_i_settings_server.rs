@@ -155,7 +155,7 @@ impl<T: Object> ISettingsServer<T> {
 	}
 
 	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_quest_flag2(&self, ) -> Result<()> {
+	pub fn get_quest_flag(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(8)

@@ -68,8 +68,8 @@ impl<T> DerefMut for IEthInterface<T> {
 	}
 }
 impl<T: Object> IEthInterface<T> {
-	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown1(&self, ) -> Result<()> {
+	// fn initialize(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn cancel(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
@@ -79,7 +79,7 @@ impl<T: Object> IEthInterface<T> {
 		Ok(())
 	}
 
-	pub fn unknown2(&self, ) -> Result<()> {
+	pub fn get_result(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
@@ -89,8 +89,8 @@ impl<T: Object> IEthInterface<T> {
 		Ok(())
 	}
 
-	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown4(&self, unk0: u32) -> Result<()> {
+	// fn get_media_list(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn set_media_type(&self, unk0: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
@@ -100,7 +100,7 @@ impl<T: Object> IEthInterface<T> {
 		Ok(())
 	}
 
-	// fn unknown5(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_media_type(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IEthInterface<T> {

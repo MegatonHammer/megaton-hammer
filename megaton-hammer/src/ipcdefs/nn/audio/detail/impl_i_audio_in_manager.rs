@@ -68,11 +68,11 @@ impl<T> DerefMut for IAudioInManager<T> {
 	}
 }
 impl<T: Object> IAudioInManager<T> {
-	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn list_audio_ins(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn open_audio_in(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown4(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn open_audio_in_auto(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn list_audio_ins_auto(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IAudioInManager<T> {

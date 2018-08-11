@@ -134,6 +134,28 @@ impl<T: Object> IAudioOutManagerForApplet<T> {
 		Ok(())
 	}
 
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn get_audio_outs_process_record_volume(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn set_audio_outs_process_record_volume(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 }
 
 impl<T: Object> From<T> for IAudioOutManagerForApplet<T> {

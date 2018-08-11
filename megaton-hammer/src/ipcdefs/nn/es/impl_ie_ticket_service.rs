@@ -68,10 +68,10 @@ impl<T> DerefMut for IETicketService<T> {
 	}
 }
 impl<T: Object> IETicketService<T> {
-	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown4(&self, unk0: u32) -> Result<()> {
+	// fn import_ticket(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn import_ticket_certificate_set(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn delete_ticket(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn delete_personalized_ticket(&self, unk0: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
@@ -81,7 +81,7 @@ impl<T: Object> IETicketService<T> {
 		Ok(())
 	}
 
-	pub fn unknown5(&self, ) -> Result<()> {
+	pub fn delete_all_common_ticket(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
@@ -91,7 +91,7 @@ impl<T: Object> IETicketService<T> {
 		Ok(())
 	}
 
-	pub fn unknown6(&self, ) -> Result<()> {
+	pub fn delete_all_personalized_ticket(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
@@ -101,9 +101,9 @@ impl<T: Object> IETicketService<T> {
 		Ok(())
 	}
 
-	// fn unknown7(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown8(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown9(&self, ) -> Result<u32> {
+	// fn delete_all_personalized_ticket_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_title_key(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn count_common_ticket(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(9)
@@ -113,7 +113,7 @@ impl<T: Object> IETicketService<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown10(&self, ) -> Result<u32> {
+	pub fn count_personalized_ticket(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
@@ -123,17 +123,171 @@ impl<T: Object> IETicketService<T> {
 		Ok(*res.get_raw())
 	}
 
-	// fn unknown11(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown12(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown13(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown14(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown15(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown16(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown17(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown18(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown19(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown20(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown21(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn list_common_ticket(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn list_personalized_ticket(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn list_missing_personalized_ticket(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_common_ticket_size(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_personalized_ticket_size(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_common_ticket_data(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_personalized_ticket_data(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn own_ticket(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_ticket_info(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn list_light_ticket_info(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn sign_data(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn get_common_ticket_and_certificate_size(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(22)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn get_common_ticket_and_certificate_data(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(23)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn import_prepurchase_record(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(24)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn delete_prepurchase_record(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(25)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn delete_all_prepurchase_record(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(26)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn count_prepurchase_record(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(27)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn list_prepurchase_record(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(28)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn list_prepurchase_record_info(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(29)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn unknown30(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn unknown31(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(31)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn unknown32(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(32)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn unknown33(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(33)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn unknown34(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(34)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn unknown35(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(35)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 }
 
 impl<T: Object> From<T> for IETicketService<T> {

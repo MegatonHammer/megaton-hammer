@@ -33,8 +33,9 @@ impl<T> DerefMut for ILogger<T> {
 	}
 }
 impl<T: Object> ILogger<T> {
-	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown1(&self, unk0: u32) -> Result<()> {
+	// fn initialize(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(feature = "switch-3.0.0")]
+	pub fn set_destination(&self, unk0: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)

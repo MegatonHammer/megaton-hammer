@@ -68,7 +68,7 @@ impl<T> DerefMut for IContentManager<T> {
 	}
 }
 impl<T: Object> IContentManager<T> {
-	pub fn create_placeholder_and_registered_directories_for_media_id(&self, unk0: u8) -> Result<()> {
+	pub fn create_content_storage(&self, unk0: u8) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
@@ -78,7 +78,7 @@ impl<T: Object> IContentManager<T> {
 		Ok(())
 	}
 
-	pub fn create_save_data_directory_for_media_id(&self, unk0: u8) -> Result<()> {
+	pub fn create_content_meta_database(&self, unk0: u8) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
@@ -88,7 +88,7 @@ impl<T: Object> IContentManager<T> {
 		Ok(())
 	}
 
-	pub fn get_exists_placeholder_and_registered_directories_for_media_id(&self, unk0: u8) -> Result<()> {
+	pub fn verify_content_storage(&self, unk0: u8) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
@@ -98,7 +98,7 @@ impl<T: Object> IContentManager<T> {
 		Ok(())
 	}
 
-	pub fn get_exists_save_data_directory_for_media_id(&self, unk0: u8) -> Result<()> {
+	pub fn verify_content_meta_database(&self, unk0: u8) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
@@ -108,8 +108,8 @@ impl<T: Object> IContentManager<T> {
 		Ok(())
 	}
 
-	// fn get_i_content_storage(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_i_content_meta_database(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn open_content_storage(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn open_content_meta_database(&self, UNKNOWN) -> Result<UNKNOWN>;
 	#[cfg(not(feature = "switch-2.0.0"))]
 	pub fn close_content_storage_forcibly(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
@@ -132,7 +132,7 @@ impl<T: Object> IContentManager<T> {
 		Ok(())
 	}
 
-	pub fn delete_save_data_for_media_id(&self, unk0: u8) -> Result<()> {
+	pub fn cleanup_content_meta_database(&self, unk0: u8) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(8)
@@ -143,7 +143,7 @@ impl<T: Object> IContentManager<T> {
 	}
 
 	#[cfg(feature = "switch-2.0.0")]
-	pub fn open_i_content_storage(&self, unk0: u8) -> Result<()> {
+	pub fn open_content_storage2(&self, unk0: u8) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(9)
@@ -154,7 +154,7 @@ impl<T: Object> IContentManager<T> {
 	}
 
 	#[cfg(feature = "switch-2.0.0")]
-	pub fn close_i_content_storage(&self, unk0: u8) -> Result<()> {
+	pub fn close_content_storage(&self, unk0: u8) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
@@ -165,7 +165,7 @@ impl<T: Object> IContentManager<T> {
 	}
 
 	#[cfg(feature = "switch-2.0.0")]
-	pub fn open_i_content_meta_database(&self, unk0: u8) -> Result<()> {
+	pub fn open_content_meta_database2(&self, unk0: u8) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)
@@ -176,7 +176,7 @@ impl<T: Object> IContentManager<T> {
 	}
 
 	#[cfg(feature = "switch-2.0.0")]
-	pub fn close_i_content_meta_database(&self, unk0: u8) -> Result<()> {
+	pub fn close_content_meta_database(&self, unk0: u8) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)

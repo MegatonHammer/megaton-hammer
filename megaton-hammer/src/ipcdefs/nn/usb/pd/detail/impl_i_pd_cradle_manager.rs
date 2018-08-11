@@ -68,7 +68,7 @@ impl<T> DerefMut for IPdCradleManager<T> {
 	}
 }
 impl<T: Object> IPdCradleManager<T> {
-	pub fn unknown0(&self, ) -> Result<T> {
+	pub fn get_pd_cradle_session(&self, ) -> Result<T> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)

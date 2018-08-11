@@ -33,7 +33,7 @@ impl<T> DerefMut for IRegistrar<T> {
 	}
 }
 impl<T: Object> IRegistrar<T> {
-	pub fn bind_registrar(&self, unk0: u64) -> Result<()> {
+	pub fn issue(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
@@ -43,7 +43,7 @@ impl<T: Object> IRegistrar<T> {
 		Ok(())
 	}
 
-	pub fn write_header(&self, unk0: u128) -> Result<()> {
+	pub fn set_application_launch_property(&self, unk0: u128) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
@@ -53,7 +53,7 @@ impl<T: Object> IRegistrar<T> {
 		Ok(())
 	}
 
-	// fn write_data(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_application_control_property(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IRegistrar<T> {

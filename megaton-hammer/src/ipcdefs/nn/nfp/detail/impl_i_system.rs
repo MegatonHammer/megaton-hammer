@@ -33,8 +33,8 @@ impl<T> DerefMut for ISystem<T> {
 	}
 }
 impl<T: Object> ISystem<T> {
-	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown1(&self, ) -> Result<()> {
+	// fn initialize_system(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn finalize_system(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
@@ -44,8 +44,8 @@ impl<T: Object> ISystem<T> {
 		Ok(())
 	}
 
-	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown3(&self, unk0: u64) -> Result<()> {
+	// fn list_devices(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn start_detection(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
@@ -55,7 +55,7 @@ impl<T: Object> ISystem<T> {
 		Ok(())
 	}
 
-	pub fn unknown4(&self, unk0: u64) -> Result<()> {
+	pub fn stop_detection(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
@@ -65,7 +65,7 @@ impl<T: Object> ISystem<T> {
 		Ok(())
 	}
 
-	pub fn unknown5(&self, unk0: u64, unk1: u32, unk2: u32) -> Result<()> {
+	pub fn mount(&self, unk0: u64, unk1: u32, unk2: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -85,7 +85,7 @@ impl<T: Object> ISystem<T> {
 		Ok(())
 	}
 
-	pub fn unknown6(&self, unk0: u64) -> Result<()> {
+	pub fn unmount(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
@@ -95,7 +95,7 @@ impl<T: Object> ISystem<T> {
 		Ok(())
 	}
 
-	pub fn unknown10(&self, unk0: u64) -> Result<()> {
+	pub fn flush(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
@@ -105,7 +105,7 @@ impl<T: Object> ISystem<T> {
 		Ok(())
 	}
 
-	pub fn unknown11(&self, unk0: u64) -> Result<()> {
+	pub fn restore(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)
@@ -115,7 +115,7 @@ impl<T: Object> ISystem<T> {
 		Ok(())
 	}
 
-	pub fn unknown13(&self, unk0: u64, unk1: &mut [u8; 0x58]) -> Result<()> {
+	pub fn get_tag_info(&self, unk0: u64, unk1: &mut [u8; 0x58]) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -127,7 +127,7 @@ impl<T: Object> ISystem<T> {
 		Ok(())
 	}
 
-	pub fn unknown14(&self, unk0: u64, unk1: &mut [u8; 0x100]) -> Result<()> {
+	pub fn get_register_info(&self, unk0: u64, unk1: &mut [u8; 0x100]) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -139,7 +139,7 @@ impl<T: Object> ISystem<T> {
 		Ok(())
 	}
 
-	pub fn unknown15(&self, unk0: u64, unk1: &mut [u8; 0x40]) -> Result<()> {
+	pub fn get_common_info(&self, unk0: u64, unk1: &mut [u8; 0x40]) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -151,7 +151,7 @@ impl<T: Object> ISystem<T> {
 		Ok(())
 	}
 
-	pub fn unknown16(&self, unk0: u64, unk1: &mut [u8; 0x40]) -> Result<()> {
+	pub fn get_model_info(&self, unk0: u64, unk1: &mut [u8; 0x40]) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -163,7 +163,7 @@ impl<T: Object> ISystem<T> {
 		Ok(())
 	}
 
-	pub fn unknown17(&self, unk0: u64) -> Result<KObject> {
+	pub fn attach_activate_event(&self, unk0: u64) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(17)
@@ -173,7 +173,7 @@ impl<T: Object> ISystem<T> {
 		Ok(res.pop_handle())
 	}
 
-	pub fn unknown18(&self, unk0: u64) -> Result<KObject> {
+	pub fn attach_deactivate_event(&self, unk0: u64) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(18)
@@ -183,7 +183,7 @@ impl<T: Object> ISystem<T> {
 		Ok(res.pop_handle())
 	}
 
-	pub fn unknown19(&self, ) -> Result<u32> {
+	pub fn get_state(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(19)
@@ -193,7 +193,7 @@ impl<T: Object> ISystem<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown20(&self, unk0: u64) -> Result<u32> {
+	pub fn get_device_state(&self, unk0: u64) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20)
@@ -203,7 +203,7 @@ impl<T: Object> ISystem<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown21(&self, unk0: u64) -> Result<u32> {
+	pub fn get_npad_id(&self, unk0: u64) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(21)
@@ -213,7 +213,7 @@ impl<T: Object> ISystem<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown23(&self, ) -> Result<KObject> {
+	pub fn attach_availability_change_event(&self, ) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(23)
@@ -223,7 +223,7 @@ impl<T: Object> ISystem<T> {
 		Ok(res.pop_handle())
 	}
 
-	pub fn unknown100(&self, unk0: u64) -> Result<()> {
+	pub fn format(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(100)
@@ -233,7 +233,7 @@ impl<T: Object> ISystem<T> {
 		Ok(())
 	}
 
-	pub fn unknown101(&self, unk0: u64, unk1: &mut [u8; 0x40]) -> Result<()> {
+	pub fn get_admin_info(&self, unk0: u64, unk1: &mut [u8; 0x40]) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -245,7 +245,7 @@ impl<T: Object> ISystem<T> {
 		Ok(())
 	}
 
-	pub fn unknown102(&self, unk0: u64, unk1: &mut [u8; 0x100]) -> Result<()> {
+	pub fn get_register_info2(&self, unk0: u64, unk1: &mut [u8; 0x100]) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -257,7 +257,7 @@ impl<T: Object> ISystem<T> {
 		Ok(())
 	}
 
-	pub fn unknown103(&self, unk0: u64, unk1: &[u8; 0x100]) -> Result<()> {
+	pub fn set_register_info(&self, unk0: u64, unk1: &[u8; 0x100]) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -269,7 +269,7 @@ impl<T: Object> ISystem<T> {
 		Ok(())
 	}
 
-	pub fn unknown104(&self, unk0: u64) -> Result<()> {
+	pub fn delete_register_info(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(104)
@@ -279,7 +279,7 @@ impl<T: Object> ISystem<T> {
 		Ok(())
 	}
 
-	pub fn unknown105(&self, unk0: u64) -> Result<()> {
+	pub fn delete_application_area(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(105)
@@ -289,7 +289,7 @@ impl<T: Object> ISystem<T> {
 		Ok(())
 	}
 
-	pub fn unknown106(&self, unk0: u64) -> Result<u8> {
+	pub fn exists_application_area(&self, unk0: u64) -> Result<u8> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(106)

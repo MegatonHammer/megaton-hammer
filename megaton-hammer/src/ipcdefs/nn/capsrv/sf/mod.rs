@@ -1,10 +1,14 @@
-mod impl_i_screen_shot_service;
-pub use self::impl_i_screen_shot_service::*;
+mod impl_i_album_application_service;
+pub use self::impl_i_album_application_service::*;
 mod impl_i_album_accessor_service;
 pub use self::impl_i_album_accessor_service::*;
+mod impl_i_album_accessor_application_session;
+pub use self::impl_i_album_accessor_application_session::*;
 mod impl_i_screen_shot_application_service;
 pub use self::impl_i_screen_shot_application_service::*;
 mod impl_i_screen_shot_control_service;
 pub use self::impl_i_screen_shot_control_service::*;
+mod impl_i_screen_shot_service;
+pub use self::impl_i_screen_shot_service::*;
 mod impl_i_album_control_service;
 pub use self::impl_i_album_control_service::*;

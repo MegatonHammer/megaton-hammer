@@ -79,7 +79,7 @@ impl<T: Object> IBtm<T> {
 	}
 
 	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn register_system_event_for_connected_device_condition_impl(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown4(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown5(&self, UNKNOWN) -> Result<UNKNOWN>;
@@ -103,13 +103,13 @@ impl<T: Object> IBtm<T> {
 		Ok(())
 	}
 
-	// fn unknown8(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn register_system_event_for_registered_device_info_impl(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown9(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown10(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown11(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown12(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown13(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown14(&self, ) -> Result<()> {
+	pub fn enable_radio_impl(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(14)
@@ -119,7 +119,7 @@ impl<T: Object> IBtm<T> {
 		Ok(())
 	}
 
-	pub fn unknown15(&self, ) -> Result<()> {
+	pub fn disable_radio_impl(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(15)
@@ -132,6 +132,39 @@ impl<T: Object> IBtm<T> {
 	// fn unknown16(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown17(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown18(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn unknown19(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(19)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn unknown20(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn unknown21(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(21)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 }
 
 impl<T: Object> From<T> for IBtm<T> {

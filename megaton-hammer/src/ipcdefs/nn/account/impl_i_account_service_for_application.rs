@@ -163,6 +163,17 @@ impl<T: Object> IAccountServiceForApplication<T> {
 		Ok(*res.get_raw())
 	}
 
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn list_open_context_stored_users(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(60)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn initialize_application_info(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
@@ -194,6 +205,17 @@ impl<T: Object> IAccountServiceForApplication<T> {
 		Ok(T::from_res(&mut res).into())
 	}
 
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn check_network_service_availability_async(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(103)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	// fn store_save_data_thumbnail(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn clear_save_data_thumbnail(&self, unk0: ::ipcdefs::nn::account::Uid) -> Result<()> {
 		use ::ipc::{Request, Response};
@@ -214,6 +236,17 @@ impl<T: Object> IAccountServiceForApplication<T> {
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(T::from_res(&mut res).into())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn load_open_context(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(130)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
 	}
 
 }

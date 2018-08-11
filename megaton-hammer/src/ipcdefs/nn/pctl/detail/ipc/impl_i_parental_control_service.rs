@@ -33,6 +33,17 @@ impl<T> DerefMut for IParentalControlService<T> {
 	}
 }
 impl<T: Object> IParentalControlService<T> {
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn initialize(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn check_free_communication_permission(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
@@ -171,6 +182,39 @@ impl<T: Object> IParentalControlService<T> {
 			;
 		let res : Response<i32> = self.0.send(req)?;
 		Ok(*res.get_raw())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn confirm_stereo_vision_permission(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1013)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn confirm_playable_application_video_old(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1014)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn confirm_playable_application_video(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1015)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
 	}
 
 	pub fn is_restriction_enabled(&self, ) -> Result<bool> {
@@ -327,6 +371,61 @@ impl<T: Object> IParentalControlService<T> {
 		Ok(())
 	}
 
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn confirm_stereo_vision_restriction_configurable(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1061)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn get_stereo_vision_restriction(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1062)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn set_stereo_vision_restriction(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1063)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn reset_confirmed_stereo_vision_permission(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1064)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn is_stereo_vision_permitted(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1065)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn unlock_restriction_temporarily(&self, unk0: &[i8]) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
@@ -403,6 +502,17 @@ impl<T: Object> IParentalControlService<T> {
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(res.pop_handle())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn get_pin_code(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1208)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
 	}
 
 	pub fn is_pairing_active(&self, ) -> Result<bool> {
@@ -537,6 +647,17 @@ impl<T: Object> IParentalControlService<T> {
 		Ok(res.pop_handle())
 	}
 
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn is_play_timer_alarm_disabled(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1458)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn notify_wrong_pin_code_input_many_times(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
@@ -631,6 +752,72 @@ impl<T: Object> IParentalControlService<T> {
 		Ok(())
 	}
 
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn get_exempt_application_list_count_for_debug(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1903)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn get_exempt_application_list_for_debug(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1904)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn update_exempt_application_list_for_debug(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1905)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn add_to_exempt_application_list_for_debug(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1906)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn delete_from_exempt_application_list_for_debug(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1907)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn clear_exempt_application_list_for_debug(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1908)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn delete_pairing(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
@@ -659,6 +846,17 @@ impl<T: Object> IParentalControlService<T> {
 			;
 		let res : Response<::ipcdefs::nn::TimeSpanType> = self.0.send(req)?;
 		Ok(*res.get_raw())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn set_play_timer_alarm_disabled_for_debug(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1953)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
 	}
 
 	pub fn request_pairing_async(&self, unk0: &[i8]) -> Result<(::ipcdefs::nn::pctl::detail::AsyncData, KObject)> {
@@ -792,6 +990,17 @@ impl<T: Object> IParentalControlService<T> {
 			;
 		let res : Response<::ipcdefs::nn::time::PosixTime> = self.0.send(req)?;
 		Ok(*res.get_raw())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn request_update_exemption_list_async(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2016)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
 	}
 
 }

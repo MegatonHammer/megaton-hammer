@@ -160,6 +160,7 @@ impl<T: Object> IPowerStateInterface<T> {
 		Ok(())
 	}
 
+	#[cfg(not(feature = "switch-4.0.0"))]
 	pub fn unknown11(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 

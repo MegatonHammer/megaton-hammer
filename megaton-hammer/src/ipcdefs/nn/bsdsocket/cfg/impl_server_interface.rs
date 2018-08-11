@@ -68,14 +68,14 @@ impl<T> DerefMut for ServerInterface<T> {
 	}
 }
 impl<T: Object> ServerInterface<T> {
-	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown1(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown4(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown5(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown6(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown7(&self, unk0: u32) -> Result<()> {
+	// fn set_if_up(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_if_up_with_event(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn cancel_if(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_if_down(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_if_state(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn dhcp_renew(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn add_static_arp_entry(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn remove_arp_entry(&self, unk0: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(7)
@@ -85,9 +85,9 @@ impl<T: Object> ServerInterface<T> {
 		Ok(())
 	}
 
-	// fn unknown8(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown9(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown10(&self, ) -> Result<()> {
+	// fn lookup_arp_entry(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn lookup_arp_entry2(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn clear_arp_entries(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
@@ -97,8 +97,8 @@ impl<T: Object> ServerInterface<T> {
 		Ok(())
 	}
 
-	// fn unknown11(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown12(&self, ) -> Result<()> {
+	// fn clear_arp_entries2(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn print_arp_entries(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)

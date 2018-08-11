@@ -105,6 +105,7 @@ impl<T: Object> IBtmSystemCore<T> {
 
 	// fn acquire_radio_event_impl(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn acquire_gamepad_pairing_event_impl(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(feature = "switch-2.0.0")]
 	pub fn is_gamepad_pairing_started_impl(&self, ) -> Result<u8> {
 		use ::ipc::{Request, Response};
 

@@ -33,8 +33,8 @@ impl<T> DerefMut for IUser<T> {
 	}
 }
 impl<T: Object> IUser<T> {
-	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown1(&self, ) -> Result<()> {
+	// fn initialize(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn finalize(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
@@ -44,8 +44,8 @@ impl<T: Object> IUser<T> {
 		Ok(())
 	}
 
-	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown3(&self, unk0: u64) -> Result<()> {
+	// fn list_devices(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn start_detection(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
@@ -55,7 +55,7 @@ impl<T: Object> IUser<T> {
 		Ok(())
 	}
 
-	pub fn unknown4(&self, unk0: u64) -> Result<()> {
+	pub fn stop_detection(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
@@ -65,9 +65,9 @@ impl<T: Object> IUser<T> {
 		Ok(())
 	}
 
-	// fn unknown5(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown6(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown7(&self, unk0: u64, unk1: &mut [u8; 0x58]) -> Result<()> {
+	// fn read(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn write(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_tag_info(&self, unk0: u64, unk1: &mut [u8; 0x58]) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -79,7 +79,7 @@ impl<T: Object> IUser<T> {
 		Ok(())
 	}
 
-	pub fn unknown8(&self, unk0: u64) -> Result<KObject> {
+	pub fn get_activate_event_handle(&self, unk0: u64) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(8)
@@ -89,7 +89,7 @@ impl<T: Object> IUser<T> {
 		Ok(res.pop_handle())
 	}
 
-	pub fn unknown9(&self, unk0: u64) -> Result<KObject> {
+	pub fn get_deactivate_event_handle(&self, unk0: u64) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(9)
@@ -99,7 +99,7 @@ impl<T: Object> IUser<T> {
 		Ok(res.pop_handle())
 	}
 
-	pub fn unknown10(&self, ) -> Result<u32> {
+	pub fn get_state(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
@@ -109,7 +109,7 @@ impl<T: Object> IUser<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown11(&self, unk0: u64) -> Result<u32> {
+	pub fn get_device_state(&self, unk0: u64) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)
@@ -119,7 +119,7 @@ impl<T: Object> IUser<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown12(&self, unk0: u64) -> Result<u32> {
+	pub fn get_npad_id(&self, unk0: u64) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)
@@ -129,7 +129,7 @@ impl<T: Object> IUser<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn unknown13(&self, ) -> Result<KObject> {
+	pub fn get_availability_change_event_handle(&self, ) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(13)

@@ -43,8 +43,8 @@ impl<T: Object> IContentStorage<T> {
 		Ok(*res.get_raw())
 	}
 
-	// fn create_placeholder_entry_and_registered_directory_entry(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn delete_placeholder_entry(&self, unk0: u128) -> Result<()> {
+	// fn create_place_holder(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn delete_place_holder(&self, unk0: u128) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
@@ -54,10 +54,10 @@ impl<T: Object> IContentStorage<T> {
 		Ok(())
 	}
 
-	// fn does_placeholder_entry_exist(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn write_placeholder_entry(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn move_placeholder_to_registered(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn delete_registered_entry(&self, unk0: u128) -> Result<()> {
+	// fn has_place_holder(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn write_place_holder(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn register(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn delete(&self, unk0: u128) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
@@ -67,10 +67,10 @@ impl<T: Object> IContentStorage<T> {
 		Ok(())
 	}
 
-	// fn does_registered_entry_exist(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn has(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_path(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_placeholder_path(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn clean_placeholder_directory(&self, ) -> Result<()> {
+	// fn get_place_holder_path(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn cleanup_all_place_holder(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
@@ -80,8 +80,8 @@ impl<T: Object> IContentStorage<T> {
 		Ok(())
 	}
 
-	// fn get_number_of_placholder_entries(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn get_number_of_registered_entries(&self, ) -> Result<u32> {
+	// fn list_place_holder(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_content_count(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)
@@ -91,9 +91,9 @@ impl<T: Object> IContentStorage<T> {
 		Ok(*res.get_raw())
 	}
 
-	// fn get_registered_entries(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_registered_entry_size(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn close_and_flush_storage(&self, ) -> Result<()> {
+	// fn list_content_id(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_size(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn disable_forcibly(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(15)
@@ -103,13 +103,14 @@ impl<T: Object> IContentStorage<T> {
 		Ok(())
 	}
 
-	// fn create_placeholder_entry_registered_entry_and_registered_directory_entry(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn set_placeholder_entry_size(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn read_registered_entry_raw(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_placeholder_entry_rights_id(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_registered_entry_rights_id(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn write_registered_path_for_debug(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn get_free_space(&self, ) -> Result<u64> {
+	// fn revert_to_place_holder(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_place_holder_size(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn read_content_id_file(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_rights_id_from_place_holder_id(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_rights_id_from_content_id(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn write_content_for_debug(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(feature = "switch-2.0.0")]
+	pub fn get_free_space_size(&self, ) -> Result<u64> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(22)
@@ -119,7 +120,8 @@ impl<T: Object> IContentStorage<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn get_total_space(&self, ) -> Result<u64> {
+	#[cfg(feature = "switch-2.0.0")]
+	pub fn get_total_space_size(&self, ) -> Result<u64> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(23)
@@ -129,10 +131,33 @@ impl<T: Object> IContentStorage<T> {
 		Ok(*res.get_raw())
 	}
 
+	#[cfg(feature = "switch-3.0.0")]
 	pub fn flush_storage(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(24)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn unknown25(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(25)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn unknown26(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(26)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;

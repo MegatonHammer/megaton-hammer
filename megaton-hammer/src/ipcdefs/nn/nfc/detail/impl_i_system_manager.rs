@@ -68,7 +68,7 @@ impl<T> DerefMut for ISystemManager<T> {
 	}
 }
 impl<T: Object> ISystemManager<T> {
-	pub fn unknown0(&self, ) -> Result<T> {
+	pub fn create_system_interface(&self, ) -> Result<T> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)

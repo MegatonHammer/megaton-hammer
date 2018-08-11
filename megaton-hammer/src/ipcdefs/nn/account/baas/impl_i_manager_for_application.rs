@@ -78,6 +78,17 @@ impl<T: Object> IManagerForApplication<T> {
 		Ok(T::from_res(&mut res).into())
 	}
 
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn store_open_context(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(160)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 }
 
 impl<T: Object> From<T> for IManagerForApplication<T> {

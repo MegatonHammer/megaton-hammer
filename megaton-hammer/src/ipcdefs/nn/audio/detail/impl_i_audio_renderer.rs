@@ -124,9 +124,9 @@ impl<T: Object> IAudioRenderer<T> {
 		Ok(*res.get_raw())
 	}
 
-	// fn request_update_audio_renderer_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn request_update_audio_renderer_auto(&self, UNKNOWN) -> Result<UNKNOWN>;
 	#[cfg(feature = "switch-3.0.0")]
-	pub fn unknown11(&self, ) -> Result<()> {
+	pub fn execute_audio_renderer_rendering(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)

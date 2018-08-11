@@ -56,7 +56,7 @@ impl<T: Object> IClientIfSession<T> {
 		Ok(*res.get_raw())
 	}
 
-	// fn unknown5(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn ctrl_xfer_async(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown6(&self, ) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
@@ -67,7 +67,7 @@ impl<T: Object> IClientIfSession<T> {
 		Ok(res.pop_handle())
 	}
 
-	// fn unknown7(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_ctrl_xfer_report(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn unknown8(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
@@ -78,7 +78,7 @@ impl<T: Object> IClientIfSession<T> {
 		Ok(())
 	}
 
-	// fn unknown9(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_client_ep_session(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IClientIfSession<T> {

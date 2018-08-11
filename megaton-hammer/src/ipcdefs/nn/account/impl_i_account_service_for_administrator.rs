@@ -163,6 +163,17 @@ impl<T: Object> IAccountServiceForAdministrator<T> {
 		Ok(*res.get_raw())
 	}
 
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn list_open_context_stored_users(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(60)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn get_user_registration_notifier(&self, ) -> Result<::ipcdefs::nn::account::detail::INotifier<T>> {
 		use ::ipc::{Request, Response};
 
@@ -213,6 +224,17 @@ impl<T: Object> IAccountServiceForAdministrator<T> {
 		Ok(T::from_res(&mut res).into())
 	}
 
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn check_network_service_availability_async(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(105)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	// fn store_save_data_thumbnail(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn clear_save_data_thumbnail(&self, unk0: ::ipcdefs::nn::account::Uid, unk1: ::ipcdefs::nn::ApplicationId) -> Result<()> {
 		use ::ipc::{Request, Response};
@@ -233,6 +255,16 @@ impl<T: Object> IAccountServiceForAdministrator<T> {
 	}
 
 	// fn load_save_data_thumbnail(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_save_data_thumbnail_existence(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(113)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn get_user_last_opened_application(&self, unk0: ::ipcdefs::nn::account::Uid) -> Result<(u32, ::ipcdefs::nn::ApplicationId)> {
 		use ::ipc::{Request, Response};
 
@@ -245,6 +277,17 @@ impl<T: Object> IAccountServiceForAdministrator<T> {
 		}
 		let res : Response<OutRaw> = self.0.send(req)?;
 		Ok((res.get_raw().unk1.clone(),res.get_raw().unk2.clone()))
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn activate_open_context_holder(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(191)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
 	}
 
 	pub fn begin_user_registration(&self, ) -> Result<::ipcdefs::nn::account::Uid> {

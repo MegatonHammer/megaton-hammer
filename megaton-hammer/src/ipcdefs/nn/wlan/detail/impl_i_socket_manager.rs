@@ -92,8 +92,8 @@ impl<T: Object> ISocketManager<T> {
 
 	// fn unknown4(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown5(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn unknown6(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown7(&self, unk0: u8) -> Result<()> {
+	// fn get_mac_address(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn switch_tsf_timer_function(&self, unk0: u8) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(7)

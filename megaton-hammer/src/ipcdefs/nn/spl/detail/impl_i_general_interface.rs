@@ -97,7 +97,7 @@ impl<T: Object> IGeneralInterface<T> {
 	}
 
 	// fn generate_specific_aes_key(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn decrypt_privk(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn decrypt_rsa_private_key(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn decrypt_aes_key(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn decrypt_aes_ctr(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn compute_cmac(&self, UNKNOWN) -> Result<UNKNOWN>;
@@ -140,6 +140,72 @@ impl<T: Object> IGeneralInterface<T> {
 
 	// fn set_shared_data(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_shared_data(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn import_ssl_rsa_key(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(26)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn secure_exp_mod_with_ssl_key(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(27)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn import_es_rsa_key(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(28)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn secure_exp_mod_with_es_key(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(29)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn encrypt_manu_rsa_key_for_import(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn get_package2_hash(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(31)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 }
 
 impl<T: Object> From<T> for IGeneralInterface<T> {

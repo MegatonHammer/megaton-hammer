@@ -63,6 +63,7 @@ impl<T: Object> ISteadyClock<T> {
 		Ok(())
 	}
 
+	#[cfg(feature = "switch-2.0.0")]
 	pub fn get_rtc_value(&self, ) -> Result<i64> {
 		use ::ipc::{Request, Response};
 
@@ -73,6 +74,7 @@ impl<T: Object> ISteadyClock<T> {
 		Ok(*res.get_raw())
 	}
 
+	#[cfg(feature = "switch-2.0.0")]
 	pub fn is_rtc_reset_detected(&self, ) -> Result<bool> {
 		use ::ipc::{Request, Response};
 
@@ -83,7 +85,8 @@ impl<T: Object> ISteadyClock<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn get_setup_resutlt_value(&self, ) -> Result<u32> {
+	#[cfg(feature = "switch-2.0.0")]
+	pub fn get_setup_result_value(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(102)
@@ -93,6 +96,7 @@ impl<T: Object> ISteadyClock<T> {
 		Ok(*res.get_raw())
 	}
 
+	#[cfg(feature = "switch-3.0.0")]
 	pub fn get_internal_offset(&self, ) -> Result<::ipcdefs::nn::TimeSpanType> {
 		use ::ipc::{Request, Response};
 
@@ -103,6 +107,7 @@ impl<T: Object> ISteadyClock<T> {
 		Ok(*res.get_raw())
 	}
 
+	#[cfg(all(feature = "switch-3.0.0", not(feature = "switch-4.0.0")))]
 	pub fn set_internal_offset(&self, unk0: ::ipcdefs::nn::TimeSpanType) -> Result<()> {
 		use ::ipc::{Request, Response};
 

@@ -68,7 +68,7 @@ impl<T> DerefMut for IGrcService<T> {
 	}
 }
 impl<T: Object> IGrcService<T> {
-	pub fn get_continuous_recorder(&self, ) -> Result<()> {
+	pub fn open_continuous_recorder(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
@@ -78,7 +78,7 @@ impl<T: Object> IGrcService<T> {
 		Ok(())
 	}
 
-	pub fn get_game_movie_trimmer(&self, ) -> Result<()> {
+	pub fn open_game_movie_trimmer(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)

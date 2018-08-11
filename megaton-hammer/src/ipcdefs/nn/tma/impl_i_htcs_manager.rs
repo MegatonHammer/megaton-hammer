@@ -171,7 +171,7 @@ impl<T: Object> IHtcsManager<T> {
 
 	// fn get_peer_name_any(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_default_host_name(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn unknown12(&self, ) -> Result<(u32, T)> {
+	pub fn create_socket_old(&self, ) -> Result<(u32, T)> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)

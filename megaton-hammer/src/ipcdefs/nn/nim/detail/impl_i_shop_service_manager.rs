@@ -125,6 +125,7 @@ impl<T: Object> IShopServiceManager<T> {
 	// fn get_account_by_virtual_account(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn request_sync_ticket(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn request_download_ticket(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(feature = "switch-4.0.0")]
 	pub fn request_download_ticket_for_prepurchased_contents(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 

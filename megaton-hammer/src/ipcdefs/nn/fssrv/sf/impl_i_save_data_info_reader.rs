@@ -33,7 +33,7 @@ impl<T> DerefMut for ISaveDataInfoReader<T> {
 	}
 }
 impl<T: Object> ISaveDataInfoReader<T> {
-	// fn unknown0(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn read_save_data_info(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for ISaveDataInfoReader<T> {
