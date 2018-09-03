@@ -133,7 +133,7 @@ fn main() -> std::result::Result<(), MyError> {
             handle: 0
         };
         println!("NVMAP_IOC_CREATE {:?} ({:?})", create, unsafe { std::mem::transmute::<&NvMapIocCreateArgs, &[u8; std::mem::size_of::<NvMapIocCreateArgs>()]>(&create) });
-        let ret = nvdrv.ioctl(nvmap, NVMAP_IOC_CREATE, 0,
+        let ret = nvdrv.ioctl(nvmap, NVMAP_IOC_CREATE,
                     // TODO: This is unsafe. And illegal. Rust assumes aliasing
                     // doesn't happen with references, which is exactly what we're
                     // doing. In theory, because we never *read* the content of
@@ -164,7 +164,7 @@ fn main() -> std::result::Result<(), MyError> {
         };
 
         println!("NVMAP_IOC_ALLOC {:?} ({:?})", alloc, unsafe { std::mem::transmute::<&NvMapIocAllocArgs, &[u8; std::mem::size_of::<NvMapIocAllocArgs>()]>(&alloc) });
-        let ret = nvdrv.ioctl(nvmap, NVMAP_IOC_ALLOC, 0,
+        let ret = nvdrv.ioctl(nvmap, NVMAP_IOC_ALLOC,
                     // TODO: This is unsafe. And illegal. Rust assumes aliasing
                     // doesn't happen with references, which is exactly what we're
                     // doing. In theory, because we never *read* the content of
