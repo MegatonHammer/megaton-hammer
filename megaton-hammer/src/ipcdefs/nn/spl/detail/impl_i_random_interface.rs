@@ -68,7 +68,18 @@ impl<T> DerefMut for IRandomInterface<T> {
 	}
 }
 impl<T: Object> IRandomInterface<T> {
-	// fn get_random_bytes(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_random_bytes(&self, unk0: &mut [u8]) -> Result<()> {
+		use ::ipc::IPCBuffer;
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(0)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_slice(unk0, 6))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 }
 
 impl<T: Object> From<T> for IRandomInterface<T> {

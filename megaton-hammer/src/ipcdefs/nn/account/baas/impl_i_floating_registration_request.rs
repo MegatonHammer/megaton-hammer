@@ -88,6 +88,17 @@ impl<T: Object> IFloatingRegistrationRequest<T> {
 		Ok((*res.get_raw(),T::from_res(&mut res).into()))
 	}
 
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn register_user(&self, ) -> Result<(::ipcdefs::nn::account::Uid, ::ipcdefs::nn::account::detail::IAsyncContext<T>)> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(100)
+			.args(())
+			;
+		let mut res : Response<::ipcdefs::nn::account::Uid> = self.0.send(req)?;
+		Ok((*res.get_raw(),T::from_res(&mut res).into()))
+	}
+
 	#[cfg(not(feature = "switch-4.0.0"))]
 	pub fn register_with_uid_async(&self, unk0: ::ipcdefs::nn::account::Uid) -> Result<::ipcdefs::nn::account::detail::IAsyncContext<T>> {
 		use ::ipc::{Request, Response};
@@ -100,27 +111,18 @@ impl<T: Object> IFloatingRegistrationRequest<T> {
 	}
 
 	#[cfg(feature = "switch-4.0.0")]
-	pub fn register_network_service_account_async(&self, ) -> Result<()> {
+	pub fn register_user_with_uid(&self, unk0: ::ipcdefs::nn::account::Uid) -> Result<::ipcdefs::nn::account::detail::IAsyncContext<T>> {
 		use ::ipc::{Request, Response};
 
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(102)
-			.args(())
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(101)
+			.args(unk0)
 			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(T::from_res(&mut res).into())
 	}
 
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn register_network_service_account_with_uid_async(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(103)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn register_network_service_account_async(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn register_network_service_account_with_uid_async(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn set_system_program_identification(&self, unk0: u64, unk2: &::ipcdefs::nn::account::SystemProgramIdentification) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};

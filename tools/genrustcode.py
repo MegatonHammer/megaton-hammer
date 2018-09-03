@@ -85,7 +85,8 @@ def getType(output, ty):
 		# Treat as an opaque byte array
 		elif ty[1][0] == "unknown":
 			return '%s[u8; %s]' % ("&mut " if output else "&", emitInt(ty[3]))
-		elif ty[3] != 0:
+		# TODO: Generalise the bytes case.
+		elif ty[3] != 0 or ty[1][0] == "bytes":
 			# Depending on type of buffer, this will be a const or
 			# a mutable reference...
 			return ("&mut %s" if output else "&%s") % getType(output, ty[1])
@@ -112,7 +113,11 @@ def getType(output, ty):
 		raise UnsupportedStructException()
 		#return 'align<%s, %s>' % (emitInt(ty[1]), getType(output, ty[2]))
 	elif ty[0] == 'bytes':
-		return '[u8; %s]' % emitInt(ty[1])
+		if len(ty) > 1:
+			return '[u8; %s]' % emitInt(ty[1])
+		else:
+			# TODO: Unsized :scream:
+			return '[u8]'
 	elif ty[0] == 'pid':
 		# TODO: maybe I need it in some situations ?
 		raise Exception("pid is not a valid type")
@@ -603,13 +608,23 @@ for name, val in types.items():
 	print("    ", name)
 	with open(os.path.join(prog_args.path, *filename), "a") as f:
 		if val[0] == 'struct':
+			
 			print("#[repr(C)]", file=f)
-			print("#[derive(Debug, Clone)]", file=f)
+			print("#[derive(Clone, Copy)]", file=f)
 			print("pub struct %s {" % to_camel_case(ifacename), file=f)
 			for structField in val[1]:
 				for line in structField[2]:
 					print("\t/// %s" % line, file=f)
 				print("\tpub %s: %s," % (camelToSnake(structField[0]), getType(False, structField[1])), file=f)
+			print("}", file=f)
+		elif val[0] == 'enum':
+			print("#[repr(" + val[2] + ")]", file=f)
+			print("#[derive(Debug, Clone, Copy)]", file=f)
+			print("pub enum %s {" % to_camel_case(ifacename), file=f)
+			for enumField in val[1]:
+				for line in enumField[2]:
+					print("\t/// %s" % line, file=f)
+				print("%s = %s," % (enumField[0], enumField[1]), file=f)
 			print("}", file=f)
 		elif val[0] == 'unknown': # This... kinda sucks.
 			print("pub type %s = ();" % to_camel_case(ifacename), file=f)

@@ -285,28 +285,8 @@ impl<T: Object> IDatabaseService<T> {
 		Ok(*res.get_raw())
 	}
 
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn set_interface_version(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(22)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn convert(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(23)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn set_interface_version(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn convert(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IDatabaseService<T> {

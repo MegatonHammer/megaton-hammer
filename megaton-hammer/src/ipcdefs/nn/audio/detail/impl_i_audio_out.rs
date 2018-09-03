@@ -85,41 +85,8 @@ impl<T: Object> IAudioOut<T> {
 		Ok(*res.get_raw())
 	}
 
-	// fn append_audio_out_buffer_auto(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_released_audio_out_buffer_auto(&self, UNKNOWN) -> Result<UNKNOWN>;
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn get_audio_out_buffer_count(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(9)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn get_audio_out_played_sample_count(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn flush_audio_out_buffers(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn append_audio_out_buffer_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_released_audio_out_buffer_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IAudioOut<T> {

@@ -71,17 +71,7 @@ impl<T: Object> IContentMetaDatabase<T> {
 	// fn list_content_meta_info(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_attributes(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_required_application_version(&self, UNKNOWN) -> Result<UNKNOWN>;
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn unknown20(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown20(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IContentMetaDatabase<T> {

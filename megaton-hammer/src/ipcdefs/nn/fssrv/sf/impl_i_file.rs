@@ -33,7 +33,7 @@ impl<T> DerefMut for IFile<T> {
 	}
 }
 impl<T: Object> IFile<T> {
-	pub fn read(&self, unk0: u32, offset: u64, size: u64, out_buf: &mut [i8]) -> Result<u64> {
+	pub fn read(&self, unk0: u32, offset: u64, size: u64, out_buf: &mut [u8]) -> Result<u64> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -55,7 +55,7 @@ impl<T: Object> IFile<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn write(&self, unk0: u32, offset: u64, size: u64, buf: &[i8]) -> Result<()> {
+	pub fn write(&self, unk0: u32, offset: u64, size: u64, unk3: &[u8]) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -71,7 +71,7 @@ impl<T: Object> IFile<T> {
 				offset,
 				size,
 			})
-			.descriptor(IPCBuffer::from_slice(buf, 0x45))
+			.descriptor(IPCBuffer::from_slice(unk3, 0x45))
 			;
 		let _res : Response<()> = self.0.send(req)?;
 		Ok(())
@@ -105,6 +105,17 @@ impl<T: Object> IFile<T> {
 			;
 		let res : Response<u64> = self.0.send(req)?;
 		Ok(*res.get_raw())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn operate_range(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
 	}
 
 }

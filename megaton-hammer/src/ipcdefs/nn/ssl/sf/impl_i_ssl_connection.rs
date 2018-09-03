@@ -236,17 +236,7 @@ impl<T: Object> ISslConnection<T> {
 	}
 
 	// fn get_verify_cert_errors(&self, UNKNOWN) -> Result<UNKNOWN>;
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn get_cipher_info(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(25)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn get_cipher_info(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for ISslConnection<T> {

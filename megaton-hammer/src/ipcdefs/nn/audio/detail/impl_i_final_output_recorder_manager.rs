@@ -15,7 +15,7 @@ impl IFinalOutputRecorderManager<Session> {
 
 		let sm = IUserInterface::raw_new()?;
 
-		let session = sm.get_service(*b"audrec:u")?;
+		let session = sm.get_service(*b"audren:u")?;
 		let object : Self = Session::from(session).into();
 		Ok(object)
 	}
@@ -31,7 +31,7 @@ impl IFinalOutputRecorderManager<Session> {
 			return Ok(hnd)
 		}
 
-		if let Some(hnd) = ::loader::get_override_service(*b"audrec:u") {
+		if let Some(hnd) = ::loader::get_override_service(*b"audren:u") {
 			let ret = Arc::new(IFinalOutputRecorderManager(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
 			*HANDLE.lock() = Arc::downgrade(&ret);
@@ -68,7 +68,7 @@ impl<T> DerefMut for IFinalOutputRecorderManager<T> {
 	}
 }
 impl<T: Object> IFinalOutputRecorderManager<T> {
-	pub fn open_final_output_recorder(&self, unk0: u64, unk1: u64, unk2: &KObject) -> Result<(u128, T)> {
+	pub fn open_final_output_recorder(&self, unk0: u64, unk1: u64, unk2: &KObject) -> Result<(u128, ::ipcdefs::nn::audio::detail::IFinalOutputRecorder<T>)> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]

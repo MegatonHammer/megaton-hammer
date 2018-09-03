@@ -104,17 +104,7 @@ impl<T: Object> IContext<T> {
 		Ok(())
 	}
 
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn unknown6(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown6(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IContext<T> {

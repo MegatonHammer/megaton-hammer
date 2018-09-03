@@ -132,39 +132,9 @@ impl<T: Object> IBtm<T> {
 	// fn unknown16(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown17(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown18(&self, UNKNOWN) -> Result<UNKNOWN>;
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn unknown19(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(19)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn unknown20(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn unknown21(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(21)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown19(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown20(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown21(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IBtm<T> {

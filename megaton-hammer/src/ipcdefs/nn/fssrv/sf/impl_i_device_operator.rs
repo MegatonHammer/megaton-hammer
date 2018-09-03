@@ -121,6 +121,28 @@ impl<T: Object> IDeviceOperator<T> {
 
 	// fn get_and_clear_mmc_error_info(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_mmc_extended_csd(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn suspend_mmc_patrol(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(115)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn resume_mmc_patrol(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(116)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	pub fn is_game_card_inserted(&self, ) -> Result<u8> {
 		use ::ipc::{Request, Response};
 
@@ -208,9 +230,9 @@ impl<T: Object> IDeviceOperator<T> {
 	}
 
 	// fn get_game_card_image_hash(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_game_card_device_id_for_prod_card(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_game_card_error_info(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn erase_and_write_param_directly(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_game_card_cid(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn read_param_directly(&self, UNKNOWN) -> Result<UNKNOWN>;
 	#[cfg(feature = "switch-2.0.0")]
 	pub fn force_erase_game_card(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
@@ -223,7 +245,7 @@ impl<T: Object> IDeviceOperator<T> {
 	}
 
 	#[cfg(feature = "switch-2.0.0")]
-	pub fn get_game_card_error_info(&self, ) -> Result<u128> {
+	pub fn get_game_card_error_info2(&self, ) -> Result<u128> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(216)
@@ -253,6 +275,28 @@ impl<T: Object> IDeviceOperator<T> {
 			;
 		let res : Response<u32> = self.0.send(req)?;
 		Ok(*res.get_raw())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn suspend_sdmmc_control(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(400)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn resume_sdmmc_control(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(401)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
 	}
 
 }

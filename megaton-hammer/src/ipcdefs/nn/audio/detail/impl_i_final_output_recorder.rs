@@ -95,8 +95,8 @@ impl<T: Object> IFinalOutputRecorder<T> {
 		Ok(*res.get_raw())
 	}
 
-	// fn append_final_output_recorder_buffer_auto(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_released_final_output_recorder_buffer_auto(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown8(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown9(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IFinalOutputRecorder<T> {

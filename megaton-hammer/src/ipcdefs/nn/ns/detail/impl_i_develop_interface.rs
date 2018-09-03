@@ -71,19 +71,9 @@ impl<T: Object> IDevelopInterface<T> {
 	// fn launch_program(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn terminate_process(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn terminate_program(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn get_shell_event_handle(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn get_shell_event_handle(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_shell_event_info(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn terminate_application(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn prepare_launch_program_from_host(&self, ) -> Result<()> {
+	pub fn terminate_application(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
@@ -93,6 +83,7 @@ impl<T: Object> IDevelopInterface<T> {
 		Ok(())
 	}
 
+	// fn prepare_launch_program_from_host(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn launch_application(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn launch_application_with_storage_id(&self, UNKNOWN) -> Result<UNKNOWN>;
 }

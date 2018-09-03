@@ -94,6 +94,19 @@ impl<T: Object> IAllSystemAppletProxiesService<T> {
 	}
 
 	#[cfg(feature = "switch-3.0.0")]
+	pub fn open_library_applet_proxy_old(&self, unk0: u64, unk2: &KObject) -> Result<::ipcdefs::nn::am::service::ILibraryAppletProxy<T>> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 1], [_; 0]> = Request::new(200)
+			.args(unk0)
+			.send_pid()
+			.copy_handle(unk2)
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(T::from_res(&mut res).into())
+	}
+
+	#[cfg(feature = "switch-3.0.0")]
 	pub fn open_library_applet_proxy(&self, unk0: u64, unk2: &KObject, unk3: &::ipcdefs::nn::am::AppletAttribute) -> Result<::ipcdefs::nn::am::service::ILibraryAppletProxy<T>> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};

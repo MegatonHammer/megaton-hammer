@@ -502,66 +502,12 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	// fn request_download_application(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn request_download_add_on_content(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn download_application(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn check_application_resume_rights(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(83)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn get_dynamic_commit_event(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(84)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn request_update_application2(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(85)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn enable_application_crash_report(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(86)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn is_application_crash_report_enabled(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(87)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn boost_system_memory_resource_limit(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(90)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn check_application_resume_rights(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_dynamic_commit_event(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn request_update_application2(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn enable_application_crash_report(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn is_application_crash_report_enabled(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn boost_system_memory_resource_limit(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn reset_to_factory_settings(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
@@ -743,16 +689,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 		Ok(())
 	}
 
-	pub fn list_application_id_on_game_card(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(509)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn list_application_id_on_game_card(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn count_application_content_meta(&self, unk0: u64) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
@@ -897,26 +834,8 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	// fn request_verify_application_deprecated(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn corrupt_application_for_debug(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn request_verify_add_on_contents_rights(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn request_verify_application(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1003)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn corrupt_content_for_debug(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1004)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn request_verify_application(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn corrupt_content_for_debug(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn needs_update_vulnerability(&self, ) -> Result<u8> {
 		use ::ipc::{Request, Response};
 
@@ -959,36 +878,9 @@ impl<T: Object> IApplicationManagerInterface<T> {
 	}
 
 	// fn delete_application_content_entity(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn try_delete_running_application_entity(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1305)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn try_delete_running_application_completely(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1306)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn try_delete_running_application_content_entities(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1307)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn try_delete_running_application_entity(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn try_delete_running_application_completely(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn try_delete_running_application_content_entities(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn prepare_shutdown(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
@@ -1072,16 +964,7 @@ impl<T: Object> IApplicationManagerInterface<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn get_application_view_download_error_context(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1703)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn get_application_view_download_error_context(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn is_notification_setup_completed(&self, ) -> Result<u8> {
 		use ::ipc::{Request, Response};
 
@@ -1114,206 +997,26 @@ impl<T: Object> IApplicationManagerInterface<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn request_download_application_prepurchased_rights(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1901)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn get_application_ticket_info(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1902)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn get_system_delivery_info(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2000)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn select_latest_system_delivery_info(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2001)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn verify_delivery_protocol_version(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2002)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn get_application_delivery_info(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2003)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn has_all_contents_to_deliver(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2004)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn compare_application_delivery_info(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2005)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn can_deliver_application(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2006)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn list_content_meta_key_to_deliver_application(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2007)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn needs_system_update_to_deliver_application(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2008)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn estimate_required_size(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2009)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn request_receive_application(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2010)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn commit_receive_application(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2011)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn get_receive_application_progress(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2012)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn request_send_application(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2013)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn get_send_application_progress(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2014)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn compare_system_delivery_info(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2015)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn list_not_committed_content_meta(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2016)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn create_download_task(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2017)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn request_download_application_prepurchased_rights(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_application_ticket_info(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_system_delivery_info(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn select_latest_system_delivery_info(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn verify_delivery_protocol_version(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_application_delivery_info(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn has_all_contents_to_deliver(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn compare_application_delivery_info(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn can_deliver_application(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn list_content_meta_key_to_deliver_application(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn needs_system_update_to_deliver_application(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn estimate_required_size(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn request_receive_application(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn commit_receive_application(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_receive_application_progress(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn request_send_application(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_send_application_progress(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn compare_system_delivery_info(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn list_not_committed_content_meta(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn create_download_task(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IApplicationManagerInterface<T> {

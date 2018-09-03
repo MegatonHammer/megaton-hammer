@@ -68,7 +68,7 @@ impl<T> DerefMut for IFileSystemProxyForLoader<T> {
 	}
 }
 impl<T: Object> IFileSystemProxyForLoader<T> {
-	pub fn mount_code(&self, tid: ::ipcdefs::nn::ApplicationId, content_path: &i8) -> Result<::ipcdefs::nn::fssrv::sf::IFileSystem<T>> {
+	pub fn open_code_file_system(&self, tid: ::ipcdefs::nn::ApplicationId, content_path: &[u8; 0x301]) -> Result<::ipcdefs::nn::fssrv::sf::IFileSystem<T>> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -80,14 +80,25 @@ impl<T: Object> IFileSystemProxyForLoader<T> {
 		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn is_code_mounted(&self, tid: ::ipcdefs::nn::ApplicationId) -> Result<u8> {
+	pub fn is_archived_program(&self, unk0: u64) -> Result<u8> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
-			.args(tid)
+			.args(unk0)
 			;
 		let res : Response<u8> = self.0.send(req)?;
 		Ok(*res.get_raw())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn set_current_process(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
 	}
 
 }

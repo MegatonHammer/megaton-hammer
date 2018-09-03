@@ -68,7 +68,7 @@ impl<T> DerefMut for IFinalOutputRecorderManagerForApplet<T> {
 	}
 }
 impl<T: Object> IFinalOutputRecorderManagerForApplet<T> {
-	pub fn request_suspend_final_output_recorders(&self, unk0: u64, unk1: u64) -> Result<KObject> {
+	pub fn unknown0(&self, unk0: u64, unk1: u64) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -86,7 +86,7 @@ impl<T: Object> IFinalOutputRecorderManagerForApplet<T> {
 		Ok(res.pop_handle())
 	}
 
-	pub fn request_resume_final_output_recorders(&self, unk0: u64, unk1: u64) -> Result<KObject> {
+	pub fn unknown1(&self, unk0: u64, unk1: u64) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]

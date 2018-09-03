@@ -4,7 +4,7 @@ pub mod nns;
 pub mod twili;
 pub type ServiceName = [u8; 8];
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Clone, Copy)]
 pub struct LoaderConfigEntryT {
 	pub key: u32,
 	pub flags: u32,

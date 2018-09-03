@@ -43,28 +43,8 @@ impl<T: Object> IBcatService<T> {
 		Ok(T::from_res(&mut res).into())
 	}
 
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn request_sync_delivery_cache_with_directory_name(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10101)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn cancel_sync_delivery_cache_request(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10200)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn request_sync_delivery_cache_with_directory_name(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn cancel_sync_delivery_cache_request(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn request_sync_delivery_cache_with_application_id(&self, unk0: u32, unk1: ::ipcdefs::nn::ApplicationId) -> Result<::ipcdefs::nn::bcat::detail::ipc::IDeliveryCacheProgressService<T>> {
 		use ::ipc::{Request, Response};
 
@@ -83,17 +63,7 @@ impl<T: Object> IBcatService<T> {
 		Ok(T::from_res(&mut res).into())
 	}
 
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn request_sync_delivery_cache_with_application_id_and_directory_name(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20101)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn request_sync_delivery_cache_with_application_id_and_directory_name(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn set_passphrase(&self, unk0: ::ipcdefs::nn::ApplicationId, unk1: &[i8]) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};

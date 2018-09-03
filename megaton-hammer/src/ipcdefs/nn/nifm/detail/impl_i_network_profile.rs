@@ -57,6 +57,17 @@ impl<T: Object> INetworkProfile<T> {
 	}
 
 	#[cfg(feature = "switch-3.0.0")]
+	pub fn persist_old(&self, unk0: ::ipcdefs::nn::util::Uuid) -> Result<::ipcdefs::nn::util::Uuid> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
+			.args(unk0)
+			;
+		let res : Response<::ipcdefs::nn::util::Uuid> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
+	#[cfg(feature = "switch-3.0.0")]
 	pub fn persist(&self, ) -> Result<::ipcdefs::nn::util::Uuid> {
 		use ::ipc::{Request, Response};
 

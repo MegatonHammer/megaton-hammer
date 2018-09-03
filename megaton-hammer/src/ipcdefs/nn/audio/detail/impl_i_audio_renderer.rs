@@ -33,7 +33,7 @@ impl<T> DerefMut for IAudioRenderer<T> {
 	}
 }
 impl<T: Object> IAudioRenderer<T> {
-	pub fn get_audio_renderer_sample_rate(&self, ) -> Result<u32> {
+	pub fn get_sample_rate(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
@@ -43,7 +43,7 @@ impl<T: Object> IAudioRenderer<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn get_audio_renderer_sample_count(&self, ) -> Result<u32> {
+	pub fn get_sample_count(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
@@ -53,7 +53,7 @@ impl<T: Object> IAudioRenderer<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn get_audio_renderer_mix_buffer_count(&self, ) -> Result<u32> {
+	pub fn get_mix_buffer_count(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
@@ -63,7 +63,7 @@ impl<T: Object> IAudioRenderer<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn get_audio_renderer_state(&self, ) -> Result<u32> {
+	pub fn get_state(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
@@ -74,7 +74,7 @@ impl<T: Object> IAudioRenderer<T> {
 	}
 
 	// fn request_update_audio_renderer(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn start_audio_renderer(&self, ) -> Result<()> {
+	pub fn start(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
@@ -84,7 +84,7 @@ impl<T: Object> IAudioRenderer<T> {
 		Ok(())
 	}
 
-	pub fn stop_audio_renderer(&self, ) -> Result<()> {
+	pub fn stop(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
@@ -124,9 +124,8 @@ impl<T: Object> IAudioRenderer<T> {
 		Ok(*res.get_raw())
 	}
 
-	// fn request_update_audio_renderer_auto(&self, UNKNOWN) -> Result<UNKNOWN>;
-	#[cfg(feature = "switch-3.0.0")]
-	pub fn execute_audio_renderer_rendering(&self, ) -> Result<()> {
+	// fn request_update_audio_renderer_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn unknown11(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)

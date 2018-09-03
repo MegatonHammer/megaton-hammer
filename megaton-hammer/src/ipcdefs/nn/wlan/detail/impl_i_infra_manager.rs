@@ -234,28 +234,8 @@ impl<T: Object> IInfraManager<T> {
 
 	// fn unknown24(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown25(&self, UNKNOWN) -> Result<UNKNOWN>;
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn unknown26(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(26)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn unknown27(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(27)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown26(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown27(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IInfraManager<T> {

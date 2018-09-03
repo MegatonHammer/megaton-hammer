@@ -110,28 +110,8 @@ impl<T: Object> IContentManager<T> {
 
 	// fn open_content_storage(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn open_content_meta_database(&self, UNKNOWN) -> Result<UNKNOWN>;
-	#[cfg(not(feature = "switch-2.0.0"))]
-	pub fn close_content_storage_forcibly(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(not(feature = "switch-2.0.0"))]
-	pub fn close_content_meta_database_forcibly(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(7)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn close_content_storage_forcibly(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn close_content_meta_database_forcibly(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn cleanup_content_meta_database(&self, unk0: u8) -> Result<()> {
 		use ::ipc::{Request, Response};
 

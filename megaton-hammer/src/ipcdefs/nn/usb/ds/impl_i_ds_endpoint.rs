@@ -71,7 +71,18 @@ impl<T: Object> IDsEndpoint<T> {
 		Ok(res.pop_handle())
 	}
 
-	// fn get_report_data(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_report_data(&self, entries: &mut [::ipcdefs::nn::usb::UsbReportEntry]) -> Result<u32> {
+		use ::ipc::IPCBuffer;
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(3)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_slice(entries, 8))
+			;
+		let res : Response<u32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	pub fn stall(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 

@@ -33,13 +33,13 @@ impl<T> DerefMut for IDirectory<T> {
 	}
 }
 impl<T: Object> IDirectory<T> {
-	pub fn read(&self, unk1: &mut [::ipcdefs::nn::fssrv::sf::IDirectoryEntry]) -> Result<u64> {
+	pub fn read(&self, entries: &mut [::ipcdefs::nn::fssrv::sf::IDirectoryEntry]) -> Result<u64> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(0)
 			.args(())
-			.descriptor(IPCBuffer::from_mut_slice(unk1, 6))
+			.descriptor(IPCBuffer::from_mut_slice(entries, 6))
 			;
 		let res : Response<u64> = self.0.send(req)?;
 		Ok(*res.get_raw())

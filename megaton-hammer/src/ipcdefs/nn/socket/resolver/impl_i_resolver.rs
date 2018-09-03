@@ -68,13 +68,43 @@ impl<T> DerefMut for IResolver<T> {
 	}
 }
 impl<T: Object> IResolver<T> {
-	// fn set_dns_address_private(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_dns_addresses_private(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_dns_address_private(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_host_by_name(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_host_by_addr(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_host_string_error(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_gai_string_error(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_addr_info(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn get_addr_info(&self, enable_nsd_resolve: bool, unk1: u32, pid_placeholder: u64, host: &[u8], service: &[u8], hints: &[u8; 0x400], response: &mut [u8; 0x1000]) -> Result<(i32, u32, u32)> {
+		use ::ipc::IPCBuffer;
+		use ::ipc::{Request, Response};
+
+		#[repr(C)] #[derive(Clone)]
+		struct InRaw {
+			enable_nsd_resolve: bool,
+			unk1: u32,
+			pid_placeholder: u64,
+		}
+		let req : Request<_, [_; 4], [_; 0], [_; 0]> = Request::new(6)
+			.args(InRaw {
+				enable_nsd_resolve,
+				unk1,
+				pid_placeholder,
+			})
+			.send_pid()
+			.descriptor(IPCBuffer::from_slice(host, 5))
+			.descriptor(IPCBuffer::from_slice(service, 5))
+			.descriptor(IPCBuffer::from_ref(hints, 5))
+			.descriptor(IPCBuffer::from_mut_ref(response, 6))
+			;
+		#[repr(C)] #[derive(Clone)] struct OutRaw {
+			ret: i32,
+			bsd_errno: u32,
+			packed_addrinfo_size: u32,
+		}
+		let res : Response<OutRaw> = self.0.send(req)?;
+		Ok((res.get_raw().ret.clone(),res.get_raw().bsd_errno.clone(),res.get_raw().packed_addrinfo_size.clone()))
+	}
+
 	// fn get_name_info(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn request_cancel_handle(&self, unk0: u64) -> Result<u32> {
 		use ::ipc::{Request, Response};
@@ -106,26 +136,8 @@ impl<T: Object> IResolver<T> {
 		Ok(())
 	}
 
-	pub fn unknown10(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn clear_dns_ip_server_address_array(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown10(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn clear_dns_ip_server_address_array(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IResolver<T> {

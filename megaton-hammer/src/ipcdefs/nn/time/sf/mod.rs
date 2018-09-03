@@ -1,5 +1,5 @@
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Clone, Copy)]
 pub struct CalendarAdditionalInfo {
 	pub tm_wday: u32,
 	pub tm_yday: i32,

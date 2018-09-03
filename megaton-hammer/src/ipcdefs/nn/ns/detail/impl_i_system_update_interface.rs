@@ -159,36 +159,9 @@ impl<T: Object> ISystemUpdateInterface<T> {
 		Ok(())
 	}
 
-	pub fn destroy_system_update_task(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(16)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn request_send_system_update(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(17)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn get_send_system_update_progress(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(18)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn destroy_system_update_task(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn request_send_system_update(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_send_system_update_progress(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for ISystemUpdateInterface<T> {

@@ -15,7 +15,7 @@ impl IAudioInManagerForDebugger<Session> {
 
 		let sm = IUserInterface::raw_new()?;
 
-		let session = sm.get_service(*b"audin:d\0")?;
+		let session = sm.get_service(*b"audin:u\0")?;
 		let object : Self = Session::from(session).into();
 		Ok(object)
 	}
@@ -31,7 +31,7 @@ impl IAudioInManagerForDebugger<Session> {
 			return Ok(hnd)
 		}
 
-		if let Some(hnd) = ::loader::get_override_service(*b"audin:d\0") {
+		if let Some(hnd) = ::loader::get_override_service(*b"audin:u\0") {
 			let ret = Arc::new(IAudioInManagerForDebugger(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
 			*HANDLE.lock() = Arc::downgrade(&ret);
@@ -68,7 +68,7 @@ impl<T> DerefMut for IAudioInManagerForDebugger<T> {
 	}
 }
 impl<T: Object> IAudioInManagerForDebugger<T> {
-	pub fn unknown0(&self, unk0: u64) -> Result<()> {
+	pub fn request_suspend_audio_ins_for_debug(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
@@ -78,7 +78,7 @@ impl<T: Object> IAudioInManagerForDebugger<T> {
 		Ok(())
 	}
 
-	pub fn unknown1(&self, unk0: u64) -> Result<()> {
+	pub fn request_resume_audio_ins_for_debug(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)

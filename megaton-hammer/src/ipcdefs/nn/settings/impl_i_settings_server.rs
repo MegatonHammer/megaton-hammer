@@ -90,17 +90,7 @@ impl<T: Object> ISettingsServer<T> {
 		Ok(*res.get_raw())
 	}
 
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn make_language_code(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn make_language_code(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn get_available_language_code_count(&self, ) -> Result<i32> {
 		use ::ipc::{Request, Response};
 
@@ -121,50 +111,10 @@ impl<T: Object> ISettingsServer<T> {
 		Ok(*res.get_raw())
 	}
 
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn get_available_language_codes2(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn get_available_language_code_count2(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn get_key_code_map(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(7)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_quest_flag(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(8)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn get_available_language_codes2(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_available_language_code_count2(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_key_code_map(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_quest_flag(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for ISettingsServer<T> {

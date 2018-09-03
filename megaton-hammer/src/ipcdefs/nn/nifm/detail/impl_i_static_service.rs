@@ -148,6 +148,17 @@ impl<T: Object> IStaticService<T> {
 	}
 
 	#[cfg(feature = "switch-3.0.0")]
+	pub fn create_general_service_old(&self, ) -> Result<::ipcdefs::nn::nifm::detail::IGeneralService<T>> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
+			.args(())
+			;
+		let mut res : Response<()> = self.0.send(req)?;
+		Ok(T::from_res(&mut res).into())
+	}
+
+	#[cfg(feature = "switch-3.0.0")]
 	pub fn create_general_service(&self, unk0: u64) -> Result<::ipcdefs::nn::nifm::detail::IGeneralService<T>> {
 		use ::ipc::{Request, Response};
 

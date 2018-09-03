@@ -135,6 +135,19 @@ impl<T: Object> IGeneralService<T> {
 		Ok(())
 	}
 
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn get_scan_data_old(&self, unk1: &mut [::ipcdefs::nn::nifm::detail::sf::AccessPointData]) -> Result<i32> {
+		use ::ipc::IPCBuffer;
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(11)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_slice(unk1, 6))
+			;
+		let res : Response<i32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	#[cfg(not(feature = "switch-4.0.0"))]
 	pub fn get_scan_data(&self, unk1: &mut [::ipcdefs::nn::nifm::detail::sf::AccessPointData]) -> Result<i32> {
 		use ::ipc::IPCBuffer;
@@ -160,6 +173,19 @@ impl<T: Object> IGeneralService<T> {
 
 	#[cfg(not(feature = "switch-4.0.0"))]
 	pub fn get_current_access_point(&self, unk0: &mut ::ipcdefs::nn::nifm::detail::sf::AccessPointData) -> Result<()> {
+		use ::ipc::IPCBuffer;
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(13)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_ref(unk0, 0x1a))
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn get_current_access_point_old(&self, unk0: &mut ::ipcdefs::nn::nifm::detail::sf::AccessPointData) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -377,50 +403,10 @@ impl<T: Object> IGeneralService<T> {
 		Ok(())
 	}
 
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn set_background_request_enabled(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(34)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn get_scan_data(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(35)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn get_current_access_point(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(36)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn shutdown(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(37)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn set_background_request_enabled(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_scan_data(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_current_access_point(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn shutdown(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IGeneralService<T> {

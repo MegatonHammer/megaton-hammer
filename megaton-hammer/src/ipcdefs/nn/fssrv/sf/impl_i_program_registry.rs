@@ -68,22 +68,33 @@ impl<T> DerefMut for IProgramRegistry<T> {
 	}
 }
 impl<T: Object> IProgramRegistry<T> {
-	// fn set_fs_permissions(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn clear_fs_permissions(&self, pid: u64) -> Result<()> {
+	// fn register_program(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn unregister_program(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
-			.args(pid)
+			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
 
-	pub fn set_enabled_program_verification(&self, enabled: u8) -> Result<()> {
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn set_current_process(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn set_enabled_program_verification(&self, unk0: u8) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(256)
-			.args(enabled)
+			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
 		Ok(())

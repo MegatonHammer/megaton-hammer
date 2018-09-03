@@ -204,26 +204,8 @@ impl<T> DerefMut for IServiceGetterInterface<T> {
 	}
 }
 impl<T: Object> IServiceGetterInterface<T> {
-	pub fn get_e_commerce_interface(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(7992)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn get_application_version_interface(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(7993)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn get_e_commerce_interface(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_application_version_interface(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn get_factory_reset_interface(&self, ) -> Result<T> {
 		use ::ipc::{Request, Response};
 

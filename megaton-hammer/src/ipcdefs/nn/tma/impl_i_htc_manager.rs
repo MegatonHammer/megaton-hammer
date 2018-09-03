@@ -123,28 +123,8 @@ impl<T: Object> IHtcManager<T> {
 		Ok(())
 	}
 
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn get_bridge_subnet_mask(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(9)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn get_bridge_mac_address(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn get_bridge_subnet_mask(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_bridge_mac_address(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IHtcManager<T> {

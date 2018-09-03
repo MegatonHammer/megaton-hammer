@@ -92,50 +92,13 @@ impl<T: Object> IShopServiceManager<T> {
 	// fn request_unlink_device_integrated(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn request_link_device(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn has_device_link(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn request_unlink_device_all(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(304)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn request_create_virtual_account(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(305)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn request_device_link_status(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(306)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn request_unlink_device_all(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn request_create_virtual_account(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn request_device_link_status(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn get_account_by_virtual_account(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn request_sync_ticket(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn request_download_ticket(&self, UNKNOWN) -> Result<UNKNOWN>;
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn request_download_ticket_for_prepurchased_contents(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(502)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn request_download_ticket_for_prepurchased_contents(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IShopServiceManager<T> {

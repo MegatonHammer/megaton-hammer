@@ -127,17 +127,7 @@ impl<T: Object> ISystemSettingsServer<T> {
 		Ok(())
 	}
 
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_firmware_version_digest(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn get_firmware_version_digest(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn get_lock_screen_flag(&self, ) -> Result<bool> {
 		use ::ipc::{Request, Response};
 
@@ -1325,314 +1315,34 @@ impl<T: Object> ISystemSettingsServer<T> {
 		Ok(())
 	}
 
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn get_service_discovery_control_settings(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(122)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn set_service_discovery_control_settings(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(123)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn get_error_report_share_permission(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(124)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn set_error_report_share_permission(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(125)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn get_applet_launch_flags(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(126)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn set_applet_launch_flags(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(127)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn get_console_six_axis_sensor_acceleration_bias(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(128)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn set_console_six_axis_sensor_acceleration_bias(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(129)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn get_console_six_axis_sensor_angular_velocity_bias(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(130)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn set_console_six_axis_sensor_angular_velocity_bias(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(131)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn get_console_six_axis_sensor_acceleration_gain(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(132)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn set_console_six_axis_sensor_acceleration_gain(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(133)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn get_console_six_axis_sensor_angular_velocity_gain(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(134)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn set_console_six_axis_sensor_angular_velocity_gain(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(135)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn get_keyboard_layout(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(136)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn set_keyboard_layout(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(137)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn get_web_inspector_flag(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(138)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn get_allowed_ssl_hosts(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(139)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn get_host_fs_mount_point(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(140)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_requires_run_repair_time_reviser(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(141)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn set_requires_run_repair_time_reviser(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(142)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn set_ble_pairing_settings(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(143)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_ble_pairing_settings(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(144)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_console_six_axis_sensor_angular_velocity_time_bias(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(145)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn set_console_six_axis_sensor_angular_velocity_time_bias(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(146)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_console_six_axis_sensor_angular_acceleration(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(147)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn set_console_six_axis_sensor_angular_acceleration(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(148)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_rebootless_system_update_version(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(149)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn get_service_discovery_control_settings(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_service_discovery_control_settings(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_error_report_share_permission(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_error_report_share_permission(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_applet_launch_flags(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_applet_launch_flags(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_console_six_axis_sensor_acceleration_bias(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_console_six_axis_sensor_acceleration_bias(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_console_six_axis_sensor_angular_velocity_bias(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_console_six_axis_sensor_angular_velocity_bias(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_console_six_axis_sensor_acceleration_gain(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_console_six_axis_sensor_acceleration_gain(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_console_six_axis_sensor_angular_velocity_gain(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_console_six_axis_sensor_angular_velocity_gain(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_keyboard_layout(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_keyboard_layout(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_web_inspector_flag(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_allowed_ssl_hosts(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_host_fs_mount_point(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_requires_run_repair_time_reviser(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_requires_run_repair_time_reviser(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_ble_pairing_settings(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_ble_pairing_settings(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_console_six_axis_sensor_angular_velocity_time_bias(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_console_six_axis_sensor_angular_velocity_time_bias(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_console_six_axis_sensor_angular_acceleration(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_console_six_axis_sensor_angular_acceleration(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_rebootless_system_update_version(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for ISystemSettingsServer<T> {

@@ -56,46 +56,10 @@ impl<T: Object> IDownloadTaskInterface<T> {
 	// fn request_ensure_download_task(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn list_download_task_status(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn request_download_task_list_data(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn try_commit_current_application_download_task(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(706)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn enable_auto_commit(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(707)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn disable_auto_commit(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(708)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	pub fn trigger_dynamic_commit_event(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(709)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn try_commit_current_application_download_task(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn enable_auto_commit(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn disable_auto_commit(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn trigger_dynamic_commit_event(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IDownloadTaskInterface<T> {

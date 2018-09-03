@@ -15,7 +15,7 @@ impl IAudioRendererManager<Session> {
 
 		let sm = IUserInterface::raw_new()?;
 
-		let session = sm.get_service(*b"audren:u")?;
+		let session = sm.get_service(*b"audrec:u")?;
 		let object : Self = Session::from(session).into();
 		Ok(object)
 	}
@@ -31,7 +31,7 @@ impl IAudioRendererManager<Session> {
 			return Ok(hnd)
 		}
 
-		if let Some(hnd) = ::loader::get_override_service(*b"audren:u") {
+		if let Some(hnd) = ::loader::get_override_service(*b"audrec:u") {
 			let ret = Arc::new(IAudioRendererManager(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
 			*HANDLE.lock() = Arc::downgrade(&ret);
@@ -69,8 +69,8 @@ impl<T> DerefMut for IAudioRendererManager<T> {
 }
 impl<T: Object> IAudioRendererManager<T> {
 	// fn open_audio_renderer(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn get_audio_renderer_work_buffer_size(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn get_audio_device_service(&self, unk0: u64) -> Result<T> {
+	// fn get_work_buffer_size(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn unknown2(&self, unk0: u64) -> Result<T> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
@@ -80,18 +80,7 @@ impl<T: Object> IAudioRendererManager<T> {
 		Ok(T::from_res(&mut res).into())
 	}
 
-	// fn open_audio_renderer_auto(&self, UNKNOWN) -> Result<UNKNOWN>;
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn get_audio_device_service_with_revision_info(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn unknown3(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IAudioRendererManager<T> {

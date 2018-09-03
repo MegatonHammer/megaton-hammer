@@ -70,8 +70,8 @@ impl<T> DerefMut for IAudioOutManager<T> {
 impl<T: Object> IAudioOutManager<T> {
 	// fn list_audio_outs(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn open_audio_out(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn list_audio_outs_auto(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn open_audio_out_auto(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn list_audio_outs_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn open_audio_out_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IAudioOutManager<T> {

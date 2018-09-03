@@ -202,7 +202,7 @@ impl<T: Object> INvDrvServices<T> {
 		Ok((res.get_raw().fd.clone(),res.get_raw().error_code.clone()))
 	}
 
-	pub fn ioctl(&self, fd: u32, rq_id: u32, unk1: u64, inbuf: &[u8], outbuf: &mut [u8]) -> Result<u32> {
+	pub fn ioctl(&self, fd: u32, rq_id: u32, input: &[u8], output: &mut [u8]) -> Result<u32> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -210,16 +210,14 @@ impl<T: Object> INvDrvServices<T> {
 		struct InRaw {
 			fd: u32,
 			rq_id: u32,
-			unk1: u64,
 		}
 		let req : Request<_, [_; 2], [_; 0], [_; 0]> = Request::new(1)
 			.args(InRaw {
 				fd,
 				rq_id,
-				unk1,
 			})
-			.descriptor(IPCBuffer::from_slice(inbuf, 0x21))
-			.descriptor(IPCBuffer::from_mut_slice(outbuf, 0x22))
+			.descriptor(IPCBuffer::from_slice(input, 0x21))
+			.descriptor(IPCBuffer::from_mut_slice(output, 0x22))
 			;
 		let res : Response<u32> = self.0.send(req)?;
 		Ok(*res.get_raw())

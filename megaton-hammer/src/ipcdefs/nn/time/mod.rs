@@ -1,6 +1,6 @@
 pub type SystemClockContext = [u8; 0x20];
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Clone, Copy)]
 pub struct CalendarTime {
 	pub year: u16,
 	pub month: u8,

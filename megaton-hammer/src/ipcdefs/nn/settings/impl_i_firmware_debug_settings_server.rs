@@ -94,61 +94,11 @@ impl<T: Object> IFirmwareDebugSettingsServer<T> {
 		Ok(T::from_res(&mut res).into())
 	}
 
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn read_settings(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(10)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn reset_settings(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn set_web_inspector_flag(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn set_allowed_ssl_hosts(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(21)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn set_host_fs_mount_point(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(22)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn read_settings(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn reset_settings(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_web_inspector_flag(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_allowed_ssl_hosts(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn set_host_fs_mount_point(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IFirmwareDebugSettingsServer<T> {

@@ -131,8 +131,8 @@ impl<T: Object> IShellInterface<T> {
 		Ok(())
 	}
 
-	#[cfg(not(feature = "switch-5.0.0"))]
-	pub fn clear_process_notification_flag(&self, unk0: u64) -> Result<()> {
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn get_application_pid(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
@@ -142,8 +142,8 @@ impl<T: Object> IShellInterface<T> {
 		Ok(())
 	}
 
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_application_pid(&self, unk0: u64) -> Result<()> {
+	#[cfg(not(feature = "switch-5.0.0"))]
+	pub fn clear_process_notification_flag(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
@@ -186,17 +186,7 @@ impl<T: Object> IShellInterface<T> {
 		Ok(*res.get_raw())
 	}
 
-	#[cfg(all(feature = "switch-4.0.0", not(feature = "switch-5.0.0")))]
-	pub fn boost_system_memory_resource_limit(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(9)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn boost_system_memory_resource_limit(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IShellInterface<T> {

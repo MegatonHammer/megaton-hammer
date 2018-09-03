@@ -2,7 +2,7 @@ pub mod sf;
 pub mod resolver;
 pub type FdSet = u128;
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Clone, Copy)]
 pub struct SockaddrIn {
 	pub sin_len: u8,
 	pub sin_family: u8,
@@ -11,14 +11,14 @@ pub struct SockaddrIn {
 	pub sin_zero: [u8; 8],
 }
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Clone, Copy)]
 pub struct Timeout {
 	pub sec: u64,
 	pub usec: u64,
 	pub off: u64,
 }
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Clone, Copy)]
 pub struct BsdBufferConfig {
 	///  Observed 1 on 2.0 LibAppletWeb, 2 on 3.0
 	pub version: u32,

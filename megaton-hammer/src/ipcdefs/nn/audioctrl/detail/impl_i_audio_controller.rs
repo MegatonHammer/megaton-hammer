@@ -68,7 +68,7 @@ impl<T> DerefMut for IAudioController<T> {
 	}
 }
 impl<T: Object> IAudioController<T> {
-	pub fn get_target_volume(&self, unk0: u32) -> Result<u32> {
+	pub fn set_expected_master_volume(&self, unk0: u32) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
@@ -78,7 +78,7 @@ impl<T: Object> IAudioController<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn set_target_volume(&self, unk0: u32, unk1: u32) -> Result<()> {
+	pub fn get_main_applet_expected_master_volume(&self, unk0: u32, unk1: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -96,7 +96,7 @@ impl<T: Object> IAudioController<T> {
 		Ok(())
 	}
 
-	pub fn get_target_volume_min(&self, ) -> Result<u32> {
+	pub fn get_library_applet_expected_master_volume(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
@@ -106,7 +106,7 @@ impl<T: Object> IAudioController<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn get_target_volume_max(&self, ) -> Result<u32> {
+	pub fn change_main_applet_master_volume(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(3)
@@ -116,8 +116,17 @@ impl<T: Object> IAudioController<T> {
 		Ok(*res.get_raw())
 	}
 
-	// fn is_target_mute(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn set_target_mute(&self, unk0: u8, unk1: u32) -> Result<()> {
+	pub fn set_transparent_volume_rate(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(4)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn unknown5(&self, unk0: u8, unk1: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -135,9 +144,27 @@ impl<T: Object> IAudioController<T> {
 		Ok(())
 	}
 
-	// fn is_target_connected(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn set_default_target(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn get_default_target(&self, ) -> Result<u32> {
+	pub fn unknown6(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(6)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn unknown7(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(7)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn unknown8(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(8)
@@ -147,7 +174,7 @@ impl<T: Object> IAudioController<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn get_audio_output_mode(&self, unk0: u32) -> Result<u32> {
+	pub fn unknown9(&self, unk0: u32) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(9)
@@ -157,7 +184,7 @@ impl<T: Object> IAudioController<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn set_audio_output_mode(&self, unk0: u32, unk1: u32) -> Result<()> {
+	pub fn unknown10(&self, unk0: u32, unk1: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -175,7 +202,7 @@ impl<T: Object> IAudioController<T> {
 		Ok(())
 	}
 
-	pub fn set_force_mute_policy(&self, unk0: u32) -> Result<()> {
+	pub fn unknown11(&self, unk0: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(11)
@@ -185,7 +212,7 @@ impl<T: Object> IAudioController<T> {
 		Ok(())
 	}
 
-	pub fn get_force_mute_policy(&self, ) -> Result<u32> {
+	pub fn unknown12(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)
@@ -195,7 +222,7 @@ impl<T: Object> IAudioController<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn get_output_mode_setting(&self, unk0: u32) -> Result<u32> {
+	pub fn unknown13(&self, unk0: u32) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(13)
@@ -205,7 +232,7 @@ impl<T: Object> IAudioController<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn set_output_mode_setting(&self, unk0: u32, unk1: u32) -> Result<()> {
+	pub fn unknown14(&self, unk0: u32, unk1: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -223,7 +250,7 @@ impl<T: Object> IAudioController<T> {
 		Ok(())
 	}
 
-	pub fn set_output_target(&self, unk0: u32) -> Result<()> {
+	pub fn unknown15(&self, unk0: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(15)
@@ -233,7 +260,7 @@ impl<T: Object> IAudioController<T> {
 		Ok(())
 	}
 
-	pub fn set_input_target_force_enabled(&self, unk0: u8) -> Result<()> {
+	pub fn unknown16(&self, unk0: u8) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(16)
@@ -243,8 +270,7 @@ impl<T: Object> IAudioController<T> {
 		Ok(())
 	}
 
-	#[cfg(feature = "switch-3.0.0")]
-	pub fn set_headphone_output_level_mode(&self, unk0: u32) -> Result<()> {
+	pub fn unknown17(&self, unk0: u32) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(17)
@@ -254,8 +280,7 @@ impl<T: Object> IAudioController<T> {
 		Ok(())
 	}
 
-	#[cfg(feature = "switch-3.0.0")]
-	pub fn get_headphone_output_level_mode(&self, ) -> Result<u32> {
+	pub fn unknown18(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(18)
@@ -265,8 +290,7 @@ impl<T: Object> IAudioController<T> {
 		Ok(*res.get_raw())
 	}
 
-	#[cfg(feature = "switch-3.0.0")]
-	pub fn acquire_audio_volume_update_event_for_play_report(&self, ) -> Result<KObject> {
+	pub fn unknown19(&self, ) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(19)
@@ -276,8 +300,7 @@ impl<T: Object> IAudioController<T> {
 		Ok(res.pop_handle())
 	}
 
-	#[cfg(feature = "switch-3.0.0")]
-	pub fn acquire_audio_output_device_update_event_for_play_report(&self, ) -> Result<KObject> {
+	pub fn unknown20(&self, ) -> Result<KObject> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20)
@@ -287,8 +310,7 @@ impl<T: Object> IAudioController<T> {
 		Ok(res.pop_handle())
 	}
 
-	#[cfg(feature = "switch-3.0.0")]
-	pub fn get_audio_output_target_for_play_report(&self, ) -> Result<u32> {
+	pub fn unknown21(&self, ) -> Result<u32> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(21)
@@ -298,55 +320,10 @@ impl<T: Object> IAudioController<T> {
 		Ok(*res.get_raw())
 	}
 
-	#[cfg(feature = "switch-3.0.0")]
-	pub fn notify_headphone_volume_warning_displayed_event(&self, ) -> Result<()> {
+	pub fn unknown22(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(22)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn set_system_output_master_volume(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(23)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn get_system_output_master_volume(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(24)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn get_audio_volume_data_for_play_report(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(25)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn update_headphone_settings(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(26)
 			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;

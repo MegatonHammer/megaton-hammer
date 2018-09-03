@@ -127,7 +127,7 @@ impl<T: Object> IFileSystem<T> {
 		Ok(())
 	}
 
-	pub fn get_entry_type(&self, path: &[u8; 0x301]) -> Result<u32> {
+	pub fn get_entry_type(&self, path: &[u8; 0x301]) -> Result<::ipcdefs::nn::fssrv::sf::DirectoryEntryType> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -135,7 +135,7 @@ impl<T: Object> IFileSystem<T> {
 			.args(())
 			.descriptor(IPCBuffer::from_ref(path, 0x19))
 			;
-		let res : Response<u32> = self.0.send(req)?;
+		let res : Response<::ipcdefs::nn::fssrv::sf::DirectoryEntryType> = self.0.send(req)?;
 		Ok(*res.get_raw())
 	}
 
@@ -151,12 +151,12 @@ impl<T: Object> IFileSystem<T> {
 		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn open_directory(&self, unk0: u32, path: &[u8; 0x301]) -> Result<::ipcdefs::nn::fssrv::sf::IDirectory<T>> {
+	pub fn open_directory(&self, filter_flags: u32, path: &[u8; 0x301]) -> Result<::ipcdefs::nn::fssrv::sf::IDirectory<T>> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(9)
-			.args(unk0)
+			.args(filter_flags)
 			.descriptor(IPCBuffer::from_ref(path, 0x19))
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -211,6 +211,17 @@ impl<T: Object> IFileSystem<T> {
 	}
 
 	// fn get_file_time_stamp_raw(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn query_entry(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(15)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 }
 
 impl<T: Object> From<T> for IFileSystem<T> {

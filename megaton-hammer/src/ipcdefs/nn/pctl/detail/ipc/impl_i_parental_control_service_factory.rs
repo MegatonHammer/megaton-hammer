@@ -181,17 +181,7 @@ impl<T: Object> IParentalControlServiceFactory<T> {
 		Ok(T::from_res(&mut res).into())
 	}
 
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn create_service_without_initialize(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn create_service_without_initialize(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IParentalControlServiceFactory<T> {

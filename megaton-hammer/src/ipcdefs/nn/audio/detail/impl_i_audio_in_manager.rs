@@ -15,7 +15,7 @@ impl IAudioInManager<Session> {
 
 		let sm = IUserInterface::raw_new()?;
 
-		let session = sm.get_service(*b"audin:u\0")?;
+		let session = sm.get_service(*b"audin:d\0")?;
 		let object : Self = Session::from(session).into();
 		Ok(object)
 	}
@@ -31,7 +31,7 @@ impl IAudioInManager<Session> {
 			return Ok(hnd)
 		}
 
-		if let Some(hnd) = ::loader::get_override_service(*b"audin:u\0") {
+		if let Some(hnd) = ::loader::get_override_service(*b"audin:d\0") {
 			let ret = Arc::new(IAudioInManager(ManuallyDrop::into_inner(hnd)));
 			::core::mem::forget(ret.clone());
 			*HANDLE.lock() = Arc::downgrade(&ret);
@@ -68,11 +68,22 @@ impl<T> DerefMut for IAudioInManager<T> {
 	}
 }
 impl<T: Object> IAudioInManager<T> {
-	// fn list_audio_ins(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn list_audio_ins(&self, names: &mut [u8]) -> Result<u32> {
+		use ::ipc::IPCBuffer;
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(0)
+			.args(())
+			.descriptor(IPCBuffer::from_mut_slice(names, 6))
+			;
+		let res : Response<u32> = self.0.send(req)?;
+		Ok(*res.get_raw())
+	}
+
 	// fn open_audio_in(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn unknown2(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn open_audio_in_auto(&self, UNKNOWN) -> Result<UNKNOWN>;
-	// fn list_audio_ins_auto(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn open_audio_in_ex(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unknown4(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IAudioInManager<T> {

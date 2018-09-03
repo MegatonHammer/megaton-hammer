@@ -68,7 +68,7 @@ impl<T> DerefMut for IAudioOutManagerForDebugger<T> {
 	}
 }
 impl<T: Object> IAudioOutManagerForDebugger<T> {
-	pub fn request_suspend_for_debug(&self, unk0: u64) -> Result<()> {
+	pub fn request_suspend_audio_outs_for_debug(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
@@ -78,7 +78,7 @@ impl<T: Object> IAudioOutManagerForDebugger<T> {
 		Ok(())
 	}
 
-	pub fn request_resume_for_debug(&self, unk0: u64) -> Result<()> {
+	pub fn request_resume_audio_outs_for_debug(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1)

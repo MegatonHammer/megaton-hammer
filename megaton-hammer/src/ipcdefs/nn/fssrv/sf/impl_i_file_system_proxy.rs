@@ -70,19 +70,19 @@ impl<T> DerefMut for IFileSystemProxy<T> {
 }
 impl<T: Object> IFileSystemProxy<T> {
 	#[cfg(not(feature = "switch-2.0.0"))]
-	pub fn mount_content(&self, tid: ::ipcdefs::nn::ApplicationId, flag: u32, path: &i8) -> Result<::ipcdefs::nn::fssrv::sf::IFileSystem<T>> {
+	pub fn open_file_system(&self, filesystem_type: ::ipcdefs::nn::fssrv::sf::FileSystemType, tid: ::ipcdefs::nn::ApplicationId, path: &[u8; 0x301]) -> Result<::ipcdefs::nn::fssrv::sf::IFileSystem<T>> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
+			filesystem_type: ::ipcdefs::nn::fssrv::sf::FileSystemType,
 			tid: ::ipcdefs::nn::ApplicationId,
-			flag: u32,
 		}
 		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(0)
 			.args(InRaw {
+				filesystem_type,
 				tid,
-				flag,
 			})
 			.descriptor(IPCBuffer::from_ref(path, 0x19))
 			;
@@ -112,18 +112,18 @@ impl<T: Object> IFileSystemProxy<T> {
 	}
 
 	#[cfg(feature = "switch-2.0.0")]
-	pub fn mount_content7(&self, tid: ::ipcdefs::nn::ApplicationId, nca_type: u32) -> Result<::ipcdefs::nn::fssrv::sf::IFileSystem<T>> {
+	pub fn open_file_system_with_patch(&self, filesystem_type: ::ipcdefs::nn::fssrv::sf::FileSystemType, tid: ::ipcdefs::nn::ApplicationId) -> Result<::ipcdefs::nn::fssrv::sf::IFileSystem<T>> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
+			filesystem_type: ::ipcdefs::nn::fssrv::sf::FileSystemType,
 			tid: ::ipcdefs::nn::ApplicationId,
-			nca_type: u32,
 		}
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(7)
 			.args(InRaw {
+				filesystem_type,
 				tid,
-				nca_type,
 			})
 			;
 		let mut res : Response<()> = self.0.send(req)?;
@@ -131,19 +131,19 @@ impl<T: Object> IFileSystemProxy<T> {
 	}
 
 	#[cfg(feature = "switch-2.0.0")]
-	pub fn mount_content(&self, tid: ::ipcdefs::nn::ApplicationId, flag: u32, path: &[u8; 0x301]) -> Result<::ipcdefs::nn::fssrv::sf::IFileSystem<T>> {
+	pub fn open_file_system_with_id(&self, filesystem_type: ::ipcdefs::nn::fssrv::sf::FileSystemType, tid: ::ipcdefs::nn::ApplicationId, path: &[u8; 0x301]) -> Result<::ipcdefs::nn::fssrv::sf::IFileSystem<T>> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
+			filesystem_type: ::ipcdefs::nn::fssrv::sf::FileSystemType,
 			tid: ::ipcdefs::nn::ApplicationId,
-			flag: u32,
 		}
 		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(8)
 			.args(InRaw {
+				filesystem_type,
 				tid,
-				flag,
 			})
 			.descriptor(IPCBuffer::from_ref(path, 0x19))
 			;
@@ -162,19 +162,19 @@ impl<T: Object> IFileSystemProxy<T> {
 		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn mount_bis(&self, partition_id: ::ipcdefs::nn::fssrv::sf::Partition, path: &[u8; 0x301]) -> Result<::ipcdefs::nn::fssrv::sf::IFileSystem<T>> {
+	pub fn open_bis_file_system(&self, partition_id: ::ipcdefs::nn::fssrv::sf::Partition, unk1: &[u8; 0x301]) -> Result<::ipcdefs::nn::fssrv::sf::IFileSystem<T>> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 1], [_; 0], [_; 0]> = Request::new(11)
 			.args(partition_id)
-			.descriptor(IPCBuffer::from_ref(path, 0x19))
+			.descriptor(IPCBuffer::from_ref(unk1, 0x19))
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn open_bis_partition(&self, partition_id: ::ipcdefs::nn::fssrv::sf::Partition) -> Result<::ipcdefs::nn::fssrv::sf::IStorage<T>> {
+	pub fn open_bis_storage(&self, partition_id: ::ipcdefs::nn::fssrv::sf::Partition) -> Result<::ipcdefs::nn::fssrv::sf::IStorage<T>> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(12)
@@ -194,7 +194,7 @@ impl<T: Object> IFileSystemProxy<T> {
 		Ok(())
 	}
 
-	pub fn open_host_file_system_impl(&self, path: &[u8; 0x301]) -> Result<::ipcdefs::nn::fssrv::sf::IFileSystem<T>> {
+	pub fn open_host_file_system(&self, path: &[u8; 0x301]) -> Result<::ipcdefs::nn::fssrv::sf::IFileSystem<T>> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -206,7 +206,7 @@ impl<T: Object> IFileSystemProxy<T> {
 		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn mount_sd_card(&self, ) -> Result<::ipcdefs::nn::fssrv::sf::IFileSystem<T>> {
+	pub fn open_sd_card_file_system(&self, ) -> Result<::ipcdefs::nn::fssrv::sf::IFileSystem<T>> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(18)
@@ -217,7 +217,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	}
 
 	#[cfg(feature = "switch-2.0.0")]
-	pub fn format_sd_card(&self, ) -> Result<()> {
+	pub fn format_sd_card_file_system(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(19)
@@ -227,7 +227,7 @@ impl<T: Object> IFileSystemProxy<T> {
 		Ok(())
 	}
 
-	pub fn delete_save_data(&self, tid: ::ipcdefs::nn::ApplicationId) -> Result<()> {
+	pub fn delete_save_data_file_system(&self, tid: ::ipcdefs::nn::ApplicationId) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(21)
@@ -237,7 +237,7 @@ impl<T: Object> IFileSystemProxy<T> {
 		Ok(())
 	}
 
-	pub fn create_save_data(&self, save_struct: ::ipcdefs::nn::fssrv::sf::SaveStruct, save_create: ::ipcdefs::nn::fssrv::sf::SaveCreateStruct, input: u128) -> Result<()> {
+	pub fn create_save_data_file_system(&self, save_struct: ::ipcdefs::nn::fssrv::sf::SaveStruct, save_create: ::ipcdefs::nn::fssrv::sf::SaveCreateStruct, input: u128) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -257,7 +257,7 @@ impl<T: Object> IFileSystemProxy<T> {
 		Ok(())
 	}
 
-	pub fn create_system_save_data(&self, save_struct: ::ipcdefs::nn::fssrv::sf::SaveStruct, save_create: ::ipcdefs::nn::fssrv::sf::SaveCreateStruct) -> Result<()> {
+	pub fn create_save_data_file_system_by_system_save_data_id(&self, save_struct: ::ipcdefs::nn::fssrv::sf::SaveStruct, save_create: ::ipcdefs::nn::fssrv::sf::SaveCreateStruct) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -275,9 +275,9 @@ impl<T: Object> IFileSystemProxy<T> {
 		Ok(())
 	}
 
-	// fn register_save_data_atomic_deletion(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn register_save_data_file_system_atomic_deletion(&self, UNKNOWN) -> Result<UNKNOWN>;
 	#[cfg(feature = "switch-2.0.0")]
-	pub fn delete_save_data_with_space_id(&self, unk0: u8, unk1: u64) -> Result<()> {
+	pub fn delete_save_data_file_system_by_save_data_space_id(&self, unk0: u8, unk1: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -317,7 +317,18 @@ impl<T: Object> IFileSystemProxy<T> {
 		Ok(*res.get_raw())
 	}
 
-	pub fn open_game_card_partition(&self, partition_id: ::ipcdefs::nn::fssrv::sf::Partition, unk1: u32) -> Result<::ipcdefs::nn::fssrv::sf::IStorage<T>> {
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn delete_save_data_file_system_by_save_data_attribute(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(28)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn open_game_card_storage(&self, partition_id: ::ipcdefs::nn::fssrv::sf::Partition, unk1: u32) -> Result<::ipcdefs::nn::fssrv::sf::IStorage<T>> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -335,7 +346,7 @@ impl<T: Object> IFileSystemProxy<T> {
 		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn mount_game_card_partition(&self, unk0: u32, unk1: u32) -> Result<::ipcdefs::nn::fssrv::sf::IFileSystem<T>> {
+	pub fn open_game_card_file_system(&self, unk0: u32, unk1: u32) -> Result<::ipcdefs::nn::fssrv::sf::IFileSystem<T>> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -354,7 +365,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	}
 
 	#[cfg(feature = "switch-3.0.0")]
-	pub fn extend_save_data(&self, unk0: u8, unk1: u64, unk2: u64, unk3: u64) -> Result<()> {
+	pub fn extend_save_data_file_system(&self, unk0: u8, unk1: u64, unk2: u64, unk3: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
@@ -376,17 +387,39 @@ impl<T: Object> IFileSystemProxy<T> {
 		Ok(())
 	}
 
-	pub fn mount_save_data(&self, input: u8, save_struct: ::ipcdefs::nn::fssrv::sf::SaveStruct) -> Result<::ipcdefs::nn::fssrv::sf::IFileSystem<T>> {
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn delete_cache_storage(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(33)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn get_cache_storage_size(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(34)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn open_save_data_file_system(&self, save_data_space_id: u8, save_struct: ::ipcdefs::nn::fssrv::sf::SaveStruct) -> Result<::ipcdefs::nn::fssrv::sf::IFileSystem<T>> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
-			input: u8,
+			save_data_space_id: u8,
 			save_struct: ::ipcdefs::nn::fssrv::sf::SaveStruct,
 		}
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(51)
 			.args(InRaw {
-				input,
+				save_data_space_id,
 				save_struct,
 			})
 			;
@@ -394,17 +427,17 @@ impl<T: Object> IFileSystemProxy<T> {
 		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn mount_system_save_data(&self, input: u8, save_struct: ::ipcdefs::nn::fssrv::sf::SaveStruct) -> Result<::ipcdefs::nn::fssrv::sf::IFileSystem<T>> {
+	pub fn open_save_data_file_system_by_system_save_data_id(&self, save_data_space_id: u8, save_struct: ::ipcdefs::nn::fssrv::sf::SaveStruct) -> Result<::ipcdefs::nn::fssrv::sf::IFileSystem<T>> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
-			input: u8,
+			save_data_space_id: u8,
 			save_struct: ::ipcdefs::nn::fssrv::sf::SaveStruct,
 		}
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(52)
 			.args(InRaw {
-				input,
+				save_data_space_id,
 				save_struct,
 			})
 			;
@@ -413,17 +446,17 @@ impl<T: Object> IFileSystemProxy<T> {
 	}
 
 	#[cfg(feature = "switch-2.0.0")]
-	pub fn mount_save_data_read_only(&self, input: u8, save_struct: ::ipcdefs::nn::fssrv::sf::SaveStruct) -> Result<::ipcdefs::nn::fssrv::sf::IFileSystem<T>> {
+	pub fn open_read_only_save_data_file_system(&self, save_data_space_id: u8, save_struct: ::ipcdefs::nn::fssrv::sf::SaveStruct) -> Result<::ipcdefs::nn::fssrv::sf::IFileSystem<T>> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
-			input: u8,
+			save_data_space_id: u8,
 			save_struct: ::ipcdefs::nn::fssrv::sf::SaveStruct,
 		}
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(53)
 			.args(InRaw {
-				input,
+				save_data_space_id,
 				save_struct,
 			})
 			;
@@ -431,7 +464,7 @@ impl<T: Object> IFileSystemProxy<T> {
 		Ok(T::from_res(&mut res).into())
 	}
 
-	// fn read_save_data_file_system_extra_data_with_space_id(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn read_save_data_file_system_extra_data_by_save_data_space_id(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn read_save_data_file_system_extra_data(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn write_save_data_file_system_extra_data(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn open_save_data_info_reader(&self, ) -> Result<::ipcdefs::nn::fssrv::sf::ISaveDataInfoReader<T>> {
@@ -444,7 +477,7 @@ impl<T: Object> IFileSystemProxy<T> {
 		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn open_save_data_iterator(&self, unk0: u8) -> Result<T> {
+	pub fn open_save_data_info_reader_by_save_data_space_id(&self, unk0: u8) -> Result<::ipcdefs::nn::fssrv::sf::ISaveDataInfoReader<T>> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(61)
@@ -454,8 +487,74 @@ impl<T: Object> IFileSystemProxy<T> {
 		Ok(T::from_res(&mut res).into())
 	}
 
-	// fn open_save_data_thumbnail_file(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn mount_image_directory(&self, unk0: u32) -> Result<::ipcdefs::nn::fssrv::sf::IFileSystem<T>> {
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn open_cache_storage_list(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(62)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn open_save_data_internal_storage_file_system(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(64)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn update_save_data_mac_for_debug(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(65)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn write_save_data_file_system_extra_data2(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(66)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	// fn open_save_data_meta_file(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn open_save_data_transfer_manager(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(81)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn open_save_data_transfer_manager_version2(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(82)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	pub fn open_image_directory_file_system(&self, unk0: u32) -> Result<::ipcdefs::nn::fssrv::sf::IFileSystem<T>> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(100)
@@ -465,7 +564,7 @@ impl<T: Object> IFileSystemProxy<T> {
 		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn mount_content_storage(&self, content_storage_id: u32) -> Result<::ipcdefs::nn::fssrv::sf::IFileSystem<T>> {
+	pub fn open_content_storage_file_system(&self, content_storage_id: u32) -> Result<::ipcdefs::nn::fssrv::sf::IFileSystem<T>> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(110)
@@ -486,7 +585,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	}
 
 	#[cfg(feature = "switch-3.0.0")]
-	pub fn open_data_storage_by_application_id(&self, tid: ::ipcdefs::nn::ApplicationId) -> Result<::ipcdefs::nn::fssrv::sf::IStorage<T>> {
+	pub fn open_data_storage_by_program_id(&self, tid: ::ipcdefs::nn::ApplicationId) -> Result<::ipcdefs::nn::fssrv::sf::IStorage<T>> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(201)
@@ -496,25 +595,25 @@ impl<T: Object> IFileSystemProxy<T> {
 		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn open_data_storage_by_data_id(&self, tid: ::ipcdefs::nn::ApplicationId, storage_id: u8) -> Result<::ipcdefs::nn::fssrv::sf::IStorage<T>> {
+	pub fn open_data_storage_by_data_id(&self, storage_id: u8, tid: ::ipcdefs::nn::ApplicationId) -> Result<::ipcdefs::nn::fssrv::sf::IStorage<T>> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
-			tid: ::ipcdefs::nn::ApplicationId,
 			storage_id: u8,
+			tid: ::ipcdefs::nn::ApplicationId,
 		}
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(202)
 			.args(InRaw {
-				tid,
 				storage_id,
+				tid,
 			})
 			;
 		let mut res : Response<()> = self.0.send(req)?;
 		Ok(T::from_res(&mut res).into())
 	}
 
-	pub fn open_rom_storage(&self, ) -> Result<::ipcdefs::nn::fssrv::sf::IStorage<T>> {
+	pub fn open_patch_data_storage_by_current_process(&self, ) -> Result<::ipcdefs::nn::fssrv::sf::IStorage<T>> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(203)
@@ -554,6 +653,28 @@ impl<T: Object> IFileSystemProxy<T> {
 		Ok(T::from_res(&mut res).into())
 	}
 
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn open_system_data_update_event_notifier(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(510)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn notify_system_data_update_event(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(511)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 	#[cfg(not(feature = "switch-4.0.0"))]
 	pub fn set_current_posix_time(&self, time: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
@@ -583,22 +704,22 @@ impl<T: Object> IFileSystemProxy<T> {
 		Ok(*res.get_raw())
 	}
 
-	// fn verify_save_data(&self, UNKNOWN) -> Result<UNKNOWN>;
-	pub fn corrupt_save_data_for_debug(&self, tid: ::ipcdefs::nn::ApplicationId) -> Result<()> {
+	// fn verify_save_data_file_system(&self, UNKNOWN) -> Result<UNKNOWN>;
+	pub fn corrupt_save_data_file_system(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(603)
-			.args(tid)
+			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
 		Ok(())
 	}
 
-	pub fn create_padding_file(&self, size: u64) -> Result<()> {
+	pub fn create_padding_file(&self, unk0: u64) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(604)
-			.args(size)
+			.args(unk0)
 			;
 		let _res : Response<()> = self.0.send(req)?;
 		Ok(())
@@ -615,13 +736,13 @@ impl<T: Object> IFileSystemProxy<T> {
 	}
 
 	#[cfg(feature = "switch-2.0.0")]
-	pub fn get_rights_id(&self, unk0: u64, unk1: u8) -> Result<u128> {
+	pub fn get_rights_id(&self, unk0: u8, unk1: u64) -> Result<u128> {
 		use ::ipc::{Request, Response};
 
 		#[repr(C)] #[derive(Clone)]
 		struct InRaw {
-			unk0: u64,
-			unk1: u8,
+			unk0: u8,
+			unk1: u64,
 		}
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(606)
 			.args(InRaw {
@@ -653,7 +774,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	}
 
 	#[cfg(feature = "switch-2.0.0")]
-	pub fn unregister_external_key(&self, ) -> Result<()> {
+	pub fn unregister_all_external_key(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(608)
@@ -677,7 +798,7 @@ impl<T: Object> IFileSystemProxy<T> {
 	}
 
 	#[cfg(feature = "switch-3.0.0")]
-	pub fn get_rights_id_by_path2(&self, path: &[u8; 0x301]) -> Result<(u128, u8)> {
+	pub fn get_rights_id_and_key_generation_by_path(&self, path: &[u8; 0x301]) -> Result<(u8, u128)> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -686,19 +807,162 @@ impl<T: Object> IFileSystemProxy<T> {
 			.descriptor(IPCBuffer::from_ref(path, 0x19))
 			;
 		#[repr(C)] #[derive(Clone)] struct OutRaw {
+			unk1: u8,
 			rights: u128,
-			unk2: u8,
 		}
 		let res : Response<OutRaw> = self.0.send(req)?;
-		Ok((res.get_raw().rights.clone(),res.get_raw().unk2.clone()))
+		Ok((res.get_raw().unk1.clone(),res.get_raw().rights.clone()))
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn set_current_posix_time_with_time_difference(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(611)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn get_free_space_size_for_save_data(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(612)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn verify_save_data_file_system_by_save_data_space_id(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(613)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn corrupt_save_data_file_system_by_save_data_space_id(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(614)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn query_save_data_internal_storage_total_size(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(615)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
 	}
 
 	#[cfg(feature = "switch-2.0.0")]
-	pub fn set_sd_card_encryption_seed(&self, seedmaybe: u128) -> Result<()> {
+	pub fn set_sd_card_encryption_seed(&self, seed: u128) -> Result<()> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(620)
-			.args(seedmaybe)
+			.args(seed)
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn set_sd_card_accessibility(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(630)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn is_sd_card_accessible(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(631)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn is_signed_system_partition_on_sd_card_valid(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(640)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn open_access_failure_resolver(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(700)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn get_access_failure_detection_event(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(701)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn is_access_failure_detected(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(702)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn resolve_access_failure(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(710)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.0.0")]
+	pub fn abandon_access_failure(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(720)
+			.args(())
 			;
 		let _res : Response<()> = self.0.send(req)?;
 		Ok(())
@@ -778,6 +1042,61 @@ impl<T: Object> IFileSystemProxy<T> {
 	}
 
 	// fn output_access_log_to_sd_card(&self, UNKNOWN) -> Result<UNKNOWN>;
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn register_update_partition(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1007)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn open_registered_update_partition(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1008)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn get_and_clear_memory_report_info(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1009)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-5.1.0")]
+	pub fn unknown1010(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1010)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn override_save_data_transfer_token_sign_verification_key(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(1100)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
+	}
+
 }
 
 impl<T: Object> From<T> for IFileSystemProxy<T> {

@@ -33,7 +33,7 @@ impl<T> DerefMut for IStorage<T> {
 	}
 }
 impl<T: Object> IStorage<T> {
-	pub fn read(&self, offset: u64, length: u64, buffer: &mut [i8]) -> Result<()> {
+	pub fn read(&self, offset: u64, length: u64, buffer: &mut [u8]) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -53,7 +53,7 @@ impl<T: Object> IStorage<T> {
 		Ok(())
 	}
 
-	pub fn write(&self, offset: u64, length: u64, data: &[i8]) -> Result<()> {
+	pub fn write(&self, offset: u64, length: u64, data: &[u8]) -> Result<()> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
 
@@ -101,6 +101,17 @@ impl<T: Object> IStorage<T> {
 			;
 		let res : Response<u64> = self.0.send(req)?;
 		Ok(*res.get_raw())
+	}
+
+	#[cfg(feature = "switch-4.0.0")]
+	pub fn operate_range(&self, ) -> Result<()> {
+		use ::ipc::{Request, Response};
+
+		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(5)
+			.args(())
+			;
+		let _res : Response<()> = self.0.send(req)?;
+		Ok(())
 	}
 
 }

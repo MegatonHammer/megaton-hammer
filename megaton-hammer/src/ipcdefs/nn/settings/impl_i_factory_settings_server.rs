@@ -304,116 +304,16 @@ impl<T: Object> IFactorySettingsServer<T> {
 		Ok(*res.get_raw())
 	}
 
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn get_lcd_vendor_id(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(23)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_eci_device_certificate2(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(24)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_eci_device_key2(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(25)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_amiibo_key(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(26)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_amiibo_ecqv_certificate(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(27)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_amiibo_ecdsa_certificate(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(28)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_amiibo_ecqv_bls_key(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(29)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_amiibo_ecqv_bls_certificate(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_amiibo_ecqv_bls_root_certificate(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(31)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_unknown_id(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(32)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn get_lcd_vendor_id(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_eci_device_certificate2(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_eci_device_key2(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_amiibo_key(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_amiibo_ecqv_certificate(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_amiibo_ecdsa_certificate(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_amiibo_ecqv_bls_key(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_amiibo_ecqv_bls_certificate(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_amiibo_ecqv_bls_root_certificate(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_unknown_id(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IFactorySettingsServer<T> {

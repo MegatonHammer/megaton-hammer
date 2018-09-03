@@ -193,17 +193,7 @@ impl<T: Object> IPadSession<T> {
 		Ok(*res.get_raw())
 	}
 
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn set_value_for_sleep_state(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(16)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn set_value_for_sleep_state(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IPadSession<T> {

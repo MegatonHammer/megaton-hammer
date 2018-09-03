@@ -474,39 +474,9 @@ impl<T: Object> IFriendService<T> {
 		Ok(*res.get_raw())
 	}
 
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_sns_account_linkage(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20302)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_sns_account_profile(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20303)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_sns_account_friend_list(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20304)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn get_sns_account_linkage(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_sns_account_profile(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_sns_account_friend_list(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn get_blocked_user_list(&self, unk0: i32, unk1: ::ipcdefs::nn::account::Uid, unk3: &mut [::ipcdefs::nn::friends::detail::BlockedUserImpl]) -> Result<i32> {
 		use ::ipc::IPCBuffer;
 		use ::ipc::{Request, Response};
@@ -967,28 +937,8 @@ impl<T: Object> IFriendService<T> {
 		Ok(())
 	}
 
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_sns_account_link_page_url(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30300)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn unlink_sns_account(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(30301)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn get_sns_account_link_page_url(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn unlink_sns_account(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn block_user(&self, unk0: i32, unk1: ::ipcdefs::nn::account::Uid, unk2: ::ipcdefs::nn::account::NetworkServiceAccountId) -> Result<()> {
 		use ::ipc::{Request, Response};
 

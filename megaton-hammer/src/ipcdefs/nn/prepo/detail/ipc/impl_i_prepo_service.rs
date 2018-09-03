@@ -194,17 +194,7 @@ impl<T: Object> IPrepoService<T> {
 
 	// fn save_system_report(&self, UNKNOWN) -> Result<UNKNOWN>;
 	// fn save_system_report_with_user(&self, UNKNOWN) -> Result<UNKNOWN>;
-	#[cfg(feature = "switch-4.0.0")]
-	pub fn set_operation_mode(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(20200)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn set_operation_mode(&self, UNKNOWN) -> Result<UNKNOWN>;
 	pub fn clear_storage(&self, ) -> Result<()> {
 		use ::ipc::{Request, Response};
 
@@ -249,39 +239,9 @@ impl<T: Object> IPrepoService<T> {
 		Ok((res.get_raw().unk0.clone(),res.get_raw().unk1.clone()))
 	}
 
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_statistics(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(90200)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_throughput_history(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(90201)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
-	#[cfg(feature = "switch-5.0.0")]
-	pub fn get_last_upload_error(&self, ) -> Result<()> {
-		use ::ipc::{Request, Response};
-
-		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(90300)
-			.args(())
-			;
-		let _res : Response<()> = self.0.send(req)?;
-		Ok(())
-	}
-
+	// fn get_statistics(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_throughput_history(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn get_last_upload_error(&self, UNKNOWN) -> Result<UNKNOWN>;
 }
 
 impl<T: Object> From<T> for IPrepoService<T> {

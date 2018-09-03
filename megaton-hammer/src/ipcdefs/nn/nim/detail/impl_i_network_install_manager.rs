@@ -182,7 +182,7 @@ impl<T: Object> INetworkInstallManager<T> {
 		Ok(())
 	}
 
-	// fn list_apply_delta_task(&self, UNKNOWN) -> Result<UNKNOWN>;
+	// fn list_apply_delta_task2(&self, UNKNOWN) -> Result<UNKNOWN>;
 	#[cfg(feature = "switch-2.0.0")]
 	pub fn clear_not_enough_space_state_of_apply_delta_task(&self, unk0: u128) -> Result<()> {
 		use ::ipc::{Request, Response};

@@ -68,7 +68,7 @@ impl<T> DerefMut for ILogService<T> {
 	}
 }
 impl<T: Object> ILogService<T> {
-	pub fn open_logger(&self, unk0: u64) -> Result<::ipcdefs::nn::lm::ILogger<T>> {
+	pub fn initialize(&self, unk0: u64) -> Result<::ipcdefs::nn::lm::ILogger<T>> {
 		use ::ipc::{Request, Response};
 
 		let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
