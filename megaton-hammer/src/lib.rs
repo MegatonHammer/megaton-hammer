@@ -20,6 +20,8 @@
 #![feature(asm, proc_macro, cfg_target_vendor, global_asm, unicode, ptr_internals, naked_functions, alloc, allocator_api, core_intrinsics, const_fn, align_offset, nonzero)]
 #![cfg_attr(feature = "crt0", feature(lang_items, compiler_builtins_lib))]
 #![no_std]
+#[cfg(feature = "std")]
+extern crate std;
 
 extern crate spin;
 extern crate byteorder;

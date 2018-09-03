@@ -129,7 +129,7 @@ unsafe extern fn megaton_start(config: *mut LoaderConfigEntry, _thread_handle: u
 }
 
 
-#[cfg(not(feature = "std"))]
+#[cfg(not(feature = "instd"))]
 mod langitems {
     extern crate compiler_builtins;
     use core;

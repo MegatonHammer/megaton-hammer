@@ -7,6 +7,17 @@ use enum_primitive::FromPrimitive;
 pub struct Error(pub u32);
 
 impl Error {
+    pub fn from_module_description(module: Module, description: u32) -> Error {
+        assert!(module != Module::__AnExtraHiddenParam);
+        Error::from_ids(module as u32, description)
+    }
+
+    fn from_ids(module: u32, description: u32) -> Error {
+        assert_eq!(description & !((1 << 13) - 1), 0, "Description is more than 13 bit long");
+        assert_eq!(module & !((1 << 9) - 1), 0, "Module is more than 9 bit long");
+        Error(module | description << 9)
+    }
+
     // TODO: eww. Don't do that.
     pub fn module_id(&self) -> u32 {
         self.0 & ((1 << 9) - 1)
@@ -23,7 +34,13 @@ impl Error {
     pub fn description_id(&self) -> u32 {
         self.0 >> 9
     }
+}
 
+#[cfg(feature = "std")]
+impl From<Error> for ::std::io::Error {
+    fn from(err: Error) -> ::std::io::Error {
+        ::std::io::Error::from_raw_os_error(err.0 as i32)
+    }
 }
 
 impl failure::Fail for Error { }
@@ -55,7 +72,7 @@ pub type Result<T> = ::core::result::Result<T, Error>;
 
 enum_from_primitive! {
     #[repr(u16)]
-    #[derive(Debug, PartialEq)]
+    #[derive(Debug, PartialEq, Eq, Clone, Copy)]
     pub enum Module {
         #[doc(hidden)]
         __AnExtraHiddenParam = 0,
@@ -150,10 +167,13 @@ enum_from_primitive! {
         GRC = 212,
         Migration = 216,
         MigrationIdcServer = 217,
+        Libtransistor = 221,
         Libnx = 345,
         HomebrewABI = 346,
         HomebrewLoader = 347,
         LibnxNvidiaErrors = 348,
+        MegatonHammer = 450,
+        MegatonHammerLinux = 451,
         GeneralWebApplet = 800,
         WifiWebAuthApplet = 809,
         WhitelistedApplet = 810,

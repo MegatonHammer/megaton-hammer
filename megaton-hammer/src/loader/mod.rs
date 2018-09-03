@@ -12,7 +12,7 @@
 // should be LOADER.
 #![allow(safe_extern_statics)]
 
-#[cfg(any(feature = "crt0", feature = "std"))]
+#[cfg(any(feature = "crt0", feature = "instd"))]
 #[doc(hidden)]
 pub mod crt0;
 
@@ -185,12 +185,12 @@ impl NonLockingLogger {
 use spin::Once;
 
 // TODO: For fuck's sake I just want interior mutability.
-#[cfg(feature = "std")]
+#[cfg(feature = "instd")]
 #[doc(hidden)]
 #[no_mangle]
 pub static LOADER: Once<LoaderConfig> = Once::new();
 
-#[cfg(not(feature = "std"))]
+#[cfg(not(feature = "instd"))]
 extern "Rust" { static LOADER: Once<LoaderConfig>; }
 
 #[repr(C)]
