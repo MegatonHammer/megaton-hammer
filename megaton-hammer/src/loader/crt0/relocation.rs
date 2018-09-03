@@ -1,20 +1,10 @@
 use core::{ptr, slice};
+use loader::ModuleHeader;
 
 #[derive(Debug)]
 pub struct DynInfo<'a, 'b> {
     pub init_array: Option<&'a [extern fn()]>,
     pub fini_array: Option<&'b [extern fn()]>,
-}
-
-#[repr(C)]
-struct ModuleHeader {
-    magic: u32,
-    dynamic_off: u32,
-    bss_start_off: u32,
-    bss_end_off: u32,
-    unwind_start_off: u32,
-    unwind_end_off: u32,
-    module_object_off: u32
 }
 
 #[repr(C)]

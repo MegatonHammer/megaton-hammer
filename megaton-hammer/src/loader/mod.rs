@@ -79,6 +79,28 @@ pub fn get_override_service(service_name: [u8; 8]) -> Option<ManuallyDrop<Sessio
     None
 }
 
+/// The definition of a MOD0 header.
+#[repr(C)]
+#[derive(Debug)]
+pub struct ModuleHeader {
+    pub magic: u32,
+    pub dynamic_off: u32,
+    pub bss_start_off: u32,
+    pub bss_end_off: u32,
+    pub unwind_start_off: u32,
+    pub unwind_end_off: u32,
+    pub module_object_off: u32
+}
+
+// Set in crt0/mod.rs
+extern {
+    static _mod_header: ModuleHeader;
+}
+
+pub fn get_mod_header() -> &'static ModuleHeader {
+    &_mod_header
+}
+
 #[derive(Debug, Clone, Copy)]
 pub enum SocketKind {
     BsdU,
