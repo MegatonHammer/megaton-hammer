@@ -180,3 +180,19 @@ enum_from_primitive! {
         ShopN = 811,
     }
 }
+
+enum_from_primitive! {
+    #[repr(u16)]
+    #[derive(Debug, PartialEq, Eq, Clone, Copy)]
+    pub enum MegatonHammerDescription {
+        RomFsReadOnly = 100,
+        RomFsEntityExists = 101,
+        RomFsEntityDoesNotExist = 102,
+    }
+}
+
+impl From<MegatonHammerDescription> for Error {
+    fn from(desc: MegatonHammerDescription) -> Error {
+        Error::from_module_description(Module::MegatonHammer, desc as u32)
+    }
+}
