@@ -12,7 +12,7 @@ use core::marker::PhantomData;
 use arrayvec::{ArrayVec, Array};
 use alloc::sync::Arc;
 use byteorder::{LE};
-use kernel::{KObject, Domain};
+use kernel::{KObject, Session, Domain};
 use bit_field::BitField;
 
 use utils::{CursorWrite, CursorRead, div_ceil, hex_print};
@@ -177,6 +177,7 @@ assert_eq_size!(AssertHandleDescriptorHeader; u16, HandleDescriptorHeader);
 
 #[derive(Debug)]
 pub enum MessageType {
+    Close,
     Request,
     Control,
     Unknown(u16)
@@ -372,6 +373,7 @@ where
 
     pub fn ty(mut self, ty: MessageType) -> Self {
         self.ty = match ty {
+            MessageType::Close => 2,
             MessageType::Request => 4,
             MessageType::Control => 5,
             MessageType::Unknown(v) => v
@@ -693,7 +695,7 @@ where
 // buffer's lifetime (somehow).
 #[derive(Debug)]
 pub struct Response<RAW> {
-    domain_obj: Option<Arc<KObject>>,
+    domain_obj: Option<Arc<Session>>,
     error: u64,
     pid: Option<u64>,
     handles: ArrayVec<[KObject; 32]>,
@@ -703,7 +705,7 @@ pub struct Response<RAW> {
 
 impl<T: Clone> Response<T> {
     // TODO: Mark unpack as unsafe (for all the obvious reasons)
-    pub fn unpack(data: &[u8], is_domain: Option<Arc<KObject>>) -> Result<Response<T>> {
+    pub fn unpack(data: &[u8], is_domain: Option<Arc<Session>>) -> Result<Response<T>> {
         let mut this : Response<T> = Response {
             domain_obj: is_domain,
             error: 0,
@@ -827,6 +829,7 @@ impl<T: Clone> Response<T> {
         self.handles.remove(0)
     }
 
+    // TODO: It'd be nice if this was only callable on Domains
     pub fn pop_domain_object(&mut self) -> Domain {
         Domain::new(self.domain_obj.clone().expect("Pop_domain_object called on a non-domain responses"), self.objects.remove(0))
     }

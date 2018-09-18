@@ -61,9 +61,20 @@ impl Session {
             .args(());
         let res : Result<Response<u32>> = self.send(req);
         match res {
-            Ok(res) => Ok(Domain(Arc::new(self.0), *res.get_raw())),
+            Ok(res) => Ok(Domain(Arc::new(self), *res.get_raw())),
             Err(err) => Err((self, err))
         }
+    }
+}
+
+impl Drop for Session {
+    fn drop(&mut self) {
+        use ipc::{Request, MessageType};
+
+        let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(0)
+            .ty(MessageType::Close)
+            .args(());
+        let _ : Result<Response<()>> = self.send(req);
     }
 }
 
@@ -85,11 +96,11 @@ impl AsRef<KObject> for Session {
 }
 
 // TODO: Impl from instead
-impl Into<KObject> for Session {
-    fn into(self) -> KObject {
-        self.0
-    }
-}
+//impl Into<KObject> for Session {
+//    fn into(self) -> KObject {
+//        self.0
+//    }
+//}
 
 // TODO: Think about the safety implication of this huge footgun.
 impl From<KObject> for Session {
@@ -103,22 +114,31 @@ impl From<KObject> for Session {
 ////////////////////////////////////////////////////////////////////////////////
 
 #[derive(Debug)]
-pub struct Domain(Arc<KObject>, u32);
+pub struct Domain(Arc<Session>, u32);
 
 
 impl Domain {
-    pub fn new(ses: Arc<KObject>, domain_id: u32) -> Domain {
+    pub fn new(ses: Arc<Session>, domain_id: u32) -> Domain {
         Domain(ses, domain_id)
     }
     fn send<REQ: IRequest, Y: Clone>(&self, req: REQ) -> Result<Response<Y>> {
         let mut ipc_buf = TlsStruct::borrow_ipc_mut();
         req.pack(&mut *ipc_buf, Some(self.1));
-        unsafe { send_sync_request((self.0).0)? };
+        unsafe { send_sync_request(((self.0).0).0)? };
         Response::unpack(&mut ipc_buf[..], Some(self.0.clone()))
     }
 }
 
-// TODO: impl Drop for Domain
+impl Drop for Domain {
+    fn drop(&mut self) {
+        use ipc::{Request, MessageType};
+
+        let req : Request<_, [_; 0], [_; 0], [_; 0]> = Request::new(2)
+            .ty(MessageType::Control)
+            .args(());
+        let _ : Result<Response<()>> = self.send(req);
+    }
+}
 
 impl Object for Domain {
     fn send<REQ: IRequest, Y: Clone>(&self, req: REQ) -> Result<Response<Y>> {
