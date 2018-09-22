@@ -39,21 +39,25 @@ macro_rules! define_svc {
     ($(#[$meta:meta])* $name:ident ( $svc:tt, ($($svc_in:tt)*), $($args:tt)* ) -> !) => {
         $(#[$meta])*
         pub unsafe fn $name($($args)*) -> ! {
-            asm!($svc : : $($svc_in)* : : "volatile");
+            // Clobber all the caller-saved registers, as the svc will put various data in them.
+            asm!($svc : : $($svc_in)* : "x0", "x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8", "x9", "x10", "x11", "x12", "x13", "x14", "x15", "x16", "x17", "x18" : "volatile");
             unreachable!();
         }
     };
     ($(#[$meta:meta])* $name:ident ( $svc:tt, ($($svc_in:tt)*), $($args:tt)* ) -> ()) => {
         $(#[$meta])*
         pub unsafe fn $name($($args)*) {
-            asm!($svc : : $($svc_in)* : : "volatile");
+            // Clobber all the caller-saved registers, as the svc will destroy it.
+            asm!($svc : : $($svc_in)* : "x0", "x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8", "x9", "x10", "x11", "x12", "x13", "x14", "x15", "x16", "x17", "x18" : "volatile");
         }
     };
     ($(#[$meta:meta])* $name:ident ( $svc:tt, ($($svc_in:tt)*), $($args:tt)* ) -> Result) => {
         $(#[$meta])*
         pub unsafe fn $name($($args)*) -> Result<()> {
+            // Clobber all the caller-saved registers, as the svc will destroy it.
+            // TODO: Putting registers in both output and clobber is illegal
             let ret: u32;
-            asm!($svc : "={x0}"(ret) : $($svc_in)* : : "volatile");
+            asm!($svc : "={x0}"(ret) : $($svc_in)* : "x0", "x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8", "x9", "x10", "x11", "x12", "x13", "x14", "x15", "x16", "x17", "x18" : "volatile");
             if ret == 0 {
                 Ok(())
             } else {
@@ -67,7 +71,8 @@ macro_rules! define_svc {
         pub unsafe fn $name($($args)*) -> Result<$return_type> {
             let mut $retname: $return_type = ::core::mem::uninitialized();
             let ret: u32;
-            asm!($svc : "={x0}"(ret), $($svc_name($($svc_id)*)),* : $($svc_in)* : : "volatile");
+            // TODO: Putting registers in both output and clobber is illegal
+            asm!($svc : "={x0}"(ret), $($svc_name($($svc_id)*)),* : $($svc_in)* : "x0", "x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8", "x9", "x10", "x11", "x12", "x13", "x14", "x15", "x16", "x17", "x18" : "volatile");
             if ret == 0 {
                 Ok($retname)
             } else {
