@@ -1,3 +1,9 @@
+# ⚠ This crate is unmaintained, outdated, incomplete.
+
+Take a look at [aarch64-switch-rs](https://github.com/aarch64-switch-rs/nx) for a much more complete and maintained alternative. The [megaton-hammer discord](https://discord.gg/MZJbNZY) is still active though, join us there!
+
+----
+
 # Megaton Hammer
 
 [![Discord](https://img.shields.io/discord/439418034130780182.svg)]( https://discord.gg/MZJbNZY)
